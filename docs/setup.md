@@ -1,6 +1,6 @@
 # Preparación local de Docker
 
-Esta guía prepara el motor de contenedores y comprueba su funcionamiento. La aplicación de recomendaciones, las bases de datos del proyecto y el entrenamiento todavía no están implementados. La configuración de `docker/smoke/` es exclusivamente una prueba de infraestructura.
+Esta guía prepara el motor de contenedores y comprueba su funcionamiento. Después, la [primera entrega del proyecto](bootstrap.md) permite construir sus imágenes y preparar PostgreSQL y Qdrant. El modelo personalizado y su API siguen pendientes. La configuración de `docker/smoke/` es exclusivamente una prueba del motor Docker.
 
 ## macOS
 

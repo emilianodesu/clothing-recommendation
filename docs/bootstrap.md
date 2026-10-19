@@ -23,6 +23,8 @@ Bootstrap crea `.env` con permisos `0600`, cuatro contraseñas aleatorias distin
 
 Las rutas predeterminadas son `./data` y `./artifacts`; se pueden configurar en `.env`. Los datos originales existentes se conservan. Las bases `hm_app`, `hm_airflow` y `hm_mlflow` tienen usuarios diferentes y no permiten conexiones cruzadas entre esos usuarios. Sólo están preparadas las bases; Airflow y MLflow como servicios se incorporan en etapas siguientes.
 
+Cada bootstrap comprueba y completa los usuarios, bases y permisos de PostgreSQL antes de migrar. Si el primer aprovisionamiento se interrumpe y deja una base o usuario sin crear, repetir el comando lo completa conservando las otras bases y las credenciales de `.env`. Esto no sustituye un respaldo ni repara un volumen corrupto.
+
 Las migraciones de aplicación se ejecutan en una transacción, protegidas por bloqueo y huella del archivo. Una migración ya aplicada no se repite ni se puede editar silenciosamente. La base PostgreSQL y el almacenamiento Qdrant usan volúmenes independientes de los contenedores.
 
 ```bash
@@ -73,6 +75,6 @@ El script de locks utiliza Linux/Python/uv fijados en `docker/lock.Dockerfile`. 
 
 ## Evidencia y límites
 
-La prueba de bootstrap usa una copia del código en otra ruta con espacios dentro del montaje compartido, sin copiar `.env` ni el dataset. Comprueba importaciones, validación de configuración, repetición de instalación, aislamiento de bases, persistencia después de detener y volver a arrancar, y eliminación de sus recursos temporales. Los datos del proyecto principal permanecen intactos.
+La prueba de bootstrap usa una copia del código en otra ruta con espacios dentro del montaje compartido, sin copiar `.env` ni el dataset. Comprueba importaciones, validación de configuración, repetición de instalación, aislamiento de bases, recuperación de un aprovisionamiento parcial, persistencia después de detener y volver a arrancar, y eliminación de sus recursos temporales. Todos sus comandos fijan el nombre del proyecto temporal; una regresión intercepta la creación de procesos y comprueba que variables Compose heredadas no puedan cambiar el destino de las consultas o de la limpieza. Los datos del proyecto principal permanecen intactos.
 
 La ejecución nativa disponible es Linux ARM64 dentro de Colima en macOS. Los manifiestos de imágenes y resolución incluyen AMD64; falta ejecutar en un equipo AMD64 y en una segunda computadora física. No confundir esta prueba con entrenamiento masivo, evaluación del recomendador, API disponible, latencia medida o instalación del producto completo.

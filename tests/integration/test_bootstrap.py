@@ -7,8 +7,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+import project as project_runner
 
 
 def load_bootstrap():
@@ -41,6 +44,43 @@ class ConfigurationTests(unittest.TestCase):
             self.assertEqual((root / ".env").read_bytes(), original)
 
 
+class ComposeIsolationTests(unittest.TestCase):
+    def test_every_test_helper_ignores_inherited_compose_configuration(self):
+        # Intercept process creation: a failing regression must never reach Docker.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            values = load_bootstrap().prepare_configuration(root)
+            instance = BootstrapIntegrationTests()
+            result = subprocess.CompletedProcess([], 0, "cross-database access rejected\n", "")
+            inherited = {
+                "COMPOSE_PROJECT_NAME": "unrelated-installation",
+                "COMPOSE_FILE": "/unrelated/compose.yaml",
+                "COMPOSE_PROFILES": "unrelated",
+                "HM_APP_PASSWORD": "unrelated-password",
+                "DATA_DIR": "/unrelated/data",
+            }
+            with mock.patch.dict(os.environ, inherited), \
+                 mock.patch.object(BootstrapIntegrationTests, "root", root, create=True), \
+                 mock.patch.object(BootstrapIntegrationTests, "temp", mock.Mock(), create=True), \
+                 mock.patch.object(instance, "project"), \
+                 mock.patch("subprocess.run", return_value=result) as run:
+                instance.sql("SELECT 1")
+                instance.test_database_roles_are_isolated()
+                BootstrapIntegrationTests.tearDownClass()
+            self.assertEqual(run.call_count, 3)
+            for call in run.call_args_list:
+                command = call.args[0]
+                with self.subTest(command=command[-3:]):
+                    self.assertIn("--project-name", command)
+                    self.assertEqual(command[command.index("--project-name") + 1],
+                                     values["COMPOSE_PROJECT_NAME"])
+                    environment = call.kwargs["env"]
+                    self.assertEqual(environment["HM_APP_PASSWORD"], values["HM_APP_PASSWORD"])
+                    self.assertEqual(environment["DATA_DIR"], values["DATA_DIR"])
+                    self.assertNotIn("COMPOSE_FILE", environment)
+                    self.assertNotIn("COMPOSE_PROFILES", environment)
+
+
 @unittest.skipUnless(os.environ.get("HMREC_DOCKER_TESTS") == "1", "host Docker integration only")
 class BootstrapIntegrationTests(unittest.TestCase):
     @classmethod
@@ -60,10 +100,15 @@ class BootstrapIntegrationTests(unittest.TestCase):
     def tearDownClass(cls):
         if (cls.root / ".env").exists():
             # Only this freshly created test project's volumes are disposable.
-            subprocess.run(["docker", "compose", "--env-file", str(cls.root / ".env"),
-                "--file", str(cls.root / "compose.yaml"), "down", "--volumes"],
-                cwd=cls.root, check=True, stdout=subprocess.DEVNULL)
+            cls.docker("down", "--volumes")
         cls.temp.cleanup()
+
+    @classmethod
+    def docker(cls, *args):
+        values = project_runner.read_configuration(cls.root / ".env")
+        if values["COMPOSE_PROJECT_NAME"] != project_runner.project_name(cls.root):
+            raise ValueError("Test configuration does not belong to its temporary directory")
+        return project_runner.compose(cls.root, values, *args, capture=True)
 
     def project(self, *args):
         result = subprocess.run([sys.executable, str(self.root / "scripts/project.py"), *args],
@@ -72,11 +117,8 @@ class BootstrapIntegrationTests(unittest.TestCase):
         return result
 
     def sql(self, statement):
-        result = subprocess.run(["docker", "compose", "--env-file", str(self.root / ".env"),
-            "--file", str(self.root / "compose.yaml"), "exec", "-T", "postgres",
-            "psql", "-U", "postgres", "-d", "hm_app", "-At", "-v", "ON_ERROR_STOP=1", "-c", statement],
-            cwd=self.root, text=True, capture_output=True, check=True)
-        return result.stdout.strip()
+        return self.docker("exec", "-T", "postgres", "psql", "-U", "postgres", "-d", "hm_app",
+                           "-At", "-v", "ON_ERROR_STOP=1", "-c", statement).strip()
 
     def test_bootstrap_preserves_secrets_and_data(self):
         self.project("bootstrap", "--skip-build")
@@ -94,6 +136,24 @@ class BootstrapIntegrationTests(unittest.TestCase):
         self.assertIn(" ", str(self.root))
         self.project("check")
 
+    def test_bootstrap_repairs_partial_database_provisioning(self):
+        self.project("bootstrap", "--skip-build")
+        original = (self.root / ".env").read_bytes()
+        self.sql("CREATE TABLE recovery_test (value text); INSERT INTO recovery_test VALUES ('preserved');")
+        # Only the isolated synthetic installation is modified. The existing
+        # PG_VERSION ensures Docker's first-initialization scripts will not rerun.
+        self.sql("DROP DATABASE hm_mlflow")
+        self.sql("DROP ROLE hm_mlflow")
+        self.sql("REVOKE CONNECT ON DATABASE hm_airflow FROM hm_airflow")
+        self.sql("GRANT CONNECT ON DATABASE hm_app TO PUBLIC")
+        self.project("down")
+        self.project("bootstrap", "--skip-build")
+        self.assertEqual((self.root / ".env").read_bytes(), original)
+        self.assertEqual(self.sql("SELECT value FROM recovery_test"), "preserved")
+        self.assertEqual(self.sql("SELECT has_database_privilege('hm_airflow', 'hm_app', 'CONNECT')"), "f")
+        self.assertEqual(self.sql("SELECT has_database_privilege('hm_airflow', 'hm_airflow', 'CONNECT')"), "t")
+        self.project("check")
+
     def test_database_roles_are_isolated(self):
         self.project("bootstrap", "--skip-build")
         script = """
@@ -108,11 +168,8 @@ except psycopg.OperationalError as error:
 else:
     raise SystemExit('app role unexpectedly connected to MLflow database')
 """
-        result = subprocess.run(["docker", "compose", "--env-file", str(self.root / ".env"),
-            "--file", str(self.root / "compose.yaml"), "run", "--rm", "--no-deps", "-T", "jobs",
-            "python", "-c", script], cwd=self.root, text=True, capture_output=True)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("cross-database access rejected", result.stdout)
+        output = self.docker("run", "--rm", "--no-deps", "-T", "jobs", "python", "-c", script)
+        self.assertIn("cross-database access rejected", output)
 
 
 if __name__ == "__main__":

@@ -39,6 +39,9 @@ def run_bootstrap(root, skip_build=False):
     if not skip_build:
         compose(root, values, "build", "app-check", "jobs")
     compose(root, values, "up", "--detach", "--wait", "--wait-timeout", "120", "postgres", "qdrant")
+    # PostgreSQL only runs initdb scripts on an empty volume. Reconcile here too
+    # so an interrupted first provisioning can resume without discarding data.
+    compose(root, values, "exec", "-T", "postgres", "bash", "/docker-entrypoint-initdb.d/10-databases.sh")
     compose(root, values, "run", "--rm", "--no-deps", "-T", "jobs", "hmrec", "db", "migrate")
     compose(root, values, "run", "--rm", "--no-deps", "-T", "app-check")
     compose(root, values, "run", "--rm", "--no-deps", "-T", "jobs", "hmrec", "check")

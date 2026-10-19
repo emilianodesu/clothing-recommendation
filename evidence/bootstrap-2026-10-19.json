@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-19T06:03:56.268593+00:00",
+  "checked_at_utc": "2026-10-19T06:16:23.574416+00:00",
   "milestone": "T1 - local reproducible foundation",
   "status": "passed",
   "runtime": {
@@ -28,16 +28,18 @@
   },
   "tests": {
     "config_unit": 3,
-    "bootstrap_host_and_integration": 5,
-    "total_passed": 8,
+    "bootstrap_host_and_integration": 7,
+    "total_passed": 10,
     "failures": 0,
     "repeat_preserves_credentials_and_data": true,
     "restart_preserves_database": true,
     "directory_with_spaces": true,
-    "database_roles_isolated": true
+    "database_roles_isolated": true,
+    "partial_database_provisioning_recovered": true,
+    "inherited_compose_configuration_isolated": true
   },
   "doctor": {
-    "checked_at_utc": "2026-10-19T06:02:13.066481+00:00",
+    "checked_at_utc": "2026-10-19T06:15:55.576043+00:00",
     "host_os": "Darwin",
     "host_architecture": "arm64",
     "checks": {
@@ -53,7 +55,7 @@
       },
       "docker_disk_free_gib": 69.83,
       "project_mount_visible": true,
-      "workspace_disk_free_gib": 185.12,
+      "workspace_disk_free_gib": 184.04,
       "private_env_mode": "0o600",
       "application_directories_writable": {
         "DATA_DIR": true,
@@ -107,5 +109,11 @@
     "python3 scripts/project.py bootstrap",
     "python3 scripts/project.py verify --suite bootstrap",
     "python3 scripts/doctor.py --application --json"
-  ]
+  ],
+  "review": {
+    "independent_review": true,
+    "important_findings": 2,
+    "findings_fixed_with_regression_tests": 2,
+    "deferred_minors": 0
+  }
 }

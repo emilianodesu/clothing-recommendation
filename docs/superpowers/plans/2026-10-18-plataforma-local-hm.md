@@ -12,7 +12,7 @@
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Tenemos los datos y el entorno necesarios para comenzar. Todavía no existe una aplicación que podamos desplegar.** No hace falta contratar infraestructura ni decidir un proveedor de nube. La preparación de Docker está terminada; construir y comprobar el producto es el trabajo siguiente.
+**Avance del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
 | Elemento | Estado comprobado | Evidencia / trabajo restante |
 | --- | --- | --- |
@@ -20,7 +20,7 @@
 | Docker local | Listo en este Mac ARM64 | Compose, construcción, HTTP, DNS, montajes y persistencia comprobados |
 | Recursos | Punto de partida disponible | Host de 16 GiB; Colima con 4 CPU, 8 GiB de RAM y disco virtual de 100 GiB; capacidad de entrenamiento aún por medir |
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
-| Repositorio e instalación de la aplicación | Pendiente | Inicializar Git, bloquear dependencias, construir imágenes y preparar configuración |
+| Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados, modelo y servicios | Pendiente | No hay entrenamiento personalizado, API, índice, interfaz ni DAG implementados |
 | Otra computadora | Pendiente de prueba | Hace falta un equipo prestado o de otro integrante para acreditar reproducción física; no impide comenzar |
 
@@ -140,7 +140,7 @@ Los tipos se definen una vez en `src/hm_recommender/contracts.py`; los módulos 
 
 La versión incluye `model.pt` con `state_dict`, `model_config.json`, `vocabularies.json`, `feature_schema.json`, `catalog.parquet`, `profiles.parquet`, `item_vectors.parquet`, `popularity.parquet`, `evaluation.json` y `manifest.json`. La tabla de vectores contiene `article_id` y un vector de 64 componentes. Cargar pesos con la opción segura de pesos, sin deserializar objetos de código arbitrarios. Un hash comprueba integridad, no otorga autorización para redistribuir datos.
 
-El punto de entrada del host será `python3 scripts/project.py <acción>`, sin depender de un entorno Python científico en el host. Éste invoca Compose; la CLI instalada en las imágenes se llama `hmrec`. Las acciones siguientes son contratos futuros, **todavía no se pueden ejecutar**:
+El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depender de un entorno Python científico en el host. Éste invoca Compose; la CLI instalada en las imágenes se llama `hmrec`. Ya funcionan `bootstrap`, `check`, `status`, `down` y `verify --suite bootstrap|unit`. La tabla siguiente conserva el contrato objetivo: las demás acciones se implementarán en etapas posteriores.
 
 | Acción | Resultado |
 | --- | --- |
@@ -161,11 +161,11 @@ El punto de entrada del host será `python3 scripts/project.py <acción>`, sin d
 
 **Interfaces:** `bootstrap(project_root: Path) -> None`; `load_config(path: Path) -> dict`; `project.py` devuelve 0 sólo si la acción termina correctamente. Crear los contratos compartidos anteriores y un esquema de configuración con tipos, límites y campos desconocidos rechazados.
 
-- [ ] Inicializar Git local y revisar exclusiones antes del primer commit; conservar el ZIP existente. Incluir código, configuración de ejemplo y evidencia sanitizada; excluir secretos, datos y entornos temporales.
-- [ ] Resolver y construir el entorno CPU: probar importaciones PyTorch, Polars, clientes PostgreSQL/Qdrant y MLflow; resolver por separado Airflow. Fijar versiones verificadas e imágenes por digest. Registrar qué arquitectura realmente se ejecutó y cuál sólo resolvió dependencias.
-- [ ] Implementar bootstrap sin rutas del autor: generar secretos una sola vez, crear directorios y manejar permisos de volúmenes en Linux. Separar bases y usuarios PostgreSQL de aplicación, Airflow y MLflow. Añadir puertos configurables y diagnóstico de conflictos.
-- [ ] Añadir `test_bootstrap_preserves_secrets_and_data` y `test_bootstrap_path_with_spaces`: dos ejecuciones conservan bytes de secretos y un registro existente; funciona con otra ruta y sin variables de Codex. Usar un proyecto Compose de prueba aislado.
-- [ ] Ejecutar `python3 scripts/project.py verify --suite bootstrap`; exigir salida 0, servicios base sanos y segunda ejecución sin pérdida ni duplicados. Actualizar guía y guardar un commit de E1.
+- [x] Inicializar Git local y revisar exclusiones antes del primer commit; conservar el ZIP existente. Incluir código, configuración de ejemplo y evidencia sanitizada; excluir secretos, datos y entornos temporales.
+- [x] Resolver y construir el entorno CPU: probar importaciones PyTorch, Polars, clientes PostgreSQL/Qdrant y MLflow; resolver por separado Airflow. Fijar versiones verificadas e imágenes por digest. Registrar qué arquitectura realmente se ejecutó y cuál sólo resolvió dependencias.
+- [x] Implementar bootstrap sin rutas del autor: generar secretos una sola vez, crear directorios y manejar permisos de volúmenes en Linux. Separar bases y usuarios PostgreSQL de aplicación, Airflow y MLflow. Añadir puertos configurables y diagnóstico de conflictos.
+- [x] Añadir `test_bootstrap_preserves_secrets_and_data` y `test_bootstrap_path_with_spaces`: dos ejecuciones conservan bytes de secretos y un registro existente; funciona con otra ruta y sin variables de Codex. Usar un proyecto Compose de prueba aislado.
+- [x] Ejecutar `python3 scripts/project.py verify --suite bootstrap`; exigir salida 0, servicios base sanos y segunda ejecución sin pérdida ni duplicados. Actualizar guía y guardar un commit de E1.
 
 ## T2 · Datos completos y features temporales
 
@@ -195,7 +195,7 @@ El punto de entrada del host será `python3 scripts/project.py <acción>`, sin d
 
 ## T4 · Versión portable, índice y API de recomendaciones
 
-**Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/001_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`.
+**Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`. T1 ya incorporó `001_bootstrap.sql`.
 
 **Interfaces:** `build_release(result: TrainingResult, features: FeatureManifest, report: EvaluationReport, output_dir: Path) -> ReleaseManifest`; `prepare_release(manifest: ReleaseManifest) -> PublicationResult`; `activate_release(release_id: str) -> None`. API `POST /recommend` recibe `{customer_id, k: 1..12, filters}` y devuelve `RecommendationResponse`; `GET /health/live`, `/health/ready` y `/metrics` exponen estado operativo.
 
@@ -207,7 +207,7 @@ El punto de entrada del host será `python3 scripts/project.py <acción>`, sin d
 
 ## T5 · Interfaz, eventos y actualización de perfiles
 
-**Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/002_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
+**Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/003_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
 
 **Interfaces:** `POST /events` recibe `EventInput`; insertar un evento nuevo devuelve 201 y repetir el mismo ID/payload devuelve 200 sin duplicarlo; ID existente con contenido diferente devuelve 409. `aggregate_events(release_id: str, received_before: datetime) -> dict` retorna conteos y última actualización. Los perfiles actualizados conservan el esquema y la versión del modelo activo.
 

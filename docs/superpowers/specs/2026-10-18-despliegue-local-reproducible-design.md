@@ -1,8 +1,10 @@
 # Diseño de ejecución local y reproducción del proyecto H&M
 
-Actualizado el 18 de octubre de 2026. Complementa la propuesta académica y sustituye sus decisiones anteriores de despliegue en nube. Este documento define requisitos para la implementación; los comandos indicados más adelante todavía no existen.
+Diseño del 18 de octubre de 2026, con nota de avance del 19 de octubre. Complementa la propuesta académica y sustituye sus decisiones anteriores de despliegue en nube. Este documento define requisitos para la implementación; el [plan](../plans/2026-10-18-plataforma-local-hm.md) y la [guía de bootstrap](../../bootstrap.md) distinguen los comandos disponibles de los futuros.
 
 **Estado actualizado después de preparar Docker:** Compose y Colima están comprobados con 4 CPU, 8 GiB y disco virtual de 100 GiB; se añadió el montaje del proyecto conservando los anteriores. Ya existen los scripts de preparación, diagnóstico y prueba aislada descritos en [docs/setup.md](../../setup.md). El [plan de implementación](../plans/2026-10-18-plataforma-local-hm.md) concreta tareas, entregables y calendario; los comandos del producto continúan pendientes.
+
+**Avance de implementación del 19 de octubre:** la [base de T1](../../bootstrap.md) incorpora Git local, locks, imágenes y bootstrap comprobado de PostgreSQL/Qdrant. Las tablas siguientes describen la auditoría anterior a T1; el estado ejecutable actualizado está en README y en el plan. Modelo, API, DAG y evaluación siguen pendientes.
 
 ## Decisión y estado del proyecto
 
