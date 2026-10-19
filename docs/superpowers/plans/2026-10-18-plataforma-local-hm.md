@@ -22,9 +22,11 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados, modelo y servicios | Pendiente | No hay entrenamiento personalizado, API, índice, interfaz ni DAG implementados |
-| Otra computadora | Pendiente de prueba | Hace falta un equipo prestado o de otro integrante para acreditar reproducción física; no impide comenzar |
+| Otra computadora | Disponible; pendiente de prueba | Segunda Mac Apple Silicon de 24 GB confirmada; falta ejecutar instalación, datos y entrenamiento allí |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
+
+**Ampliación del 19 de octubre: segunda Mac.** Se usará Git privado para código y una carpeta de intercambio para datos/resultados, según la elección del usuario. El [diseño de ejecución entre equipos](../specs/2026-10-19-entrenamiento-dos-macs-design.md) incluye las instrucciones de T1 que ya se pueden ejecutar y propone adelantar la instalación física de T7. T2–T3 deberán incluir registro de ejecuciones, perfiles de recursos y exportación/importación de reportes antes del primer entrenamiento allá. La Mac actual recibirá los reportes para analizarlos; importar y servir un modelo completo continúa dependiendo de T4/T7. El remoto privado aún no está configurado. Los comandos nuevos y el presupuesto ampliado de memoria son propuestas pendientes de implementación y prueba.
 
 ## Global Constraints
 
@@ -274,16 +276,17 @@ La ampliación de grafos sólo comienza con E1–E7 terminados y tiempo disponib
 
 | Pendiente | Cuándo / cómo se resuelve | ¿Impide empezar? |
 | --- | --- | --- |
-| Versiones exactas y compatibilidad de imágenes | T1: construir y ejecutar; locks y digests verificados | No; es el primer entregable técnico |
+| Versiones exactas y compatibilidad de imágenes | T1 completada en ARM64: locks, digests y ejecución; falta repetir en segundo equipo y probar AMD64 | No; repetir T1 es la primera comprobación en la otra Mac |
 | Memoria y duración reales del entrenamiento completo | T2–T3: lectura por lotes y una época completa | No; sí condiciona el calendario y concurrencia |
 | Acceso a H&M desde otro equipo | Token propio y términos de Kaggle, o ZIP local obtenido con acceso autorizado | Sólo para reproducir datos reales; la demo no lo necesita |
-| Disponibilidad de un segundo equipo | Prueba con integrante o equipo prestado durante T7 | No; sí impide afirmar reproducción física comprobada mientras falte |
+| Prueba en el segundo equipo | Mac Apple Silicon de 24 GB disponible; adelantar instalación T1 y entrenamiento T2–T3, conservar pruebas de versión/restore en T7 | No; todavía no acredita reproducción física hasta ejecutarse |
+| Remoto Git privado | Elegir o crear repositorio y comprobar acceso desde ambas Macs | Necesario para la transferencia de código elegida; no impide desarrollar localmente |
 | Calidad y latencia alcanzables | T3 y T8: medir antes de afirmar resultados | No; son criterios de validación, no capacidades ya demostradas |
 
-No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. Elegir remoto Git es opcional. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
+No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. El usuario eligió Git privado para compartir código; falta su URL y acceso. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
 
 ## Referencias y control del plan
 
-La propuesta académica conserva la motivación y las referencias del proyecto. El [diseño técnico](../specs/2026-10-18-despliegue-local-reproducible-design.md#referencias-técnicas) reúne las fuentes oficiales de Kaggle, MLflow, Airflow, Docker, Colima, PyTorch y uv; T1 verificará las versiones concretas antes de fijarlas. Las instrucciones operativas vigentes estarán en README y `docs/`, sin depender de este chat.
+La propuesta académica conserva la motivación y las referencias del proyecto. El [diseño técnico](../specs/2026-10-18-despliegue-local-reproducible-design.md#referencias-técnicas) reúne las fuentes oficiales de Kaggle, MLflow, Airflow, Docker, Colima, PyTorch y uv; T1 ya fijó las versiones verificadas en ARM64. Las instrucciones operativas vigentes están en README y `docs/`, sin depender de este chat.
 
 Revisión del plan: datos y tiempo → T2; modelo y escala → T3; publicación y servicio → T4; interfaz/eventos → T5; operación → T6; independencia y recuperación → T7; medición y curso → T8. Los cinco modos de fallo de Review Focus tienen pruebas asignadas. Este documento es planificación: ninguna casilla pendiente representa funcionalidad ya entregada.

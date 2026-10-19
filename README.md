@@ -44,6 +44,7 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 ## Documentos disponibles
 
 - [Infraestructura inicial y operación](docs/bootstrap.md): qué instala esta entrega y cómo repetirla.
+- [Trabajo entre dos Macs](docs/superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md): instrucciones disponibles para comprobar la instalación en la Mac Apple Silicon de 24 GB y diseño pendiente de entrenamiento e intercambio de resultados mediante Git privado y carpetas.
 - [Plan de implementación, entregables y estructura](docs/superpowers/plans/2026-10-18-plataforma-local-hm.md): estado actual, ocho etapas, tareas verificables, contratos, estructura objetivo y cobertura del curso. Es la referencia operativa más reciente; distingue lo preparado de lo pendiente.
 - Propuesta académica en Word: archivo local `Propuesta_proyecto_final_Datos_Masivos.docx`, fuera de Git. El diseño y el plan en Markdown contienen las decisiones técnicas versionadas.
 - [Diseño de ejecución local y reproducibilidad](docs/superpowers/specs/2026-10-18-despliegue-local-reproducible-design.md): recursos verificados, arquitectura local, contrato del futuro repositorio y pruebas para otra computadora.
