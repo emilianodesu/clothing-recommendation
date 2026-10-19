@@ -134,3 +134,7 @@ colima --profile hm-project stop
 La siguiente ejecución normal del instalador arranca el perfil y reutiliza los volúmenes. Si cambiaste el nombre del perfil, usa ese nombre en estos comandos.
 
 Tras aceptar el reporte de T1, el siguiente entregable es T2: importación por lotes, validación del ZIP y Parquet. Después vendrá T3: entrenamiento PyTorch CPU con checkpoints y métricas exportables. Cada entrega incluirá un commit, comando y resultados esperados antes de pedir su ejecución en la otra Mac. El [diseño entre equipos](superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md) describe el traslado único del dataset y los contratos futuros; esos comandos de entrenamiento aún no existen.
+
+## Verificación disponible
+
+El 19 de octubre de 2026 se ejecutó el instalador completo en la Mac de desarrollo, reutilizando su perfil Colima `default`: las siete etapas y las 26 pruebas pasaron; el lector verificó el ZIP con salida 0. La [evidencia sanitizada](../evidence/second-mac-script-2026-10-19.json) registra el commit y los resultados. Esto comprueba el recorrido local y el empaquetado; la instalación desde cero en la Mac 24 GB continúa pendiente hasta recibir su reporte.

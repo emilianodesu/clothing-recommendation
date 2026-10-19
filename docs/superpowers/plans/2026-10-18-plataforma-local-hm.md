@@ -14,6 +14,8 @@
 
 **Avance del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
+**Extensión de T1 para la segunda Mac:** instalador, instrucciones para su agente y lector de paquetes implementados. El recorrido completo se verificó en el equipo de desarrollo con 26 pruebas satisfactorias (las 10 originales y 16 de intercambio). La [evidencia del instalador](../../../evidence/second-mac-script-2026-10-19.json) conserva esa distinción: todavía falta recibir la ejecución física de la Mac 24 GB. T2 y T3 siguen pendientes.
+
 | Elemento | Estado comprobado | Evidencia / trabajo restante |
 | --- | --- | --- |
 | H&M completo | Listo | 31,788,324 transacciones, 1,371,980 clientes, 105,542 artículos; 16 controles satisfactorios |

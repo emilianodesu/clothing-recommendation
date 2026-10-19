@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "scope": "Second-Mac launcher verified on the original development Mac; not a second physical installation",
+  "source_commit": "02fe45af68745428930ea61bfc641a8d0e9dea87",
+  "source_clean_during_run": true,
+  "run_id": "bootstrap-author-check-20261019T164153Z-2211f301",
+  "started_at": "2026-10-19T16:41:53.055067+00:00",
+  "finished_at": "2026-10-19T16:44:01.826929+00:00",
+  "command": "python3 scripts/start-second-mac.py --machine-id author-check --profile default",
+  "status": "passed",
+  "launcher_exit_code": 0,
+  "reader_exit_code": 0,
+  "steps": [
+    {
+      "name": "setup-docker",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 1.942
+    },
+    {
+      "name": "doctor-before",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 0.605
+    },
+    {
+      "name": "docker-smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 24.203
+    },
+    {
+      "name": "bootstrap",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 10.303
+    },
+    {
+      "name": "check",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 3.902
+    },
+    {
+      "name": "verify",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 87.021
+    },
+    {
+      "name": "doctor",
+      "status": "passed",
+      "exit_code": 0,
+      "duration_seconds": 0.711
+    }
+  ],
+  "tests": {
+    "container_unit": 3,
+    "host_handoff": 16,
+    "host_bootstrap": 7,
+    "total_passed": 26
+  },
+  "environment": {
+    "host_os": "Darwin",
+    "host_architecture": "arm64",
+    "engine": {
+      "version": "29.5.2",
+      "architecture": "aarch64",
+      "cpus": 4,
+      "memory_gib": 7.74
+    },
+    "context": "colima"
+  },
+  "diagnostic_errors": [],
+  "diagnostic_warnings": [],
+  "archive_sha256": "b4b2e066b0bd236ffa7d2d4286462ebd4486f0e5e55456d09d174da28618c33f",
+  "archive_bytes": 8265,
+  "artifacts_policy": "Full diagnostic ZIP remains private under ignored artifacts/handoff; no credentials or dataset attached",
+  "limitations": [
+    "Existing Colima profile and cached dependencies on the development Mac",
+    "Fresh installation on the 24 GB Apple Silicon Mac remains pending",
+    "Training, data pipeline and model deployment remain pending T2 onward",
+    "Report transport is manual; no remote agent channel or monitoring configured"
+  ]
+}
