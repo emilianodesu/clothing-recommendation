@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "T2 resource profiles; verification on development Mac, not mac24",
+  "implementation_commit": "76fc2a515165ab8d36946a65e62a0ce4838d7c83",
+  "tests": {
+    "host": 44,
+    "container_unit": 6,
+    "container_data_integration": 8,
+    "host_docker_integration": 8,
+    "unique_total": 66,
+    "status": "passed",
+    "warning": "Expected zipfile warning in test that deliberately creates a duplicate archive member"
+  },
+  "commands": [
+    "SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima python3 scripts/project.py verify --suite bootstrap",
+    "SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima python3 scripts/project.py verify --suite data"
+  ],
+  "nondefault_docker_integration": {
+    "memory_gib": 2,
+    "cpus": 1,
+    "threads": 1,
+    "synthetic_pipeline_and_report": "passed",
+    "boundary": "Real Docker and worker; fixture Git identity and already-built image"
+  },
+  "clean_commit_runs": [
+    {
+      "run_id": "data-dev-arm64-20261019T181327Z-a164a2a9",
+      "status": "passed",
+      "profile": "base",
+      "resource_sha256": "940367515dfdd14ddc82d8c3ee704a6e6a464848020ad4af03f87ea913e748f7",
+      "source_commit": "76fc2a515165ab8d36946a65e62a0ce4838d7c83",
+      "source_clean": true,
+      "container_created": true,
+      "archive_sha256": "00d602c150a57fe04a6fbd2959b0569e562e374dff9bc9d5152db7999bed79d9"
+    },
+    {
+      "run_id": "data-dev-arm64-20261019T181347Z-05105598",
+      "status": "passed",
+      "profile": "base",
+      "resource_sha256": "940367515dfdd14ddc82d8c3ee704a6e6a464848020ad4af03f87ea913e748f7",
+      "source_commit": "76fc2a515165ab8d36946a65e62a0ce4838d7c83",
+      "source_clean": true,
+      "container_created": true,
+      "archive_sha256": "db8c6354df5b5568e166c3e9128e4fe32022f0e46d758e6bd9d321eb9ddc6082"
+    },
+    {
+      "run_id": "data-dev-arm64-20261019T181405Z-553bbdf0",
+      "status": "failed",
+      "profile": "mac24",
+      "resource_sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+      "source_commit": "76fc2a515165ab8d36946a65e62a0ce4838d7c83",
+      "source_clean": true,
+      "container_created": false,
+      "archive_sha256": "c19e43aed98cc52094cd3c89a54b39cdef2f861c7a541c75df1820dfc94c7d98"
+    }
+  ],
+  "resume_profile_and_effective_limits_equal": true,
+  "capacity_guard": "mac24 correctly rejected on 8 GiB VM before image build/container creation; failure report verified",
+  "profiles": {
+    "base": {
+      "job_memory_gib": 5,
+      "job_cpus": 3,
+      "threads": 2,
+      "recommended_vm_memory_gib": 8
+    },
+    "mac24": {
+      "job_memory_gib": 10,
+      "job_cpus": 3,
+      "threads": 2,
+      "recommended_vm_memory_gib": 14
+    }
+  },
+  "limitations": [
+    "10 GiB job not executed on physical mac24 yet",
+    "No performance or training claim; T3 remains pending",
+    "T2 complete H&M not repeated for this launcher-only change; see data-pipeline.json for previous full run"
+  ]
+}
