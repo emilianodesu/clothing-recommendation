@@ -22,7 +22,7 @@ STEPS = ('setup-docker', 'doctor-before', 'docker-smoke', 'bootstrap', 'check', 
 ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {name + '.log' for name in STEPS}
 
 
-DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'result.json', 'config.resolved.json'}
+DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'build.log', 'result.json', 'config.resolved.json'}
 
 def marker_for(run_id):
     return DATA_MARKER if run_id.startswith('data-') else MARKER

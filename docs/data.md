@@ -19,6 +19,8 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job export --run
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload artifacts/handoff/RUN_ID.zip
 ```
 
+`start` anuncia su run_id antes de construir y conserva un log acotado de la construcción. Si falla antes de crear el contenedor, se puede exportar el mismo run_id. Un lanzamiento activo no se exporta hasta terminar o interrumpirse.
+
 `start` acepta `--expected-commit SHA_COMPLETO` y `--dataset synthetic` para probar sin Kaggle. El trabajo conserva el contenedor hasta capturar diagnóstico, no necesita PostgreSQL/Qdrant ni tiene acceso a Internet. Cerrar la terminal después de recibir el `run_id` no cancela el cálculo. Dormir o apagar el equipo sí puede interrumpirlo. `status` distingue `running`, `passed`, `failed` e `interrupted`; salida 0 sin resultado terminado no se considera éxito.
 
 `data-job resume --run-id RUN_ID` inicia **otra ejecución** del mismo commit, dataset y perfil. Relee la fuente y verifica las particiones existentes antes de reutilizarlas; reconstruye el estado de los perfiles desde el histórico. No es un checkpoint de entrenamiento. No cambies de código a mitad de trabajo. Si cambia el formato de procesamiento, hay que incrementar su versión y utilizar otro destino.

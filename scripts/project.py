@@ -12,14 +12,21 @@ from bootstrap import PASSWORD_KEYS, prepare_configuration, project_name, read_c
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def compose(root, values, *args, capture=False):
+def compose(root, values, *args, capture=False, log_path=None):
     environment = dict(os.environ)
     environment.pop("COMPOSE_FILE", None)
     environment.pop("COMPOSE_PROFILES", None)
     environment.update(values)
-    result = subprocess.run(["docker", "compose", "--project-directory", str(root), "--env-file",
+    command = ["docker", "compose", "--project-directory", str(root), "--env-file",
         str(root / ".env"), "--file", str(root / "compose.yaml"), "--project-name",
-        values["COMPOSE_PROJECT_NAME"], *args], cwd=root, env=environment,
+        values["COMPOSE_PROJECT_NAME"], *args]
+    if log_path is not None:
+        from handoff import execute
+        code, _ = execute(command, root, environment, log_path)
+        if code:
+            raise subprocess.CalledProcessError(code, command)
+        return ""
+    result = subprocess.run(command, cwd=root, env=environment,
         text=True, capture_output=capture, check=True)
     return result.stdout if capture else ""
 
