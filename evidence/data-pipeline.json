@@ -1,6 +1,6 @@
 {
   "architecture": "aarch64",
-  "cgroup_peak_bytes": 5030637568,
+  "cgroup_peak_bytes": 4847894528,
   "config_sha256": "f21c253ea7376953b76e46e2664f401907583f6c603cccce6ba23bfaa1a89b05",
   "counts": {
     "articles": 105542,
@@ -10,9 +10,9 @@
   },
   "dataset": "hm",
   "dataset_id": "hm-e4695ac063fd621a",
-  "disk_free_after_bytes": 197072445440,
-  "disk_free_before_bytes": 196258299904,
-  "duration_seconds": 124.179,
+  "disk_free_after_bytes": 195740196864,
+  "disk_free_before_bytes": 195770703872,
+  "duration_seconds": 90.747,
   "examples": {
     "after_test_end_transactions": 0,
     "cold_user_labels": 4620382,
@@ -47,74 +47,126 @@
       "vocabulary": 103165
     }
   },
-  "finished_at": "2026-10-19T17:36:10.350523+00:00",
+  "finished_at": "2026-10-19T17:52:10.544577+00:00",
   "manifest_sha256": {
     "dataset": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
-    "end_features": "e57b3f2ae0b1ee83e29616c23c08344156f3824fdde1669efd71f9a2e547d261",
+    "end_features": "a8b76da448d844f6c52655665885776a2ac33698a8e83ea0bfba350f67a3e036",
     "examples": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
-    "test_features": "60224a6d39db088828f588ad425d3769857b4c92e8f68f7064a796419480ce97",
+    "test_features": "84e28519563f0b26a08336f36a4a7659968d08064129f12a972c0c43691926ca",
     "train_features": "d5ada30629704948d9a44b006ac6039a9d4f2843d62d21f6fee734a313483f57"
   },
   "max_date": "2020-09-22",
   "min_date": "2018-09-20",
-  "output_bytes": 1302029536,
   "partitions": 265,
-  "peak_rss_bytes": 2868592640,
+  "peak_rss_bytes": 2612449280,
   "python": "3.12.15",
   "schema_version": 1,
   "scope": "data and temporal features; no trained model or recommendation metrics",
   "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
   "stage": "T2",
-  "started_at": "2026-10-19T17:34:06.416660+00:00",
+  "started_at": "2026-10-19T17:50:39.860630+00:00",
   "status": "passed",
   "steps": [
     {
-      "duration_seconds": 66.881,
+      "duration_seconds": 32.873,
       "name": "ingest",
       "status": "passed"
     },
     {
-      "duration_seconds": 2.585,
-      "name": "features-train",
+      "duration_seconds": 4.114,
+      "name": "features-validation-cut",
       "status": "passed"
     },
     {
-      "duration_seconds": 2.732,
-      "name": "features-validation",
+      "duration_seconds": 3.664,
+      "name": "features-test-cut",
       "status": "passed"
     },
     {
-      "duration_seconds": 2.581,
-      "name": "features-test-end",
+      "duration_seconds": 4.283,
+      "name": "features-serving-cut",
       "status": "passed"
     },
     {
-      "duration_seconds": 49.346,
+      "duration_seconds": 45.747,
       "name": "weekly-examples",
       "status": "passed"
     }
   ],
+  "verification_exit_code": 0,
   "versions": {
     "polars": "1.44.2",
     "pyarrow": "25.0.1",
     "pydantic": "2.13.5"
   },
-  "measurement_kind": "development checkout before clean-commit verification",
   "machine_alias": "development-arm64",
+  "run_id": "data-dev-arm64-20261019T175036Z-2348601b",
+  "source_commit": "867eb20d697ce9f1eb354008f822a61af5d106d7",
+  "source_clean": true,
+  "image_id": "sha256:e8752b5e1470cb0a3427a943473cbbf55825281b0ddf67fa3b2808f193cec0a6",
+  "uv_lock_sha256": "b2cbf9ce29b30720ff76ef4f0e49b17e7ce9433b829340f927db4055e7803c3a",
   "limits": {
-    "cpus": 3,
     "memory_bytes": 5368709120,
+    "cpus": 3,
     "polars_threads": 2
   },
+  "measurement_kind": "clean-commit detached rerun, verified existing partitions reused",
+  "report_archive_sha256": "21f3f8da007b2b1651d29edb4643278b4fbecf8c135eb816a921f504342269cb",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-dev-arm64-20261019T175036Z-2348601b",
+  "first_complete_ingestion": {
+    "measurement_kind": "development checkout before clean-commit verification",
+    "duration_seconds": 124.179,
+    "peak_rss_bytes": 2868592640,
+    "cgroup_peak_bytes": 5030637568,
+    "counts": {
+      "articles": 105542,
+      "customers": 1371980,
+      "sample_submission": 1371980,
+      "transactions": 31788324
+    },
+    "image_limit_bytes": 5368709120
+  },
   "tests": {
-    "container_data": 14,
-    "host": 33,
+    "container_unit": 6,
+    "container_data_integration": 8,
+    "host": 37,
+    "docker_bootstrap_integration": 7,
+    "unique_total": 58,
     "status": "passed"
   },
+  "review": {
+    "fresh_reviewer": "gpt-6-astra",
+    "important_findings": 3,
+    "fixed_with_red_green_regressions": 3,
+    "deferred_minors": 0
+  },
+  "kaggle_access": {
+    "real_authenticated_probe": "passed",
+    "http_status": 206,
+    "bytes_read": 1024,
+    "full_network_download_repeated": false,
+    "source_zip_already_available": true,
+    "host_prefix": "SSL_CERT_FILE=/etc/ssl/cert.pem",
+    "this_host_extra_ca": "existing locally trusted T1 build bundle"
+  },
   "limitations": [
-    "T2 not yet executed on mac24",
-    "No T3 training or model quality measured",
-    "Full archive SHA-256 checked; JPEG decoding not repeated",
-    "Native Linux ARM64 only"
-  ]
+    "T2 not yet executed on physical mac24; T1 there passed35 tests",
+    "No training, quality metrics, API or trained model; T3 pending",
+    "Native Linux ARM64 only; AMD64 runtime unverified",
+    "Complete ZIP hash verified; JPEG decoding not repeated",
+    "Controlled disk write failure and mocked lifecycle failures tested; no real OOM, power-loss or disk-corruption experiment",
+    "Static article metadata lacks historical change timestamps"
+  ],
+  "synthetic_run": {
+    "run_id": "data-dev-arm64-20261019T175008Z-09006baf",
+    "status": "passed",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-dev-arm64-20261019T175008Z-09006baf"
+  },
+  "github_transport": {
+    "uploaded_to_private_repository": true,
+    "downloaded_to_incoming": true,
+    "both_archives_sha256_match": true
+  },
+  "output_gib": 1.324813,
+  "summary_units_note": "Output footprint expressed in GiB in this tracked summary; exact byte count remains in the runtime report."
 }
