@@ -6,6 +6,16 @@ Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/e
 
 **Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. El motor personalizado, la API de recomendaciones, Streamlit y los DAG todavía están pendientes. Esta entrega prepara y comprueba la infraestructura base.
 
+## Empezar en la segunda Mac
+
+Después de clonar en una Mac Apple Silicon con Git, Homebrew, Python 3.9+ y Ruby, lee [las instrucciones del agente](AGENTS.md) y ejecuta desde la raíz:
+
+```bash
+python3 scripts/start-second-mac.py --machine-id mac24
+```
+
+Prepara Docker/Colima, instala la infraestructura, ejecuta las pruebas y genera un ZIP incluso ante fallos normales. La [guía entre equipos](docs/second-mac.md) explica los requisitos, el intercambio manual del paquete y cómo leerlo aquí con `scripts/read-handoff.py`. Esta primera tarea no necesita el dataset ni inicia entrenamiento.
+
 ## Instalar la infraestructura del proyecto
 
 Requisitos del host: Docker con Compose y Buildx, Python 3.9+ y Git si se obtiene el código por clonación. No se necesita instalar PyTorch, uv ni bibliotecas científicas en el host. La primera construcción descarga imágenes y paquetes.

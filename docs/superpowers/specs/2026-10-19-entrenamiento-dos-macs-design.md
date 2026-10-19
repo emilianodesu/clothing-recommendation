@@ -29,39 +29,23 @@ Los jobs trabajan en el disco local de la segunda Mac. La carpeta de intercambio
 
 ## Qué ejecutar hoy: reproducir T1 en la segunda Mac
 
-Primero comprobar que la cuenta usada en la segunda Mac tiene acceso al repositorio privado. La revisión funcional de T1 es `937b7c8bc75fa2e17daea5b7ec6d45c6ec004732`; contiene las 10 pruebas ya verificadas en el equipo original. Para esta primera comprobación se puede fijar ese commit. Para etapas posteriores se entregará el commit exacto que contenga sus comandos: no ejecutar una rama cambiante durante un experimento.
+El procedimiento vigente está en [la guía de la segunda Mac](../../second-mac.md), y las instrucciones para su agente están en [AGENTS.md](../../../AGENTS.md). Se necesita un clon limpio de la versión actual de `main`, acceso al repositorio privado, Git, Homebrew, Python 3.9+ nativo ARM64 y Ruby con YAML. Si se entrega un commit concreto, se fija antes de ejecutar y se pasa con `--expected-commit SHA_COMPLETO`.
 
-Requisitos: Git, Homebrew, Python 3.9+ y Ruby con YAML, según [la guía de Docker](../../setup.md), y autenticación Git propia con acceso al repositorio privado. Usar una carpeta de trabajo local. En la terminal de la segunda Mac:
-
-```bash
-git clone https://github.com/emilianodesu/clothing-recommendation.git hm-recommender
-cd hm-recommender
-git checkout --detach 937b7c8bc75fa2e17daea5b7ec6d45c6ec004732
-
-python3 scripts/setup-docker-macos.py --profile hm-project --cpus 4 --memory 8 --disk 100
-export DOCKER_CONTEXT=colima-hm-project
-python3 scripts/doctor.py
-bash scripts/docker-smoke.sh
-python3 scripts/project.py bootstrap
-python3 scripts/project.py verify --suite bootstrap
-python3 scripts/doctor.py --application
-```
-
-Ejecutar una línea a la vez y detenerse ante un fallo. No hace falta transferir H&M para esta prueba. Las imágenes se construyen localmente a partir de Dockerfiles, digests y locks; no se supone que `hmrec-jobs:0.1.0` sea un tag publicado en un registro. Se necesita Internet para las primeras descargas y las CA válidas del propio equipo. Si hay otro contexto Docker configurado por `DOCKER_HOST`, quitar esa variable de esta terminal antes de elegir el contexto local, como indica la guía de Docker.
-
-Primero se usa el mismo presupuesto de recursos que en la Mac actual para comprobar la instalación. No usar `--platform linux/amd64` ni Rosetta: el objetivo de ambos equipos es Linux ARM64 nativo. La prueba demuestra una segunda instalación física ARM64; no acredita Intel/AMD64.
-
-Para devolver evidencia de esta primera instalación, los comandos siguientes **ya existen**. En la segunda Mac, desde el clon:
+Desde la raíz del clon:
 
 ```bash
-mkdir -p artifacts/handoff/bootstrap-mac24
-git rev-parse HEAD > artifacts/handoff/bootstrap-mac24/commit.txt
-python3 scripts/doctor.py --application --json > artifacts/handoff/bootstrap-mac24/doctor.json
-python3 scripts/project.py check > artifacts/handoff/bootstrap-mac24/check.log 2>&1
-python3 scripts/project.py verify --suite bootstrap > artifacts/handoff/bootstrap-mac24/verify.log 2>&1
+python3 scripts/start-second-mac.py --machine-id mac24
 ```
 
-Se vuelve a ejecutar la suite para capturar su resultado. Comprobar el código de salida de cada orden (`echo $?` inmediatamente después, antes de otra orden); 0 indica éxito. Si falla, conservar el log y no declarar completada la instalación. Copiar **esa carpeta completa** a `artifacts/incoming/bootstrap-mac24/` dentro del proyecto de la Mac actual. `artifacts/` ya está fuera de Git. Con esos archivos se puede revisar aquí el commit, el entorno y las 10 pruebas sin acceder a la otra computadora. Los logs son evidencia privada; contienen potencialmente rutas locales.
+Este comando ya está implementado: prepara el perfil Colima `hm-project` con 4 CPU, 8 GiB y disco de hasta 100 GiB; comprueba Docker; instala la infraestructura; ejecuta las pruebas y crea un ZIP de evidencia bajo `artifacts/handoff/`. Registra los recursos efectivos y conserva el diagnóstico ante fallos normales. No necesita H&M ni autenticar Kaggle. Los locks y las imágenes se construyen desde el repositorio, sin suponer que los tags de aplicación estén publicados en un registro.
+
+Copiar únicamente el ZIP terminado a `artifacts/incoming/` del clon de desarrollo y leerlo allí:
+
+```bash
+python3 scripts/read-handoff.py artifacts/incoming/NOMBRE-EXACTO.zip
+```
+
+El lector valida integridad y muestra estado y commit, sin extraer ni ejecutar contenido. Este formato `bootstrap-handoff` es el reporte de T1; el contrato de entrenamiento descrito más adelante sigue pendiente. Una ejecución local del instalador no acredita la segunda instalación física: esa evidencia debe venir de la Mac 24 GB. No usar emulación AMD64; esta primera prueba sólo cubre ARM64.
 
 ## Traslado de los datos
 
@@ -102,7 +86,7 @@ La primera comparación usa igual commit, datos, seed, batch, workers e hilos en
 
 | Paso | Trabajo que haremos aquí | Ejecución en la Mac 24 GB | Evidencia de salida |
 | --- | --- | --- | --- |
-| A · Segunda instalación | Publicar commit privado y usar esta guía | T1, sin dataset | Commit, diagnóstico y 10 pruebas satisfactorias |
+| A · Segunda instalación | Publicar commit privado y usar esta guía | T1 con el instalador, sin dataset | ZIP con commit, diagnóstico y suite satisfactoria |
 | B · Datos portables, T2 | Importación/validación, Parquet por mes, features temporales, recursos y registro de ejecuciones | Copiar ZIP, verificar huella, procesar tablas completas | Conteos conciliados, manifiestos, RAM/disco/tiempo; reintento sin duplicados |
 | C · Entrenamiento mínimo, T3 | Dos torres, checkpoints reanudables, evaluación y exportación de reportes | Sintéticos y dos tamaños deterministas; después una época sobre todo el conjunto de entrenamiento | Estado, ejemplos consumidos, métricas, pico de RAM, duración y checkpoint |
 | D · Análisis de regreso | Importador de reportes y comparación local | Copiar paquete cerrado de cada ejecución | Reporte legible aquí, validación de huellas y comparación con configuración exacta |
@@ -168,7 +152,7 @@ Pruebas que se añadirán junto a estos componentes: recursos solicitados realme
 
 ## Pendientes y fuentes
 
-Las decisiones de arquitectura y transporte están tomadas, el remoto es privado y la cuenta de publicación tiene acceso. Para ejecutar A falta comprobar acceso Git y completar la instalación en la segunda Mac. El espacio libre y la capacidad de entrenamiento de la Mac 24 GB se medirán allí. Si el almacenamiento no alcanza, se ajustará su ubicación/margen antes de procesar el histórico. Los comandos nuevos, el perfil ampliado y el empaquetado de resultados deben implementarse antes de pedirle al operador que entrene.
+Las decisiones de arquitectura y transporte están tomadas, el remoto es privado y la cuenta de publicación tiene acceso. Para ejecutar A falta comprobar acceso Git y completar la instalación en la segunda Mac. El espacio libre y la capacidad de entrenamiento de la Mac 24 GB se medirán allí. Si el almacenamiento no alcanza, se ajustará su ubicación/margen antes de procesar el histórico. El instalador y el lector de reportes de T1 ya existen. Los comandos de entrenamiento, el perfil ampliado y sus paquetes de métricas/checkpoints deben implementarse antes de pedirle al operador que entrene.
 
 Decisiones propuestas por el constructor: CPU como referencia, primero mismo presupuesto y después 14 GiB de VM/10 GiB de job; transferencia manual de paquetes cerrados; guardar métricas sin depender de MLflow; adelantar la prueba física de T7. Todas conservan el objetivo local y reproducible del proyecto. Los tamaños finales de batch, frecuencia de checkpoint, intervalos de progreso y tolerancias se fijarán con mediciones y pruebas sintéticas, versionados antes del ensayo completo.
 

@@ -73,6 +73,8 @@ def main():
         elif args.action == "verify":
             compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest", "tests/unit", "-q")
             if args.suite == "bootstrap":
+                subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
+                               cwd=ROOT, check=True)
                 environment = dict(os.environ, HMREC_DOCKER_TESTS="1")
                 subprocess.run([sys.executable, str(ROOT / "tests/integration/test_bootstrap.py"), "-v"],
                                cwd=ROOT, env=environment, check=True)
