@@ -26,7 +26,7 @@
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
 
-**Ampliación del 19 de octubre: segunda Mac.** Se usará Git privado para código y una carpeta de intercambio para datos/resultados, según la elección del usuario. El [diseño de ejecución entre equipos](../specs/2026-10-19-entrenamiento-dos-macs-design.md) incluye las instrucciones de T1 que ya se pueden ejecutar y propone adelantar la instalación física de T7. T2–T3 deberán incluir registro de ejecuciones, perfiles de recursos y exportación/importación de reportes antes del primer entrenamiento allá. La Mac actual recibirá los reportes para analizarlos; importar y servir un modelo completo continúa dependiendo de T4/T7. El remoto privado aún no está configurado. Los comandos nuevos y el presupuesto ampliado de memoria son propuestas pendientes de implementación y prueba.
+**Ampliación del 19 de octubre: segunda Mac.** Se usará Git privado para código y una carpeta de intercambio para datos/resultados, según la elección del usuario. El [diseño de ejecución entre equipos](../specs/2026-10-19-entrenamiento-dos-macs-design.md) incluye las instrucciones de T1 que ya se pueden ejecutar y propone adelantar la instalación física de T7. T2–T3 deberán incluir registro de ejecuciones, perfiles de recursos y exportación/importación de reportes antes del primer entrenamiento allá. La Mac actual recibirá los reportes para analizarlos; importar y servir un modelo completo continúa dependiendo de T4/T7. `origin` apunta a [clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation); la publicación está pendiente de visibilidad privada y permiso de escritura. Los comandos nuevos y el presupuesto ampliado de memoria son propuestas pendientes de implementación y prueba.
 
 ## Global Constraints
 
@@ -280,10 +280,10 @@ La ampliación de grafos sólo comienza con E1–E7 terminados y tiempo disponib
 | Memoria y duración reales del entrenamiento completo | T2–T3: lectura por lotes y una época completa | No; sí condiciona el calendario y concurrencia |
 | Acceso a H&M desde otro equipo | Token propio y términos de Kaggle, o ZIP local obtenido con acceso autorizado | Sólo para reproducir datos reales; la demo no lo necesita |
 | Prueba en el segundo equipo | Mac Apple Silicon de 24 GB disponible; adelantar instalación T1 y entrenamiento T2–T3, conservar pruebas de versión/restore en T7 | No; todavía no acredita reproducción física hasta ejecutarse |
-| Remoto Git privado | Elegir o crear repositorio y comprobar acceso desde ambas Macs | Necesario para la transferencia de código elegida; no impide desarrollar localmente |
+| Remoto Git privado | URL configurada; hacer privado, habilitar escritura y publicar; comprobar acceso desde ambas Macs | Necesario para la transferencia de código elegida; no impide desarrollar localmente |
 | Calidad y latencia alcanzables | T3 y T8: medir antes de afirmar resultados | No; son criterios de validación, no capacidades ya demostradas |
 
-No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. El usuario eligió Git privado para compartir código; falta su URL y acceso. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
+No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. El usuario eligió Git privado para compartir código y proporcionó la URL; falta cerrar visibilidad y acceso. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
 
 ## Referencias y control del plan
 
