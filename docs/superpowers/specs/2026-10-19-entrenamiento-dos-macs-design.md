@@ -69,7 +69,7 @@ El ZIP conserva imágenes para etapas posteriores, pero T2 extraerá/procesará 
 
 Mantener PyTorch CPU dentro de Linux ARM64 como referencia. MPS sería una ejecución alternativa macOS con validación propia; no es necesario incorporarla para aprovechar la segunda máquina. Tener más RAM no garantiza una aceleración proporcional: CPU, batches y lectura de datos también se medirán.
 
-El presupuesto ampliado es una **propuesta técnica inicial**, pendiente de medir. No es una capacidad de entrenamiento ya demostrada:
+El presupuesto ampliado está disponible para T2 mediante `--resources mac24` y **pendiente de medir en esa Mac**. Sigue siendo una propuesta para T3, no una capacidad de entrenamiento ya demostrada:
 
 | Recurso | Comprobación inicial de T1 | Entrenamiento propuesto en Mac 24 GB |
 | --- | --- | --- |
@@ -82,7 +82,7 @@ El presupuesto ampliado es una **propuesta técnica inicial**, pendiente de medi
 
 El objetivo de 100 GiB libres es un margen inicial, no una demostración de que todo el entrenamiento cabe. Docker y el proyecto compiten por el almacenamiento físico aunque sus diagnósticos sean distintos; no sumar su espacio libre como si fueran dos discos independientes. T2–T3 deberán calcular espacio requerido para salidas, checkpoints y copias temporales antes de arrancar cada etapa.
 
-Hoy `compose.yaml` fija `mem_limit: 5g`, `cpus: 3` y límites de hilos. Aumentar sólo la memoria de Colima no cambia esos límites. Antes de entrenar se añadirá un perfil de recursos versionado y validado, separado de los hiperparámetros, y el lanzador aplicará tanto la VM como el límite del job. El preparador Colima admite ya `--memory 14`; se aplicará con los trabajos detenidos y sobre el perfil `hm-project`, conservando volúmenes.
+`compose.yaml` conserva `mem_limit: 5g`, `cpus: 3` y límites de hilos para herramientas de desarrollo. El lanzador desacoplado T2 usa directamente `docker create`: ya aplica los perfiles versionados `configs/resources/base.json` y `mac24.json`, separados de los hiperparámetros. Verifica capacidad, registra nombre/contenido/SHA-256 y límites efectivos, y conserva ese perfil al reanudar. Aumentar sólo Colima no cambia el presupuesto del job. El preparador Colima admite `--memory 14`; se aplica por separado con los trabajos detenidos sobre `hm-project`, conservando volúmenes. El lanzador nunca redimensiona la VM automáticamente. T3 deberá reutilizar este contrato al implementarse.
 
 La primera comparación usa igual commit, datos, seed, batch, workers e hilos en ambas Macs sobre un subconjunto determinista. Después se podrá medir el presupuesto ampliado. Si se cambia batch u otro hiperparámetro se registra como experimento distinto. Sólo un trabajo pesado a la vez; no es necesario arrancar interfaz, Airflow ni API para acreditar esta fase. Mantener el equipo conectado a corriente y despierto durante la ejecución; cerrar la tapa o dormirlo puede interrumpir el progreso.
 

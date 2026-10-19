@@ -56,9 +56,61 @@ def fingerprint(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def start(machine_id, profile, dataset, expected_commit=None):
+def load_resources(name):
+    if not isinstance(name, str) or not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', name):
+        raise ValueError('Nombre de perfil de recursos inválido')
+    directory = ROOT / 'configs/resources'
+    path = directory / (name + '.json')
+    if path.resolve().parent != directory.resolve():
+        raise ValueError('El perfil de recursos debe estar en configs/resources')
+    raw = path.read_bytes()
+    config = json.loads(raw)
+    if (not isinstance(config, dict) or set(config) != {'schema_version', 'colima', 'job'}
+            or type(config['schema_version']) is not int or config['schema_version'] != 1):
+        raise ValueError('Esquema de recursos inválido; se requiere schema_version 1')
+    for section, keys in [('colima', {'memory_gib', 'cpus'}), ('job', {'memory_gib', 'cpus', 'threads'})]:
+        values = config[section]
+        if not isinstance(values, dict) or set(values) != keys:
+            raise ValueError('Campos de recursos inválidos en ' + section)
+        if any(type(value) is not int or value < 1 for value in values.values()):
+            raise ValueError('Los recursos deben ser enteros positivos')
+    vm, job = config['colima'], config['job']
+    if vm['memory_gib'] < job['memory_gib'] + 1 or vm['cpus'] < job['cpus'] or job['threads'] > job['cpus']:
+        raise ValueError('Recursos incompatibles: deja al menos 1 GiB en la VM y respeta CPU/hilos')
+    return {'name': name, 'sha256': hashlib.sha256(raw).hexdigest(), 'config': config}
+
+
+def requested_limits(resources):
+    job = resources['config']['job']
+    return {'memory_bytes': job['memory_gib'] * 2**30, 'cpus': job['cpus'],
+            'polars_threads': job['threads'], 'omp_threads': job['threads'], 'mkl_threads': job['threads']}
+
+
+def validate_capacity(limits, engine):
+    # Docker's MemTotal excludes the VM kernel's overhead; compare job + margin,
+    # not the nominal Colima allocation. Other workloads must be stopped separately.
+    if engine['MemTotal'] < limits['memory_bytes'] + 2**30 or engine['NCPU'] < limits['cpus']:
+        raise ValueError('Docker no tiene capacidad para estos recursos (job + 1 GiB de margen). '
+                         'Prepara Colima según el perfil; consulta docs/data.md.')
+
+
+def effective_limits(info):
+    environment = dict(value.split('=', 1) for value in info['Config']['Env'] if '=' in value)
+    host = info['HostConfig']
+    return {'memory_bytes': host['Memory'], 'nano_cpus': host['NanoCpus'],
+            'memory_swap_bytes': host['MemorySwap'],
+            'polars_threads': int(environment.get('POLARS_MAX_THREADS', '0')),
+            'omp_threads': int(environment.get('OMP_NUM_THREADS', '0')),
+            'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
+
+
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
+    resources = load_resources(resource_profile)
+    if expected_resources is not None and resources != expected_resources:
+        raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
+    limits = requested_limits(resources)
     env = local_environment(profile)
     commit = capture(env, 'git', 'rev-parse', 'HEAD')
     if expected_commit and commit != expected_commit:
@@ -76,7 +128,7 @@ def start(machine_id, profile, dataset, expected_commit=None):
            'config_sha256':fingerprint(ROOT / 'configs' / (config+'.yaml')),
            'uv_lock_sha256':fingerprint(ROOT / 'uv.lock'), 'started_at':now(), 'host_architecture':platform.machine(),
            'host_os':platform.system(), 'launch_status':'running',
-           'limits':{'memory_bytes':5*2**30,'cpus':3,'polars_threads':2}, 'ca_file':os.environ.get('SSL_CERT_FILE'),
+           'resources':resources, 'limits':limits, 'ca_file':os.environ.get('SSL_CERT_FILE'),
            'scope':'T2 only; data and temporal features, no training'}
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -94,6 +146,7 @@ def start(machine_id, profile, dataset, expected_commit=None):
         if active:
             raise ValueError('Ya hay un trabajo T2 activo en este proyecto')
         run.update(engine_version=engine['ServerVersion'], engine_memory_bytes=engine['MemTotal'], engine_cpus=engine['NCPU'])
+        validate_capacity(limits, engine)
         # Build logs persist even when the image cannot be built.
         original = os.environ.copy()
         try:
@@ -110,11 +163,14 @@ def start(machine_id, profile, dataset, expected_commit=None):
         image = json.loads(capture(env, 'docker', 'image', 'inspect', 'hmrec-jobs:0.1.0'))[0]
         run.update(image_id=image['Id'], image_architecture=image['Architecture'])
         container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', 'none',
-            '--read-only', '--tmpfs', '/tmp', '--memory', '5g', '--cpus', '3',
+            '--read-only', '--tmpfs', '/tmp', '--memory', str(resources['config']['job']['memory_gib']) + 'g',
+            '--cpus', str(limits['cpus']),
             '--log-driver', 'json-file', '--log-opt', 'max-size=5m', '--log-opt', 'max-file=2',
             '--label', 'hmrec.data-project=' + values['COMPOSE_PROJECT_NAME'], '--label', 'hmrec.run-id=' + run_id,
             '--user', values['HMREC_UID'] + ':' + values['HMREC_GID'],
-            '--env', 'POLARS_MAX_THREADS=2', '--env', 'OMP_NUM_THREADS=2', '--env', 'MKL_NUM_THREADS=2',
+            '--env', 'POLARS_MAX_THREADS=' + str(limits['polars_threads']),
+            '--env', 'OMP_NUM_THREADS=' + str(limits['omp_threads']),
+            '--env', 'MKL_NUM_THREADS=' + str(limits['mkl_threads']),
             '--env', 'PYTHONDONTWRITEBYTECODE=1', '--env', 'PYTHONUNBUFFERED=1',
             '--env', 'PYTEST_ADDOPTS=-o cache_dir=/tmp/pytest-cache',
             '--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data',
@@ -122,6 +178,12 @@ def start(machine_id, profile, dataset, expected_commit=None):
             image['Id'], 'python', '-m', 'hm_recommender.data.worker', '--config', '/opt/hmrec/configs/' + config + '.yaml',
             '--run-dir', '/artifacts/data-jobs/' + run_id)
         run['container_id'] = container
+        info = json.loads(capture(env, 'docker', 'inspect', container))[0]
+        applied = effective_limits(info)
+        run['effective_limits'] = applied
+        if (applied['memory_bytes'] != limits['memory_bytes'] or applied['nano_cpus'] != limits['cpus'] * 10**9
+                or any(applied[key] != limits[key] for key in ('polars_threads', 'omp_threads', 'mkl_threads'))):
+            raise ValueError('Los límites efectivos de Docker no coinciden con el perfil solicitado; no se inicia el job')
         write_json(directory / 'environment.json', run)
         capture(env, 'docker', 'start', container)
         run['launch_status'] = 'started'
@@ -214,6 +276,8 @@ def export(run_id):
         'steps':steps,
         'container_exit_code':state.get('ExitCode'), 'oom_killed':state.get('OOMKilled',False),
         'image_id':run['image_id'], 'result':result}
+    for key in ('resources', 'limits', 'effective_limits'):
+        if key in run:report[key] = run[key]
     return package_report(export_dir, report)
 
 
@@ -225,21 +289,25 @@ def main(argv=None):
     launch.add_argument('--profile', default='hm-project')
     launch.add_argument('--dataset', choices=('hm','synthetic'), default='hm')
     launch.add_argument('--expected-commit')
+    launch.add_argument('--resources', default='base', help='Perfil versionado en configs/resources (base o mac24)')
     for name in ('status','export','resume'):
         command = commands.add_parser(name)
         command.add_argument('--run-id', required=True)
     args = parser.parse_args(argv)
     try:
-        if args.action == 'start':start(args.machine_id,args.profile,args.dataset,args.expected_commit)
+        if args.action == 'start':start(args.machine_id,args.profile,args.dataset,args.expected_commit,args.resources)
         elif args.action == 'export':print('Paquete para GitHub: ' + str(export(args.run_id)))
         else:
             directory, run, env, state, result, status = inspect_run(args.run_id)
             if args.action == 'resume':
                 if status == 'running':raise ValueError('El trabajo sigue activo')
-                start(run['machine_id'],run['profile'],run['dataset'],run['source_commit'])
+                resources = run.get('resources')
+                start(run['machine_id'],run['profile'],run['dataset'],run['source_commit'],
+                      resources['name'] if resources else 'base', expected_resources=resources)
             else:
                 print(json.dumps({'run_id':args.run_id,'status':status,'container_exit_code':state.get('ExitCode'),
-                    'oom_killed':state.get('OOMKilled',False),'result':result}, indent=2))
+                    'oom_killed':state.get('OOMKilled',False), 'resources':run.get('resources'),
+                    'limits':run.get('limits'), 'effective_limits':run.get('effective_limits'), 'result':result}, indent=2))
                 return 0 if status in ('running','passed') else 1
         return 0
     except KeyboardInterrupt:

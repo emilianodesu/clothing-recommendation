@@ -36,6 +36,10 @@ class DataJobRecoveryTests(unittest.TestCase):
                        'COMPOSE_PROJECT_NAME':'hmrec_fixture', 'HMREC_UID':'501','HMREC_GID':'20'}
         for name in ('data','artifacts','configs'):(self.root/name).mkdir()
         (self.root/'configs/demo.yaml').write_text('dataset: synthetic\n')
+        (self.root/'configs/resources').mkdir()
+        (self.root/'configs/resources/base.json').write_text(json.dumps({
+            'schema_version':1, 'colima':{'memory_gib':8,'cpus':4},
+            'job':{'memory_gib':5,'cpus':3,'threads':2}}))
         (self.root/'uv.lock').write_text('synthetic lock')
         patches = [mock.patch.object(data_job,'ROOT',self.root), mock.patch.object(data_job,'read_configuration',return_value=self.values)]
         for patch in patches:patch.start();self.addCleanup(patch.stop)

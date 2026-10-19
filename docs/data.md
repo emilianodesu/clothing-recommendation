@@ -21,9 +21,9 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload artifac
 
 `start` anuncia su run_id antes de construir y conserva un log acotado de la construcción. Si falla antes de crear el contenedor, se puede exportar el mismo run_id. Un lanzamiento activo no se exporta hasta terminar o interrumpirse.
 
-`start` acepta `--expected-commit SHA_COMPLETO` y `--dataset synthetic` para probar sin Kaggle. El trabajo conserva el contenedor hasta capturar diagnóstico, no necesita PostgreSQL/Qdrant ni tiene acceso a Internet. Cerrar la terminal después de recibir el `run_id` no cancela el cálculo. Dormir o apagar el equipo sí puede interrumpirlo. `status` distingue `running`, `passed`, `failed` e `interrupted`; salida 0 sin resultado terminado no se considera éxito.
+`start` acepta `--expected-commit SHA_COMPLETO`, `--resources base|mac24` y `--dataset synthetic` para probar sin Kaggle. Sin `--resources` utiliza `base`. El trabajo conserva el contenedor hasta capturar diagnóstico, no necesita PostgreSQL/Qdrant ni tiene acceso a Internet. Cerrar la terminal después de recibir el estado `started` no cancela el cálculo; el primer anuncio del `run_id` todavía puede estar construyendo la imagen. Dormir o apagar el equipo sí puede interrumpirlo. `status` distingue `running`, `passed`, `failed` e `interrupted`; salida 0 sin resultado terminado no se considera éxito.
 
-`data-job resume --run-id RUN_ID` inicia **otra ejecución** del mismo commit, dataset y perfil. Relee la fuente y verifica las particiones existentes antes de reutilizarlas; reconstruye el estado de los perfiles desde el histórico. No es un checkpoint de entrenamiento. No cambies de código a mitad de trabajo. Si cambia el formato de procesamiento, hay que incrementar su versión y utilizar otro destino.
+`data-job resume --run-id RUN_ID` inicia **otra ejecución** del mismo commit, dataset, perfil Colima y perfil de recursos. Verifica que el contenido y SHA-256 del perfil de recursos sigan iguales; no admite sustituirlo durante `resume`. Para un presupuesto diferente usa `start`, que genera un experimento nuevo. Los reportes anteriores a estos perfiles corresponden al presupuesto `base`; sigue siendo obligatorio el commit original. Relee la fuente y verifica las particiones existentes antes de reutilizarlas; reconstruye el estado de los perfiles desde el histórico. No es un checkpoint de entrenamiento. No cambies de código a mitad de trabajo. Si cambia el formato de procesamiento, hay que incrementar su versión y utilizar otro destino.
 
 Después de exportar, se puede quitar **sólo** el contenedor terminado identificado por `container_id` en `artifacts/data-jobs/RUN_ID/environment.json` usando `docker --context CONTEXTO rm ID_EXACTO`. Nunca usar `prune` ni eliminar los originales. El ZIP del reporte contiene logs acotados, configuración, identidad de imagen/commit/lock y resultados agregados; no contiene transacciones, perfiles de clientes, imágenes ni credenciales.
 
@@ -99,7 +99,33 @@ artifacts/data-jobs/RUN_ID/             # Entorno, configuración y resultado
 artifacts/handoff/RUN_ID.zip            # Paquete pequeño para GitHub
 ```
 
-T2 exige 20 GiB libres adicionales al ZIP como margen conservador, utiliza un trabajo de **3 CPU y 5 GiB** y dos hilos Polars. La VM de referencia tiene 4 CPU/8 GiB; no hace falta ampliarla para esta etapa. El pico RSS del proceso y el pico de cgroup se reportan por separado: el segundo incluye memoria contabilizada por el contenedor, como caché de archivos. Disco libre antes/después puede variar por otros procesos; `output_bytes` mide la huella de los directorios procesados, incluyendo salidas conservadas de ejecuciones anteriores.
+T2 exige 20 GiB libres adicionales al ZIP como margen conservador. Los recursos se versionan en `configs/resources/*.json`, separados del dataset y de los futuros hiperparámetros de entrenamiento:
+
+| `--resources` | Colima recomendado | Límite del job | Polars / OMP / MKL |
+| --- | --- | --- | --- |
+| `base` (predeterminado) | 8 GiB, 4 CPU | 5 GiB, 3 CPU | 2 hilos cada uno |
+| `mac24` | 14 GiB, 4 CPU | 10 GiB, 3 CPU | 2 hilos cada uno |
+
+`--profile hm-project` elige la VM; `--resources mac24` elige el presupuesto del job. El lanzador usa `docker create` y aplica memoria, CPU y hilos desde el JSON; cambiar sólo `compose.yaml` no lo modifica. Los comandos de desarrollo `prepare-data` y `verify` siguen usando los límites de Compose (5 GiB/3 CPU).
+
+La sección `colima` del JSON documenta la asignación recomendada: **el lanzador no redimensiona ni reinicia la VM**. En la Mac de 24 GB, comprueba que no haya trabajos activos, detén sólo los servicios propios que no necesites y amplía el perfil existente conservando los volúmenes:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem docker --context colima-hm-project ps
+# Sólo cuando no exista un trabajo activo que deba continuar:
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py down
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/setup-docker-macos.py --profile hm-project --cpus 4 --memory 14 --disk 100
+SSL_CERT_FILE=/etc/ssl/cert.pem docker --context colima-hm-project info --format 'CPU={{.NCPU}} MemoryBytes={{.MemTotal}} Arch={{.Architecture}}'
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --resources mac24 --dataset synthetic --expected-commit SHA_COMPLETO
+```
+
+El preparador rechaza reiniciar Colima si quedan contenedores activos; no detengas servicios ajenos para eludirlo. El job requiere que el motor tenga al menos su límite de RAM más 1 GiB de margen, y CPU suficientes. Este control utiliza la capacidad total del motor, no estima memoria libre ni promete ausencia de competencia con otras aplicaciones. Docker ve algo menos que la RAM nominal de Colima; por eso no se exige igualdad con el valor nominal. No ejecutar trabajos pesados simultáneos. 14 GiB deja aproximadamente 10 GiB fuera de la VM en mac24; más memoria no garantiza menor duración.
+
+Antes de `docker start` se comprueba con `docker inspect` que memoria, cuota CPU y los tres límites de hilos coincidan con el perfil. Si no coinciden, el job no arranca y su diagnóstico permanece exportable. `environment.json`, `status` y el reporte exportado incluyen `resources` (nombre, contenido y SHA-256), `limits` solicitados y `effective_limits` verificados. La RAM y CPU reales del motor quedan en `environment.json`. Se registra también `memory_swap_bytes` tal como lo devuelve Docker; el perfil no modifica la política de swap del motor.
+
+Para añadir otro presupuesto, versiona un JSON con el mismo esquema, enteros positivos, hilos no mayores que CPU del job y al menos 1 GiB de diferencia entre VM y job. Los nombres admiten letras minúsculas, números, `_` y `-`, empezando por letra. Haz commit antes de una corrida oficial; no edites perfiles para reanudar un experimento existente.
+
+El pico RSS del proceso y el pico de cgroup se reportan por separado: el segundo incluye memoria contabilizada por el contenedor, como caché de archivos. Disco libre antes/después puede variar por otros procesos; `output_bytes` mide la huella de los directorios procesados, incluyendo salidas conservadas de ejecuciones anteriores. Al comparar presupuestos, conserva commit, dataset, hilos y condiciones de reutilización de particiones: una primera ingestión y una repetición con particiones verificadas no son tiempos directamente comparables.
 
 La primera medición completa en el equipo original procesó 31,788,324 filas y 28,245,922 etiquetas semanales: 31,292,772 compras train, 255,241 validación y 240,311 prueba. Hay 22,674,665 etiquetas train marcadas elegibles, 11,385 etiquetas de validación fuera de catálogo y 8,334 de prueba fuera de catálogo. Las cifras finales, identidad del código y límites de verificación quedan en [data-pipeline.json](../evidence/data-pipeline.json). Esta medición no acredita T2 en mac24 ni factibilidad del entrenamiento T3.
 

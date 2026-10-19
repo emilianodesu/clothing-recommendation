@@ -1,11 +1,13 @@
 """Run from the host: real containers, isolated project, synthetic records only."""
 import importlib.util
+import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from unittest import mock
 
@@ -79,6 +81,61 @@ class ComposeIsolationTests(unittest.TestCase):
                     self.assertEqual(environment["DATA_DIR"], values["DATA_DIR"])
                     self.assertNotIn("COMPOSE_FILE", environment)
                     self.assertNotIn("COMPOSE_PROFILES", environment)
+
+
+@unittest.skipUnless(os.environ.get("HMREC_DOCKER_TESTS") == "1", "host Docker integration only")
+class DataJobResourceIntegrationTests(unittest.TestCase):
+    def test_nondefault_budget_runs_and_exports_with_real_docker(self):
+        """Use the already-built jobs image; only Git identity/build are fixtures."""
+        import data_job
+        from handoff import local_environment, read_report
+        location = ROOT / '.runtime/tests'
+        location.mkdir(parents=True, exist_ok=True)
+        profile = os.environ.get('HMREC_TEST_COLIMA_PROFILE', 'default')
+        env = local_environment(profile)
+        actual_capture = data_job.capture
+        containers = []
+        with tempfile.TemporaryDirectory(prefix='resource fixture ', dir=location) as directory:
+            root = Path(directory)
+            load_bootstrap().prepare_configuration(root)
+            (root / 'configs/resources').mkdir(parents=True)
+            shutil.copy2(ROOT / 'configs/demo.yaml', root / 'configs/demo.yaml')
+            shutil.copy2(ROOT / 'uv.lock', root / 'uv.lock')
+            (root / 'configs/resources/small.json').write_text(json.dumps({
+                'schema_version': 1, 'colima': {'memory_gib': 4, 'cpus': 2},
+                'job': {'memory_gib': 2, 'cpus': 1, 'threads': 1}}))
+
+            def capture(environment, *command, **kwargs):
+                # This temporary directory is a synthetic fixture, not a code checkout.
+                if command[:2] == ('git', 'rev-parse'): return 'f' * 40
+                if command[:2] == ('git', 'status'): return ''
+                output = actual_capture(environment, *command, **kwargs)
+                if command[:2] == ('docker', 'create'): containers.append(output)
+                return output
+
+            try:
+                with mock.patch.object(data_job, 'ROOT', root), \
+                     mock.patch.object(data_job, 'capture', side_effect=capture), \
+                     mock.patch.object(data_job, 'compose'):
+                    run_id = data_job.start('resource-fixture', profile, 'synthetic', resource_profile='small')
+                    deadline = time.monotonic() + 90
+                    while True:
+                        _, run, _, state, result, status = data_job.inspect_run(run_id)
+                        if status != 'running': break
+                        if time.monotonic() > deadline: self.fail('Synthetic resource job did not finish in 90 seconds')
+                        time.sleep(0.5)
+                    self.assertEqual(status, 'passed', result)
+                    self.assertEqual(run['effective_limits']['memory_bytes'], 2 * 2**30)
+                    self.assertEqual(run['effective_limits']['nano_cpus'], 1000000000)
+                    self.assertEqual(run['effective_limits']['polars_threads'], 1)
+                    report = read_report(data_job.export(run_id))
+                    self.assertEqual(report['status'], 'passed')
+                    self.assertEqual(report['resources']['name'], 'small')
+                    self.assertEqual(report['effective_limits']['memory_bytes'], 2 * 2**30)
+            finally:
+                for container in containers:
+                    subprocess.run(['docker', 'rm', '--force', container], env=env, check=True,
+                                   stdout=subprocess.DEVNULL)
 
 
 @unittest.skipUnless(os.environ.get("HMREC_DOCKER_TESTS") == "1", "host Docker integration only")

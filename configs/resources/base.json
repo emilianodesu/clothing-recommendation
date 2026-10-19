@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "colima": {"memory_gib": 8, "cpus": 4},
+  "job": {"memory_gib": 5, "cpus": 3, "threads": 2}
+}

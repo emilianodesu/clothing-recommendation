@@ -180,19 +180,19 @@ Después se añadió el transporte GitHub: la suite completa pasó con **35 prue
 
 La instalación física pasó el 19 de octubre: `bootstrap-mac24-20261019T171240Z-52229e97`, commit `0df375fea67b41eb51d7e0581e8e7978f8873183`, 35 pruebas. El primer intento falló por certificados; se resolvió usando `SSL_CERT_FILE=/etc/ssl/cert.pem`. Mantén ese prefijo. El aviso de puerto 5000 ocupado se resolverá al desplegar MLflow en T3; no bloquea el procesamiento T2.
 
-1. Conserva tus cambios, actualiza el clon desde GitHub y selecciona el SHA completo recibido. Comprueba `git status --short` y `git rev-parse HEAD`. Mantén activo Colima `hm-project`.
+1. Conserva tus cambios, actualiza el clon desde GitHub y selecciona el SHA completo recibido. Comprueba `git status --short` y `git rev-parse HEAD`. Para aprovechar mac24, sigue [la preparación de recursos](data.md#salidas-y-recursos): Colima `hm-project` con 14 GiB/4 CPU y `--resources mac24` con 10 GiB/3 CPU/2 hilos. Verifica que no haya trabajos activos antes de redimensionar. El presupuesto `base` de 5 GiB sigue disponible para equipos menores.
 2. Lee [docs/data.md](data.md), configura tu propia credencial Kaggle y comprueba acceso. Ejecuta `SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py download-data`. El descargador continúa un temporal incompleto y valida el ZIP antes de publicarlo. Conserva al menos 20 GiB libres adicionales para T2.
 3. Ejecuta primero el trabajo sintético, que no necesita Kaggle:
 
 ```bash
-SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --dataset synthetic --expected-commit SHA_COMPLETO
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --resources mac24 --dataset synthetic --expected-commit SHA_COMPLETO
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job status --run-id RUN_ID_SINTETICO
 ```
 
 4. Si termina `passed`, exporta y publica ese reporte. Inicia después el trabajo completo:
 
 ```bash
-SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --dataset hm --expected-commit SHA_COMPLETO
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --resources mac24 --dataset hm --expected-commit SHA_COMPLETO
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job status --run-id RUN_ID_REAL
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job export --run-id RUN_ID_REAL
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py artifacts/handoff/RUN_ID_REAL.zip
@@ -203,6 +203,6 @@ Sustituye los marcadores por el SHA y los run_id reales. Publica también los re
 
 Instrucción para el agente de mac24:
 
-> Lee AGENTS.md, docs/second-mac.md y docs/data.md. Actualiza de forma segura y fija el commit indicado. Usa SSL_CERT_FILE=/etc/ssl/cert.pem en los intentos. Comprueba T2 sintético y después procesa H&M completo descargado directamente de Kaggle. Espera resultados, valida y publica ambos reportes mediante github-handoff, incluso ante fallos. Devuelve commit, run_id, URL, conteos, duración, memoria y errores si los hay. No inicies entrenamiento T3 ni cambies límites para ocultar fallos.
+> Lee AGENTS.md, docs/second-mac.md y docs/data.md. Actualiza de forma segura y fija el commit indicado. Usa SSL_CERT_FILE=/etc/ssl/cert.pem en los intentos. Prepara Colima hm-project con 14 GiB/4 CPU sin interrumpir trabajos ni borrar volúmenes. Los perfiles ya están implementados: ejecuta T2 sintético y después H&M completo con --resources mac24 (10 GiB/3 CPU/2 hilos), descargando el dataset directamente de Kaggle. Espera resultados, valida y publica ambos reportes mediante github-handoff, incluso ante fallos. Devuelve commit, run_id, URL, recursos solicitados/efectivos, conteos, duración, memoria y errores si los hay. No inicies entrenamiento T3 ni cambies límites para ocultar fallos.
 
 En esta Mac recibimos los resultados con los comandos existentes `github-handoff.py list`, `download RUN_ID` y `read-handoff.py`. El nuevo tipo `data-handoff` viaja en una Release privada `handoff-data-...`, con el mismo control de integridad y límite de 50 MiB. GitHub es el único canal entre equipos; la subida no activa automáticamente al otro agente.
