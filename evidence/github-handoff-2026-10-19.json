@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-10-19T16:57:22.039585+00:00",
+  "scope": "Private GitHub transport verified from the development Mac; second physical Mac still pending",
+  "base_commit": "607231f4103732eb6631ee1ba324133b09129c15",
+  "tested_worktree_files_sha256": {
+    "scripts/github-handoff.py": "f034329363dbfe517357fac706f463d78001e5da9afef33ecd91bdbbc88a074d",
+    "scripts/start-second-mac.py": "4eb33bd4d6f62d0f714c36f9b9c0d4fb88aeb38800226b6c95d2c9ef42f87e40",
+    "tests/host/test_github_handoff.py": "f09992f274d68d0221759d689742e2439bf8e53993c76048976dfbd0f21e5e67"
+  },
+  "suite": {
+    "command": "DOCKER_CONTEXT=colima python3 scripts/project.py verify --suite bootstrap",
+    "exit_code": 0,
+    "container_unit": 3,
+    "host_handoff": 16,
+    "host_github_transport": 9,
+    "host_bootstrap": 7,
+    "total_passed": 35
+  },
+  "real_operations": {
+    "upload": "passed",
+    "list": "passed",
+    "download": "passed",
+    "upload_retry_same_package": "passed",
+    "local_reader": "passed",
+    "source_download_and_github_sha256_match": true
+  },
+  "release": {
+    "assets": [
+      {
+        "digest": "sha256:b4b2e066b0bd236ffa7d2d4286462ebd4486f0e5e55456d09d174da28618c33f",
+        "name": "bootstrap-author-check-20261019T164153Z-2211f301.zip",
+        "size": 8265,
+        "state": "uploaded"
+      }
+    ],
+    "draft": false,
+    "prerelease": true,
+    "tag": "handoff-bootstrap-author-check-20261019T164153Z-2211f301",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-bootstrap-author-check-20261019T164153Z-2211f301"
+  },
+  "dataset_transport": "Download directly from Kaggle on the second Mac with its own authorized credentials",
+  "limits": [
+    "Uploaded bootstrap report was produced earlier at commit 02fe45af68745428930ea61bfc641a8d0e9dea87",
+    "No automatic remote-agent activation or live monitoring",
+    "Only completed bootstrap reports are accepted, up to 50 MiB",
+    "Model/checkpoint transport remains pending with T3-T4"
+  ]
+}

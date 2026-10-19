@@ -4,11 +4,11 @@ Diseño y guía inicial del 19 de octubre de 2026. Extiende el [plan del proyect
 
 ## Decisiones confirmadas y objetivo
 
-El usuario dispone de una segunda Mac Apple Silicon con 24 GB de RAM y eligió Git privado para código, más una carpeta para intercambiar datos y resultados. La Mac actual seguirá siendo el entorno de desarrollo, revisión y, posteriormente, servicio del modelo. La otra ejecutará las pruebas de instalación y los trabajos pesados. No se requieren nube, SSH, un registro privado de imágenes ni Codex en la segunda Mac.
+El usuario dispone de una segunda Mac Apple Silicon con 24 GB de RAM y eligió GitHub privado como canal entre equipos: Git para código y adjuntos de Releases para reportes. El dataset se descargará directamente de Kaggle en la segunda Mac, según su aclaración posterior. La Mac actual seguirá siendo el entorno de desarrollo, revisión y, posteriormente, servicio del modelo. La otra ejecutará las pruebas de instalación y los trabajos pesados. No se requieren nube, SSH, un registro privado de imágenes ni Codex en la segunda Mac.
 
 Cada experimento debe poder reconstruirse a partir de un commit, los locks, el ZIP identificado por su SHA-256 y la configuración efectiva. Al devolver los resultados se debe poder determinar qué se ejecutó, si terminó, cuánto consumió y qué calidad obtuvo. Un entrenamiento hecho allá deberá poder importarse y servirse aquí sin reentrenar ni depender del MLflow de origen.
 
-El remoto es [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), configurado como `origin`. El 19 de octubre de 2026 se autenticó la cuenta propietaria, se comprobaron permisos de escritura y se cambió el repositorio vacío a privado antes de publicar código. Cada Mac necesita su propio acceso Git autorizado; no se transfieren tokens entre equipos. La carpeta puede transferirse por disco externo o red local; su medio concreto no cambia el formato. Antes de entrenar se registrarán CPU, versión de macOS y espacio libre del segundo equipo.
+El remoto es [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), configurado como `origin`. El 19 de octubre de 2026 se autenticó la cuenta propietaria, se comprobaron permisos de escritura y se cambió el repositorio vacío a privado antes de publicar código. Cada Mac necesita su propio acceso Git autorizado; no se transfieren tokens entre equipos. Cada Mac autentica GitHub CLI; el agente emisor requiere escritura para publicar los reportes y el receptor necesita acceso al repositorio privado. Ya no se requiere AirDrop, disco externo ni carpeta compartida. Antes de entrenar se registrarán CPU, versión de macOS y espacio libre del segundo equipo.
 
 ## Flujo entre equipos
 
@@ -23,9 +23,11 @@ flowchart LR
     A -->|Importar modelo, etapa T4/T7| S[Servicio local de recomendaciones]
 ```
 
-Git transporta código, configuración sin secretos, pruebas, documentación y resúmenes aprobados. La carpeta transporta el ZIP, reportes completos, checkpoints y, después, versiones portables. No se copian `.env`, tokens, entornos Python, configuración Docker, volúmenes de PostgreSQL ni la base interna de MLflow. Cada clon genera sus propias credenciales.
+Git transporta código, configuración sin secretos, pruebas, documentación y resúmenes aprobados. GitHub Releases transporta los reportes completos de T1 con `scripts/github-handoff.py`; el transporte de checkpoints y versiones portables se añadirá con sus contratos posteriores. H&M se descarga desde Kaggle en cada equipo que lo necesite. No se copian `.env`, tokens, entornos Python, configuración Docker, volúmenes de PostgreSQL ni la base interna de MLflow. Cada clon genera sus propias credenciales.
 
-Los jobs trabajan en el disco local de la segunda Mac. La carpeta de intercambio sólo recibe archivos cerrados; no se escribe un checkpoint ni una base de datos directamente sobre un directorio sincronizado. El retorno de resultados es manual al principio. Esta conversación puede analizar los archivos cuando estén disponibles en el workspace actual; Git por sí solo no permite consultar la otra Mac ni trae métricas en tiempo real.
+Las extensiones de T3–T4 mantendrán GitHub Releases como canal para modelos: deberán validar su formato y tamaño antes de publicarlos. El helper actual sólo acepta reportes de T1 hasta 50 MiB. GitHub exige [adjuntos menores de 2 GiB](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases); si un checkpoint supera ese límite, su empaquetador futuro tendrá que fragmentarlo con un manifiesto verificable. No se ha implementado todavía el transporte de pesos.
+
+Los jobs trabajan en el disco local de la segunda Mac. Sólo se publican paquetes cerrados en GitHub; los jobs no escriben checkpoints ni bases de datos directamente sobre almacenamiento compartido. Los agentes invocan comandos de publicación y descarga; no hay activación automática ni métricas en tiempo real. Esta conversación puede consultar las Releases y descargar los reportes a su workspace cuando el usuario pida revisarlos.
 
 ## Qué ejecutar hoy: reproducir T1 en la segunda Mac
 
@@ -39,19 +41,22 @@ python3 scripts/start-second-mac.py --machine-id mac24
 
 Este comando ya está implementado: prepara el perfil Colima `hm-project` con 4 CPU, 8 GiB y disco de hasta 100 GiB; comprueba Docker; instala la infraestructura; ejecuta las pruebas y crea un ZIP de evidencia bajo `artifacts/handoff/`. Registra los recursos efectivos y conserva el diagnóstico ante fallos normales. No necesita H&M ni autenticar Kaggle. Los locks y las imágenes se construyen desde el repositorio, sin suponer que los tags de aplicación estén publicados en un registro.
 
-Copiar únicamente el ZIP terminado a `artifacts/incoming/` del clon de desarrollo y leerlo allí:
+En la segunda Mac, publicar únicamente el ZIP terminado; en la de desarrollo, listar y descargar el `run_id` elegido:
 
 ```bash
-python3 scripts/read-handoff.py artifacts/incoming/NOMBRE-EXACTO.zip
+python3 scripts/github-handoff.py upload artifacts/handoff/NOMBRE-EXACTO.zip
+# En la Mac de desarrollo:
+python3 scripts/github-handoff.py list
+python3 scripts/github-handoff.py download RUN_ID
 ```
 
 El lector valida integridad y muestra estado y commit, sin extraer ni ejecutar contenido. Este formato `bootstrap-handoff` es el reporte de T1; el contrato de entrenamiento descrito más adelante sigue pendiente. Una ejecución local del instalador no acredita la segunda instalación física: esa evidencia debe venir de la Mac 24 GB. No usar emulación AMD64; esta primera prueba sólo cubre ARM64.
 
 ## Traslado de los datos
 
-Transferir una sola vez, usando el acceso autorizado del usuario, `data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip` a la misma ruta relativa del clon de la segunda Mac. Se puede usar una ruta distinta cuando el importador de T2 exista, pero la primera guía usa la convención actual. El ZIP ocupa 30,810,293,747 bytes, aproximadamente 28.69 GiB. No es necesario volver a descargarlo ni transferir la credencial Kaggle para utilizar esa copia autorizada.
+Descargar H&M directamente de Kaggle en la segunda Mac, decisión confirmada por el usuario al elegir GitHub como canal entre equipos. Su cuenta debe tener acceso a la competición y usar una credencial propia. Conservar el archivo en `data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip`. El descargador portable y la validación de ingestión pertenecen a T2; T1 no necesita esa descarga. No subir el ZIP ni credenciales a GitHub. El archivo original validado ocupa 30,810,293,747 bytes, aproximadamente 28.69 GiB.
 
-Después de copiar, ejecutar en la segunda Mac:
+Después de descargar, ejecutar en la segunda Mac:
 
 ```bash
 shasum -a 256 data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip
@@ -59,7 +64,7 @@ shasum -a 256 data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip
 
 El resultado debe ser `e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c`, según [la validación existente](../../../evidence/dataset-validation-summary.json). Coincidir con esa huella acredita identidad con el archivo ya validado; T2 añadirá validación estructural y de conteos al procesarlo. Si no coincide, no entrenar con esa copia.
 
-El ZIP conserva imágenes para etapas posteriores, pero T2 extraerá/procesará las tablas por lotes sin expandir todos los JPEG. Si hace falta reintentar una copia, conservar el destino incompleto con nombre temporal y verificarlo antes de renombrarlo al nombre definitivo. La capa de datos deberá conciliar 31,788,324 transacciones, 1,371,980 clientes y 105,542 artículos. Las filas de entrenamiento serán las que correspondan a sus cortes y reglas, no necesariamente todas las transacciones de la capa original.
+El ZIP conserva imágenes para etapas posteriores, pero T2 extraerá/procesará las tablas por lotes sin expandir todos los JPEG. Si hace falta reintentar una descarga, conservar el destino incompleto con nombre temporal y verificarlo antes de renombrarlo al nombre definitivo. La capa de datos deberá conciliar 31,788,324 transacciones, 1,371,980 clientes y 105,542 artículos. Las filas de entrenamiento serán las que correspondan a sus cortes y reglas, no necesariamente todas las transacciones de la capa original.
 
 ## Recursos de la Mac de 24 GB
 
@@ -74,7 +79,7 @@ El presupuesto ampliado es una **propuesta técnica inicial**, pendiente de medi
 | Hilos / workers | Límites actuales; workers 0 | Conservar inicialmente; ajustar con evidencia |
 | Memoria fuera de Colima | Resto del equipo | Aproximadamente 10 GiB para macOS y otras apps |
 | Disco virtual Docker | Máximo de 100 GiB | 100 GiB inicialmente; vigilar espacio real |
-| Almacenamiento del proyecto | No necesita H&M para T1 | Procurar al menos 100 GiB libres antes de copiar los datos; medir tras cada etapa |
+| Almacenamiento del proyecto | No necesita H&M para T1 | Procurar al menos 100 GiB libres antes de descargar los datos; medir tras cada etapa |
 
 El objetivo de 100 GiB libres es un margen inicial, no una demostración de que todo el entrenamiento cabe. Docker y el proyecto compiten por el almacenamiento físico aunque sus diagnósticos sean distintos; no sumar su espacio libre como si fueran dos discos independientes. T2–T3 deberán calcular espacio requerido para salidas, checkpoints y copias temporales antes de arrancar cada etapa.
 
@@ -87,9 +92,9 @@ La primera comparación usa igual commit, datos, seed, batch, workers e hilos en
 | Paso | Trabajo que haremos aquí | Ejecución en la Mac 24 GB | Evidencia de salida |
 | --- | --- | --- | --- |
 | A · Segunda instalación | Publicar commit privado y usar esta guía | T1 con el instalador, sin dataset | ZIP con commit, diagnóstico y suite satisfactoria |
-| B · Datos portables, T2 | Importación/validación, Parquet por mes, features temporales, recursos y registro de ejecuciones | Copiar ZIP, verificar huella, procesar tablas completas | Conteos conciliados, manifiestos, RAM/disco/tiempo; reintento sin duplicados |
+| B · Datos portables, T2 | Importación/validación, Parquet por mes, features temporales, recursos y registro de ejecuciones | Descargar ZIP de Kaggle, verificar huella, procesar tablas completas | Conteos conciliados, manifiestos, RAM/disco/tiempo; reintento sin duplicados |
 | C · Entrenamiento mínimo, T3 | Dos torres, checkpoints reanudables, evaluación y exportación de reportes | Sintéticos y dos tamaños deterministas; después una época sobre todo el conjunto de entrenamiento | Estado, ejemplos consumidos, métricas, pico de RAM, duración y checkpoint |
-| D · Análisis de regreso | Importador de reportes y comparación local | Copiar paquete cerrado de cada ejecución | Reporte legible aquí, validación de huellas y comparación con configuración exacta |
+| D · Análisis de regreso | Importador de reportes y comparación local | Publicar y descargar paquete cerrado mediante GitHub | Reporte legible aquí, validación de huellas y comparación con configuración exacta |
 | E · Modelo operativo, T4/T7 | Empaquetar/importar versión portable y reconstruir Qdrant | Exportar versión entrenada | Recomendaciones aquí sin entrenar ni conectar con MLflow de allá |
 
 B incluye el registro básico de ejecuciones; C incluye su empaquetado y D su lector, para que el primer entrenamiento remoto ya devuelva resultados útiles. E no es prerrequisito para comparar métricas. Se adelantan de T7 la instalación física y el intercambio de resultados, pero backup/restore completo, activación y prueba sin Internet siguen perteneciendo a T4/T7.
@@ -142,7 +147,7 @@ El importador rechaza huellas incorrectas, rutas absolutas, `..`, enlaces fuera 
 
 ## Lectura aquí y criterios de aceptación
 
-Se depositará cada paquete recibido en `artifacts/incoming/` dentro de este repositorio. El importador generará su resumen en `artifacts/imported-runs/`; sólo una versión sanitizada del resumen pasará a `evidence/` y Git. MLflow podrá seguir siendo el registro local de T3, pero el intercambio debe funcionar con los archivos exportados aun cuando su servidor no esté accesible. No se copiará su base PostgreSQL para consultar una corrida.
+Los paquetes se descargarán desde las Releases privadas a `artifacts/incoming/` dentro de este repositorio. El importador generará su resumen en `artifacts/imported-runs/`; sólo una versión sanitizada del resumen pasará a `evidence/` y Git. MLflow podrá seguir siendo el registro local de T3, pero el intercambio debe funcionar con los archivos exportados aun cuando su servidor no esté accesible. No se copiará su base PostgreSQL para consultar una corrida.
 
 Para dar por acreditada la ejecución en la segunda Mac se exigirán: commit exacto, dataset coincidente, pruebas satisfactorias, recursos efectivos registrados, conteos conciliados y un resultado de entrenamiento con salida 0 y ejemplos consumidos comprobables. Un log que termina o una barra al 100 % no son suficientes. Una corrida fallida sigue produciendo un paquete de diagnóstico, sin mezclarse con resultados válidos.
 
@@ -154,7 +159,7 @@ Pruebas que se añadirán junto a estos componentes: recursos solicitados realme
 
 Las decisiones de arquitectura y transporte están tomadas, el remoto es privado y la cuenta de publicación tiene acceso. Para ejecutar A falta comprobar acceso Git y completar la instalación en la segunda Mac. El espacio libre y la capacidad de entrenamiento de la Mac 24 GB se medirán allí. Si el almacenamiento no alcanza, se ajustará su ubicación/margen antes de procesar el histórico. El instalador y el lector de reportes de T1 ya existen. Los comandos de entrenamiento, el perfil ampliado y sus paquetes de métricas/checkpoints deben implementarse antes de pedirle al operador que entrene.
 
-Decisiones propuestas por el constructor: CPU como referencia, primero mismo presupuesto y después 14 GiB de VM/10 GiB de job; transferencia manual de paquetes cerrados; guardar métricas sin depender de MLflow; adelantar la prueba física de T7. Todas conservan el objetivo local y reproducible del proyecto. Los tamaños finales de batch, frecuencia de checkpoint, intervalos de progreso y tolerancias se fijarán con mediciones y pruebas sintéticas, versionados antes del ensayo completo.
+Decisiones propuestas por el constructor: CPU como referencia, primero mismo presupuesto y después 14 GiB de VM/10 GiB de job; publicación y descarga explícita de paquetes cerrados mediante GitHub; guardar métricas sin depender de MLflow; adelantar la prueba física de T7. Todas conservan el objetivo local y reproducible del proyecto. Los tamaños finales de batch, frecuencia de checkpoint, intervalos de progreso y tolerancias se fijarán con mediciones y pruebas sintéticas, versionados antes del ensayo completo.
 
 Fuentes consultadas el 19 de octubre de 2026:
 

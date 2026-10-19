@@ -107,7 +107,8 @@ def run(root, machine_id, profile, skip_setup, expected_commit):
     archive = package_report(destination, report)
     print('Estado: ' + report['status'], flush=True)
     print('Paquete para devolver: ' + str(archive), flush=True)
-    print('Copiar ese ZIP a artifacts/incoming/ del otro clon; no se envía automáticamente.', flush=True)
+    print('Publicar ese ZIP con: python3 scripts/github-handoff.py upload RUTA-DEL-ZIP', flush=True)
+    print('La publicación requiere GitHub CLI autenticado; consultar docs/second-mac.md.', flush=True)
     return code, archive
 
 

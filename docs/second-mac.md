@@ -4,9 +4,17 @@ Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestruc
 
 ## 1. Obtener el código
 
-Se necesitan Git, Homebrew, Python 3.9+ nativo ARM64 y Ruby con YAML, además de acceso al repositorio privado. Consulta [la preparación de Docker](setup.md) si falta un requisito. El script instala Docker CLI, Colima, Compose y Buildx cuando faltan; no instala Homebrew ni autentica GitHub por ti. La primera instalación necesita Internet para descargar imágenes y dependencias. No necesita una cuenta de nube ni Kaggle.
+Se necesitan Git, Homebrew, Python 3.9+ nativo ARM64 y Ruby con YAML, además de GitHub CLI (`gh`) y una cuenta con permiso de escritura en el repositorio privado. Consulta [la preparación de Docker](setup.md) si falta un requisito. El script instala Docker CLI, Colima, Compose y Buildx cuando faltan; no instala Homebrew ni autentica GitHub por ti. La primera instalación necesita Internet para descargar imágenes y dependencias. No necesita una cuenta de nube ni Kaggle.
 
-Autentica Git con una cuenta autorizada en esta Mac y clona en una carpeta local, fuera de carpetas sincronizadas automáticamente:
+Prepara GitHub CLI una vez en esta Mac (si `gh` ya está instalado y autenticado con la cuenta correcta, conserva esa configuración):
+
+```bash
+brew install gh
+gh auth login --hostname github.com --git-protocol https --web
+gh auth setup-git --hostname github.com
+```
+
+Completa el acceso en el navegador con `emilianodesu` o un colaborador autorizado. No pegues tokens en el repositorio ni transfieras los de la otra Mac. Clona en una carpeta local:
 
 ```bash
 git clone --branch main https://github.com/emilianodesu/clothing-recommendation.git hm-recommender
@@ -18,7 +26,7 @@ Para un clon existente, conserva primero cualquier cambio propio y actualiza a l
 
 El agente del segundo equipo debe leer [AGENTS.md](../AGENTS.md). Puedes darle esta instrucción:
 
-> Lee AGENTS.md y docs/second-mac.md. Ejecuta la comprobación inicial de la segunda Mac con alias mac24. Conserva y verifica el paquete de resultados aunque falle. Devuélveme estado, commit, run_id y ruta del ZIP. Esta tarea sólo comprueba T1.
+> Lee AGENTS.md y docs/second-mac.md. Ejecuta la comprobación inicial de la segunda Mac con alias mac24. Conserva, verifica y publica el paquete de resultados en GitHub aunque la instalación falle. Devuélveme estado, commit, run_id y URL de la Release. Esta tarea sólo comprueba T1.
 
 ## 2. Ejecutar un único script
 
@@ -83,38 +91,59 @@ Si falla una etapa, las posteriores no se ejecutan. Devuelve el ZIP fallido; no 
 
 ## 4. Comunicar el resultado a la Mac de desarrollo
 
-El circuito inicial es manual:
+Toda la comunicación entre Macs usa el repositorio privado de GitHub:
 
 ```text
-Mac de desarrollo → Git privado: código, documentación y commit acordado
-Segunda Mac       → clona/actualiza, ejecuta y cierra un ZIP de resultados
-Usuario           → copia ese ZIP mediante AirDrop, disco o carpeta compartida
-Mac de desarrollo → verifica el ZIP, analiza el resultado y publica el siguiente cambio
+Mac de desarrollo → push de código, documentación y commit acordado
+Segunda Mac       → clona/actualiza, ejecuta y publica su ZIP en GitHub Releases
+Mac de desarrollo → lista, descarga y valida el reporte; publica la siguiente entrega
 ```
 
-**Git no transporta los reportes ni permite consultar la otra Mac.** Tampoco hay comunicación automática entre los agentes o seguimiento en vivo. Una carpeta compartida sirve como transporte; el script trabaja en disco local y sólo se copia el ZIP terminado. No hay que abrir puertos de PostgreSQL, Qdrant ni otros servicios para leerlo aquí.
+Los ZIP son **adjuntos de Releases**, no archivos versionados con `git add`. El entrenamiento continúa siendo local: no se usan runners de GitHub Actions. La publicación no activa al otro agente y no hay seguimiento en vivo. Para revisar resultados basta con pedir al agente de esta Mac que consulte GitHub; no hay que mover archivos ni abrir puertos entre equipos.
 
-En la Mac de desarrollo, coloca el ZIP en `artifacts/incoming/` dentro del clon. Ese directorio ya está excluido de Git. Desde su raíz:
+En la segunda Mac, después de que el instalador muestre la ruta final:
 
 ```bash
-mkdir -p artifacts/incoming
-python3 scripts/read-handoff.py artifacts/incoming/NOMBRE-EXACTO.zip
+python3 scripts/github-handoff.py upload artifacts/handoff/NOMBRE-EXACTO.zip
 ```
 
-El lector no extrae ni ejecuta archivos: valida formato, inventario, límites y SHA-256, y muestra el resumen. Se puede añadir `--json` para leer el manifiesto. Sus códigos de salida son **0: instalación reportada como satisfactoria; 1: paquete válido con instalación fallida/interrumpida; 2: paquete inválido o inaccesible**. Un paquete válido con fallo sigue siendo útil para diagnosticar.
+Usa la ruta exacta del intento, sin comodines. El comando valida el ZIP y exige que el repositorio sea privado y la cuenta tenga escritura. Crea una Release marcada como prerelease, con nombre `handoff-RUN_ID`, vinculada al commit del reporte; no la marca como última versión de la aplicación. Adjunta únicamente el ZIP de diagnóstico (límite de este protocolo: 50 MiB), lo descarga para comparar su SHA-256 y devuelve la URL. Un reporte fallido también se puede publicar. Si falla la conexión, conserva el ZIP y repite el mismo comando: reutiliza contenido idéntico y rechaza sobrescribir contenido distinto. Una publicación incompleta recuperable permanece como borrador hasta terminar.
 
-Después de copiar, envía en esta conversación: «Ya copié `artifacts/incoming/NOMBRE-EXACTO.zip`; revisa los resultados». El agente de aquí podrá abrirlo en su workspace. Para revisar un log concreto, léelo como texto dentro del ZIP, sin ejecutar su contenido. No subas el ZIP al repositorio ni publiques logs sin revisarlos.
+Si el fallo ocurrió antes de obtener un commit, la Release usa la rama predeterminada como referencia técnica, pero el manifiesto conserva `source_commit: null`; no se atribuye una revisión comprobada a ese intento. Para publicar un reporte de un commit propio, ese commit debe estar previamente disponible en el remoto.
+
+Si GitHub dejó un adjunto incompleto en un borrador, el comando puede rechazarlo para evitar sobrescribir contenido: conserva el ZIP original y devuelve el error al agente de desarrollo. No se borran adjuntos automáticamente.
+
+En la Mac de desarrollo:
+
+```bash
+python3 scripts/github-handoff.py list
+python3 scripts/github-handoff.py download RUN_ID
+```
+
+El primer comando muestra las ejecuciones disponibles y sus URL. Copia el `run_id` completo del resultado al segundo comando. La descarga se guarda bajo `artifacts/incoming/RUN_ID.zip`, verifica el inventario y las huellas antes de publicar el archivo local, y muestra el resumen. Un archivo local diferente con ese nombre no se sobrescribe. No uses un reporte `draft: true`: el emisor debe reintentar la publicación.
+
+Puedes volver a leer el paquete sin conexión:
+
+```bash
+python3 scripts/read-handoff.py artifacts/incoming/RUN_ID.zip
+```
+
+`github-handoff.py` devuelve **0 si el transporte fue correcto y 1 si falló**. Un transporte exitoso puede contener una instalación fallida: revisa siempre el estado del resumen. El lector local distingue **0: instalación reportada como satisfactoria; 1: reporte válido de fallo/interrupción; 2: paquete inválido o inaccesible**. Ninguno extrae ni ejecuta archivos del paquete.
+
+El destino predeterminado es `emilianodesu/clothing-recommendation`. Para usar otro repositorio privado autorizado, pasa `--repo PROPIETARIO/REPOSITORIO` antes de `upload`, `download` o `list`. No depende del directorio personal, de un token incluido en el código ni de un contexto GitHub implícito. El repositorio elegido debe seguir siendo privado.
+
+Después de publicar, puedes escribir aquí «Revisa los reportes de mac24 en GitHub» o dar el `run_id`. El agente de aquí podrá descargarlos y analizarlos. Los reportes contienen logs privados, potencialmente con rutas locales; sus adjuntos sólo deben permanecer en el repositorio privado. La verificación de huellas detecta corrupción, pero no sustituye la confianza en la cuenta que publicó el reporte.
 
 Formato breve que debe devolver el agente de la segunda Mac:
 
 ```text
-Estado: passed / failed / interrupted
-Commit: SHA completo
+Estado de instalación: passed / failed / interrupted
+Publicación: completada / fallida
+Commit: SHA completo, o no disponible
 Run ID: identificador de manifest.json
 Primera etapa fallida: nombre, o ninguna
 Avisos: los que indique el diagnóstico
-Paquete: ruta absoluta al ZIP
-Acción: copiarlo a artifacts/incoming/ en la Mac de desarrollo
+Release: URL confirmada, o diagnóstico del fallo de publicación
 ```
 
 ## 5. Parar y continuar después
@@ -133,8 +162,16 @@ colima --profile hm-project stop
 
 La siguiente ejecución normal del instalador arranca el perfil y reutiliza los volúmenes. Si cambiaste el nombre del perfil, usa ese nombre en estos comandos.
 
-Tras aceptar el reporte de T1, el siguiente entregable es T2: importación por lotes, validación del ZIP y Parquet. Después vendrá T3: entrenamiento PyTorch CPU con checkpoints y métricas exportables. Cada entrega incluirá un commit, comando y resultados esperados antes de pedir su ejecución en la otra Mac. El [diseño entre equipos](superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md) describe el traslado único del dataset y los contratos futuros; esos comandos de entrenamiento aún no existen.
+Tras aceptar el reporte de T1, el siguiente entregable es T2: importación por lotes, validación del ZIP y Parquet. Después vendrá T3: entrenamiento PyTorch CPU con checkpoints y métricas exportables. Cada entrega incluirá un commit, comando y resultados esperados antes de pedir su ejecución en la otra Mac. El usuario confirmó que H&M se descargará directamente de Kaggle en la segunda Mac con sus propias credenciales, sin enviarlo por GitHub. El [diseño entre equipos](superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md) describe la comprobación del dataset y los contratos futuros; esos comandos de entrenamiento aún no existen.
 
 ## Verificación disponible
 
 El 19 de octubre de 2026 se ejecutó el instalador completo en la Mac de desarrollo, reutilizando su perfil Colima `default`: las siete etapas y las 26 pruebas pasaron; el lector verificó el ZIP con salida 0. La [evidencia sanitizada](../evidence/second-mac-script-2026-10-19.json) registra el commit y los resultados. Esto comprueba el recorrido local y el empaquetado; la instalación desde cero en la Mac 24 GB continúa pendiente hasta recibir su reporte.
+
+Después se añadió el transporte GitHub: la suite completa pasó con **35 pruebas**. Se publicó ese ZIP de instalación, se listó, descargó y leyó mediante los comandos nuevos; su SHA-256 coincide con el original y con GitHub. Un segundo envío reutilizó el mismo adjunto. La [evidencia del transporte](../evidence/github-handoff-2026-10-19.json) registra estas operaciones; el ZIP de prueba sigue correspondiendo a la ejecución anterior de infraestructura.
+
+## Referencias del transporte
+
+- [GitHub: Releases, permisos y adjuntos](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+- [GitHub CLI: creación y publicación de Releases](https://cli.github.com/manual/gh_release_create).
+- [GitHub CLI: descarga de adjuntos](https://cli.github.com/manual/gh_release_download).
