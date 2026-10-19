@@ -8,7 +8,7 @@ El usuario dispone de una segunda Mac Apple Silicon con 24 GB de RAM y eligió G
 
 Cada experimento debe poder reconstruirse a partir de un commit, los locks, el ZIP identificado por su SHA-256 y la configuración efectiva. Al devolver los resultados se debe poder determinar qué se ejecutó, si terminó, cuánto consumió y qué calidad obtuvo. Un entrenamiento hecho allá deberá poder importarse y servirse aquí sin reentrenar ni depender del MLflow de origen.
 
-El remoto elegido es [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), configurado como `origin`. En la comprobación del 19 de octubre de 2026 estaba vacío, público y sin permiso de escritura para la sesión GitHub disponible. La publicación está pendiente de hacerlo privado y habilitar escritura; configurar `origin` no sube archivos. Después habrá que comprobar acceso desde ambas Macs. La carpeta puede transferirse por disco externo o red local; su medio concreto no cambia el formato. Antes de entrenar se registrarán CPU, versión de macOS y espacio libre del segundo equipo.
+El remoto es [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), configurado como `origin`. El 19 de octubre de 2026 se autenticó la cuenta propietaria, se comprobaron permisos de escritura y se cambió el repositorio vacío a privado antes de publicar código. Cada Mac necesita su propio acceso Git autorizado; no se transfieren tokens entre equipos. La carpeta puede transferirse por disco externo o red local; su medio concreto no cambia el formato. Antes de entrenar se registrarán CPU, versión de macOS y espacio libre del segundo equipo.
 
 ## Flujo entre equipos
 
@@ -29,9 +29,9 @@ Los jobs trabajan en el disco local de la segunda Mac. La carpeta de intercambio
 
 ## Qué ejecutar hoy: reproducir T1 en la segunda Mac
 
-Primero publicar el repositorio en el remoto privado elegido y darle acceso al usuario de la segunda Mac. La revisión funcional de T1 es `937b7c8bc75fa2e17daea5b7ec6d45c6ec004732`; contiene las 10 pruebas ya verificadas en el equipo original. Para esta primera comprobación se puede fijar ese commit. Para etapas posteriores se entregará el commit exacto que contenga sus comandos: no ejecutar una rama cambiante durante un experimento.
+Primero comprobar que la cuenta usada en la segunda Mac tiene acceso al repositorio privado. La revisión funcional de T1 es `937b7c8bc75fa2e17daea5b7ec6d45c6ec004732`; contiene las 10 pruebas ya verificadas en el equipo original. Para esta primera comprobación se puede fijar ese commit. Para etapas posteriores se entregará el commit exacto que contenga sus comandos: no ejecutar una rama cambiante durante un experimento.
 
-Requisitos: Git, Homebrew, Python 3.9+ y Ruby con YAML, según [la guía de Docker](../../setup.md). Usar una carpeta de trabajo local. **Ejecutar este bloque cuando el código ya esté publicado y exista acceso al repositorio privado.** En la terminal de la segunda Mac:
+Requisitos: Git, Homebrew, Python 3.9+ y Ruby con YAML, según [la guía de Docker](../../setup.md), y autenticación Git propia con acceso al repositorio privado. Usar una carpeta de trabajo local. En la terminal de la segunda Mac:
 
 ```bash
 git clone https://github.com/emilianodesu/clothing-recommendation.git hm-recommender
@@ -168,7 +168,7 @@ Pruebas que se añadirán junto a estos componentes: recursos solicitados realme
 
 ## Pendientes y fuentes
 
-Las decisiones de arquitectura y transporte están tomadas y la URL del remoto ya está elegida. Para ejecutar A falta configurar su visibilidad privada, habilitar escritura para publicar los commits y comprobar acceso desde ambos equipos. El espacio libre y la capacidad de entrenamiento de la Mac 24 GB se medirán allí. Si el almacenamiento no alcanza, se ajustará su ubicación/margen antes de procesar el histórico. Los comandos nuevos, el perfil ampliado y el empaquetado de resultados deben implementarse antes de pedirle al operador que entrene.
+Las decisiones de arquitectura y transporte están tomadas, el remoto es privado y la cuenta de publicación tiene acceso. Para ejecutar A falta comprobar acceso Git y completar la instalación en la segunda Mac. El espacio libre y la capacidad de entrenamiento de la Mac 24 GB se medirán allí. Si el almacenamiento no alcanza, se ajustará su ubicación/margen antes de procesar el histórico. Los comandos nuevos, el perfil ampliado y el empaquetado de resultados deben implementarse antes de pedirle al operador que entrene.
 
 Decisiones propuestas por el constructor: CPU como referencia, primero mismo presupuesto y después 14 GiB de VM/10 GiB de job; transferencia manual de paquetes cerrados; guardar métricas sin depender de MLflow; adelantar la prueba física de T7. Todas conservan el objetivo local y reproducible del proyecto. Los tamaños finales de batch, frecuencia de checkpoint, intervalos de progreso y tolerancias se fijarán con mediciones y pruebas sintéticas, versionados antes del ensayo completo.
 

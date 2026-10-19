@@ -2,6 +2,8 @@
 
 Plataforma local de recomendaciones para comercio electrónico con H&M, PyTorch y Docker Compose. La ejecución prevista utiliza recursos propios, sin nube ni servicios de pago.
 
+Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.
+
 **Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. El motor personalizado, la API de recomendaciones, Streamlit y los DAG todavía están pendientes. Esta entrega prepara y comprueba la infraestructura base.
 
 ## Instalar la infraestructura del proyecto
