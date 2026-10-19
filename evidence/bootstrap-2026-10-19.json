@@ -1,0 +1,111 @@
+{
+  "checked_at_utc": "2026-10-19T06:03:56.268593+00:00",
+  "milestone": "T1 - local reproducible foundation",
+  "status": "passed",
+  "runtime": {
+    "python": "3.12.15",
+    "architecture": "aarch64",
+    "packages": {
+      "torch": "2.14.1+cpu",
+      "polars": "1.44.2",
+      "pyarrow": "25.0.1",
+      "numpy": "2.5.3",
+      "fastapi": "0.136.3",
+      "uvicorn": "0.52.4",
+      "qdrant-client": "1.19.0",
+      "psycopg": "3.3.5",
+      "mlflow-skinny": "3.17.1",
+      "pydantic": "2.13.5"
+    },
+    "torch_device": "cpu",
+    "services": {
+      "app_database": "healthy",
+      "airflow_database": "healthy",
+      "mlflow_database": "healthy",
+      "qdrant": "healthy"
+    },
+    "status": "passed"
+  },
+  "tests": {
+    "config_unit": 3,
+    "bootstrap_host_and_integration": 5,
+    "total_passed": 8,
+    "failures": 0,
+    "repeat_preserves_credentials_and_data": true,
+    "restart_preserves_database": true,
+    "directory_with_spaces": true,
+    "database_roles_isolated": true
+  },
+  "doctor": {
+    "checked_at_utc": "2026-10-19T06:02:13.066481+00:00",
+    "host_os": "Darwin",
+    "host_architecture": "arm64",
+    "checks": {
+      "docker_client": "Docker version 29.6.1, build 8900f1d330",
+      "compose": "Docker Compose version 5.6.0",
+      "buildx": "github.com/docker/buildx v0.35.0 Homebrew",
+      "context": "colima",
+      "engine": {
+        "version": "29.5.2",
+        "architecture": "aarch64",
+        "cpus": 4,
+        "memory_gib": 7.74
+      },
+      "docker_disk_free_gib": 69.83,
+      "project_mount_visible": true,
+      "workspace_disk_free_gib": 185.12,
+      "private_env_mode": "0o600",
+      "application_directories_writable": {
+        "DATA_DIR": true,
+        "ARTIFACTS_DIR": true
+      },
+      "application_ports": {
+        "API_PORT": {
+          "port": 8000,
+          "status": "available"
+        },
+        "UI_PORT": {
+          "port": 8501,
+          "status": "available"
+        },
+        "MLFLOW_PORT": {
+          "port": 5000,
+          "status": "available"
+        },
+        "AIRFLOW_PORT": {
+          "port": 8080,
+          "status": "available"
+        }
+      }
+    },
+    "warnings": [],
+    "errors": [],
+    "status": "passed"
+  },
+  "availability": {
+    "postgresql": true,
+    "qdrant": true,
+    "recommender_trained": false,
+    "recommendation_api": false,
+    "airflow_service": false,
+    "mlflow_service": false
+  },
+  "portability": {
+    "native_platform_executed": "linux/arm64",
+    "image_manifests_available": [
+      "linux/arm64",
+      "linux/amd64"
+    ],
+    "second_physical_machine_tested": false,
+    "amd64_runtime_tested": false
+  },
+  "dependency_locks": [
+    "uv.lock",
+    "docker/airflow/requirements.lock"
+  ],
+  "commands": [
+    "python3 scripts/project.py bootstrap",
+    "python3 scripts/project.py verify --suite bootstrap",
+    "python3 scripts/doctor.py --application --json"
+  ]
+}

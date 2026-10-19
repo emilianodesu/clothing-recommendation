@@ -1,0 +1,37 @@
+
+# Validación temporal del dataset H&M
+.venv-validation/
+data/kaggle_hm/
+validation_hm/jupyter/
+/Propuesta_proyecto_final_Datos_Masivos.docx
+/validation_hm/resultado_validacion.json
+/validation_hm/reinicio_descarga.json
+**/.ipynb_checkpoints/
+
+# Configuración privada y archivos generados de Python
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+
+# Datos y artefactos privados; sólo las fixtures sintéticas se versionan.
+/data/
+/artifacts/
+/backups/
+/.runtime/
+/.secrets/
+/.venv/
+/.superpowers/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.DS_Store
+_document_work/
+# El notebook exploratorio incluye rutas y resultados del entorno original.
+notebooks/validacion_hm_temporal.ipynb
+validation_hm/history/
+validation_hm/*.log
+validation_hm/jupyter/

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hm-recommender"
+version = "0.1.0"
+description = "Reproducible local H&M recommendation platform"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "pydantic==2.13.5",
+  "PyYAML==6.0.3",
+  "numpy==2.5.3",
+  "polars==1.44.2",
+  "pyarrow==25.0.1",
+  "torch==2.14.1",
+  "fastapi==0.136.3",
+  "uvicorn==0.52.4",
+  "qdrant-client==1.19.0",
+  "psycopg[binary]==3.3.5",
+  "mlflow-skinny==3.17.1",
+  "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+ui = ["streamlit==1.66.0"]
+tracking = ["mlflow==3.17.1"]
+
+[dependency-groups]
+build = ["hatchling==1.32.4"]
+test = ["pytest==9.1.1"]
+
+[project.scripts]
+hmrec = "hm_recommender.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hm_recommender"]
+
+[tool.uv]
+required-version = ">=0.13.1"
+environments = [
+  "sys_platform == 'linux' and platform_machine == 'aarch64'",
+  "sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+required-environments = [
+  "sys_platform == 'linux' and platform_machine == 'aarch64'",
+  "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["docker: exercises a local Docker engine from the host"]

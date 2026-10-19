@@ -1,0 +1,6 @@
+dataset: synthetic
+seed: 42
+batch_size: 64
+embedding_dim: 64
+epochs: 3
+workers: 0

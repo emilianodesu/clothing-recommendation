@@ -1,0 +1,119 @@
+"""Run from the host: real containers, isolated project, synthetic records only."""
+import importlib.util
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def load_bootstrap():
+    spec = importlib.util.spec_from_file_location("bootstrap", ROOT / "scripts/bootstrap.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ConfigurationTests(unittest.TestCase):
+    def test_repeated_configuration_preserves_private_values_and_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            module = load_bootstrap()
+            module.prepare_configuration(root)
+            original = (root / ".env").read_bytes()
+            (root / "data/keep.txt").write_text("existing input")
+            module.prepare_configuration(root)
+            self.assertEqual((root / ".env").read_bytes(), original)
+            self.assertEqual((root / "data/keep.txt").read_text(), "existing input")
+            self.assertEqual((root / ".env").stat().st_mode & 0o777, 0o600)
+
+    def test_incomplete_existing_configuration_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = b"COMPOSE_PROJECT_NAME=my-existing-project\n"
+            (root / ".env").write_bytes(original)
+            with self.assertRaises(ValueError):
+                load_bootstrap().prepare_configuration(root)
+            self.assertEqual((root / ".env").read_bytes(), original)
+
+
+@unittest.skipUnless(os.environ.get("HMREC_DOCKER_TESTS") == "1", "host Docker integration only")
+class BootstrapIntegrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Under the project so Colima's existing shared mount includes the copy.
+        location = ROOT / ".runtime/tests"
+        location.mkdir(parents=True, exist_ok=True)
+        cls.temp = tempfile.TemporaryDirectory(prefix="another project with spaces ", dir=location)
+        cls.root = Path(cls.temp.name)
+        for name in ("scripts", "docker", "src", "configs", "migrations", "tests"):
+            if (ROOT / name).exists():
+                shutil.copytree(ROOT / name, cls.root / name, ignore=shutil.ignore_patterns("__pycache__"))
+        for name in ("compose.yaml", ".env.example", ".python-version", "pyproject.toml", "uv.lock", ".dockerignore"):
+            shutil.copy2(ROOT / name, cls.root / name)
+
+    @classmethod
+    def tearDownClass(cls):
+        if (cls.root / ".env").exists():
+            # Only this freshly created test project's volumes are disposable.
+            subprocess.run(["docker", "compose", "--env-file", str(cls.root / ".env"),
+                "--file", str(cls.root / "compose.yaml"), "down", "--volumes"],
+                cwd=cls.root, check=True, stdout=subprocess.DEVNULL)
+        cls.temp.cleanup()
+
+    def project(self, *args):
+        result = subprocess.run([sys.executable, str(self.root / "scripts/project.py"), *args],
+            cwd=tempfile.gettempdir(), text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        return result
+
+    def sql(self, statement):
+        result = subprocess.run(["docker", "compose", "--env-file", str(self.root / ".env"),
+            "--file", str(self.root / "compose.yaml"), "exec", "-T", "postgres",
+            "psql", "-U", "postgres", "-d", "hm_app", "-At", "-v", "ON_ERROR_STOP=1", "-c", statement],
+            cwd=self.root, text=True, capture_output=True, check=True)
+        return result.stdout.strip()
+
+    def test_bootstrap_preserves_secrets_and_data(self):
+        self.project("bootstrap", "--skip-build")
+        original = (self.root / ".env").read_bytes()
+        self.sql("CREATE TABLE bootstrap_test (value text PRIMARY KEY); INSERT INTO bootstrap_test VALUES ('survives');")
+        self.project("bootstrap", "--skip-build")
+        self.assertEqual((self.root / ".env").read_bytes(), original)
+        self.assertEqual(self.sql("SELECT value FROM bootstrap_test"), "survives")
+        self.project("down")
+        self.project("bootstrap", "--skip-build")
+        self.assertEqual(self.sql("SELECT value FROM bootstrap_test"), "survives")
+
+    def test_bootstrap_path_with_spaces(self):
+        self.project("bootstrap", "--skip-build")
+        self.assertIn(" ", str(self.root))
+        self.project("check")
+
+    def test_database_roles_are_isolated(self):
+        self.project("bootstrap", "--skip-build")
+        script = """
+import os, psycopg
+try:
+    psycopg.connect(host='postgres', dbname='hm_mlflow', user='hm_app',
+        password=os.environ['HM_APP_PASSWORD'], connect_timeout=5)
+except psycopg.OperationalError as error:
+    if 'permission denied for database' not in str(error):
+        raise
+    print('cross-database access rejected')
+else:
+    raise SystemExit('app role unexpectedly connected to MLflow database')
+"""
+        result = subprocess.run(["docker", "compose", "--env-file", str(self.root / ".env"),
+            "--file", str(self.root / "compose.yaml"), "run", "--rm", "--no-deps", "-T", "jobs",
+            "python", "-c", script], cwd=self.root, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("cross-database access rejected", result.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

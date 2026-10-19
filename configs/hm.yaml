@@ -1,0 +1,10 @@
+dataset: hm
+seed: 42
+batch_size: 4096
+embedding_dim: 64
+epochs: 1
+learning_rate: 0.001
+workers: 0
+validation_start: 2020-09-09
+test_start: 2020-09-16
+test_end: 2020-09-23

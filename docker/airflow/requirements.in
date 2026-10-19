@@ -1,0 +1,2 @@
+# Official constraints are supplied separately to the resolver.
+apache-airflow[postgres]==3.3.2

@@ -1,0 +1,17 @@
+**
+!pyproject.toml
+!uv.lock
+!src/
+!src/**
+!tests/
+!tests/**
+!configs/
+!configs/**
+!migrations/
+!migrations/**
+!docker/
+!docker/*.Dockerfile
+!docker/airflow/
+!docker/airflow/**
+**/__pycache__/
+**/*.pyc

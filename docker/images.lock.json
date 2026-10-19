@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "manifest_platforms": [
+    "linux/arm64",
+    "linux/amd64"
+  ],
+  "images": {
+    "python": {
+      "reference": "python:3.12-slim-bookworm",
+      "version": "3.12.15",
+      "digest": "sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258"
+    },
+    "uv": {
+      "reference": "astral/uv:0.13.1",
+      "version": "0.13.1",
+      "digest": "sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef30279f7d64048519ab901ada336"
+    },
+    "postgres": {
+      "reference": "postgres:17.11-bookworm",
+      "version": "17.11",
+      "digest": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "qdrant": {
+      "reference": "qdrant/qdrant:v1.19.1",
+      "version": "1.19.1",
+      "digest": "sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10"
+    }
+  }
+}

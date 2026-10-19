@@ -1,0 +1,33 @@
+services:
+  web:
+    image: ${SMOKE_IMAGE:?Run scripts/docker-smoke.sh}
+    build: .
+    pull_policy: never
+    ports:
+      - "127.0.0.1::8080"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - state:/state
+      - type: bind
+        source: ./fixture.txt
+        target: /fixture.txt
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: [CMD-SHELL, "wget -qO- http://127.0.0.1:8080 | grep -q docker-ready"]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+  client:
+    image: busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+    profiles: [checks]
+    command: [wget, -qO-, http://web:8080]
+    user: "65534:65534"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  state:

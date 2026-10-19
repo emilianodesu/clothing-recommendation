@@ -1,0 +1,47 @@
+{
+  "checked_at_utc": "2026-10-19T05:24:22.899791+00:00",
+  "host_os": "Darwin",
+  "host_architecture": "arm64",
+  "checks": {
+    "docker_client": "Docker version 29.6.1, build 8900f1d330",
+    "compose": "Docker Compose version 5.6.0",
+    "buildx": "github.com/docker/buildx v0.35.0 Homebrew",
+    "context": "colima",
+    "engine": {
+      "version": "29.5.2",
+      "architecture": "aarch64",
+      "cpus": 4,
+      "memory_gib": 7.74
+    },
+    "docker_disk_free_gib": 82.09,
+    "project_mount_visible": true,
+    "workspace_disk_free_gib": 204.45
+  },
+  "warnings": [],
+  "errors": [],
+  "status": "passed",
+  "colima_configuration": {
+    "name": "default",
+    "status": "Running",
+    "arch": "aarch64",
+    "cpus": 4,
+    "memory": 8589934592,
+    "disk": 107374182400,
+    "runtime": "docker"
+  },
+  "preparation_tests": {
+    "setup_repeat_without_vm_restart": true,
+    "compose_smoke_exit_code": 0,
+    "checks": [
+      "PASS: build, healthcheck y HTTP desde el host.",
+      "PASS: DNS y comunicación entre contenedores.",
+      "PASS: montaje del proyecto y volumen persistente tras recrear el contenedor."
+    ],
+    "relocated_directory_with_spaces": true,
+    "working_directory_independent": true,
+    "base_image": "busybox:1.37.0@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e",
+    "second_physical_machine_tested": false,
+    "recommender_deployed": false,
+    "temporary_resources_removed": true
+  }
+}

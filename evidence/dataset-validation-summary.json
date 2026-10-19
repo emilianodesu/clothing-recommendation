@@ -1,0 +1,26 @@
+{
+  "competition": "h-and-m-personalized-fashion-recommendations",
+  "status": "validated_complete_and_usable",
+  "complete_and_usable": true,
+  "updated_at_utc": "2026-10-01T04:28:26.306835+00:00",
+  "source_archive_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+  "archive_bytes": 30810293747,
+  "inventory_files": 105104,
+  "decoded_images": 105100,
+  "checks_total": 16,
+  "pending_or_failed_checks": [],
+  "rows": {
+    "articles.csv": 105542,
+    "customers.csv": 1371980,
+    "sample_submission.csv": 1371980,
+    "transactions_train.csv": 31788324
+  },
+  "transactions_first_date": "2018-09-20",
+  "transactions_last_date": "2020-09-22",
+  "image_coverage": {
+    "articles_with_image": 105100,
+    "articles_without_image": 442
+  },
+  "scope": "Integrity and readability validation only; no personalized model trained.",
+  "sample_identifiers_included": false
+}
