@@ -1,0 +1,1 @@
+Fixtures generadas en `tmp_path` por `data.synthetic.make_zip`: usuarios `user-a/b`, artículos `00a/b/c`, fechas de frontera y una compra repetida. No contienen registros reales de Kaggle. El generador comparte únicamente el esquema, no la lógica de features.

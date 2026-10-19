@@ -1,0 +1,120 @@
+{
+  "architecture": "aarch64",
+  "cgroup_peak_bytes": 5030637568,
+  "config_sha256": "f21c253ea7376953b76e46e2664f401907583f6c603cccce6ba23bfaa1a89b05",
+  "counts": {
+    "articles": 105542,
+    "customers": 1371980,
+    "sample_submission": 1371980,
+    "transactions": 31788324
+  },
+  "dataset": "hm",
+  "dataset_id": "hm-e4695ac063fd621a",
+  "disk_free_after_bytes": 197072445440,
+  "disk_free_before_bytes": 196258299904,
+  "duration_seconds": 124.179,
+  "examples": {
+    "after_test_end_transactions": 0,
+    "cold_user_labels": 4620382,
+    "eligible_train_labels": 22674665,
+    "labels": 28245922,
+    "out_of_catalog_labels": 894083,
+    "test_labels": 213728,
+    "test_out_of_catalog_labels": 8334,
+    "test_transactions": 240311,
+    "train_labels": 27804284,
+    "train_out_of_catalog_labels": 874364,
+    "train_transactions": 31292772,
+    "transactions": 31788324,
+    "validation_labels": 227910,
+    "validation_out_of_catalog_labels": 11385,
+    "validation_transactions": 255241
+  },
+  "features": {
+    "end_snapshot": {
+      "catalog": 104547,
+      "profiles": 1362281,
+      "vocabulary": 103165
+    },
+    "test_cut": {
+      "catalog": 103880,
+      "profiles": 1356709,
+      "vocabulary": 103165
+    },
+    "train_cut": {
+      "catalog": 102967,
+      "profiles": 1351314,
+      "vocabulary": 103165
+    }
+  },
+  "finished_at": "2026-10-19T17:36:10.350523+00:00",
+  "manifest_sha256": {
+    "dataset": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+    "end_features": "e57b3f2ae0b1ee83e29616c23c08344156f3824fdde1669efd71f9a2e547d261",
+    "examples": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+    "test_features": "60224a6d39db088828f588ad425d3769857b4c92e8f68f7064a796419480ce97",
+    "train_features": "d5ada30629704948d9a44b006ac6039a9d4f2843d62d21f6fee734a313483f57"
+  },
+  "max_date": "2020-09-22",
+  "min_date": "2018-09-20",
+  "output_bytes": 1302029536,
+  "partitions": 265,
+  "peak_rss_bytes": 2868592640,
+  "python": "3.12.15",
+  "schema_version": 1,
+  "scope": "data and temporal features; no trained model or recommendation metrics",
+  "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+  "stage": "T2",
+  "started_at": "2026-10-19T17:34:06.416660+00:00",
+  "status": "passed",
+  "steps": [
+    {
+      "duration_seconds": 66.881,
+      "name": "ingest",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 2.585,
+      "name": "features-train",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 2.732,
+      "name": "features-validation",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 2.581,
+      "name": "features-test-end",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 49.346,
+      "name": "weekly-examples",
+      "status": "passed"
+    }
+  ],
+  "versions": {
+    "polars": "1.44.2",
+    "pyarrow": "25.0.1",
+    "pydantic": "2.13.5"
+  },
+  "measurement_kind": "development checkout before clean-commit verification",
+  "machine_alias": "development-arm64",
+  "limits": {
+    "cpus": 3,
+    "memory_bytes": 5368709120,
+    "polars_threads": 2
+  },
+  "tests": {
+    "container_data": 14,
+    "host": 33,
+    "status": "passed"
+  },
+  "limitations": [
+    "T2 not yet executed on mac24",
+    "No T3 training or model quality measured",
+    "Full archive SHA-256 checked; JPEG decoding not repeated",
+    "Native Linux ARM64 only"
+  ]
+}

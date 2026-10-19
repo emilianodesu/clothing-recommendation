@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "machine_alias": "mac24",
+  "source_commit": "0df375fea67b41eb51d7e0581e8e7978f8873183",
+  "source_clean": true,
+  "run_id": "bootstrap-mac24-20261019T171240Z-52229e97",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-bootstrap-mac24-20261019T171240Z-52229e97",
+  "archive_sha256": "e762b4604b274f7b28bfdef247c541f605ca6b3e94a184443d0f24918e0e8d93",
+  "tests_passed": 35,
+  "duration_seconds": 316.751798,
+  "host_architecture": "arm64",
+  "runtime_architecture": "aarch64",
+  "colima": {
+    "profile": "hm-project",
+    "cpus": 4,
+    "configured_memory_gib": 8
+  },
+  "user_confirmed_prefix": "SSL_CERT_FILE=/etc/ssl/cert.pem",
+  "prior_run": "bootstrap-mac24-20261019T170730Z-2ecbed2c",
+  "prior_failure": "Python CA trust missing",
+  "warning": "MLFLOW_PORT 5000 occupied; address before deploying MLflow in T3",
+  "scope": "T1 infrastructure only; no real data pipeline or training"
+}

@@ -1,9 +1,9 @@
 """Versioned interchange types. Artifact paths are relative to their manifest."""
 from datetime import date, datetime
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 SHA256 = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
 Count = Annotated[int, Field(ge=0, strict=True)]
@@ -28,6 +28,7 @@ class ArtifactFile(Contract):
 
 
 class DatasetManifest(Contract):
+    _root: Path | None = PrivateAttr(default=None)
     schema_version: Literal[1] = 1
     dataset_id: str
     source_sha256: SHA256

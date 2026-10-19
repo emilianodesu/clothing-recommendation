@@ -147,3 +147,21 @@ class GitHubHandoffTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class DataHandoffTests(unittest.TestCase):
+    setUp = GitHubHandoffTests.setUp
+    def test_data_reports_round_trip_without_dataset_payload(self):
+        run = self.root / 'data-mac24-fixture'
+        run.mkdir()
+        (run / 'job.log').write_text('Data pipeline finished\n')
+        (run / 'result.json').write_text(json.dumps({'status':'passed','stage':'T2','counts':{'transactions':7}}))
+        (run / 'environment.json').write_text('{}')
+        report = {'schema_version':1, 'kind':'data-handoff', 'run_id':run.name,
+                  'machine_id':'mac24', 'status':'passed', 'source_commit':'b'*40, 'source_clean':True,
+                  'context':'colima-hm-project', 'steps':[{'name':'data','log':'job.log','status':'passed','exit_code':0}], 'warnings':[]}
+        archive = package_report(run, report)
+        self.module.upload(self.client, archive)
+        destination = self.module.download(self.client, run.name, self.root / 'incoming')
+        self.assertEqual(archive.read_bytes(), destination.read_bytes())
+        with zipfile.ZipFile(archive) as bundle:
+            self.assertIn('result.json', bundle.namelist())

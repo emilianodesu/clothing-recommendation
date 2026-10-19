@@ -14,7 +14,7 @@
 
 **Avance del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
-**Extensión de T1 para la segunda Mac:** instalador, instrucciones para su agente y lector de paquetes implementados. El recorrido completo se verificó en el equipo de desarrollo con 26 pruebas satisfactorias (las 10 originales y 16 de intercambio). La [evidencia del instalador](../../../evidence/second-mac-script-2026-10-19.json) conserva esa distinción: todavía falta recibir la ejecución física de la Mac 24 GB. T2 y T3 siguen pendientes.
+**Extensión de T1 para la segunda Mac:** instalador, instrucciones para su agente y lector de paquetes implementados. El recorrido completo se verificó en el equipo de desarrollo con 26 pruebas satisfactorias (las 10 originales y 16 de intercambio). La [evidencia del instalador](../../../evidence/second-mac-script-2026-10-19.json) conserva esa distinción: la ejecución física de mac24 ya pasó (35 pruebas, [revisión](../../../evidence/mac24-bootstrap-review-2026-10-19.json)).
 
 **Cambio de transporte confirmado:** la suite alcanza 35 pruebas con el envío por GitHub Releases. Subida, listado, descarga, reintento y lectura del reporte se comprobaron contra el repositorio privado; consultar [la evidencia](../../../evidence/github-handoff-2026-10-19.json). El dataset se descargará desde Kaggle en la segunda Mac.
 
@@ -25,12 +25,15 @@
 | Recursos | Punto de partida disponible | Host de 16 GiB; Colima con 4 CPU, 8 GiB de RAM y disco virtual de 100 GiB; capacidad de entrenamiento aún por medir |
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
-| Datos procesados, modelo y servicios | Pendiente | No hay entrenamiento personalizado, API, índice, interfaz ni DAG implementados |
-| Otra computadora | Disponible; pendiente de prueba | Segunda Mac Apple Silicon de 24 GB confirmada; falta ejecutar instalación, datos y entrenamiento allí |
+| Datos procesados | T2 implementada y probada en equipo original | Parquet completo, cortes y ejemplos semanales; falta repetir T2 en mac24 |
+| Modelo y servicios | Pendiente | No hay entrenamiento personalizado, API, índice, interfaz ni DAG implementados |
+| Otra computadora | T1 probada en mac24 | 35 pruebas y reporte verificado; datos T2 y entrenamiento T3 pendientes allí |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
 
 **Ampliación del 19 de octubre: segunda Mac.** La decisión vigente del usuario es GitHub privado para código y reportes: Git y adjuntos de Releases, respectivamente. H&M se descargará directamente de Kaggle en la segunda Mac; ya no se necesita carpeta compartida ni AirDrop. El [diseño de ejecución entre equipos](../specs/2026-10-19-entrenamiento-dos-macs-design.md) incluye las instrucciones de T1 que ya se pueden ejecutar y propone adelantar la instalación física de T7. T2–T3 deberán incluir registro de ejecuciones, perfiles de recursos y exportación/importación de reportes antes del primer entrenamiento allá. La Mac actual recibirá los reportes para analizarlos; importar y servir un modelo completo continúa dependiendo de T4/T7. `origin` apunta al repositorio privado [clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), con autenticación y escritura verificadas para la cuenta propietaria. El instalador `scripts/start-second-mac.py`, el transporte `scripts/github-handoff.py`, el lector `scripts/read-handoff.py` y [la guía del operador](../../second-mac.md) automatizan T1 y su reporte. Los comandos de entrenamiento y el presupuesto ampliado de memoria siguen pendientes de implementación y prueba.
+
+**T2 implementada:** descarga portable con reanudación, fuente fijada por SHA-256, ingestión íntegra por lotes, Parquet mensual, snapshots y ejemplos semanales. La primera corrida completa del equipo original concilia 31,788,324 transacciones, con 47 pruebas T2 satisfactorias. Ver [guía de datos](../../data.md) y [medición](../../../evidence/data-pipeline.json). Se añade `data-job` para ejecución desacoplada, identidad de imagen/commit y reportes por GitHub. T3 y la época completa exigida para cerrar E2 siguen pendientes. T2 aún debe repetirse físicamente en mac24.
 
 ## Global Constraints
 
@@ -161,7 +164,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 | `backup --output DIRECTORIO` / `restore --input DIRECTORIO --project-name NOMBRE` | Respaldar y restaurar en un proyecto Compose nuevo, sin sobrescribir el original |
 | `benchmark --config configs/benchmark.yaml` | Carga controlada e informe de tiempos, errores y recursos |
 
-## T1 · Base del repositorio y entorno ejecutable
+## Task 1 · T1 — Base del repositorio y entorno ejecutable
 
 **Archivos:** crear `pyproject.toml`, `uv.lock`, `.python-version`, `.env.example`, `.dockerignore`, `compose.yaml`, `docker/app.Dockerfile`, `docker/jobs.Dockerfile`, `docker/images.lock.json`, `src/hm_recommender/{__init__,cli,config,contracts}.py`, `scripts/project.py`, `scripts/bootstrap.py`, `tests/integration/test_bootstrap.py`. Modificar `.gitignore`, `README.md`, `docs/setup.md` y `scripts/doctor.py`.
 
@@ -173,20 +176,20 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [x] Añadir `test_bootstrap_preserves_secrets_and_data` y `test_bootstrap_path_with_spaces`: dos ejecuciones conservan bytes de secretos y un registro existente; funciona con otra ruta y sin variables de Codex. Usar un proyecto Compose de prueba aislado.
 - [x] Ejecutar `python3 scripts/project.py verify --suite bootstrap`; exigir salida 0, servicios base sanos y segunda ejecución sin pérdida ni duplicados. Actualizar guía y guardar un commit de E1.
 
-## T2 · Datos completos y features temporales
+## Task 2 · T2 — Datos completos y features temporales
 
 **Archivos:** crear `src/hm_recommender/data/{download,validate,ingest,synthetic}.py`, `src/hm_recommender/features/build.py`, `configs/demo.yaml`, `configs/hm.yaml`, `docs/data.md`, `tests/fixtures/hm_synthetic/`, `tests/unit/test_temporal_features.py`, `tests/integration/test_ingest.py`. Ampliar `cli.py` y `scripts/project.py`.
 
 **Interfaces:** `ingest(source_zip: Path, output_dir: Path) -> DatasetManifest`; `build_features(dataset: DatasetManifest, data_as_of: date, output_dir: Path) -> FeatureManifest`. La CLI ofrece `hmrec data ingest`, `hmrec data validate` y `hmrec features build` con parámetros de entrada, salida y corte explícitos.
 
-- [ ] Convertir el código útil del notebook en funciones del paquete: descarga a temporal con reintentos, importación de ZIP y modos quick/full. Conservar el manifiesto de la fuente; rechazar archivos incompletos, rutas de archivo inseguras y esquemas inesperados antes de publicar resultados.
-- [ ] Leer por lotes y escribir Parquet particionado por mes. Publicar cada partición completa mediante reemplazo atómico; validar filas y huellas para reanudar. Conservar 31,788,324 transacciones en la capa de datos; documentar cualquier exclusión posterior. No eliminar compras repetidas legítimas del histórico.
-- [ ] Fijar entrenamiento inicial anterior a `2020-09-09`, validación `[2020-09-09, 2020-09-16)` y prueba `[2020-09-16, 2020-09-23)`. Para cada ejemplo temporal, construir variables sólo con antecedentes; ajustar vocabularios y transformaciones exclusivamente con datos disponibles al corte. Reservar valores OOV y faltantes.
-- [ ] Definir ejemplos semanales: perfil al inicio de la semana y compras como etiquetas de esa semana. Consolidar relevancia binaria por artículo para métricas, conservando frecuencias como variables separadas. Ante la ausencia de fechas de alta del catálogo, usar la primera compra observada antes del corte como aproximación de disponibilidad y declarar esa limitación; reportar compras de artículos fuera del catálogo evaluado, sin ocultarlas del denominador principal de recuperación.
-- [ ] Probar `test_future_purchase_does_not_change_past_features`, `test_ids_preserve_leading_zeros` y `test_ingest_resume_after_partial_write`: agregar una compra futura no cambia features anteriores; reintentar no duplica filas; salida parcial no aparece como válida. Simular disco insuficiente con fallo de escritura controlado.
-- [ ] Ejecutar `python3 scripts/project.py verify --suite data` y la ingestión real; exigir pruebas satisfactorias y conciliación de conteos. Guardar `evidence/data-pipeline.json`, documentación y commit de E2.
+- [x] Convertir el código útil del notebook en funciones del paquete: descarga a temporal con reintentos, importación de ZIP y modos quick/full. Conservar el manifiesto de la fuente; rechazar archivos incompletos, rutas de archivo inseguras y esquemas inesperados antes de publicar resultados.
+- [x] Leer por lotes y escribir Parquet particionado por mes. Publicar cada partición completa mediante reemplazo atómico; validar filas y huellas para reanudar. Conservar 31,788,324 transacciones en la capa de datos; documentar cualquier exclusión posterior. No eliminar compras repetidas legítimas del histórico.
+- [x] Fijar entrenamiento inicial anterior a `2020-09-09`, validación `[2020-09-09, 2020-09-16)` y prueba `[2020-09-16, 2020-09-23)`. Para cada ejemplo temporal, construir variables sólo con antecedentes; ajustar vocabularios y transformaciones exclusivamente con datos disponibles al corte. Reservar valores OOV y faltantes.
+- [x] Definir ejemplos semanales: perfil al inicio de la semana y compras como etiquetas de esa semana. Consolidar relevancia binaria por artículo para métricas, conservando frecuencias como variables separadas. Ante la ausencia de fechas de alta del catálogo, usar la primera compra observada antes del corte como aproximación de disponibilidad y declarar esa limitación; reportar compras de artículos fuera del catálogo evaluado, sin ocultarlas del denominador principal de recuperación.
+- [x] Probar `test_future_purchase_does_not_change_past_features`, `test_ids_preserve_leading_zeros` y `test_ingest_resume_after_partial_write`: agregar una compra futura no cambia features anteriores; reintentar no duplica filas; salida parcial no aparece como válida. Simular disco insuficiente con fallo de escritura controlado.
+- [x] Ejecutar `python3 scripts/project.py verify --suite data` y la ingestión real; exigir pruebas satisfactorias y conciliación de conteos. Guardar `evidence/data-pipeline.json`, documentación y commit de T2. E2 permanece abierta hasta la época completa de T3.
 
-## T3 · Modelo PyTorch, capacidad y evaluación
+## Task 3 · T3 — Modelo PyTorch, capacidad y evaluación
 
 **Archivos:** crear `src/hm_recommender/model/{two_tower,train,evaluate}.py`, `docs/evaluation.md`, `tests/unit/test_model.py`, `tests/unit/test_ranking_metrics.py`, `tests/integration/test_training.py`. Modificar `configs/hm.yaml`, `configs/demo.yaml`, `compose.yaml` y `cli.py` para MLflow y entrenamiento.
 
@@ -199,7 +202,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [ ] Probar métricas con rankings pequeños de resultado conocido y `test_train_save_load_preserves_scores` con tolerancia `atol=1e-6` en el mismo dispositivo. `test_checkpoint_resume_preserves_progress` comprueba que una interrupción no marca el trabajo como terminado ni pierde el contador de progreso.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite model`; entrenar sobre las particiones completas y guardar `evidence/cpu-feasibility.json` y métricas de validación. Seleccionar configuración sólo con validación; al final, reentrenar con train+validación y evaluar una única vez sobre prueba, sin ajustar contra ella. Guardar commit de E3.
 
-## T4 · Versión portable, índice y API de recomendaciones
+## Task 4 · T4 — Versión portable, índice y API de recomendaciones
 
 **Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`. T1 ya incorporó `001_bootstrap.sql`.
 
@@ -211,7 +214,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [ ] Probar `test_activation_failure_keeps_previous_release` y `test_concurrent_requests_never_mix_releases`, incluyendo caída/reinicio entre preparación y activación. Probar usuario desconocido, catálogo menor de 12, filtro sin resultados, `k` inválido y timeout de Qdrant. Consultas vacías válidas devuelven lista vacía; entrada inválida devuelve 422.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite serving`; exigir respuestas HTTP reales con versión identificable, índice íntegro y rollback satisfactorio. Medir Recall@200 del índice aproximado frente a búsqueda exacta, separándolo de Recall@200 de compras relevantes. Guardar evidencia y commit de API/versión.
 
-## T5 · Interfaz, eventos y actualización de perfiles
+## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
 **Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/003_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
 
@@ -223,7 +226,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [ ] Añadir `test_duplicate_event_is_counted_once`, `test_late_event_rebuilds_correct_profile`, `test_database_failure_is_not_acknowledged` y prueba de demo HTTP: generar sintéticos → entrenar → publicar → recomendar → comprar → actualizar → volver a recomendar. Comprobar que la actualización conserva compatibilidad y cambia el perfil; no prometer que toda compra cambie necesariamente el ranking.
 - [ ] Ejecutar `python3 scripts/project.py demo` y `python3 scripts/project.py verify --suite events`. Probar el mismo flujo con una versión H&M. Guardar evidencia y commit que completa E4; la programación automática se añade en T6.
 
-## T6 · Orquestación, reintentos y observabilidad
+## Task 6 · T6 — Orquestación, reintentos y observabilidad
 
 **Archivos:** crear `docker/airflow.Dockerfile`, `docker/airflow/requirements.in`, `docker/airflow/requirements.lock`, `dags/train_release.py`, `dags/refresh_profiles.py`, `tests/integration/test_pipeline.py`, `docs/operations.md`. Modificar `compose.yaml`, `docker/images.lock.json`, `cli.py`, `scripts/project.py` y `api/app.py`.
 
@@ -235,7 +238,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [ ] Probar `test_retry_does_not_duplicate_partition`, `test_failed_training_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que el modelo activo y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite pipeline` y un DAG sintético completo. Ejecutar el flujo H&M con recursos medidos y demostrar frescura menor de diez minutos mientras el pipeline esté activo, o registrar el incumplimiento. Guardar commit de E5.
 
-## T7 · Instalación independiente, transferencia y recuperación
+## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 
 **Archivos:** crear `scripts/backup.py`, `scripts/restore.py`, `docs/reproducibility.md`, `tests/integration/test_release_transfer.py`, `tests/integration/test_backup_restore.py`, `tests/integration/test_offline.py`. Modificar `releases/package.py`, `scripts/project.py`, `.gitignore`, `README.md`, `docs/setup.md` y `docs/operations.md`.
 
@@ -247,7 +250,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [ ] Ejecutar `python3 scripts/project.py verify --suite portability` en una instalación limpia, otra ruta con espacios y otro usuario. Repetir en un segundo equipo cuando esté disponible, registrando arquitectura y SO. Transferir imágenes con `docker save/load` si se necesita instalación sin registro; conservar manifiesto de plataforma y digests.
 - [ ] Comparar consultas fijas y puntuaciones de una versión importada con tolerancias registradas antes de la prueba; validar integridad de vectores y separar diferencias de ANN de errores de modelo. Para reentrenamiento, comparar métricas con tolerancias fijadas a partir de repeticiones de referencia; no exigir pesos idénticos entre arquitecturas. Guardar evidencia, límites de soporte y commit de E6.
 
-## T8 · Rendimiento, cobertura académica y entrega
+## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
 **Archivos:** crear `scripts/benchmark.py`, `configs/benchmark.yaml`, `docs/course-coverage.md`, `docs/final-report.md`, `docs/demo.md`, `tests/integration/test_acceptance.py`. Actualizar `docs/evaluation.md`, `README.md` y el documento académico al cerrar los resultados.
 

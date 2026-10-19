@@ -1,6 +1,6 @@
 # Iniciar la segunda Mac y devolver resultados
 
-Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **El objetivo actual es T1; todavía no hay un comando de entrenamiento.** No hace falta copiar H&M para esta comprobación.
+Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **T1 ya pasó en mac24. T2 está disponible; todavía no hay un comando de entrenamiento.** No hace falta copiar H&M para esta comprobación.
 
 ## 1. Obtener el código
 
@@ -33,7 +33,7 @@ El agente del segundo equipo debe leer [AGENTS.md](../AGENTS.md). Puedes darle e
 Desde la raíz del clon:
 
 ```bash
-python3 scripts/start-second-mac.py --machine-id mac24
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/start-second-mac.py --machine-id mac24
 ```
 
 Si recibiste una revisión concreta, añade `--expected-commit SHA_COMPLETO`. El script no cambia de revisión ni ejecuta `git pull` por su cuenta. No necesita activación de un entorno Python: sus dependencias del host son la biblioteca estándar.
@@ -175,3 +175,34 @@ Después se añadió el transporte GitHub: la suite completa pasó con **35 prue
 - [GitHub: Releases, permisos y adjuntos](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 - [GitHub CLI: creación y publicación de Releases](https://cli.github.com/manual/gh_release_create).
 - [GitHub CLI: descarga de adjuntos](https://cli.github.com/manual/gh_release_download).
+
+## T2: preparar los datos en mac24
+
+La instalación física pasó el 19 de octubre: `bootstrap-mac24-20261019T171240Z-52229e97`, commit `0df375fea67b41eb51d7e0581e8e7978f8873183`, 35 pruebas. El primer intento falló por certificados; se resolvió usando `SSL_CERT_FILE=/etc/ssl/cert.pem`. Mantén ese prefijo. El aviso de puerto 5000 ocupado se resolverá al desplegar MLflow en T3; no bloquea el procesamiento T2.
+
+1. Conserva tus cambios, actualiza el clon desde GitHub y selecciona el SHA completo recibido. Comprueba `git status --short` y `git rev-parse HEAD`. Mantén activo Colima `hm-project`.
+2. Lee [docs/data.md](data.md), configura tu propia credencial Kaggle y comprueba acceso. Ejecuta `SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py download-data`. El descargador continúa un temporal incompleto y valida el ZIP antes de publicarlo. Conserva al menos 20 GiB libres adicionales para T2.
+3. Ejecuta primero el trabajo sintético, que no necesita Kaggle:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --dataset synthetic --expected-commit SHA_COMPLETO
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job status --run-id RUN_ID_SINTETICO
+```
+
+4. Si termina `passed`, exporta y publica ese reporte. Inicia después el trabajo completo:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job start --machine-id mac24 --profile hm-project --dataset hm --expected-commit SHA_COMPLETO
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job status --run-id RUN_ID_REAL
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py data-job export --run-id RUN_ID_REAL
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py artifacts/handoff/RUN_ID_REAL.zip
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload artifacts/handoff/RUN_ID_REAL.zip
+```
+
+Sustituye los marcadores por el SHA y los run_id reales. Publica también los reportes fallidos: la salida 1 del lector significa que el paquete es válido pero la ejecución falló. No publiques datos, ZIP H&M, `.env` ni tokens. Si se corta la descarga, repite `download-data`; si se interrumpe el procesamiento, consulta estado/exporta el diagnóstico antes de `data-job resume --run-id RUN_ID`.
+
+Instrucción para el agente de mac24:
+
+> Lee AGENTS.md, docs/second-mac.md y docs/data.md. Actualiza de forma segura y fija el commit indicado. Usa SSL_CERT_FILE=/etc/ssl/cert.pem en los intentos. Comprueba T2 sintético y después procesa H&M completo descargado directamente de Kaggle. Espera resultados, valida y publica ambos reportes mediante github-handoff, incluso ante fallos. Devuelve commit, run_id, URL, conteos, duración, memoria y errores si los hay. No inicies entrenamiento T3 ni cambies límites para ocultar fallos.
+
+En esta Mac recibimos los resultados con los comandos existentes `github-handoff.py list`, `download RUN_ID` y `read-handoff.py`. El nuevo tipo `data-handoff` viaja en una Release privada `handoff-data-...`, con el mismo control de integridad y límite de 50 MiB. GitHub es el único canal entre equipos; la subida no activa automáticamente al otro agente.

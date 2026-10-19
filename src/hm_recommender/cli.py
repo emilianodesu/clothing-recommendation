@@ -48,6 +48,24 @@ def main():
     db.add_argument("action", choices=("migrate",))
     config = commands.add_parser("config")
     config.add_argument("path", type=Path)
+    data = commands.add_parser("data")
+    data_commands = data.add_subparsers(dest="data_action", required=True)
+    validate = data_commands.add_parser("validate")
+    validate.add_argument("--source", type=Path, required=True)
+    validate.add_argument("--mode", choices=("quick", "full"), default="full")
+    ingestion = data_commands.add_parser("ingest")
+    ingestion.add_argument("--source", type=Path, required=True)
+    ingestion.add_argument("--output", type=Path, required=True)
+    ingestion.add_argument("--synthetic", action="store_true")
+    pipeline = data_commands.add_parser("pipeline")
+    pipeline.add_argument("--config", type=Path, required=True)
+    pipeline.add_argument("--run-dir", type=Path, required=True)
+    features = commands.add_parser("features")
+    features.add_argument("action", choices=("build",))
+    features.add_argument("--dataset", type=Path, required=True)
+    features.add_argument("--data-as-of", type=__import__('datetime').date.fromisoformat, required=True)
+    features.add_argument("--output", type=Path, required=True)
+    features.add_argument("--vocabulary", type=Path)
     args = parser.parse_args()
     try:
         if args.command == "check":
@@ -55,6 +73,20 @@ def main():
         elif args.command == "db":
             from hm_recommender.database import migrate
             output = {"applied": migrate(Path(os.environ.get("HMREC_MIGRATIONS_DIR", "/opt/hmrec/migrations")))}
+        elif args.command == "data":
+            from hm_recommender.data.validate import HM_SOURCE, validate_source
+            if args.data_action == "validate":
+                output = validate_source(args.source, args.mode)
+            elif args.data_action == "ingest":
+                from hm_recommender.data.ingest import ingest
+                output = ingest(args.source, args.output, expected=None if args.synthetic else HM_SOURCE).model_dump(mode="json")
+            else:
+                from hm_recommender.data.pipeline import run_pipeline
+                output = run_pipeline(args.config, args.run_dir)
+        elif args.command == "features":
+            from hm_recommender.data.ingest import load_dataset
+            from hm_recommender.features.build import build_features
+            output = build_features(load_dataset(args.dataset), args.data_as_of, args.output, vocabulary=args.vocabulary).model_dump(mode="json")
         else:
             from hm_recommender.config import load_config
             output = load_config(args.path)

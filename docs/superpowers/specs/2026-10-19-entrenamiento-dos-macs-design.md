@@ -1,6 +1,6 @@
 # Entrenamiento reproducible entre dos Macs
 
-Diseño y guía inicial del 19 de octubre de 2026. Extiende el [plan del proyecto](../plans/2026-10-18-plataforma-local-hm.md); no sustituye sus cortes temporales, métricas ni criterios de entrega. **Sólo la instalación de infraestructura de la sección «Qué ejecutar hoy» está implementada.** El entrenamiento, sus órdenes de ejecución y los paquetes de resultados descritos después son trabajo pendiente de T2–T3.
+Diseño y guía inicial del 19 de octubre de 2026. Extiende el [plan del proyecto](../plans/2026-10-18-plataforma-local-hm.md); no sustituye sus cortes temporales, métricas ni criterios de entrega. **T1 está probada en mac24 y T2 está implementada; consulta docs/data.md y docs/second-mac.md para sus comandos.** El entrenamiento y su contrato de checkpoints descritos después siguen pendientes de T3. Los comandos generales run-job del diseño son futuros; hoy se usa data-job para T2.
 
 ## Decisiones confirmadas y objetivo
 
@@ -16,16 +16,15 @@ El remoto es [emilianodesu/clothing-recommendation](https://github.com/emilianod
 flowchart LR
     A[Mac actual: desarrollo y análisis] -->|Commit probado| G[Git privado]
     G -->|Mismo commit y locks| B[Mac 24 GB: instalación y entrenamiento]
-    A -->|ZIP validado, una vez| F[Carpeta de intercambio]
-    F -->|Copia local verificada| B
-    B -->|Paquetes completos por ejecución| F
-    F -->|Copia a artifacts/incoming| A
+    K[Kaggle] -->|Descarga directa| B
+    B -->|Reportes cerrados| F[GitHub Releases privado]
+    F -->|Descarga verificada| A
     A -->|Importar modelo, etapa T4/T7| S[Servicio local de recomendaciones]
 ```
 
-Git transporta código, configuración sin secretos, pruebas, documentación y resúmenes aprobados. GitHub Releases transporta los reportes completos de T1 con `scripts/github-handoff.py`; el transporte de checkpoints y versiones portables se añadirá con sus contratos posteriores. H&M se descarga desde Kaggle en cada equipo que lo necesite. No se copian `.env`, tokens, entornos Python, configuración Docker, volúmenes de PostgreSQL ni la base interna de MLflow. Cada clon genera sus propias credenciales.
+Git transporta código, configuración sin secretos, pruebas, documentación y resúmenes aprobados. GitHub Releases transporta los reportes completos de T1/T2 con `scripts/github-handoff.py`; el transporte de checkpoints y versiones portables se añadirá con sus contratos posteriores. H&M se descarga desde Kaggle en cada equipo que lo necesite. No se copian `.env`, tokens, entornos Python, configuración Docker, volúmenes de PostgreSQL ni la base interna de MLflow. Cada clon genera sus propias credenciales.
 
-Las extensiones de T3–T4 mantendrán GitHub Releases como canal para modelos: deberán validar su formato y tamaño antes de publicarlos. El helper actual sólo acepta reportes de T1 hasta 50 MiB. GitHub exige [adjuntos menores de 2 GiB](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases); si un checkpoint supera ese límite, su empaquetador futuro tendrá que fragmentarlo con un manifiesto verificable. No se ha implementado todavía el transporte de pesos.
+Las extensiones de T3–T4 mantendrán GitHub Releases como canal para modelos: deberán validar su formato y tamaño antes de publicarlos. El helper actual acepta reportes de T1/T2 hasta 50 MiB. GitHub exige [adjuntos menores de 2 GiB](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases); si un checkpoint supera ese límite, su empaquetador futuro tendrá que fragmentarlo con un manifiesto verificable. No se ha implementado todavía el transporte de pesos.
 
 Los jobs trabajan en el disco local de la segunda Mac. Sólo se publican paquetes cerrados en GitHub; los jobs no escriben checkpoints ni bases de datos directamente sobre almacenamiento compartido. Los agentes invocan comandos de publicación y descarga; no hay activación automática ni métricas en tiempo real. Esta conversación puede consultar las Releases y descargar los reportes a su workspace cuando el usuario pida revisarlos.
 
@@ -54,7 +53,7 @@ El lector valida integridad y muestra estado y commit, sin extraer ni ejecutar c
 
 ## Traslado de los datos
 
-Descargar H&M directamente de Kaggle en la segunda Mac, decisión confirmada por el usuario al elegir GitHub como canal entre equipos. Su cuenta debe tener acceso a la competición y usar una credencial propia. Conservar el archivo en `data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip`. El descargador portable y la validación de ingestión pertenecen a T2; T1 no necesita esa descarga. No subir el ZIP ni credenciales a GitHub. El archivo original validado ocupa 30,810,293,747 bytes, aproximadamente 28.69 GiB.
+Descargar H&M directamente de Kaggle en la segunda Mac, decisión confirmada por el usuario al elegir GitHub como canal entre equipos. Su cuenta debe tener acceso a la competición y usar una credencial propia. Conservar el archivo en `data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip`. El descargador portable y la validación de ingestión están implementados en T2; T1 no necesita esa descarga. No subir el ZIP ni credenciales a GitHub. El archivo original validado ocupa 30,810,293,747 bytes, aproximadamente 28.69 GiB.
 
 Después de descargar, ejecutar en la segunda Mac:
 

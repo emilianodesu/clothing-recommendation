@@ -17,13 +17,19 @@ from handoff import MAX_TOTAL, NAME, read_report, summary
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = 'emilianodesu/clothing-recommendation'
 MARKER = '<!-- hmrec-bootstrap-handoff-v1 -->'
+DATA_MARKER = '<!-- hmrec-data-handoff-v1 -->'
 STEPS = ('setup-docker', 'doctor-before', 'docker-smoke', 'bootstrap', 'check', 'verify', 'doctor')
 ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {name + '.log' for name in STEPS}
 
 
+DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'result.json', 'config.resolved.json'}
+
+def marker_for(run_id):
+    return DATA_MARKER if run_id.startswith('data-') else MARKER
+
 def tag_for(run_id):
-    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith('bootstrap-'):
-        raise ValueError('Run ID inválido; usa el identificador bootstrap-... del reporte')
+    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-')):
+        raise ValueError('Run ID inválido; usa el identificador bootstrap-... o data-... del reporte')
     return 'handoff-' + run_id
 
 
@@ -38,7 +44,10 @@ def validate_archive(path, run_id=None):
     tag_for(report['run_id'])
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
-    if any(item['path'] not in ALLOWED for item in report['files']):
+    allowed = DATA_ALLOWED if report['kind'] == 'data-handoff' else ALLOWED
+    if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
+        raise ValueError('Tipo y nombre de reporte incompatibles')
+    if any(item['path'] not in allowed for item in report['files']):
         raise ValueError('El inventario contiene archivos ajenos al reporte de infraestructura')
     return report
 
@@ -112,7 +121,7 @@ def private_repository(client, write=False):
 def checked_release(client, run_id):
     tag = tag_for(run_id)
     release = client.lookup(tag)
-    if release is not None and (release.get('tag_name') != tag or MARKER not in (release.get('body') or '')):
+    if release is not None and (release.get('tag_name') != tag or marker_for(run_id) not in (release.get('body') or '')):
         raise ValueError('La release existente no pertenece a este protocolo; no se modifica')
     return release
 
@@ -151,7 +160,7 @@ def upload(client, archive):
         release = checked_release(client, run_id)
         if release is None:
             notes = directory / 'notes.md'
-            notes.write_text(MARKER + '\n\n' + summary(report))
+            notes.write_text(marker_for(run_id) + '\n\n' + summary(report))
             client.create(tag, snapshot, report['source_commit'] or repository['default_branch'], notes)
             release = checked_release(client, run_id)
         elif release.get('draft') and not release.get('assets'):
@@ -219,7 +228,7 @@ def main():
             reports = []
             for release in client.releases():
                 tag = release.get('tag_name', '')
-                if tag.startswith('handoff-bootstrap-') and MARKER in (release.get('body') or ''):
+                if tag.startswith(('handoff-bootstrap-', 'handoff-data-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
                     run_id = tag[len('handoff-'):]
                     tag_for(run_id)
                     reports.append({'run_id': run_id, 'draft': release['draft'], 'url': release['html_url']})

@@ -4,17 +4,19 @@ Plataforma local de recomendaciones para comercio electrónico con H&M, PyTorch 
 
 Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.
 
-**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. El motor personalizado, la API de recomendaciones, Streamlit y los DAG todavía están pendientes. Esta entrega prepara y comprueba la infraestructura base.
+**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. El motor personalizado, la API de recomendaciones, Streamlit y los DAG todavía están pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
 
 ## Empezar en la segunda Mac
 
 Después de clonar en una Mac Apple Silicon con Git, Homebrew, Python 3.9+ y Ruby, lee [las instrucciones del agente](AGENTS.md) y ejecuta desde la raíz:
 
 ```bash
-python3 scripts/start-second-mac.py --machine-id mac24
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/start-second-mac.py --machine-id mac24
 ```
 
 Prepara Docker/Colima, instala la infraestructura, ejecuta las pruebas y genera un ZIP incluso ante fallos normales. Con GitHub CLI autenticado, publícalo con `python3 scripts/github-handoff.py upload RUTA-DEL-ZIP`. En la Mac de desarrollo, `python3 scripts/github-handoff.py list` muestra reportes y `python3 scripts/github-handoff.py download RUN_ID` descarga y valida el elegido. La [guía entre equipos](docs/second-mac.md) explica la autenticación y los comandos. Esta primera tarea no necesita el dataset ni inicia entrenamiento.
+
+T1 ya pasó en la Mac física de 24 GB (35 pruebas). Para continuar allí con los datos, sigue [T2 en mac24](docs/second-mac.md#t2-preparar-los-datos-en-mac24). El agente debe fijar el commit, descargar H&M de Kaggle, ejecutar una corrida sintética y otra completa, y publicar ambos reportes. T3 aún no está implementada.
 
 ## Instalar la infraestructura del proyecto
 
@@ -65,6 +67,6 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 
 ## Requisitos de la futura entrega
 
-Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Se añadirán procesamiento, entrenamiento, servicio de recomendaciones, transferencia de modelos y respaldo/restauración. Habrá una demo sintética sin Kaggle y un modo completo con acceso propio a los datos H&M. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
+Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2. Se añadirán entrenamiento, servicio de recomendaciones, transferencia de modelos y respaldo/restauración. Habrá una demo sintética sin Kaggle y un modo completo con acceso propio a los datos H&M. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
 
 Los datos reales, tokens y credenciales permanecen fuera del código versionado. La documentación distingue la infraestructura disponible de las funcionalidades de recomendación pendientes.
