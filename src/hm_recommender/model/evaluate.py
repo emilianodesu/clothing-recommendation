@@ -3,6 +3,7 @@ import numpy as np
 import polars as pl
 import torch
 
+from hm_recommender.model.metrics import ranking_metrics
 from hm_recommender.contracts import EvaluationReport
 from hm_recommender.features.build import VALIDATION, TEST
 from hm_recommender.model.inputs import ids, lookup, numeric, select_users
@@ -21,15 +22,6 @@ def topk(scores, k=200):
     return np.asarray(output, dtype=np.int64)
 
 
-def ranking_metrics(ranking, relevant):
-    if not relevant:
-        raise ValueError('Users without purchases must be counted as excluded')
-    hits = np.asarray([value in relevant for value in ranking], dtype=np.float64)
-    cut = hits[:12]
-    ap = np.sum(cut * np.cumsum(cut) / np.arange(1, len(cut) + 1)) / min(12, len(relevant))
-    ideal = np.sum(1 / np.log2(np.arange(2, min(12, len(relevant)) + 2)))
-    dcg = np.sum(cut / np.log2(np.arange(2, len(cut) + 2)))
-    return {'map_at_12': float(ap), 'ndcg_at_12': float(dcg / ideal), 'recall_at_200': float(hits[:200].sum() / len(relevant))}
 
 
 def evaluate_model(model, inputs, population_size=None):

@@ -1,0 +1,77 @@
+{
+  "protocol": "quality-v1",
+  "seed": 42,
+  "history_days": 28,
+  "popularity_days": 7,
+  "history_extended_days": 90,
+  "candidates": 200,
+  "pilot_users": 2000,
+  "folds": {
+    "V1": "2020-08-26",
+    "V2": "2020-09-02",
+    "V3": "2020-09-09"
+  },
+  "graph": {
+    "window_days": 90,
+    "basket_days": 7,
+    "basket_items": 50,
+    "degree": 50,
+    "seeds": 50,
+    "half_life_days": 14,
+    "rrf_constant": 60
+  },
+  "pagerank": {
+    "sample_users": 5000,
+    "nodes": 512,
+    "alpha": 0.85,
+    "iterations": 100,
+    "tolerance": 1e-6,
+    "permutations": 10
+  },
+  "ranker": {
+    "weeks": 4,
+    "negatives": 20,
+    "objective": "lambdarank",
+    "label_gain": [
+      0,
+      1
+    ],
+    "metric": "None",
+    "evaluator": "project_ndcg_at_12",
+    "lambdarank_truncation_level": 15,
+    "num_boost_round": 300,
+    "learning_rate": 0.05,
+    "num_leaves": 31,
+    "min_data_in_leaf": 100,
+    "max_bin": 127,
+    "lambda_l2": 1,
+    "feature_fraction": 1,
+    "bagging_fraction": 1,
+    "bagging_freq": 0,
+    "seed": 42,
+    "num_threads": 2,
+    "deterministic": true,
+    "force_col_wise": true,
+    "early_stopping_rounds": 30
+  },
+  "selection": {
+    "bootstrap_resamples": 2000,
+    "family_alpha": 0.05,
+    "contrasts": 3,
+    "min_map_gain": 0.02,
+    "min_positive_folds": 2,
+    "max_fold_loss": 0.02,
+    "max_auxiliary_loss": 0.01,
+    "max_segment_loss": 0.05,
+    "min_segment_users": 1000,
+    "tie_map": 0.0001
+  },
+  "budget": {
+    "job_seconds": 7200,
+    "full_seconds": 84600,
+    "summary_seconds": 1800,
+    "pilot_seconds": 7200,
+    "start_free_bytes": 21474836480,
+    "min_free_bytes": 5368709120
+  }
+}

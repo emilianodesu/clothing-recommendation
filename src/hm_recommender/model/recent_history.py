@@ -22,17 +22,13 @@ class HistoryConfig(ComparisonConfig):
 
 def recent_histories(transactions, catalog, customers, days=28):
     """Return aligned catalog indices, using only events strictly before validation."""
-    grouped = (transactions.filter((pl.col('t_dat') >= VALIDATION - timedelta(days=days)) &
-                                  (pl.col('t_dat') < VALIDATION))
-        .join(pl.DataFrame({'customer_id': customers}).lazy(), on='customer_id', how='semi')
-        .join(catalog.select('article_id').with_row_index('index').lazy(), on='article_id', how='inner')
-        .group_by('customer_id', 'article_id', 'index')
-        .agg(pl.col('t_dat').max().alias('last_purchase'), pl.len().alias('frequency'))
-        .sort(['customer_id','last_purchase','frequency','article_id'], descending=[False,True,True,False])
-        .group_by('customer_id', maintain_order=True).agg(pl.col('index').head(200))
-        .collect(engine='streaming'))
-    mapped = {customer: np.asarray(items, dtype=np.int64) for customer, items in grouped.iter_rows()}
-    return [mapped.get(customer, np.empty(0, dtype=np.int64)) for customer in customers]
+    from hm_recommender.quality.temporal import history_table
+    selected = transactions.join(pl.DataFrame({'customer_id':customers}).lazy(), on='customer_id', how='semi')
+    selected = selected.join(catalog.select('article_id').lazy(), on='article_id', how='semi')
+    grouped = history_table(selected, VALIDATION, days).group_by('customer_id', maintain_order=True).agg(pl.col('article_id').head(200))
+    indices = {item:i for i,item in enumerate(catalog['article_id'])}
+    mapped = {customer:np.asarray([indices[item] for item in items],dtype=np.int64) for customer,items in grouped.iter_rows()}
+    return [mapped.get(customer,np.empty(0,dtype=np.int64)) for customer in customers]
 
 
 def compose_recent(history, popular, *, model=None, k=200):

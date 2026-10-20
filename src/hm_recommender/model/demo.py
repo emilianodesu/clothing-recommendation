@@ -10,7 +10,7 @@ from hm_recommender.features.build import build_examples, build_features, VALIDA
 from hm_recommender.model.inputs import load_features
 
 
-def prepare_demo(root):
+def prepare_demo_dataset(root):
     root.mkdir(parents=True, exist_ok=True)
     users = ['demo-%03d' % i for i in range(33)]
     articles = ['%010d' % i for i in range(25)]
@@ -37,6 +37,11 @@ def prepare_demo(root):
             info = ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0)); info.compress_type = ZIP_DEFLATED
             bundle.writestr(info, stream.getvalue())
     dataset = ingest(source, root / 'dataset', expected=None)
+    return dataset
+
+
+def prepare_demo(root):
+    dataset = prepare_demo_dataset(root)
     build_features(dataset, VALIDATION, root / 'features/train')
     build_examples(dataset, root / 'features/examples')
     return load_features(root / 'features/train')

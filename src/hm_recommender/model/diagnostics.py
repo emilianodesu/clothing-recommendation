@@ -72,10 +72,10 @@ def paired_rankings(left, right, k=12):
 
 
 def recent_popular(transactions, catalog, days):
-    counts = transactions.filter((pl.col('t_dat') >= VALIDATION - timedelta(days=days)) &
-                                 (pl.col('t_dat') < VALIDATION)).group_by('article_id').len().collect(engine='streaming')
-    ordered = catalog.select('article_id').with_row_index('index').join(counts, on='article_id', how='left').with_columns(pl.col('len').fill_null(0))
-    return ordered.sort(['len', 'article_id'], descending=[True, False])['index'].to_numpy()[:200].astype(np.int64)
+    from hm_recommender.quality.temporal import popular_table
+    ordered = popular_table(transactions, catalog, VALIDATION, days)
+    indices = {item:i for i,item in enumerate(catalog['article_id'])}
+    return np.asarray([indices[item] for item in ordered['article_id'][:200]], dtype=np.int64)
 
 
 def metric_average(rankings, truths, article_ids):
