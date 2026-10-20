@@ -206,3 +206,17 @@ Instrucción para el agente de mac24:
 > Lee AGENTS.md, docs/second-mac.md y docs/data.md. Actualiza de forma segura y fija el commit indicado. Usa SSL_CERT_FILE=/etc/ssl/cert.pem en los intentos. Prepara Colima hm-project con 14 GiB/4 CPU sin interrumpir trabajos ni borrar volúmenes. Los perfiles ya están implementados: ejecuta T2 sintético y después H&M completo con --resources mac24 (10 GiB/3 CPU/2 hilos), descargando el dataset directamente de Kaggle. Espera resultados, valida y publica ambos reportes mediante github-handoff, incluso ante fallos. Devuelve commit, run_id, URL, recursos solicitados/efectivos, conteos, duración, memoria y errores si los hay. No inicies entrenamiento T3 ni cambies límites para ocultar fallos.
 
 En esta Mac recibimos los resultados con los comandos existentes `github-handoff.py list`, `download RUN_ID` y `read-handoff.py`. El nuevo tipo `data-handoff` viaja en una Release privada `handoff-data-...`, con el mismo control de integridad y límite de 50 MiB. GitHub es el único canal entre equipos; la subida no activa automáticamente al otro agente.
+
+
+### Resultado T2 recibido de mac24
+
+Las corridas sintética `data-mac24-20261019T182008Z-b0c98090` y completa `data-mac24-20261020T000332Z-c95306b5` terminaron `passed` con el commit `8e62bfdc55024428a08c7f16d58d718560116509`. Ver [resultados y Releases](data.md#resultado-físico-en-mac24--19-de-octubre-de-2026) y [evidencia agregada](../evidence/mac24-t2-2026-10-19.json).
+
+En la máquina principal, después de actualizar este repositorio, descargar y validar los paquetes:
+
+```bash
+python3 scripts/github-handoff.py download data-mac24-20261019T182008Z-b0c98090
+python3 scripts/github-handoff.py download data-mac24-20261020T000332Z-c95306b5
+```
+
+Estos comandos reciben sólo los reportes. H&M y las salidas procesadas permanecen en mac24. La publicación no inicia automáticamente al agente de la máquina principal ni autoriza entrenamiento T3.

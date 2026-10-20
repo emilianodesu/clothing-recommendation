@@ -4,7 +4,7 @@ Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md
 
 ## Si tu tarea es continuar con T2 en mac24
 
-T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`.
+T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`. T2 sintético y completo también pasaron en mac24; consulta `evidence/mac24-t2-2026-10-19.json` y sus Releases antes de solicitar otra ejecución. T3 sigue pendiente.
 
 - En futuros intentos de host usa el prefijo solicitado por el usuario: `SSL_CERT_FILE=/etc/ssl/cert.pem`. No desactives TLS. En otra red, cualquier CA adicional debe proceder de la confianza local del equipo.
 - Fija el commit recibido en un clon limpio; conserva cambios existentes. Descarga H&M directamente de Kaggle con una credencial propia y `scripts/project.py download-data`; no transfieras el ZIP por GitHub.

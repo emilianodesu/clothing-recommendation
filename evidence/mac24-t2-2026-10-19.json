@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "T2 data and temporal features on physical mac24; no training",
+  "local_date": "2026-10-19",
+  "timezone": "America/Mexico_City",
+  "host": {
+    "architecture": "arm64",
+    "memory_gib": 24,
+    "cpus": 10
+  },
+  "colima": {
+    "profile": "hm-project",
+    "configured_memory_gib": 14,
+    "engine_memory_bytes": 14623768576,
+    "cpus": 4
+  },
+  "runs": [
+    {
+      "run_id": "data-mac24-20261019T182008Z-b0c98090",
+      "dataset": "synthetic",
+      "status": "passed",
+      "source_commit": "8e62bfdc55024428a08c7f16d58d718560116509",
+      "source_clean": true,
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-mac24-20261019T182008Z-b0c98090",
+      "archive_sha256": "f203101b16b9369c5ba2751c331beef1d414f6f21367561e5338fcef1bf02021",
+      "archive_validation_exit_code": 0,
+      "publication_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "counts": {
+        "articles": 3,
+        "customers": 2,
+        "sample_submission": 2,
+        "transactions": 7
+      },
+      "examples": {
+        "after_test_end_transactions": 0,
+        "cold_user_labels": 2,
+        "eligible_train_labels": 1,
+        "labels": 6,
+        "out_of_catalog_labels": 3,
+        "test_labels": 1,
+        "test_out_of_catalog_labels": 0,
+        "test_transactions": 1,
+        "train_labels": 3,
+        "train_out_of_catalog_labels": 2,
+        "train_transactions": 4,
+        "transactions": 7,
+        "validation_labels": 2,
+        "validation_out_of_catalog_labels": 1,
+        "validation_transactions": 2
+      },
+      "duration_seconds": 0.106,
+      "peak_rss_bytes": 148873216,
+      "cgroup_peak_bytes": 264826880,
+      "source_sha256": "55bf22c3d5b6ed152e616427cff3bdab48bbd353a7c232513d467e7d903f3b21",
+      "output_bytes": 55509,
+      "steps": [
+        {
+          "duration_seconds": 0.03,
+          "name": "ingest",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 0.013,
+          "name": "features-validation-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 0.013,
+          "name": "features-test-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 0.013,
+          "name": "features-serving-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 0.027,
+          "name": "weekly-examples",
+          "status": "passed"
+        }
+      ],
+      "verification_exit_code": 0,
+      "started_at": "2026-10-19T18:20:12.257787+00:00",
+      "finished_at": "2026-10-19T18:20:12.366209+00:00",
+      "oom_killed": false
+    },
+    {
+      "run_id": "data-mac24-20261020T000332Z-c95306b5",
+      "dataset": "hm",
+      "status": "passed",
+      "source_commit": "8e62bfdc55024428a08c7f16d58d718560116509",
+      "source_clean": true,
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-mac24-20261020T000332Z-c95306b5",
+      "archive_sha256": "dac3bb0262ef594f978500e99be7191ff3be687bb7304f19f25d1d26318be8d9",
+      "archive_validation_exit_code": 0,
+      "publication_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "counts": {
+        "articles": 105542,
+        "customers": 1371980,
+        "sample_submission": 1371980,
+        "transactions": 31788324
+      },
+      "examples": {
+        "after_test_end_transactions": 0,
+        "cold_user_labels": 4620382,
+        "eligible_train_labels": 22674665,
+        "labels": 28245922,
+        "out_of_catalog_labels": 894083,
+        "test_labels": 213728,
+        "test_out_of_catalog_labels": 8334,
+        "test_transactions": 240311,
+        "train_labels": 27804284,
+        "train_out_of_catalog_labels": 874364,
+        "train_transactions": 31292772,
+        "transactions": 31788324,
+        "validation_labels": 227910,
+        "validation_out_of_catalog_labels": 11385,
+        "validation_transactions": 255241
+      },
+      "duration_seconds": 118.155,
+      "peak_rss_bytes": 3139276800,
+      "cgroup_peak_bytes": 10737418240,
+      "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+      "output_bytes": 1302024899,
+      "steps": [
+        {
+          "duration_seconds": 61.606,
+          "name": "ingest",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 2.515,
+          "name": "features-validation-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 2.55,
+          "name": "features-test-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 2.468,
+          "name": "features-serving-cut",
+          "status": "passed"
+        },
+        {
+          "duration_seconds": 48.96,
+          "name": "weekly-examples",
+          "status": "passed"
+        }
+      ],
+      "verification_exit_code": 0,
+      "started_at": "2026-10-20T00:03:36.096153+00:00",
+      "finished_at": "2026-10-20T00:05:33.738026+00:00",
+      "oom_killed": false
+    }
+  ],
+  "notes": [
+    "H&M downloaded directly from Kaggle on mac24; size 30810293747 bytes and SHA-256 verified.",
+    "Initial Kaggle access blocked by untrusted Fortinet TLS interception; resolved by changing network, without disabling TLS or adding a CA.",
+    "Host commands used SSL_CERT_FILE=/etc/ssl/cert.pem.",
+    "Full run cgroup peak reached the 10 GiB limit; includes file cache. No OOM; swap usage was not measured.",
+    "Processing durations exclude download and image build.",
+    "Previous development-machine evidence remains historical; these runs validate physical mac24.",
+    "T3 and training feasibility remain pending."
+  ]
+}

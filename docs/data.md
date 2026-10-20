@@ -131,4 +131,18 @@ La primera medición completa en el equipo original procesó 31,788,324 filas y 
 
 El lanzador final se probó desde el commit limpio `867eb20d697ce9f1eb354008f822a61af5d106d7`: corrida completa `data-dev-arm64-20261019T175036Z-2348601b`, salida 0 y 90.747 segundos reutilizando particiones verificadas. La primera ingestión sin particiones previas tardó 124.179 segundos. Las 58 pruebas únicas (51 de T2 y 7 de bootstrap Docker) pasaron; los tres hallazgos de la revisión independiente tienen regresiones RED→GREEN. Ambos reportes están publicados como Releases privadas enlazadas desde la evidencia.
 
-La ampliación de perfiles se verificó después en `76fc2a515165ab8d36946a65e62a0ce4838d7c83`: **66 pruebas únicas** satisfactorias, incluido un contenedor real de 2 GiB/1 CPU/1 hilo que completa T2 sintético y exporta sus límites. Una corrida sintética desde commit limpio y su reanudación conservaron el perfil `base`, la huella y los límites efectivos. La prueba de `mac24` en la VM local de 8 GiB fue rechazada correctamente antes de construir o crear contenedor, con diagnóstico exportable. La ejecución de 10 GiB en mac24 aún debe medirse. Ver [evidencia de perfiles](../evidence/t2-resource-profiles.json).
+La ampliación de perfiles se verificó después en `76fc2a515165ab8d36946a65e62a0ce4838d7c83`: **66 pruebas únicas** satisfactorias, incluido un contenedor real de 2 GiB/1 CPU/1 hilo que completa T2 sintético y exporta sus límites. Una corrida sintética desde commit limpio y su reanudación conservaron el perfil `base`, la huella y los límites efectivos. La prueba de `mac24` en la VM local de 8 GiB fue rechazada correctamente antes de construir o crear contenedor, con diagnóstico exportable. La ejecución posterior de 10 GiB en mac24 se documenta abajo. Ver [evidencia de perfiles](../evidence/t2-resource-profiles.json).
+
+
+## Resultado físico en mac24 · 19 de octubre de 2026
+
+T2 sintético y H&M completo pasaron desde el commit limpio `8e62bfdc55024428a08c7f16d58d718560116509`. Colima `hm-project` tuvo 14 GiB configurados (14,623,768,576 bytes efectivos) y 4 CPU; ambos jobs verificaron 10 GiB, 3 CPU y 2 hilos. La [evidencia agregada](../evidence/mac24-t2-2026-10-19.json) conserva los resultados y SHA-256 de los paquetes.
+
+| Dataset | Run ID / Release | Procesamiento | Pico RSS | Pico cgroup |
+| --- | --- | ---: | ---: | ---: |
+| Sintético | [data-mac24-20261019T182008Z-b0c98090](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-mac24-20261019T182008Z-b0c98090) | 0.106 s | 142 MiB | 252.6 MiB |
+| H&M | [data-mac24-20261020T000332Z-c95306b5](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-data-mac24-20261020T000332Z-c95306b5) | 118.155 s | 2.924 GiB | 10 GiB |
+
+H&M: 31,788,324 transacciones, 1,371,980 clientes, 105,542 artículos y 1,371,980 filas de sample_submission. Se generaron 28,245,922 etiquetas semanales: 27,804,284 train, 227,910 validación y 213,728 prueba; 22,674,665 etiquetas train elegibles. El pico cgroup incluye caché y alcanzó el límite, sin OOM; no se midió uso de swap. Los tiempos excluyen descarga y construcción.
+
+El ZIP fuente se descargó directamente de Kaggle y coincidió en tamaño y SHA-256 con la identidad fijada. El bloqueo TLS inicial por inspección Fortinet se resolvió cambiando de red, conservando `SSL_CERT_FILE=/etc/ssl/cert.pem` y la validación TLS. Ambos reportes se exportaron, validaron y publicaron con descarga verificada. El run_id de H&M lleva fecha UTC del 20 de octubre; la ejecución ocurrió el 19 en America/Mexico_City. T3 continúa pendiente.
