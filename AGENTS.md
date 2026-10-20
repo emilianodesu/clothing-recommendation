@@ -2,6 +2,15 @@
 
 Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Stack acordado: Docker local, PostgreSQL, Qdrant y PyTorch CPU; sin TensorFlow, Hopsworks ni servicios de nube de pago.
 
+## Si tu tarea es continuar con T3 en mac24
+
+Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. Entrenamiento ya está implementado; su época completa debe demostrarse con resultados reales. Usa el commit recibido, clon limpio, Colima `hm-project` 14 GiB/4 CPU y `--resources mac24` 10 GiB/3 CPU/2 hilos. Conserva el prefijo `SSL_CERT_FILE=/etc/ssl/cert.pem`.
+
+- Reutiliza los datos/features T2; no los borres ni modifiques. Prepara `tracking-up --port 5001` y `verify --suite model` con `DOCKER_CONTEXT=colima-hm-project`.
+- Ejecuta `train-job start` con configuraciones demo, hm-small, hm-medium y hm-full, una por una. Cada una exige `--expected-commit SHA_COMPLETO`. Espera estado final, exporta, valida y publica cada intento por GitHub Releases privado; ya está autorizado. Ante fallo, conserva evidencia y no avances al siguiente tamaño.
+- `train-job stop` guarda al finalizar el lote. `resume` exige mismo commit/configuración/recursos/entradas, devuelve otro run_id y conserva experiment_id. Usa el intento más reciente; no cambies código para ocultar fallos. Mantén el equipo sin suspensión.
+- Devuelve estado, identidad, filas, época, tiempo, RSS/cgroup/swap/OOM, métricas, popularidad, ID MLflow y URL de Release. Full requiere 22,674,665 filas por época. No uses test para ajustar; no implementes T4. Los pesos permanecen locales: este intercambio sólo publica reportes sin clientes.
+
 ## Si tu tarea es continuar con T2 en mac24
 
 T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`. T2 sintético y completo también pasaron en mac24; consulta `evidence/mac24-t2-2026-10-19.json` y sus Releases antes de solicitar otra ejecución. T3 sigue pendiente.
@@ -11,7 +20,7 @@ T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019
 - Los perfiles ya existen en `configs/resources/`: `base` conserva 5 GiB/3 CPU/2 hilos; `mac24` permite 10 GiB/3 CPU/2 hilos. Para mac24 prepara Colima `hm-project` con 14 GiB/4 CPU siguiendo `docs/data.md`, sin interrumpir trabajos ni borrar volúmenes. `--profile` selecciona la VM; `--resources` selecciona el presupuesto del job. El lanzador verifica capacidad y límites efectivos; no amplía la VM automáticamente.
 - Ejecuta primero `scripts/project.py data-job start --machine-id mac24 --profile hm-project --resources mac24 --dataset synthetic --expected-commit SHA_COMPLETO` y consulta su `status`. Si pasa, inicia otro trabajo con `--dataset hm`. Cada orden lleva el prefijo SSL anterior. `start` construye desde el clon limpio y ejecuta pruebas dentro de la imagen; no necesita una terminal abierta después de anunciar estado `started`.
 - Conserva el `run_id`. Espera hasta estado final; exporta con `data-job export --run-id RUN_ID`, valida con `scripts/read-handoff.py RUTA.zip` y publica mediante `scripts/github-handoff.py upload RUTA.zip`, también si falla. Ya está autorizado este intercambio privado. Devuelve estado, commit, run_id, conteos, tiempo/RAM y URL de Release.
-- No cambies código o recursos para ocultar un fallo. Si se interrumpe, conserva diagnóstico y usa `data-job resume` con el run_id, que crea otro reporte y reutiliza particiones verificadas con el mismo commit y perfil de recursos (incluida su huella). Para cambiar presupuesto usa `start` como experimento nuevo. No ejecutes dos trabajos pesados a la vez. No entrenes todavía: T3 sigue pendiente.
+- No cambies código o recursos para ocultar un fallo. Si se interrumpe, conserva diagnóstico y usa `data-job resume` con el run_id, que crea otro reporte y reutiliza particiones verificadas con el mismo commit y perfil de recursos (incluida su huella). Para cambiar presupuesto usa `start` como experimento nuevo. No ejecutes dos trabajos pesados a la vez. Esta orden T2 termina con los datos; continúa T3 sólo cuando se solicite.
 
 ## Si tu tarea es iniciar el proyecto en la segunda Mac
 
@@ -26,7 +35,7 @@ La máquina de destino es una Mac Apple Silicon de 24 GB. Sigue `docs/second-mac
 
 No cambies de rama ni actualices el código durante la ejecución. Cada reintento crea otro reporte. Si falla, reúne primero el diagnóstico; no cambies dependencias, límites o código para ocultar el fallo. La instalación puede dejar servicios iniciados: la guía explica cómo detenerlos conservando volúmenes. Si hay un corte abrupto sin ZIP final, conserva la carpeta incompleta e informa del corte; su presencia no prueba éxito.
 
-Esta tarea termina al producir y devolver la evidencia. T2 (datos) usa el procedimiento anterior cuando se solicite; T3 (entrenamiento) requiere implementación posterior. Si el usuario pide desarrollo en lugar de la prueba de instalación, sigue el plan en `docs/superpowers/plans/2026-10-18-plataforma-local-hm.md`; esta sección no impide avanzar el desarrollo autorizado.
+Esta tarea termina al producir y devolver la evidencia. T2 (datos) usa el procedimiento anterior cuando se solicite; T3 (entrenamiento) usa su procedimiento separado cuando se solicite. Si el usuario pide desarrollo en lugar de la prueba de instalación, sigue el plan en `docs/superpowers/plans/2026-10-18-plataforma-local-hm.md`; esta sección no impide avanzar el desarrollo autorizado.
 
 ## Datos, resultados y verificación
 

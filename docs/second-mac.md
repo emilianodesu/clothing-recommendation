@@ -220,3 +220,56 @@ python3 scripts/github-handoff.py download data-mac24-20261020T000332Z-c95306b5
 ```
 
 Estos comandos reciben sólo los reportes. H&M y las salidas procesadas permanecen en mac24. La publicación no inicia automáticamente al agente de la máquina principal ni autoriza entrenamiento T3.
+
+## T3: entrenar y devolver evidencia desde mac24
+
+Lee `docs/evaluation.md`. T2 ya está validada; reutiliza `data/processed/hm-v1` y `artifacts/features/hm-v1`. No descargues ni reproceses H&M salvo que falten o fallen sus verificaciones. Fija el commit recibido en un clon limpio y conserva cambios ajenos.
+
+1. Comprueba Colima `hm-project` con 14 GiB/4 CPU, directorios montados y al menos 10 GiB libres adicionales. No ejecutes dos trabajos pesados. Usa los perfiles existentes: VM mediante `--profile`, presupuesto mediante `--resources mac24` (10 GiB/3 CPU/2 hilos).
+2. Mantén la Mac encendida, conectada a corriente y sin suspensión; puede usarse `caffeinate -i` en otra terminal mientras duren los trabajos. Cerrar Codex no detiene el contenedor, pero suspender macOS sí detiene el cómputo.
+3. Prepara tracking y verifica T3 con el contexto correcto:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py tracking-up --port 5001
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py verify --suite model
+```
+
+Si 5001 está ocupado, elige otro puerto libre explícito y repite `tracking-up --port PUERTO`; no interrumpas al dueño del puerto. El servicio queda en `http://127.0.0.1:5001` si elegiste 5001.
+
+4. Ejecuta **uno por uno**, sustituyendo `SHA_COMPLETO` por el commit recibido:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py train-job start --machine-id mac24 --profile hm-project --resources mac24 --config demo --expected-commit SHA_COMPLETO
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py train-job status --run-id RUN_ID
+```
+
+Cuando la demo pase, repite start con `--config hm-small`, luego `hm-medium`, y finalmente `hm-full`. Conserva cada run_id. Espera estado final y exporta cada intento **antes de iniciar el siguiente**. Si un intento falla o se interrumpe, exporta diagnóstico y no avances a un tamaño mayor. No cambies código/hiperparámetros/recursos para ocultar un fallo. Los pilotos y full son experimentos nuevos, no `resume` del tamaño anterior.
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py train-job export --run-id RUN_ID
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py RUTA_EXACTA.zip
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload RUTA_EXACTA.zip
+```
+
+Un reporte válido fallido devuelve 1 en el lector; aun así se publica. ZIP inválido devuelve 2 y no debe publicarse. Publicar cada reporte en el repositorio privado está autorizado.
+
+Para interrupciones recuperables:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py train-job stop --run-id RUN_ID
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/project.py train-job resume --run-id RUN_ID
+```
+
+Resume devuelve **otro run_id** de intento con el mismo experiment_id. Usa siempre el intento más reciente. Recupera el checkpoint verificado con mismo commit/configuración/recursos. No reinicia una corrida ya aprobada ni bifurca un intento antiguo.
+
+Devuelve por cada intento: configuración, estado, commit, run_id, experiment_id, attempt, filas, época, tiempo, RSS, pico cgroup/swap/OOM, MAP@12, NDCG@12, Recall@200, cobertura, popularidad, ID MLflow y URL de Release. Para full confirma 22,674,665 filas y una época terminada. No afirmes éxito de full por haber pasado los pilotos. No evalúes test ni implementes T4.
+
+### Recibir aquí
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py list
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download RUN_ID
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py artifacts/incoming/RUN_ID.zip --json
+```
+
+La descarga valida inventario, SHA-256 y la identidad del paquete; repetirla es idempotente y rechaza contenido distinto. Los reportes se leen sin ejecutar nada ni importar pesos. La publicación no despierta automáticamente al agente de la otra Mac: avisa aquí cuando esté disponible.

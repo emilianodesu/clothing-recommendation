@@ -56,6 +56,38 @@ services:
     restart: unless-stopped
     networks: [backend]
 
+  mlflow:
+    image: hmrec-jobs:0.1.0
+    profiles: [training]
+    user: "0:0"
+    command: [python, -m, hm_recommender.model.tracking]
+    environment:
+      HM_MLFLOW_PASSWORD: ${HM_MLFLOW_PASSWORD:?Run bootstrap first}
+      PYTHONDONTWRITEBYTECODE: "1"
+      MLFLOW_DISABLE_TELEMETRY: "true"
+      MLFLOW_SERVER_ENABLE_JOB_EXECUTION: "false"
+      MLFLOW_SERVER_JOB_ENABLE_PERIODIC_TASKS: "false"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+    ports:
+      - "127.0.0.1:${MLFLOW_PORT:-5000}:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 40
+    mem_limit: 1g
+    cpus: 1
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    networks: [backend]
+
   app-check:
     image: hmrec-app:0.1.0
     build:
@@ -107,6 +139,7 @@ networks:
 volumes:
   postgres_data:
   qdrant_data:
+  mlflow_artifacts:
 
 secrets:
   build_ca:

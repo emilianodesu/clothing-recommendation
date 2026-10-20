@@ -39,6 +39,7 @@ class DatasetManifest(Contract):
 
 
 class FeatureManifest(Contract):
+    _root: Path | None = PrivateAttr(default=None)
     schema_version: Literal[1] = 1
     dataset_id: str
     data_as_of: date

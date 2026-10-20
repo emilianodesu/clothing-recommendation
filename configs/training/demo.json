@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "batch_size": 64,
+  "epochs": 2,
+  "learning_rate": 0.05,
+  "negatives": 8,
+  "temperature": 0.1,
+  "max_users": 0,
+  "eval_users": 0,
+  "checkpoint_steps": 2,
+  "min_free_bytes": 1073741824,
+  "demo": true
+}

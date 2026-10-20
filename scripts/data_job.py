@@ -22,19 +22,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def validate_run_id(value):
-    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith('data-'):
+    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith(('data-', 'train-')):
         raise ValueError('Run ID de datos inválido')
     return value
 
 
-def classify_result(state, result):
+def classify_result(state, result, stage='T2'):
     if state.get('Running'):
         return 'running'
     if state.get('ExitCode') == 130 and not state.get('OOMKilled'):
         return 'interrupted'
     if state.get('OOMKilled') or state.get('ExitCode', 0) != 0:
         return 'failed'
-    if result and result.get('status') == 'passed' and result.get('stage') == 'T2' and result.get('verification_exit_code') == 0:
+    if result and result.get('status') == 'passed' and result.get('stage') == stage and result.get('verification_exit_code') == 0:
         return 'passed'
     return 'interrupted'
 
@@ -104,12 +104,17 @@ def effective_limits(info):
             'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
 
 
-def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None):
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
     resources = load_resources(resource_profile)
     if expected_resources is not None and resources != expected_resources:
         raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
+    if training_config is not None and training_config not in ('demo', 'hm-small', 'hm-medium', 'hm-full'):
+        raise ValueError('Perfil de entrenamiento desconocido')
+    config_file = ROOT / 'configs/training' / (training_config + '.json') if training_config else ROOT / 'configs' / ('hm.yaml' if dataset == 'hm' else 'demo.yaml')
+    if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
+        raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
     limits = requested_limits(resources)
     env = local_environment(profile)
     commit = capture(env, 'git', 'rev-parse', 'HEAD')
@@ -120,22 +125,32 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
     values = read_configuration(ROOT / '.env')
     dirs = paths(values)
     config = 'hm' if dataset == 'hm' else 'demo'
-    run_id = 'data-' + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+    run_id = ('train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     directory = dirs['ARTIFACTS_DIR'] / 'data-jobs' / run_id
     directory.mkdir(parents=True, mode=0o700)
     run = {'run_id':run_id, 'machine_id':machine_id, 'context':env['DOCKER_CONTEXT'], 'profile':profile,
            'source_commit':commit, 'source_clean':True, 'dataset':dataset, 'image_id':None,
-           'config_sha256':fingerprint(ROOT / 'configs' / (config+'.yaml')),
+           'config_sha256':fingerprint(config_file),
            'uv_lock_sha256':fingerprint(ROOT / 'uv.lock'), 'started_at':now(), 'host_architecture':platform.machine(),
            'host_os':platform.system(), 'launch_status':'running',
            'resources':resources, 'limits':limits, 'ca_file':os.environ.get('SSL_CERT_FILE'),
            'scope':'T2 only; data and temporal features, no training'}
+    if training_config:
+        experiment_id = resume_run['experiment_id'] if resume_run else run_id
+        validate_run_id(experiment_id)
+        run.update(training_config=training_config, experiment_id=experiment_id,
+                   attempt=resume_run['attempt'] + 1 if resume_run else 1,
+                   resumed_from=resume_run['run_id'] if resume_run else None,
+                   scope='T3 training and validation only; no test tuning or serving')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
     (directory / 'commit.txt').write_text(commit + '\n')
     print(json.dumps({'run_id':run_id, 'status':'preparing'}), flush=True)
+    project_lock = None
     try:
+        project_lock = (dirs['ARTIFACTS_DIR'] / '.heavy-launch.lock').open('a')
+        fcntl.flock(project_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         for key, path in dirs.items():
             if not path.is_dir():raise ValueError('Falta directorio de datos/artefactos; ejecutar bootstrap')
             if ',' in str(path):raise ValueError('Docker --mount requiere una ruta sin comas')
@@ -144,7 +159,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         validate_context(context['Endpoints']['docker']['Host'], engine['Architecture'])
         active = capture(env, 'docker', 'ps', '--filter', 'label=hmrec.data-project=' + values['COMPOSE_PROJECT_NAME'], '--format', '{{.ID}}')
         if active:
-            raise ValueError('Ya hay un trabajo T2 activo en este proyecto')
+            raise ValueError('Ya hay un trabajo pesado activo en este proyecto')
         run.update(engine_version=engine['ServerVersion'], engine_memory_bytes=engine['MemTotal'], engine_cpus=engine['NCPU'])
         validate_capacity(limits, engine)
         # Build logs persist even when the image cannot be built.
@@ -153,6 +168,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             os.environ.clear(); os.environ.update(env)
             compose(ROOT, values, 'build', 'jobs', log_path=directory / 'build.log')
             run['build_exit_code'] = 0
+            if training_config and training_config != 'demo':
+                compose(ROOT, values, 'up', '--detach', '--wait', '--wait-timeout', '240', 'mlflow', log_path=directory / 'tracking.log')
         except subprocess.CalledProcessError as error:
             run['build_exit_code'] = error.returncode
             raise
@@ -162,7 +179,11 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             raise ValueError('El código cambió durante la construcción; repetir desde un commit limpio')
         image = json.loads(capture(env, 'docker', 'image', 'inspect', 'hmrec-jobs:0.1.0'))[0]
         run.update(image_id=image['Id'], image_architecture=image['Architecture'])
-        container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', 'none',
+        worker = ['python', '-m', 'hm_recommender.model.worker' if training_config else 'hm_recommender.data.worker',
+                  '--config', '/opt/hmrec/configs/training/' + training_config + '.json' if training_config else '/opt/hmrec/configs/' + config + '.yaml',
+                  '--run-dir', '/artifacts/data-jobs/' + run_id]
+        network = values['COMPOSE_PROJECT_NAME'] + '_backend' if training_config and training_config != 'demo' else 'none'
+        container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', network,
             '--read-only', '--tmpfs', '/tmp', '--memory', str(resources['config']['job']['memory_gib']) + 'g',
             '--cpus', str(limits['cpus']),
             '--log-driver', 'json-file', '--log-opt', 'max-size=5m', '--log-opt', 'max-file=2',
@@ -173,10 +194,12 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             '--env', 'MKL_NUM_THREADS=' + str(limits['mkl_threads']),
             '--env', 'PYTHONDONTWRITEBYTECODE=1', '--env', 'PYTHONUNBUFFERED=1',
             '--env', 'PYTEST_ADDOPTS=-o cache_dir=/tmp/pytest-cache',
+            '--env', 'MLFLOW_TRACKING_URI=http://mlflow:5000',
+            '--env', 'MLFLOW_ENABLE_ARTIFACTS_PROGRESS_BAR=false',
+            '--env', 'MLFLOW_DISABLE_TELEMETRY=true',
             '--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data',
             '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts',
-            image['Id'], 'python', '-m', 'hm_recommender.data.worker', '--config', '/opt/hmrec/configs/' + config + '.yaml',
-            '--run-dir', '/artifacts/data-jobs/' + run_id)
+            image['Id'], *worker)
         run['container_id'] = container
         info = json.loads(capture(env, 'docker', 'inspect', container))[0]
         applied = effective_limits(info)
@@ -198,6 +221,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             write_json(directory / 'environment.json', run)
         finally:
             launch_lock.close()
+            if project_lock is not None:
+                project_lock.close()
     print(json.dumps({'run_id':run_id,'status':'started','source_commit':commit,'image_id':run['image_id']}, indent=2))
     return run_id
 
@@ -241,7 +266,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result)
+        status = classify_result(state, result, 'T3' if run.get('training_config') else 'T2')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
     return directory, run, env, state, result, status
@@ -263,6 +288,13 @@ def export(run_id):
         (export_dir / 'job.log').write_text('Contenedor ausente o no creado: revisar diagnóstico de lanzamiento.\n')
     else:
         execute(['docker','logs',run['container_id']], ROOT, env, export_dir / 'job.log')
+    if run.get('training_config'):
+        progress_path = directory.parent.parent / 'training' / run['experiment_id'] / 'progress.json'
+        if result is None:
+            result = {'stage':'T3', 'status':status, 'worker_result_missing':True}
+        if progress_path.exists():
+            result = dict(result, last_durable_progress=json.loads(progress_path.read_text()))
+        write_json(export_dir / 'result.json', result)
     code = 0 if status == 'passed' else (130 if status == 'interrupted' else state.get('ExitCode') or 1)
     steps = []
     if (export_dir / 'build.log').exists():
@@ -270,10 +302,10 @@ def export(run_id):
         steps.append({'name':'build','log':'build.log','exit_code':build_code,
                       'status':'passed' if build_code == 0 else ('interrupted' if build_code == 130 else 'failed')})
     steps.append({'name':'data','log':'job.log','status':status,'exit_code':code})
-    report = {'schema_version':1, 'kind':'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
+    report = {'schema_version':1, 'kind':'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
         'context':run['context'], 'source_commit':run['source_commit'], 'source_clean':run['source_clean'],
         'started_at':run['started_at'], 'finished_at':now(), 'status':status, 'warnings':[],
-        'steps':steps,
+        'steps':steps, 'experiment_id':run.get('experiment_id'), 'attempt':run.get('attempt'),
         'container_exit_code':state.get('ExitCode'), 'oom_killed':state.get('OOMKilled',False),
         'image_id':run['image_id'], 'result':result}
     for key in ('resources', 'limits', 'effective_limits'):

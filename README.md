@@ -4,7 +4,7 @@ Plataforma local de recomendaciones para comercio electrónico con H&M, PyTorch 
 
 Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.
 
-**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. El motor personalizado, la API de recomendaciones, Streamlit y los DAG todavía están pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
+**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. T3 incorpora el entrenamiento de dos torres PyTorch, checkpoints, evaluación exacta y MLflow local. La API de recomendaciones, Streamlit y los DAG todavía están pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
 
 ## Empezar en la segunda Mac
 
@@ -16,7 +16,11 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/start-second-mac.py --machine-id
 
 Prepara Docker/Colima, instala la infraestructura, ejecuta las pruebas y genera un ZIP incluso ante fallos normales. Con GitHub CLI autenticado, publícalo con `python3 scripts/github-handoff.py upload RUTA-DEL-ZIP`. En la Mac de desarrollo, `python3 scripts/github-handoff.py list` muestra reportes y `python3 scripts/github-handoff.py download RUN_ID` descarga y valida el elegido. La [guía entre equipos](docs/second-mac.md) explica la autenticación y los comandos. Esta primera tarea no necesita el dataset ni inicia entrenamiento.
 
-T1 ya pasó en la Mac física de 24 GB (35 pruebas). Para continuar allí con los datos, sigue [T2 en mac24](docs/second-mac.md#t2-preparar-los-datos-en-mac24). El agente debe fijar el commit, preparar Colima con 14 GiB, descargar H&M de Kaggle, ejecutar una corrida sintética y otra completa con `data-job start --resources mac24` (10 GiB para el job), y publicar ambos reportes. `--resources base` conserva el presupuesto original de 5 GiB. Los [perfiles y límites efectivos](docs/data.md#salidas-y-recursos) quedan registrados y se conservan al reanudar. T3 aún no está implementada. **T2 ya pasó en mac24**: corridas sintética y H&M completo, con límites efectivos de 10 GiB/3 CPU/2 hilos. La [evidencia de mac24](evidence/mac24-t2-2026-10-19.json) contiene conteos, memoria, duración y enlaces a ambos reportes privados.
+T1 ya pasó en la Mac física de 24 GB (35 pruebas). Para continuar allí con los datos, sigue [T2 en mac24](docs/second-mac.md#t2-preparar-los-datos-en-mac24). El agente debe fijar el commit, preparar Colima con 14 GiB, descargar H&M de Kaggle, ejecutar una corrida sintética y otra completa con `data-job start --resources mac24` (10 GiB para el job), y publicar ambos reportes. `--resources base` conserva el presupuesto original de 5 GiB. Los [perfiles y límites efectivos](docs/data.md#salidas-y-recursos) quedan registrados y se conservan al reanudar. T3 está preparada para la prueba de entrenamiento en mac24; la factibilidad de una época completa permanece pendiente de esa evidencia. **T2 ya pasó en mac24**: corridas sintética y H&M completo, con límites efectivos de 10 GiB/3 CPU/2 hilos. La [evidencia de mac24](evidence/mac24-t2-2026-10-19.json) contiene conteos, memoria, duración y enlaces a ambos reportes privados.
+
+## Entrenar (T3)
+
+Sigue [T3 en la segunda Mac](docs/second-mac.md#t3-entrenar-y-devolver-evidencia-desde-mac24): verifica MLflow, ejecuta demo → hm-small → hm-medium → hm-full secuencialmente y publica cada reporte. El [contrato de evaluación](docs/evaluation.md) describe métricas, cortes, recursos y recuperación. `train-job start/status/stop/resume/export` reutiliza el transporte privado de T1/T2. No necesita TensorFlow, Hopsworks, nube ni librerías científicas en el host. El despliegue de la API y el transporte de pesos siguen siendo T4.
 
 ## Instalar la infraestructura del proyecto
 
@@ -67,6 +71,6 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 
 ## Requisitos de la futura entrega
 
-Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2. Se añadirán entrenamiento, servicio de recomendaciones, transferencia de modelos y respaldo/restauración. Habrá una demo sintética sin Kaggle y un modo completo con acceso propio a los datos H&M. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
+Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2 y entrenamiento/evaluación T3. Se añadirán servicio de recomendaciones, transferencia de modelos y respaldo/restauración. Habrá una demo sintética sin Kaggle y un modo completo con acceso propio a los datos H&M. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
 
 Los datos reales, tokens y credenciales permanecen fuera del código versionado. La documentación distingue la infraestructura disponible de las funcionalidades de recomendación pendientes.
