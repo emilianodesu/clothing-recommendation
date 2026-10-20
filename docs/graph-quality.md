@@ -1,6 +1,6 @@
 # Q2: grafo de artículos y control PageRank
 
-Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. El paso pendiente en mac24 es medir demo, piloto y los tres folds completos; una demo sintética no acredita calidad ni rendimiento H&M. Q3, Q4 y T4 no se ejecutan en esta entrega y test permanece reservado.
+Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. Los cinco reportes mac24 ya se descargaron y [revisaron](../evidence/quality-q2-review.json): Q2 está cerrada operativamente. G mejora MAP/NDCG, pero incumple el límite de pérdida de Recall. Esta página conserva el procedimiento de reproducción; no repetirlo por defecto. Q3, Q4 y T4 siguen pendientes y test permanece reservado.
 
 ## Qué calcula
 
@@ -14,7 +14,7 @@ El control PageRank selecciona hasta 5,000 compradores por hash antes de separar
 
 Los resultados completos de G y los de la muestra PPR están separados. No se promueve un motor a partir de la muestra. Las membresías/aciertos exclusivos describen las fuentes del pool G finalmente seleccionado; no estiman causalidad ni el valor de cambiar hiperparámetros.
 
-[Prompt listo para copiar en mac24](mac24-q2-prompt.md).
+[Prompt histórico Q2](mac24-q2-prompt.md), ya ejecutado; no reutilizarlo para iniciar Q3.
 
 ## Referencias y preparación
 
@@ -141,4 +141,26 @@ G mejora MAP y NDCG frente a H en los tres folds, pero reduce Recall. Esto no ac
 
 Presupuesto acumulado Q1+Q2: full 326.898137 s, piloto 41.213648 s, demo 13.286877 s. Entradas Q1 intactas, ninguna reserva abierta; se conserva el ledger local. Espacio libre mínimo de los intentos: 198.446957 GiB.
 
-La evidencia incluye segmentos, recompra/descubrimiento, exposición, fuentes del pool, PPR y sus controles, construcción/recuperación/evaluación, disco y presupuesto. Se conservaron grafos y métricas individuales privados para las fases posteriores. `quality_accepted=false`: revisión pendiente en la máquina principal, sin iniciar Q3/Q4/T4.
+La evidencia incluye segmentos, recompra/descubrimiento, exposición, fuentes del pool, PPR y sus controles, construcción/recuperación/evaluación, disco y presupuesto. Se conservaron grafos y métricas individuales privados para las fases posteriores. El reporte de entrega registró `quality_accepted=false` y revisión pendiente; la revisión posterior se conserva por separado a continuación, sin modificar ese registro histórico.
+
+## Revisión de la máquina principal: Q2 cerrada
+
+La [auditoría estructurada](../evidence/quality-q2-review.json) verifica los cinco ZIP: inventario/SHA-256, identidades, commit limpio, configuración/lock/recursos, referencias Q1, poblaciones, secuencia y presupuesto. Los agregados redondeados de Git concuerdan con los originales. P/H y sus hashes de rankings/métricas coinciden exactamente con Q1. Piloto y full V3 usan el mismo grafo global, con hashes idénticos; los tres folds tienen snapshots distintos y la misma fuente H&M. Cada log de worker registra 35 pruebas aprobadas.
+
+| Media simple de tres folds | H | G | Cambio relativo G/H |
+| --- | ---: | ---: | ---: |
+| MAP@12 | 0.02222467 | 0.02366238 | +6.47% |
+| NDCG@12 | 0.03300888 | 0.03533201 | +7.04% |
+| Recall@200 | 0.19526924 | 0.18669113 | −4.39% |
+
+G mejora MAP en V1/V2/V3 +5.94%/+5.95%/+7.37%, pero pierde Recall −4.99%/−4.08%/−4.12%. **Incumple el límite predeclarado de pérdida media de Recall del 1%.** Cumple los umbrales puntuales de MAP, NDCG y MAP por segmento; eso no compensa el incumplimiento de Recall. Los intervalos y la selección formal corresponden a Q4, con las tablas privadas por comprador. Esta revisión no los calcula desde medias.
+
+La pérdida se concentra en compradores con historia de 29–90 días: Recall cae 19.13%, 19.70% y 22.57%, aunque MAP aumenta en los tres folds. En compradores con compras de 28 días mejoran ambas métricas; los segmentos sin historia o sólo historia anterior a 90 días conservan exactamente H. El grafo aporta mejores posiciones iniciales, pero el pool fijo de 200 pierde artículos relevantes: reordenarlo no puede recuperarlos. La cobertura top12 del catálogo sube de 17.84–18.71% con H a 32.78–33.98% con G; no equivale a recuperar más compras relevantes.
+
+En la muestra PPR de 5,000 por fold convergen todos los compradores con semillas: 3,697/3,702/3,667. Los deltas de MAP frente al promedio de diez permutaciones son +0.00358544/+0.00306048/+0.00486076; NDCG/Recall también mejoran. Apoya una señal personalizada de la fuente PPR, sin intervalo nuevo ni afirmación causal. Frente a G en la misma muestra, MAP cambia −1.20%/+0.44%/−0.20%, sin ventaja consistente. PPR sigue siendo un control acotado a subgrafos de hasta 512 nodos, no un candidato full.
+
+Los tres jobs full suman 218.548781 s, con máximo RSS 1.885216 GiB y cgroup 2.054413 GiB, sin swap/OOM. Construcción+recuperación de G suman 78.688904 s; excluyen el control PPR y evaluación. Q1+Q2 consumieron 326.898137 s del presupuesto full; quedan 84,273.101863 s para Q1–Q3 y se conservan 1,800 s reservados para Q4. Estas medidas batch no acreditan latencia de API.
+
+La preservación de 500 originales y la suite quality posterior a demo son declaraciones de mac24: sus inventarios/log completo permanecen allí. Se validaron los ZIP y sus logs de worker aquí, sin recalcular archivos privados ni métricas individuales. La auditoría conserva esta distinción.
+
+**Decisión:** cerrar Q2, conservar H como referencia y desarrollar Q3 sin repetir Q1/Q2. RH puede mejorar el orden de H manteniendo su Recall. RG se conserva como ablación de recuperación/ordenamiento; al usar exactamente el pool G hereda su pérdida de Recall y no puede cumplir ese umbral sin cambiar el protocolo. No se cambia el pool, los parámetros ni la regla de selección. Q3 aún necesita implementación y verificación antes de enviar nuevas órdenes a mac24; test y T4 siguen pendientes.

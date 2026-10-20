@@ -8,7 +8,7 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Los cinco reportes mac24 ya se [revisaron](../evidence/quality-q1-review.json) y cierran Q1; Q2 ya dispone de [grafo y control PageRank ejecutables](graph-quality.md), pendiente de los cinco resultados mac24; Q3/Q4 siguen pendientes.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1 y Q2 están cerradas operativamente tras revisar cinco reportes mac24 por etapa: [revisión Q1](../evidence/quality-q1-review.json) y [revisión Q2](../evidence/quality-q2-review.json). Las guías [Q1](quality-campaign.md) y [Q2](graph-quality.md) conservan resultados y reproducción. Q3/Q4 siguen pendientes.
 
 ## Evidencia que decide la selección
 
@@ -29,7 +29,17 @@ Agregar PyTorch al mismo prefijo no demuestra mejora de MAP: delta -0.00006190, 
 
 La [revisión Q1](../evidence/quality-q1-review.json) confirma que H supera a P en MAP/NDCG/Recall en tres semanas completas. MAP H/P: V1 0.01936354/0.00682845; V2 0.02272145/0.00673213; V3 0.02458902/0.00660410. El promedio no ponderado entre semanas mejora MAP +230.65%, sin que esto constituya un nuevo contraste con intervalo de confianza. V3 coincide con el reporte histórico original.
 
-La ventaja global proviene de la recompra. En la evaluación de artículos no comprados anteriormente, MAP de H es 26.88–30.18% inferior a P. Además, 55–56% de compradores de cada semana carecen de historial28 y conservan exactamente P. Esta evidencia justifica continuar el contraste de grafo/ranking ya fijado, manteniendo H como referencia y sin cambiar ventanas ni umbrales tras observar resultados.
+La ventaja global proviene de la recompra. En la evaluación de artículos no comprados anteriormente, MAP de H es 26.88–30.18% inferior a P. Además, 55–56% de compradores de cada semana carecen de historial28 y conservan exactamente P. Esta evidencia justificó continuar el contraste de grafo/ranking ya fijado, manteniendo H como referencia y sin cambiar ventanas ni umbrales tras observar resultados.
+
+## Resultado Q2: mejor orden inicial, menor recuperación
+
+Los tres folds completos de G mejoran MAP y NDCG frente a H. La media simple entre semanas pasa de 0.02222467 a 0.02366238 en MAP (+6.47%) y de 0.03300888 a 0.03533201 en NDCG (+7.04%). Recall@200 baja de 0.19526924 a 0.18669113 (−4.39%), incumpliendo el máximo de pérdida relativa del 1% fijado antes de ejecutar. G no puede sustituir H bajo la regla vigente; la selección formal y sus intervalos siguen siendo Q4.
+
+La caída de Recall se concentra en historia de 29–90 días: −19.13%/−19.70%/−22.57% en V1/V2/V3. En ese segmento mejora MAP; en historia reciente28 mejoran ambas métricas. Sin historia90, G conserva H. La cobertura top12 casi se duplica, pero esa mayor variedad no implica mayor recuperación de compras relevantes. La [guía Q2](graph-quality.md) detalla métricas, costes y límites de la auditoría.
+
+El control PPR converge para todos los compradores con semillas de su muestra; usar la personalización correcta mejora las tres métricas respecto a diez permutaciones. No muestra una ventaja consistente de MAP frente a G en esa misma muestra y no permite seleccionar un motor full. Acredita un experimento de PageRank personalizado acotado, no superioridad universal ni causalidad.
+
+Q3 conserva RH y RG conforme al protocolo: el primero reordena H y el segundo G. **Ordenar el mismo pool mantiene Recall@200:** RH puede mejorar MAP sin sacrificar la recuperación de H; RG hereda el incumplimiento de G y conserva valor como ablación académica. No se ampliará el pool ni se relajará el umbral después de ver estos resultados. No repetir Q1/Q2 ni usar test.
 
 ## Qué podemos explicar y con qué certeza
 
@@ -37,7 +47,7 @@ La ventaja global proviene de la recompra. En la evaluación de artículos no co
 | --- | --- | --- |
 | El historial contiene los artículos concretos comprados recientemente | El motor aprovecha una señal de repetición de compra que se evalúa directamente; no excluye compras anteriores | No demuestra que 28 días sea la mejor ventana posible ni explica la intención del comprador |
 | Cambiar el propietario del historial empeora métricas | En 2,224 compradores con historial, el historial correcto aporta MAP frente al promedio de diez permutaciones: IC95% [0.03871746, 0.05247017] | Es un control de personalización, no un experimento causal |
-| 39,605 compradores no tienen historial reciente | El respaldo popular mantiene exactamente las métricas de popularidad en ese segmento; la mejora global proviene del segmento con historial | No se ha mejorado la personalización de ese 55% aproximado de compradores |
+| En el diagnóstico histórico V3, 39,605 compradores no tienen historial reciente | H mantiene exactamente popularidad en ese segmento; su mejora global proviene del historial28 | Q2 sí personaliza parte de ese segmento con historia29–90: mejora MAP, pero pierde Recall; sin historia90 mantiene H |
 | Popularidad7d supera a popularidad histórica y al modelo aislado en esta validación | La popularidad reciente es una referencia exigente y útil en este corte temporal | La estacionalidad o cambios de catálogo son hipótesis; no están aislados causalmente |
 | La torre de usuario recibe ID y cuatro agregados numéricos, no la lista de artículos recientes | El modelo actual no recibe explícitamente la misma señal que utiliza la regla seleccionada; su representación es una explicación plausible de la diferencia | No prueba que todas las redes neuronales sean inferiores ni atribuye la diferencia al framework |
 | Tres épocas reducen MAP/NDCG | Más entrenamiento no resolvió la relevancia en esta configuración | No basta para diagnosticar sobreajuste, un problema concreto del optimizador o el número óptimo de épocas |
@@ -56,7 +66,7 @@ El diagnóstico full consumió 132.132 s y 2.568 GiB de pico de contenedor, sin 
 | 4.4 Factores latentes | Embeddings de 64 dimensiones y producto punto | Representaciones latentes aprendidas; no equivale a haber implementado SVD |
 | 4.5 Evaluación | Cortes temporales, métricas, segmentos, cobertura, bootstrap y permutaciones | Parte central de la selección y de la explicación de resultados negativos |
 | 4.6 Netflix | Comparación conceptual con datos de calificaciones | Contexto del informe, pendiente de desarrollo bibliográfico |
-| 3 y 5, grafos | Q2 implementa pesos, vecinos, similitud y PageRank personalizado en subgrafos acotados | Calidad/coste H&M pendientes de mac24; no implementa HITS o comunidades ni supone una red social observada. Qdrant y Airflow no acreditan esos subtemas |
+| 3.1, 3.3, 3.4 y 5.5, grafos | Pesos/similitud y vecinos evaluados en tres folds completos; PageRank personalizado y caminatas con reinicio evaluados en muestras acotadas | Q2 cerrada con resultados y recursos verificados; no implementa HITS, análisis espectral completo o comunidades ni supone una red social observada. Qdrant y Airflow no acreditan esos subtemas |
 | 1 y 2 | No se implementaron PCA, NMF, t-SNE, Apriori o FP-Growth | No declarar cobertura por usar embeddings, frecuencias o historial |
 
 La comparación, sus fallos y sus límites son parte del resultado académico. No hace falta introducir cada experimento en producción para demostrar que se implementó y evaluó correctamente. El informe final enlazará código, configuración, dataset/corte, commit, reportes y recursos; no sólo una gráfica de puntuaciones.
@@ -79,4 +89,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-Q1 ya está cerrada. El siguiente entregable es **Q2: grafo y control PageRank**, seguido de Q3 ranking y Q4 selección. La implementación Q2 y sus instrucciones están en `docs/graph-quality.md`; el siguiente paso remoto exige el commit recibido y las cinco referencias Q1 conservadas. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.
+Q1/Q2 están cerradas. El siguiente entregable es **Q3: ordenamiento LightGBM RH/RG**, seguido de Q4 selección. Q3 aún requiere implementación, pruebas y su propio commit/prompt antes de ejecutarse en mac24; conservar los artefactos privados Q1/Q2 y el presupuesto. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.

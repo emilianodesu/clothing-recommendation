@@ -121,9 +121,9 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 - [x] Escribir RED de PageRank contra solución lineal en fixture de 4 nodos (`atol=1e-6`), dangling, residuo global, truncación 512 y fallback declarado si no converge. Probar permutaciones sin propietarios fijos y exclusión explícita de usuarios sin semillas del contraste personalizado.
 - [x] Implementar PPR/control de hasta 5,000 compradores y diez permutaciones; comparar H/G/PPR en esa cohorte. Registrar scope `sample`, sin permitir promoción ni mezcla con métricas full.
 - [x] Ejecutar suite quality y host, bootstrap si cambia imagen/dependencias, demo oficial; validar reportes y publicar código. Prompt mac24 Q2: demo → piloto V3 → full V1/V2/V3 (cada full incluye G y control acotado; referencias Q1 verificadas). Los resultados peores siguen la secuencia; fallo operativo la detiene.
-- [ ] Recibir reportes, registrar `evidence/quality-q2-mac24.json`, verificar insumos/candidatos/cohortes/recursos. Cerrar Q2 operativa aunque G no supere H; no elegir modelo con la muestra PPR.
+- [x] Recibir reportes, registrar `evidence/quality-q2-mac24.json`, verificar insumos/candidatos/cohortes/recursos. Cerrar Q2 operativa aunque G no supere H; no elegir modelo con la muestra PPR.
 
-**Entrega local Q2:** implementada y revisada, 133 pruebas distintas y demo oficial publicadas en [la evidencia](../../../evidence/local-quality-q2.json). [Guía y referencias mac24](../../graph-quality.md). La recepción de los cinco reportes sigue pendiente; no cerrar Q2 remota ni avanzar Q3 automáticamente.
+**Entrega Q2 cerrada:** implementación revisada, 133 pruebas distintas y demo oficial en [la evidencia local](../../../evidence/local-quality-q2.json). Los cinco reportes mac24 se descargaron y [auditaron](../../../evidence/quality-q2-review.json): G mejora MAP medio +6.47%, pero pierde Recall −4.39% y no cumple el límite del 1%. [Resultados y referencias](../../graph-quality.md). El siguiente desarrollo es Q3; recibir los reportes no lo ejecuta automáticamente. RG conserva el pool G y, por tanto, su Recall: queda como ablación académica; se mantienen las tareas y parámetros predeclarados.
 
 ## Q3 · Ordenamiento aprendido y ablación de recuperación
 
@@ -162,12 +162,12 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 3. **Aquí:** descargar y auditar Q1; preparar Q2 y después Q3, cada una con su propio commit y prompt. Q4 se calcula donde estén los artefactos individuales y devuelve sólo agregados.
 4. **Después de selección:** completar T4–T8. Un modelo más complejo sólo llega al servicio si cumple la regla; los experimentos del curso se entregan aunque pierdan.
 
-No hay comando nuevo para ejecutar hoy en mac24. No lanzar órdenes de diagnóstico histórico para simular Q1. La publicación de este documento sincroniza el plan, no acredita implementación.
+Estado actual: Q1/Q2 implementadas, ejecutadas y revisadas; continuar por el paso 3 con desarrollo Q3. Todavía no hay comando Q3 para mac24. No repetir las secuencias históricas por recibir el plan; cada etapa requiere su entrega ejecutable y prompt propios.
 
 ## Presupuesto de trabajo y dependencias
 
 Estimación de ingeniería, no compromiso de calendario: Q1 1–2 jornadas; Q2 2–3; Q3 2–3; Q4 1. Total 6–9 jornadas de desarrollo/revisión, más ejecución medida y disponibilidad para intercambiar reportes. T4–T8 conservan su trabajo pendiente y se reestiman al cerrar Q4; no prometer mantener el calendario original sin absorber esta ampliación.
 
-No hacen falta nuevas cuentas, servicios de pago o dataset. Pendientes técnicos: compatibilidad SciPy/LightGBM en la imagen, espacio local medido, coste del grafo y de tablas por semana, y permanencia de artefactos locales en mac24 para el resumen. Se verifican en sus tareas antes de full; son incertidumbres de implementación, no requisitos para contratar infraestructura.
+No hacen falta nuevas cuentas, servicios de pago o dataset. Q2 verificó SciPy, grafo a escala H&M y espacio local. Pendientes técnicos: compatibilidad LightGBM en la imagen, coste de tablas/grafos internos por semana para Q3, y permanencia de artefactos locales en mac24 para el resumen. Se verifican en sus tareas antes de full; son incertidumbres de implementación, no requisitos para contratar infraestructura.
 
 Auto-revisión prevista: cubrir cada requisito del diseño con una tarea/prueba, conservar tipos entre tareas, revisar referencias de fechas y estado de comandos, y verificar que límites/selección no puedan cambiarse después de medir sin nuevo protocolo. Los números de pruebas y resultados se escribirán únicamente después de ejecutar.

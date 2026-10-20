@@ -1,5 +1,7 @@
 # Prompt para ejecutar Q2 en mac24
 
+**Histórico: Q2 ya se ejecutó y revisó.** Consulta [el cierre](graph-quality.md#revisión-de-la-máquina-principal-q2-cerrada). No repetir este prompt por defecto ni usarlo para iniciar Q3, que aún necesita su propia implementación y entrega.
+
 Sustituye `SHA_COMPLETO_RECIBIDO` por el commit de entrega indicado por la Mac principal.
 
 > Actualiza desde GitHub y fija `SHA_COMPLETO_RECIBIDO` en un clon limpio, conservando cualquier cambio existente. Lee AGENTS.md, docs/graph-quality.md y evidence/quality-q1-review.json.
