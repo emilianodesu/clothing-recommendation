@@ -55,3 +55,20 @@ def test_corrupt_features_and_checkpoint_are_rejected(tmp_path):
         stream.write(b'corrupt')
     with pytest.raises(ValueError, match='integrity'):
         load_features(features._root)
+
+
+def test_worker_records_final_resources_and_failed_phase(tmp_path):
+    from hm_recommender.model.worker import run
+    run_dir = tmp_path / 'data-jobs/train-fixture'; run_dir.mkdir(parents=True)
+    (run_dir / 'environment.json').write_text(json.dumps({'experiment_id':'train-fixture','source_commit':'a'*40,'attempt':1}))
+    config = tmp_path / 'config.json'; config.write_text(json.dumps({'demo':True,'min_free_bytes':0}))
+    assert run(config, run_dir, verify=False) == 0
+    result = json.loads((run_dir / 'result.json').read_text())
+    assert result['job_resources']['peak_rss_bytes'] >= result['training']['peak_memory_bytes']
+    assert result['job_duration_seconds'] >= result['training']['duration_seconds']
+    assert result['phase'] == 'evaluation' and result['status'] == 'passed'
+
+    assert run(config, run_dir, verify=False) == 1
+    failed = json.loads((run_dir / 'result.json').read_text())
+    assert failed['status'] == 'failed' and failed['phase'] == 'training'
+    assert failed['job_resources']['peak_rss_bytes'] > 0

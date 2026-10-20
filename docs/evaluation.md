@@ -37,7 +37,7 @@ Se conserva modelo, optimizador Adagrad, RNG PyTorch/NumPy, época, semana, posi
 
 Cada `run_id` es un intento inmutable. `experiment_id` enlaza intentos; `attempt` aumenta con `resume`. Mismo commit, lock, configuración, recursos y huellas de entradas son obligatorios. Cambiar presupuesto requiere otro experimento. `status` lee progreso; la terminal no necesita permanecer abierta. El equipo sí debe mantenerse encendido y sin suspensión.
 
-Se registran RSS del proceso, `memory.peak`, eventos OOM, estadísticas de memoria/cache y swap cuando cgroup los expone, límites Docker efectivos, tiempo y filas/s. RSS y memoria del contenedor son medidas distintas. `duration_seconds` mide entrenamiento/checkpoints, no descarga, construcción ni evaluación. Los jobs comprueban una reserva de 10 GiB de disco para H&M.
+Se registran RSS del proceso, `memory.peak`, eventos OOM, estadísticas de memoria/cache y swap cuando cgroup los expone, límites Docker efectivos, tiempo y filas/s. RSS y memoria del contenedor son medidas distintas. `training.duration_seconds` mide entrenamiento/checkpoints, no descarga, construcción ni evaluación. `job_duration_seconds` y `job_resources` cubren el worker completo, incluida evaluación y tracking. Los jobs comprueban una reserva de 10 GiB de disco para H&M.
 
 Los archivos originales T2 mantienen sus hashes. Las entradas numéricas del modelo son Float32, con huella canónica de perfiles ordenados. Las comparaciones de features admiten `atol=rtol=1e-12`; save/load de scores en el mismo dispositivo exige `atol=1e-6, rtol=0`. Reanudar exige identidad exacta; no se promete repetición bit a bit entre plataformas.
 
@@ -50,3 +50,14 @@ H&M registra parámetros, métricas, reporte y pesos finales; verifica subir/des
 GitHub transporta únicamente reportes pequeños, verificables e inmutables: no incluye pesos, perfiles ni IDs de clientes. El transporte portable de modelos y el servicio de recomendaciones corresponden a T4. La Mac de desarrollo puede leer todos los resultados sin acceder a la base MLflow de mac24.
 
 Referencias: [Adagrad en PyTorch](https://docs.pytorch.org/docs/stable/generated/torch.optim.Adagrad.html), [servidor de tracking MLflow](https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/), [CLI MLflow](https://mlflow.org/docs/latest/api_reference/cli.html).
+
+## Evidencia previa a mac24
+
+La [evidencia local](../evidence/cpu-feasibility.json) corresponde a una Mac de 16 GiB, perfil `base` de 5 GiB/3 CPU/2 hilos, commit `ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4`. La demo y dos pilotos reales terminaron y verificaron el transporte HTTP de MLflow.
+
+| Piloto | Filas entrenadas | RSS hasta fin del entrenamiento | MAP@12 | Popularidad MAP@12 |
+| --- | ---: | ---: | ---: | ---: |
+| 1,000 usuarios | 15,415 | 0.886 GiB | 0.000000 | 0.003729 |
+| 10,000 usuarios | 163,472 | 0.976 GiB | 0.001865 | 0.003341 |
+
+Estos resultados comprueban ejecución, sin demostrar todavía calidad suficiente: los pilotos omiten muchos usuarios del vocabulario entrenado y ambos están por debajo de popularidad. mac24 debe ejecutar la época completa y devolver validación/segmentos antes de aceptar el modelo o decidir ajustes. Cualquier ajuste posterior usa validación; test sigue reservado. No se extrapola duración ni RAM de estos pilotos para afirmar factibilidad de full.

@@ -6,12 +6,13 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import torch
 from hm_recommender.data.io import atomic_json
 from hm_recommender.model.demo import prepare_demo
 from hm_recommender.model.inputs import TrainConfig, Inputs, load_features
-from hm_recommender.model.train import train, load_checkpoint
+from hm_recommender.model.train import train, load_checkpoint, telemetry
 from hm_recommender.model.two_tower import TwoTower
 from hm_recommender.model.evaluate import evaluate_model
 
@@ -24,6 +25,7 @@ def run(config_path, run_dir, *, verify=True):
     atomic_json(run_dir / 'config.resolved.json', config.model_dump())
     result = {'stage': 'T3', 'status': 'running', 'source_commit': metadata['source_commit'],
               'experiment_id': experiment, 'attempt': metadata['attempt'], 'verification_exit_code': None}
+    started = time.monotonic()
     code = 1
     def phase(name):
         result['phase'] = name
@@ -79,6 +81,8 @@ def run(config_path, run_dir, *, verify=True):
         print('T3 failed: ' + type(error).__name__, flush=True)
         return 1
     finally:
+        result['job_resources'] = telemetry()
+        result['job_duration_seconds'] = time.monotonic() - started
         result['verification_exit_code'] = code
         atomic_json(run_dir / 'result.json', result)
 

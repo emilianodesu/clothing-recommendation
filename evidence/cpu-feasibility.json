@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "stage": "T3",
+  "status": "local_pilots_passed_full_epoch_pending",
+  "machine_id": "dev16",
+  "physical_ram_gib": 16,
+  "docker_profile": "default",
+  "resources": "base",
+  "full_epoch_required_rows": 22674665,
+  "full_epoch_proven": false,
+  "mac24_training_proven": false,
+  "test_evaluated": false,
+  "runs": [
+    {
+      "run_id": "train-dev16-20261020T003525Z-18df5ba5",
+      "source_commit": "ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4",
+      "status": "passed",
+      "config": {
+        "batch_size": 64,
+        "checkpoint_steps": 2,
+        "demo": true,
+        "epochs": 2,
+        "eval_users": 0,
+        "learning_rate": 0.05,
+        "max_users": 0,
+        "min_free_bytes": 1073741824,
+        "negatives": 8,
+        "seed": 42,
+        "temperature": 0.1
+      },
+      "rows_consumed": 768,
+      "epochs": 2,
+      "duration_seconds": 0.09307012500357814,
+      "examples_per_second": 8251.842360483279,
+      "cgroup_peak_bytes": 489750528,
+      "swap_peak_bytes": 0,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_bytes": 396179,
+      "limits": {
+        "memory_bytes": 5368709120,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 10737418240,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "evaluation": {
+        "coverage": 1.0,
+        "evaluated_users": 33,
+        "exact_catalog_size": 24,
+        "excluded_population": "registered customers",
+        "excluded_users": 0,
+        "map_at_12": 0.9747474747474747,
+        "ndcg_at_12": 0.9817057694109114,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 1,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.20251596047050593,
+          "ndcg_at_12": 0.3371445045045612,
+          "recall_at_200": 0.9898989898989898
+        },
+        "recall_at_200": 0.9898989898989898,
+        "sampled_out_users": 0,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.9895833333333333,
+            "ndcg_at_12": 0.9926675199058944,
+            "recall_at_200": 0.9895833333333333,
+            "users": 32
+          },
+          "new_user": {
+            "map_at_12": 0.5,
+            "ndcg_at_12": 0.6309297535714575,
+            "recall_at_200": 1.0,
+            "users": 1
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.6666666666666666,
+            "ndcg_at_12": 0.7653606369886217,
+            "recall_at_200": 0.6666666666666666,
+            "users": 1
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 33
+      },
+      "mlflow": null,
+      "input_identity": {
+        "config": {
+          "batch_size": 64,
+          "checkpoint_steps": 2,
+          "demo": true,
+          "epochs": 2,
+          "eval_users": 0,
+          "learning_rate": 0.05,
+          "max_users": 0,
+          "min_free_bytes": 1073741824,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "1bdb8e8f6ebfbb792152cc978a28677f6daecc0250055f67584b9afaadeaf42e",
+        "feature_manifest_sha256": "21450e6b6e51df56681185dd86c266adb9b57ad57d08fd603e0adc4c58cb96de",
+        "model_input_sha256": "98e1e446d9de562573a53c89dfcce57f3f16880fa11427fc6f942131f0481c33",
+        "sha256": "c06aa02c8b129af923a45254c620ba6e032568aa840ebae01006746b6632ab03",
+        "source_sha256": "bf9a6176acb626253a422fce3e96bb3ce8331d7be6cd60b768f4956d284c12ee"
+      },
+      "archive_sha256": "94306cd27baf0f2447c0d3dc1a28b4875f9d5add5c0db0798c1cae8db9699c74",
+      "package_id": "53b10af86f5478cdacb626b490ab847ba01175e3ca3c66d68ab56e93fbd3d6c3",
+      "peak_rss_gib": 0.428612
+    },
+    {
+      "run_id": "train-dev16-20261020T003558Z-62a0ff40",
+      "source_commit": "ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4",
+      "status": "passed",
+      "config": {
+        "batch_size": 4096,
+        "checkpoint_steps": 250,
+        "demo": false,
+        "epochs": 1,
+        "eval_users": 1000,
+        "learning_rate": 0.05,
+        "max_users": 1000,
+        "min_free_bytes": 10737418240,
+        "negatives": 8,
+        "seed": 42,
+        "temperature": 0.1
+      },
+      "rows_consumed": 15415,
+      "epochs": 1,
+      "duration_seconds": 4.411698679992696,
+      "examples_per_second": 3494.118959190912,
+      "cgroup_peak_bytes": 1392283648,
+      "swap_peak_bytes": 0,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_bytes": 106825327,
+      "limits": {
+        "memory_bytes": 5368709120,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 10737418240,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "evaluation": {
+        "coverage": 0.0010003204910311071,
+        "evaluated_users": 1000,
+        "exact_catalog_size": 102967,
+        "excluded_population": "registered customers",
+        "excluded_users": 1299961,
+        "map_at_12": 0.0,
+        "ndcg_at_12": 0.0,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 141,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.003729008451865595,
+          "ndcg_at_12": 0.007641339866399013,
+          "recall_at_200": 0.07152647352647352
+        },
+        "recall_at_200": 0.002565079365079365,
+        "sampled_out_users": 71019,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.0,
+            "users": 38
+          },
+          "new_user": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.002666402666402666,
+            "users": 962
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.005791505791505791,
+            "users": 111
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 72019
+      },
+      "mlflow": {
+        "artifact_uri": "mlflow-artifacts:/1/6aaf7f50694744f2ba62c815b555d2fb/artifacts",
+        "run_id": "6aaf7f50694744f2ba62c815b555d2fb",
+        "transport": "http",
+        "verified": true
+      },
+      "input_identity": {
+        "config": {
+          "batch_size": 4096,
+          "checkpoint_steps": 250,
+          "demo": false,
+          "epochs": 1,
+          "eval_users": 1000,
+          "learning_rate": 0.05,
+          "max_users": 1000,
+          "min_free_bytes": 10737418240,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+        "feature_manifest_sha256": "d5ada30629704948d9a44b006ac6039a9d4f2843d62d21f6fee734a313483f57",
+        "model_input_sha256": "7288f2530dbdff37c8c959e9b5f2505bf05c114153e51d057ea2ff6856ebe693",
+        "sha256": "b3d5e874d7e3128ed06deceaa9e83d224e3a4730a0c59531342b34dfaf7adf41",
+        "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+      },
+      "archive_sha256": "43d678ab7b1e8b2225319cfab36d30333295c08d8188d1fa80e25367ce1d0313",
+      "package_id": "e8a7fc8a6066c8a1b03675e86753373a94db7efe19cbbcd491266ada085b1406",
+      "peak_rss_gib": 0.885857
+    },
+    {
+      "run_id": "train-dev16-20261020T003707Z-cdc0d09d",
+      "source_commit": "ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4",
+      "status": "passed",
+      "config": {
+        "batch_size": 4096,
+        "checkpoint_steps": 250,
+        "demo": false,
+        "epochs": 1,
+        "eval_users": 2000,
+        "learning_rate": 0.05,
+        "max_users": 10000,
+        "min_free_bytes": 10737418240,
+        "negatives": 8,
+        "seed": 42,
+        "temperature": 0.1
+      },
+      "rows_consumed": 163472,
+      "epochs": 1,
+      "duration_seconds": 4.4451523309980985,
+      "examples_per_second": 36775.342626625934,
+      "cgroup_peak_bytes": 1491271680,
+      "swap_peak_bytes": 0,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_bytes": 116041402,
+      "limits": {
+        "memory_bytes": 5368709120,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 10737418240,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "evaluation": {
+        "coverage": 0.0002525080851146484,
+        "evaluated_users": 2000,
+        "exact_catalog_size": 102967,
+        "excluded_population": "registered customers",
+        "excluded_users": 1299961,
+        "map_at_12": 0.0018649786556036556,
+        "ndcg_at_12": 0.004389054078439159,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 303,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.0033411170806706522,
+          "ndcg_at_12": 0.006970180018839161,
+          "recall_at_200": 0.06744059343434343
+        },
+        "recall_at_200": 0.05500021991896992,
+        "sampled_out_users": 70019,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.00075830865898586,
+            "ndcg_at_12": 0.0023268780835941113,
+            "recall_at_200": 0.045530190902651396,
+            "users": 443
+          },
+          "new_user": {
+            "map_at_12": 0.002179850080460228,
+            "ndcg_at_12": 0.004975787518205605,
+            "recall_at_200": 0.057694646928750974,
+            "users": 1557
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.0004679470139996456,
+            "ndcg_at_12": 0.0017378859568189012,
+            "recall_at_200": 0.034899305129568285,
+            "users": 228
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 72019
+      },
+      "mlflow": {
+        "artifact_uri": "mlflow-artifacts:/1/8d9d8e3d717647bc8f631ef0c51483ae/artifacts",
+        "run_id": "8d9d8e3d717647bc8f631ef0c51483ae",
+        "transport": "http",
+        "verified": true
+      },
+      "input_identity": {
+        "config": {
+          "batch_size": 4096,
+          "checkpoint_steps": 250,
+          "demo": false,
+          "epochs": 1,
+          "eval_users": 2000,
+          "learning_rate": 0.05,
+          "max_users": 10000,
+          "min_free_bytes": 10737418240,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+        "feature_manifest_sha256": "d5ada30629704948d9a44b006ac6039a9d4f2843d62d21f6fee734a313483f57",
+        "model_input_sha256": "7288f2530dbdff37c8c959e9b5f2505bf05c114153e51d057ea2ff6856ebe693",
+        "sha256": "1b16caf1e6c7028c48532ccb3f86e083ea5030a68beb1b6aacab69444f30b85f",
+        "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+      },
+      "archive_sha256": "50b14f3b946465b5eb836da01c592649c3cbc29b4ceafb22c46edf0ce02765b4",
+      "package_id": "b79453cae1b5e694a4bb6b1e2ac5f7d9bdb1f322c092be1a5e2009671a25971b",
+      "peak_rss_gib": 0.975971
+    }
+  ],
+  "quality_conclusion": "Capacity pilots only; neither pilot exceeds popularity MAP@12. Review full training validation before accepting recommendation quality.",
+  "verification": {
+    "model_tests": 14,
+    "host_tests": 47,
+    "bootstrap_integration_tests": 8,
+    "data_integration_tests": 8,
+    "final_suites_status": "passed",
+    "unique_tests": 77
+  },
+  "review": {
+    "fresh_review_findings": 2,
+    "resolved": [
+      "Export durable and observed progress separately",
+      "Preserve tracking phase and failure logs"
+    ]
+  },
+  "tracking_correction": "Disable unused MLflow job executor; initial 1 GiB server restarted due to OOM. Corrected service remained healthy; PostgreSQL and HTTP artifact round-trip passed.",
+  "resource_scope": "Pilot records under training measure up to the end of training. Final T3 worker additionally emits job_resources after evaluation and tracking; full-epoch feasibility is not inferred from these pilots. RSS in this tracked summary is rounded to six decimals in GiB; original report archives retain exact byte measurements."
+}
