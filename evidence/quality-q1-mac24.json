@@ -2,7 +2,7 @@
   "execution_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
   "machine_id": "mac24",
   "operational_status": "passed",
-  "campaign_review_pending": true,
+  "campaign_review_pending": false,
   "quality_accepted": false,
   "original_verification": {
     "before_after_files": 606,
@@ -1396,7 +1396,7 @@
         "legacy_ranking_verified": true
       },
       "historical_reference": {
-        "absolute_tolerance": 0.0,
+        "absolute_tolerance": 1e-10,
         "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
         "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72",
         "verified": true
@@ -1446,5 +1446,11 @@
       "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201805Z-63eb4569",
       "publication_download_verified": true
     }
-  ]
+  ],
+  "campaign_review": {
+    "status": "passed",
+    "q1_closed": true,
+    "evidence": "evidence/quality-q1-review.json",
+    "scope": "Aggregate archive audit on development Mac; private inventories and rank rows remain on mac24."
+  }
 }

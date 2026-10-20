@@ -8,7 +8,7 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Las nuevas métricas H&M requieren los cinco reportes mac24; Q2–Q4 siguen pendientes.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Los cinco reportes mac24 ya se [revisaron](../evidence/quality-q1-review.json) y cierran Q1; Q2–Q4 siguen pendientes.
 
 ## Evidencia que decide la selección
 
@@ -24,6 +24,12 @@ La [revisión independiente de los ZIP recibidos](../evidence/mac24-recent-histo
 Historial+popularidad mejora MAP frente a popularidad en +0.01798491, IC95% [0.01716408, 0.01882157]: +272.33% relativo. Los intervalos de NDCG y Recall también son positivos. No es una mejora de conversión comercial: no hay experimento online.
 
 Agregar PyTorch al mismo prefijo no demuestra mejora de MAP: delta -0.00006190, IC95% [-0.00012972, 0.00000903]. NDCG y Recall sí se reducen con intervalos negativos. Por eso no se añade inferencia neuronal al recorrido principal de servicio. La variante de tres épocas también se conserva: empeoró MAP/NDCG frente a una época aunque mejoró Recall y cobertura.
+
+## Confirmación temporal Q1 y límite de descubrimiento
+
+La [revisión Q1](../evidence/quality-q1-review.json) confirma que H supera a P en MAP/NDCG/Recall en tres semanas completas. MAP H/P: V1 0.01936354/0.00682845; V2 0.02272145/0.00673213; V3 0.02458902/0.00660410. El promedio no ponderado entre semanas mejora MAP +230.65%, sin que esto constituya un nuevo contraste con intervalo de confianza. V3 coincide con el reporte histórico original.
+
+La ventaja global proviene de la recompra. En la evaluación de artículos no comprados anteriormente, MAP de H es 26.88–30.18% inferior a P. Además, 55–56% de compradores de cada semana carecen de historial28 y conservan exactamente P. Esta evidencia justifica continuar el contraste de grafo/ranking ya fijado, manteniendo H como referencia y sin cambiar ventanas ni umbrales tras observar resultados.
 
 ## Qué podemos explicar y con qué certeza
 
@@ -73,4 +79,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-El siguiente entregable es **Q1: evaluador temporal y reportes**, seguido de Q2 grafo, Q3 ranking y Q4 selección. Se implementa/probará aquí y luego se publicará un commit con instrucciones mac24; esta actualización no requiere ejecutar nada allá. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.
+Q1 ya está cerrada. El siguiente entregable es **Q2: grafo y control PageRank**, seguido de Q3 ranking y Q4 selección. Q2 se implementará/probará aquí y luego se publicará un commit con instrucciones mac24; esta revisión no requiere ejecutar nada allá. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.

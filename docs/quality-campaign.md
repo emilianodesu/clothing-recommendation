@@ -1,6 +1,6 @@
 # Q1: referencias temporales reproducibles
 
-Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q2, Q3, Q4 y T4 siguen pendientes. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la evidencia mac24 se añadirá después de recibir sus cinco reportes.
+Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q2, Q3, Q4 y T4 siguen pendientes. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
 
 ## Protocolo y archivos
 
@@ -116,4 +116,26 @@ Sin swap ni OOM. Full V3 verificó rankings P/H exactos contra las funciones his
 
 Los 606 archivos inventariados de datos procesados y entrenamientos coinciden antes/después. Limitación del inventario: las features no se incluyeron en el inventario nuevo previo; al cierre se verificaron 113 archivos de features de entrenamiento/validación contra sus manifiestos históricos y se enlazaron los dos manifiestos H&M con sus hashes del entrenamiento original. No se leyeron payloads de features de test. Inventarios detallados permanecen fuera de Git.
 
-Las métricas P/H, segmentos, recompra/descubrimiento, exposición, espacio libre, presupuesto y SHA de cada ZIP están en la evidencia. `passed` acredita ejecución; Q1 queda pendiente de revisión de los cinco reportes en la máquina principal. No hubo entrenamiento ni evaluación de test ni avance a Q2–Q4 o T4.
+Las métricas P/H, segmentos, recompra/descubrimiento, exposición, espacio libre, presupuesto y SHA de cada ZIP están en la evidencia. `passed` acredita ejecución; Q1 ya pasó la revisión de los cinco reportes en la máquina principal (véase el apartado siguiente). No hubo entrenamiento ni evaluación de test ni avance a Q2–Q4 o T4.
+
+## Revisión de la máquina principal: Q1 cerrada
+
+Se descargaron los cinco ZIP desde GitHub y se verificaron inventario, tamaños/SHA-256, package ID, commit, configuración normativa, lock, recursos, aislamiento, secuencia y presupuesto acumulado. Los agregados redondeados de Git coinciden con los resultados originales. Piloto y full V3 comparten snapshot; V1/V2/V3 tienen snapshots distintos con una misma fuente H&M. La [revisión estructurada](../evidence/quality-q1-review.json) conserva comprobaciones y límites.
+
+Se recalcularon las comparaciones de métricas, exposición y segmentos de V3 contra el ZIP histórico de historial reciente: diferencia de las métricas globales exactamente cero para P y H. El worker informó igualdad exacta de rankings, que permanecen privados en mac24; aquí se compararon agregados, no filas individuales. Se corrigió en el resumen Git la tolerancia `absolute_tolerance`, que el redondeo había convertido de `1e-10` a `0.0`; el ZIP original era correcto y se conserva intacto.
+
+| Fold full | MAP@12 P | MAP@12 H | Mejora relativa H/P |
+| --- | ---: | ---: | ---: |
+| V1 | 0.00682845 | 0.01936354 | +183.57% |
+| V2 | 0.00673213 | 0.02272145 | +237.51% |
+| V3 | 0.00660410 | 0.02458902 | +272.33% |
+
+H también supera a P en NDCG@12 y Recall@200 en cada semana. La media no ponderada de MAP entre semanas es 0.02222467 frente a 0.00672156 (+230.65%). Es evidencia descriptiva temporal, sin nuevo intervalo de confianza ni test final. Q4 calculará sus contrastes con las métricas por comprador conservadas en mac24.
+
+La mejora tiene un límite claro: entre 55% y 56% de los compradores semanales no tienen historial28 y reciben el mismo respaldo que P. En artículos que el comprador no había comprado antes, MAP de H cae entre 26.88% y 30.18% respecto a P. H obtiene su ventaja global por recompras; no se debe describir como mejora universal de descubrimiento. Q2/Q3 ya estaban previstos para contrastar recuperación y ordenamiento; este hallazgo no modifica sus parámetros congelados.
+
+Las tres evaluaciones full sumaron 108.179411 s de job; máximo RSS 2.239624 GiB y máximo cgroup 2.563431 GiB, sin swap/OOM. Se conciliaron 108.349356 s cobrados al presupuesto full. Quedan 84,491.650644 s para Q1–Q3, 7,187.848331 s de pilotos y 1,800 s reservados para Q4. El espacio mínimo observado fue 202.403690 GiB. No son mediciones de latencia de la futura API.
+
+La preservación de 606 archivos y la comprobación posterior de 113 features son declaraciones de mac24 respaldadas por sus inventarios locales; no se recalcularon esos hashes en la primera Mac. Se mantiene visible la omisión de features en el inventario previo, sin atribuirle un fallo de calidad. El aislamiento de los jobs se verificó en los reportes.
+
+**Decisión:** cerrar Q1 y conservar H como referencia fija. No repetir entrenamiento ni Q1. La siguiente implementación es Q2 (grafo ponderado de artículos y control PageRank), seguida de Q3 y Q4. Todavía no hay orden Q2 ejecutable para mac24; test, selección final y T4 siguen pendientes.

@@ -1,8 +1,8 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** [Q1: referencias temporales](quality-campaign.md), cuando se reciba el commit/prompt correspondiente. Los procedimientos T1–T3 de abajo son históricos y no deben repetirse para Q1.
+**Paso vigente:** Q1 ya se ejecutó y [revisó](../evidence/quality-q1-review.json). Esperar la implementación, commit y prompt Q2. Los procedimientos T1–Q1 se conservan como antecedentes; no repetirlos por recibir esta actualización.
 
-Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **T1, T2, T3 y la validación de historial reciente ya terminaron y se revisaron.** Las secciones de instalación y entrenamiento se conservan para reproducción. El siguiente desarrollo es [Q1: evaluación temporal](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), todavía sin comandos implementados: esperar el commit y prompt ejecutables antes de iniciar nuevos jobs en mac24. No repetir instalación, descarga, entrenamiento ni diagnósticos históricos por recibir este plan.
+Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **T1, T2, T3 y la validación de historial reciente ya terminaron y se revisaron.** Las secciones de instalación y entrenamiento se conservan para reproducción. Q1 temporal también pasó sus cinco corridas y la revisión de reportes. El siguiente desarrollo es [Q2: grafo y PageRank](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md); esperar su commit y prompt ejecutables antes de iniciar nuevos jobs en mac24. No repetir instalación, descarga, entrenamiento ni diagnósticos históricos por recibir este plan.
 
 ## 1. Obtener el código
 

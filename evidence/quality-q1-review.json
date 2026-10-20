@@ -1,0 +1,358 @@
+{
+  "review_status": "passed",
+  "q1_closed": true,
+  "execution_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+  "received_commit": "c0fe79ee20043a9234e1c9d359ad6335d9070f8b",
+  "checked": {
+    "closed_archives": 5,
+    "archive_inventory_and_sha256": true,
+    "summary_matches_raw_metrics": true,
+    "package_ids_and_source_commit": true,
+    "configuration_lock_and_resources": true,
+    "same_hm_inputs": true,
+    "distinct_full_snapshots": true,
+    "pilot_v3_same_full_snapshot": true,
+    "sequential_execution": true,
+    "budget_reconciled": true,
+    "no_swap_or_oom": true,
+    "readonly_inputs_and_no_network": true,
+    "test_reserved": true,
+    "v3_historical_aggregate_comparison_recomputed": true
+  },
+  "runs": [
+    {
+      "run_id": "quality-mac24-20261020T201526Z-09fc3714",
+      "size": "demo",
+      "fold": "V3",
+      "archive_sha256": "f1d6efc898743304fed2fc331b23cc97a94b9a4c426d6340c5d317724035c1e1",
+      "package_id": "d6df38e2da4d526356994f757d2237aa66d1449695ca2bfc1ea5bddacfede9f5",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201526Z-09fc3714"
+    },
+    {
+      "run_id": "quality-mac24-20261020T201604Z-9415f25d",
+      "size": "pilot",
+      "fold": "V3",
+      "archive_sha256": "b98a359f793b11f9804c7923e9542f0c3f593a0e8fb766e2a9dc26a82ef7b585",
+      "package_id": "9a54b2f35f654da4f87f1d3d7067bbeb59787b54d8833a808243a482e5c3d84a",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201604Z-9415f25d"
+    },
+    {
+      "run_id": "quality-mac24-20261020T201629Z-9e5fc20a",
+      "size": "full",
+      "fold": "V1",
+      "archive_sha256": "a948ebcf770fd2fc063f0e1f8cf96969c8da8febe4fd7794643e7aecbb48a729",
+      "package_id": "a465cd4fe4fc78574bebc7bf5358ee29a76133350bb167d6616e7d64c0238913",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201629Z-9e5fc20a"
+    },
+    {
+      "run_id": "quality-mac24-20261020T201718Z-80c2b832",
+      "size": "full",
+      "fold": "V2",
+      "archive_sha256": "3c5f89bfea9edf50664e40e733d267e6c4613cdec835163375375913d7177fa4",
+      "package_id": "33d8f77268fdecebf0ae97ef121a70737b6087c02a01a5522b6ea7d6d105210a",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201718Z-80c2b832"
+    },
+    {
+      "run_id": "quality-mac24-20261020T201805Z-63eb4569",
+      "size": "full",
+      "fold": "V3",
+      "archive_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76",
+      "package_id": "8d7f9a8300318f3d1b1b83f52e2cd13bc3889cadc591c4db3a4699ca8dbf5253",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201805Z-63eb4569"
+    }
+  ],
+  "full_folds": [
+    {
+      "fold": "V1",
+      "population": {
+        "catalog_size": 101151,
+        "sampled_out_users": 0,
+        "users": 80253,
+        "validation_buyers": 80253
+      },
+      "P": {
+        "map_at_12": 0.00682845,
+        "ndcg_at_12": 0.01336663,
+        "recall_at_200": 0.17618543
+      },
+      "H": {
+        "map_at_12": 0.01936354,
+        "ndcg_at_12": 0.02936683,
+        "recall_at_200": 0.19345198
+      },
+      "relative_gain_percent": {
+        "map_at_12": 183.57147877,
+        "ndcg_at_12": 119.70261892,
+        "recall_at_200": 9.80021975
+      },
+      "recent_history_fraction": 0.43572203,
+      "discovery": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.00654421,
+            "ndcg_at_12": 0.01271148,
+            "recall_at_200": 0.17206316
+          },
+          "relevant_items": 246170,
+          "users": 78475
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.00456927,
+            "ndcg_at_12": 0.00981075,
+            "recall_at_200": 0.17107214
+          },
+          "relevant_items": 246170,
+          "users": 78475
+        }
+      },
+      "repeat": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.01068657,
+            "ndcg_at_12": 0.01965252,
+            "recall_at_200": 0.25342933
+          },
+          "relevant_items": 9002,
+          "users": 7266
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.26711498,
+            "ndcg_at_12": 0.32283112,
+            "recall_at_200": 0.60988628
+          },
+          "relevant_items": 9002,
+          "users": 7266
+        }
+      },
+      "top12_coverage": {
+        "P": 0.00011863,
+        "H": 0.18712618
+      },
+      "out_of_catalog_relevant_items": 6330
+    },
+    {
+      "fold": "V2",
+      "population": {
+        "catalog_size": 101945,
+        "sampled_out_users": 0,
+        "users": 75822,
+        "validation_buyers": 75822
+      },
+      "P": {
+        "map_at_12": 0.00673213,
+        "ndcg_at_12": 0.01400663,
+        "recall_at_200": 0.18032371
+      },
+      "H": {
+        "map_at_12": 0.02272145,
+        "ndcg_at_12": 0.03416696,
+        "recall_at_200": 0.20157019
+      },
+      "relative_gain_percent": {
+        "map_at_12": 237.50763587,
+        "ndcg_at_12": 143.93412208,
+        "recall_at_200": 11.78241233
+      },
+      "recent_history_fraction": 0.44099338,
+      "discovery": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.00652767,
+            "ndcg_at_12": 0.01345312,
+            "recall_at_200": 0.17597977
+          },
+          "relevant_items": 228879,
+          "users": 73863
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.00463638,
+            "ndcg_at_12": 0.01054459,
+            "recall_at_200": 0.17500977
+          },
+          "relevant_items": 228879,
+          "users": 73863
+        }
+      },
+      "repeat": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.01051355,
+            "ndcg_at_12": 0.01940272,
+            "recall_at_200": 0.26982644
+          },
+          "relevant_items": 9195,
+          "users": 7383
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.29412536,
+            "ndcg_at_12": 0.35362372,
+            "recall_at_200": 0.65548445
+          },
+          "relevant_items": 9195,
+          "users": 7383
+        }
+      },
+      "top12_coverage": {
+        "P": 0.00011771,
+        "H": 0.18319682
+      },
+      "out_of_catalog_relevant_items": 12877
+    },
+    {
+      "fold": "V3",
+      "population": {
+        "catalog_size": 102967,
+        "sampled_out_users": 0,
+        "users": 72019,
+        "validation_buyers": 72019
+      },
+      "P": {
+        "map_at_12": 0.0066041,
+        "ndcg_at_12": 0.01260462,
+        "recall_at_200": 0.1675792
+      },
+      "H": {
+        "map_at_12": 0.02458902,
+        "ndcg_at_12": 0.03549285,
+        "recall_at_200": 0.19078554
+      },
+      "relative_gain_percent": {
+        "map_at_12": 272.32933886,
+        "ndcg_at_12": 181.58604505,
+        "recall_at_200": 13.84798325
+      },
+      "recent_history_fraction": 0.45007567,
+      "discovery": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.00624032,
+            "ndcg_at_12": 0.01189349,
+            "recall_at_200": 0.16334145
+          },
+          "relevant_items": 218955,
+          "users": 70127
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.00456282,
+            "ndcg_at_12": 0.00954169,
+            "recall_at_200": 0.16256622
+          },
+          "relevant_items": 218955,
+          "users": 70127
+        }
+      },
+      "repeat": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.01145241,
+            "ndcg_at_12": 0.01919588,
+            "recall_at_200": 0.25202343
+          },
+          "relevant_items": 8955,
+          "users": 7148
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.32364806,
+            "ndcg_at_12": 0.38317808,
+            "recall_at_200": 0.66633174
+          },
+          "relevant_items": 8955,
+          "users": 7148
+        }
+      },
+      "top12_coverage": {
+        "P": 0.00011654,
+        "H": 0.17840667
+      },
+      "out_of_catalog_relevant_items": 11385
+    }
+  ],
+  "unweighted_fold_means": {
+    "P": {
+      "map_at_12": 0.00672156,
+      "ndcg_at_12": 0.01332596,
+      "recall_at_200": 0.17469611
+    },
+    "H": {
+      "map_at_12": 0.02222467,
+      "ndcg_at_12": 0.03300888,
+      "recall_at_200": 0.19526924
+    }
+  },
+  "relative_gain_of_fold_means_percent": {
+    "map_at_12": 230.64741352,
+    "ndcg_at_12": 147.70357419,
+    "recall_at_200": 11.77652264
+  },
+  "historical_parity": {
+    "reference_run_id": "diagnose-mac24-20261020T184112Z-4b76ee72",
+    "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
+    "absolute_tolerance": "1e-10",
+    "methods": {
+      "P": {
+        "max_absolute_metric_delta": 0.0,
+        "exposure_and_segments_match": true
+      },
+      "H": {
+        "max_absolute_metric_delta": 0.0,
+        "exposure_and_segments_match": true
+      }
+    }
+  },
+  "resources": {
+    "full_wall_seconds": 108.179411,
+    "max_full_rss_gib": 2.239624,
+    "max_full_cgroup_gib": 2.563431,
+    "minimum_free_disk_gib": 202.40369,
+    "charged_seconds": {
+      "demo": 7.146425,
+      "pilot": 12.151669,
+      "full": 108.349356,
+      "summary": 0
+    },
+    "remaining_seconds": {
+      "full_q1_q3": 84491.650644,
+      "pilot": 7187.848331,
+      "q4_reserved": 1800
+    }
+  },
+  "scope": {
+    "quality_accepted": false,
+    "test_evaluated": false,
+    "Q2_implemented": false,
+    "T4_started": false
+  },
+  "limitations": [
+    "Ranks and per-buyer metrics remain on mac24. Exact rank parity is reported by the worker; this review independently compared aggregates and hashes, not private rows.",
+    "606 original files matched before/after according to mac24. Features were omitted from its new pre-run inventory; 113 train/validation feature files were checked against historical manifests afterward. Those private inventories were not transferred.",
+    "Three full folds are descriptive temporal validation, not a fresh holdout test or a new clustered confidence interval. Q4 must use the retained per-buyer data.",
+    "Measured times include offline verification/IO; they are not serving latency."
+  ],
+  "summary_correction": {
+    "field": "runs[full V3].historical_reference.absolute_tolerance",
+    "reported_summary": 0.0,
+    "raw_report": "1e-10",
+    "cause": "Blanket rounding to eight decimals; raw ZIP is correct."
+  },
+  "decision": {
+    "q1": "closed",
+    "reference": "H: history28d plus popularity7d",
+    "next_step": "Q2 implementation: weighted item graph and bounded personalized PageRank control",
+    "repeat_q1": false,
+    "change_protocol": false,
+    "final_model_selected": false
+  },
+  "findings": [
+    "H exceeds P in MAP@12, NDCG@12 and Recall@200 on each full fold.",
+    "The unweighted mean of three fold MAP values is 0.02222467 for H versus 0.00672156 for P; relative gain 230.65%. This is descriptive, not a new confidence interval.",
+    "For 55–56% of weekly buyers there is no recent28 history; H falls back to P exactly.",
+    "Discovery-only MAP is 26.88–30.18% lower for H than P on the same target population in each fold. Repeated-item gains explain why overall metrics improve. This motivates testing the already planned graph/ranker without changing the frozen protocol.",
+    "The three full jobs used 108.179411 seconds in total, maximum cgroup peak 2.563431 GiB, no swap/OOM. These are offline job costs, not serving latency."
+  ]
+}
