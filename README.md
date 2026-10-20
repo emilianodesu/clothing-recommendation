@@ -26,9 +26,13 @@ Sigue [T3 en la segunda Mac](docs/second-mac.md#t3-entrenar-y-devolver-evidencia
 
 El diagnóstico de demo y full en mac24 ya pasó; la [evidencia](evidence/mac24-t3-diagnostics-2026-10-19.json) muestra que popularidad de 7 días supera al modelo y confirma concentración alta. La calidad permanece pendiente de revisión. Para [diagnosticar concentración y personalización](docs/diagnostics.md) se usa `diagnose-job`: reproduce la evaluación del checkpoint full, compara popularidad de 7/28 días y mide cambios al modificar las entradas del usuario. Reutiliza pesos en lectura y devuelve agregados por GitHub. No entrena ni evalúa test; la aceptación de calidad sigue pendiente.
 
-## Siguiente experimento: tres épocas
+## Experimento de tres épocas
 
-El [procedimiento de tres épocas](docs/three-epochs.md) prepara un candidato nuevo con una sola variable modificada y compara ambos checkpoints con bootstrap pareado y diez permutaciones entre usuarios conocidos. La secuencia de mac24 produce cuatro reportes por GitHub: entrenamiento/comparación demo y entrenamiento/comparación full. Test sigue reservado; no configura SSH ni inicia T4.
+El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro reportes aprobados en mac24, descargados y verificados en la máquina principal. [Resultados](evidence/mac24-three-epochs-2026-10-20.json): MAP/NDCG empeoraron frente a una época, aunque Recall y cobertura mejoraron; popularidad7d supera ambos modelos. La calidad no se aceptó. Test sigue reservado y T4 permanece pendiente.
+
+## Siguiente paso: historial reciente
+
+La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. `diagnose-job --protocol recent-history` reutiliza pesos en lectura: mac24 devuelve dos reportes, demo y full. No requiere otro entrenamiento ni nuevas dependencias.
 
 ## Instalar la infraestructura del proyecto
 

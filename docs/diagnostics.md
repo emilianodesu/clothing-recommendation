@@ -199,3 +199,9 @@ Contraste repetido sólo entre conocidos: normal menos el promedio de diez permu
 | 1 época | Recall@200 | +0.000669827 | [-0.001325094, +0.002625671] |
 
 La asignación correcta del ID aporta MAP y NDCG al candidato frente a estas permutaciones; el intervalo de Recall incluye cero. Esto no demuestra causalidad ni aceptación de calidad. Siguiente acción: revisar en la máquina principal los cuatro reportes y decidir otro experimento mediante una nueva instrucción; T4 permanece pendiente.
+
+## Revisión en la máquina principal y siguiente paso
+
+Los cuatro ZIP anteriores se descargaron y verificaron por inventario, tamaños, SHA-256, package ID y commit limpio. Se conciliaron límites efectivos de 10 GiB/3 CPU/2 hilos, tres épocas/filas, ambos replay, población, diez permutaciones y deltas pareados. La evidencia coincide con los reportes. Los hashes intactos de los pesos son una comprobación realizada en mac24: aquí sólo se recibieron reportes, no los modelos. Auditoría local: `artifacts/reviews/mac24-three-epochs-review.json`.
+
+Se mantiene `quality_accepted=false`; aumentar épocas no resolvió la calidad. El siguiente paso solicitado queda preparado en [recent-history.md](recent-history.md): medir compras recientes explícitas con popularidad como respaldo y el aporte incremental del modelo de una época. Reglas fijadas antes de ejecutarlo, dos diagnósticos por GitHub, sin nuevo entrenamiento ni test/T4.

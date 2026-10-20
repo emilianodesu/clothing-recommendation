@@ -1,6 +1,6 @@
 # Iniciar la segunda Mac y devolver resultados
 
-Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **T1 ya pasó en mac24. T2 está disponible; todavía no hay un comando de entrenamiento.** No hace falta copiar H&M para esta comprobación.
+Esta guía permite que otra Mac Apple Silicon de 24 GB reproduzca la infraestructura y devuelva evidencia a la Mac de desarrollo. **T1, T2 y T3 ya se ejecutaron en mac24; la calidad continúa en validación.** Las secciones de instalación se conservan para clonar en equipos nuevos. El siguiente paso en mac24 es [validar historial reciente](recent-history.md): dos diagnósticos sobre checkpoints existentes, sin repetir instalación, descarga o entrenamiento.
 
 ## 1. Obtener el código
 

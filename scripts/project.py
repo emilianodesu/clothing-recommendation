@@ -136,7 +136,7 @@ def main():
                         "tests/integration/test_ingest.py", "tests/integration/test_data_pipeline.py", "-q")
             if args.suite == "diagnostics":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
-                        "tests/integration/test_diagnostics.py", "tests/integration/test_epoch_comparison.py", "-q")
+                        "tests/integration/test_diagnostics.py", "tests/integration/test_epoch_comparison.py", "tests/integration/test_recent_history.py", "-q")
             if args.suite == "model":
                 compose(ROOT, values, "up", "--detach", "--wait", "--wait-timeout", "240", "mlflow")
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",

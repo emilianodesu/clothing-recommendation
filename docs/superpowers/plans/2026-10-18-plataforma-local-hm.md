@@ -207,7 +207,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 
 Paso previo a aceptar calidad: [diagnóstico reproducible](../../diagnostics.md) sobre el checkpoint cerrado. Reproduce métricas, mide concentración y sensibilidad a entradas, y compara popularidad reciente usando únicamente validación. El código puede estar implementado sin que la ejecución full en mac24 haya concluido.
 
-El siguiente experimento autorizado se especifica en [tres épocas](../../three-epochs.md): candidato desde cero y comparación pareada contra la época original y popularidad reciente. La calidad sigue abierta hasta revisar resultados físicos; test y T4 permanecen pendientes.
+El experimento de [tres épocas](../../three-epochs.md) ya se ejecutó y sus cuatro reportes fueron verificados: empeoró MAP/NDCG frente a una época y no superó popularidad7d. La calidad sigue abierta. El siguiente paso preparado es [historial reciente](../../recent-history.md), con un prefijo de compras recientes y respaldo de popularidad o del modelo existente; no requiere reentrenar. Test y T4 permanecen pendientes.
 
 ## Task 4 · T4 — Versión portable, índice y API de recomendaciones
 

@@ -14,16 +14,19 @@ from hm_recommender.model.diagnostics import DiagnosticConfig, diagnose, verifie
 from hm_recommender.model.train import telemetry
 from hm_recommender.model.comparison import ComparisonConfig, compare_models
 from hm_recommender.model.comparison_contract import validate_comparison_sources
+from hm_recommender.model.recent_history import HistoryConfig, validate_recent_history
 
 
 def run(config_path, run_dir, *, verify=True):
     metadata = json.loads((run_dir / 'environment.json').read_text())
     source = metadata['diagnostic_source']
     reference = metadata.get('diagnostic_reference')
+    protocol = metadata.get('diagnostic_protocol', 'standard')
     artifacts = run_dir.parent.parent
     result = {'stage': 'T3-diagnostics', 'status': 'running', 'source_commit': metadata['source_commit'],
               'source_run_id': source['run_id'], 'verification_exit_code': None,
-              'comparison_required': bool(reference), 'reference_run_id': reference['run_id'] if reference else None}
+              'comparison_required': bool(reference), 'reference_run_id': reference['run_id'] if reference else None,
+              'diagnostic_protocol': protocol}
     started = time.monotonic()
     code = None
     def phase(name):
@@ -32,9 +35,11 @@ def run(config_path, run_dir, *, verify=True):
         print('Diagnostic phase: ' + name, flush=True)
     try:
         phase('verification')
-        config = (ComparisonConfig if reference else DiagnosticConfig).model_validate_json(config_path.read_text())
+        if protocol not in ('standard','recent-history') or (protocol == 'recent-history' and reference):
+            raise ValueError('Incompatible diagnostic protocol')
+        config = (HistoryConfig if protocol == 'recent-history' else ComparisonConfig if reference else DiagnosticConfig).model_validate_json(config_path.read_text())
         atomic_json(run_dir / 'config.resolved.json', config.model_dump())
-        code = subprocess.run([sys.executable, '-m', 'pytest', 'tests/unit', 'tests/integration/test_diagnostics.py', 'tests/integration/test_epoch_comparison.py', '-q']).returncode if verify else 0
+        code = subprocess.run([sys.executable, '-m', 'pytest', 'tests/unit', 'tests/integration/test_diagnostics.py', 'tests/integration/test_epoch_comparison.py', 'tests/integration/test_recent_history.py', '-q']).returncode if verify else 0
         result['verification_exit_code'] = code
         if code:
             raise ValueError('Diagnostic image tests failed')
@@ -51,7 +56,13 @@ def run(config_path, run_dir, *, verify=True):
         model_dir = safe_file(artifacts, 'training/' + source['experiment_id'])
         model = verified_model(model_dir, inputs, source)
         dataset = load_dataset(artifacts / 'training-demo-v1/dataset' if training_config.demo else Path('/data/processed/hm-v1'))
-        result['diagnostic'] = diagnose(model, inputs, dataset, source['evaluation'], config, progress=phase)
+        if protocol == 'recent-history':
+            validation = validate_recent_history(model, inputs, dataset, source, config, progress=phase)
+            result['history_validation'] = validation
+            result['diagnostic'] = {'replay_verified':validation['model_replay_verified'], 'replay':validation['replay'],
+                                    'test_evaluated':False, 'quality_accepted':False}
+        else:
+            result['diagnostic'] = diagnose(model, inputs, dataset, source['evaluation'], config, progress=phase)
         if reference:
             phase('reference_integrity')
             validate_comparison_sources(source, reference)

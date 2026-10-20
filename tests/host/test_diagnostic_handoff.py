@@ -135,3 +135,27 @@ class ComparisonReportTests(unittest.TestCase):
                         source_commit='a'*40,source_clean=True,status='passed',result=result,
                         steps=[dict(name='diagnose',log='job.log',status='passed',exit_code=0)])
             with self.assertRaises(ValueError):package_report(directory,report)
+
+
+class HistoryReportTests(unittest.TestCase):
+    def test_history_protocol_cannot_pass_with_ordinary_diagnostic_only(self):
+        result={'stage':'T3-diagnostics','status':'passed','verification_exit_code':0,
+                'source_run_id':'train-fixture','diagnostic_protocol':'recent-history',
+                'diagnostic':{'replay_verified':True,'quality_accepted':False,'test_evaluated':False}}
+        state={'Running':False,'ExitCode':0,'OOMKilled':False}
+        self.assertNotEqual(data_job.classify_result(state,result,'T3-diagnostics',require_history=True),'passed')
+        with tempfile.TemporaryDirectory() as tmp:
+            directory=Path(tmp)/'diagnose-fixture-history'; directory.mkdir()
+            (directory/'job.log').write_text('ordinary diagnostic only')
+            (directory/'result.json').write_text(json.dumps(result))
+            report=dict(schema_version=1,kind='diagnostic-handoff',run_id=directory.name,machine_id='fixture',context='colima',
+                        source_commit='a'*40,source_clean=True,status='passed',result=result,
+                        steps=[dict(name='diagnose',log='job.log',status='passed',exit_code=0)])
+            with self.assertRaises(ValueError):package_report(directory,report)
+
+    def test_history_protocol_rejects_incomplete_payload_even_if_completed_flag_is_true(self):
+        from handoff import history_complete
+        result={'source_run_id':'train-fixture','history_validation':{
+            'source_run_id':'train-fixture','completed':True,'model_replay_verified':True,
+            'quality_accepted':False,'test_evaluated':False}}
+        self.assertFalse(history_complete(result))

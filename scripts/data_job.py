@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime, timezone
 
 from bootstrap import read_configuration
-from handoff import comparison_complete, NAME, execute, local_environment, now, package_report, validate_context, write_json
+from handoff import comparison_complete, history_complete, NAME, execute, local_environment, now, package_report, validate_context, write_json
 from project import compose
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +28,7 @@ def validate_run_id(value):
     return value
 
 
-def classify_result(state, result, stage='T2', *, require_comparison=False):
+def classify_result(state, result, stage='T2', *, require_comparison=False, require_history=False):
     if state.get('Running'):
         return 'running'
     if state.get('ExitCode') == 130 and not state.get('OOMKilled'):
@@ -36,6 +36,8 @@ def classify_result(state, result, stage='T2', *, require_comparison=False):
     if state.get('OOMKilled') or state.get('ExitCode', 0) != 0:
         return 'failed'
     if require_comparison and not comparison_complete(result or {}):
+        return 'interrupted'
+    if require_history and not history_complete(result or {}):
         return 'interrupted'
     if result and result.get('status') == 'passed' and result.get('stage') == stage and result.get('verification_exit_code') == 0:
         return 'passed'
@@ -107,7 +109,7 @@ def effective_limits(info):
             'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
 
 
-def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None, reference_run=None):
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None, reference_run=None, diagnostic_protocol='standard'):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
     resources = load_resources(resource_profile)
@@ -115,13 +117,17 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
     if reference_run and not diagnostic_run:
         raise ValueError('La referencia requiere un diagnóstico')
+    if diagnostic_protocol not in ('standard','recent-history'):
+        raise ValueError('Protocolo de diagnóstico desconocido')
+    if diagnostic_protocol != 'standard' and (not diagnostic_run or reference_run):
+        raise ValueError('Historial reciente requiere un solo origen de diagnóstico')
     if diagnostic_run and (training_config or resume_run):
         raise ValueError('Diagnóstico y entrenamiento son trabajos separados')
     if training_config is not None and training_config not in TRAINING_PROFILES:
         raise ValueError('Perfil de entrenamiento desconocido')
     config_file = ROOT / 'configs/training' / (training_config + '.json') if training_config else ROOT / 'configs' / ('hm.yaml' if dataset == 'hm' else 'demo.yaml')
     if diagnostic_run:
-        config_file = ROOT / 'configs/diagnostics' / ('epochs.json' if reference_run else 'validation.json')
+        config_file = ROOT / 'configs/diagnostics' / ('recent-history.json' if diagnostic_protocol == 'recent-history' else 'epochs.json' if reference_run else 'validation.json')
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
     limits = requested_limits(resources)
@@ -161,7 +167,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
                    resumed_from=resume_run['run_id'] if resume_run else None,
                    scope='T3 training and validation only; no test tuning or serving')
     if diagnostic_source:
-        run.update(diagnostic_source=diagnostic_source, scope='T3 read-only validation diagnostics; no retraining or test evaluation')
+        run.update(diagnostic_source=diagnostic_source, diagnostic_protocol=diagnostic_protocol,
+                   scope='T3 read-only validation diagnostics; no retraining or test evaluation')
     if diagnostic_reference:
         run.update(diagnostic_reference=diagnostic_reference, scope='T3 paired epoch comparison; no test evaluation or serving')
     launch_lock = (directory / '.launch.lock').open('a')
@@ -301,7 +308,8 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2', require_comparison=bool(run.get('diagnostic_reference')))
+        status = classify_result(state, result, 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
+            require_comparison=bool(run.get('diagnostic_reference')), require_history=run.get('diagnostic_protocol') == 'recent-history')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
     return directory, run, env, state, result, status

@@ -54,6 +54,7 @@ def main(argv=None):
     launch.add_argument('--resources', default='mac24')
     launch.add_argument('--source-run-id', required=True)
     launch.add_argument('--reference-run-id', help='Comparar tres épocas con un entrenamiento cerrado de referencia')
+    launch.add_argument('--protocol', choices=('standard','recent-history'), default='standard', help='Protocolo fijo de validación, sin reentrenamiento')
     launch.add_argument('--expected-commit', required=True)
     for name in ('status', 'stop', 'export'):
         command = commands.add_parser(name)
@@ -61,7 +62,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.action == 'start':
-            start(args.machine_id, args.profile, 'hm', args.expected_commit, args.resources, diagnostic_run=args.source_run_id, reference_run=args.reference_run_id)
+            start(args.machine_id, args.profile, 'hm', args.expected_commit, args.resources, diagnostic_run=args.source_run_id,
+                  reference_run=args.reference_run_id, diagnostic_protocol=args.protocol)
         else:
             if not args.run_id.startswith('diagnose-'):
                 raise ValueError('Se requiere run_id de diagnóstico')

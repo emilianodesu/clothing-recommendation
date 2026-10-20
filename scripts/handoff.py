@@ -154,6 +154,31 @@ def comparison_complete(result):
             and comparison.get('candidate_run_id') == result.get('source_run_id'))
 
 
+def history_complete(result):
+    """A completed replay alone is insufficient for the recent-history protocol."""
+    value = result.get('history_validation')
+    if not isinstance(value, dict):
+        return False
+    try:
+        controls = value['history_controls']
+        expected = value['config']['permutation_repeats']
+        return (value['completed'] is True and value['model_replay_verified'] is True
+                and value['protocol'] == 'recent-history-v1'
+                and value['test_evaluated'] is False and value['quality_accepted'] is False
+                and value['source_run_id'] == result['source_run_id']
+                and set(value['methods']) == {'model','popular_7d','recent_then_popular','recent_then_model'}
+                and set(value['paired']) == {'recent_popular_vs_popular','recent_popular_vs_model',
+                    'recent_model_vs_recent_popular','recent_model_vs_popular','recent_model_vs_model'}
+                and value['population']['users'] >= controls['users'] >= 2
+                and type(expected) is int and 2 <= expected <= 30
+                and all(len(controls[name]['permutations']) == expected and
+                        all(row['unchanged_owner_rows'] == 0 for row in controls[name]['permutations']) and
+                        controls[name]['normal_vs_mean_permuted']['users'] == controls['users']
+                        for name in ('recent_then_popular','recent_then_model')))
+    except (KeyError, TypeError):
+        return False
+
+
 def package_report(run, report):
     (run / 'summary.md').write_text(summary(report))
     names = ['summary.md']
@@ -228,6 +253,8 @@ def read_report(archive):
             environment = json.loads(bundle.read('environment.json')) if 'environment.json' in names else {}
             if (result.get('comparison_required') or environment.get('diagnostic_reference')) and not comparison_complete(result):
                 raise ValueError('Comparación requerida incompleta')
+            if (result.get('diagnostic_protocol') == 'recent-history' or environment.get('diagnostic_protocol') == 'recent-history') and not history_complete(result):
+                raise ValueError('Validación de historial requerida incompleta')
         if report.get('kind') in ('training-handoff', 'diagnostic-handoff'):
             identity = dict(report)
             package_id = identity.pop('package_id', None)

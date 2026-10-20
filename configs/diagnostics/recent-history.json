@@ -1,0 +1,8 @@
+{
+  "seed": 42,
+  "sample_users": 5000,
+  "bootstrap_resamples": 2000,
+  "permutation_repeats": 10,
+  "history_days": 28,
+  "popularity_days": 7
+}
