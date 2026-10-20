@@ -123,3 +123,79 @@ Eliminar el ID reduce las métricas; permutar IDs o historiales apenas las empeo
 ## Comparación del siguiente candidato
 
 El [experimento de tres épocas](three-epochs.md) añade `--reference-run-id` para comparar dos checkpoints cerrados con intervalos pareados y permutaciones repetidas. La ejecución anterior de este documento permanece como evidencia del modelo de una época; no se sobrescribe ni acredita el candidato nuevo.
+
+
+## Experimento de tres épocas ejecutado en mac24
+
+Los cuatro pasos finalizaron con `passed` desde el commit limpio `41e41037a3e203a683d94226ee535b56079563fc`. Los cuatro ZIP se exportaron, validaron y publicaron con descarga verificada. La [evidencia agregada](../evidence/mac24-three-epochs-2026-10-20.json) conserva métricas, intervalos, recursos, hashes y controles completos. Las horas de los run_id son UTC; la ejecución atravesó la medianoche local del 19 al 20 de octubre de 2026 (America/Mexico_City).
+
+Colima `hm-project`: 14 GiB/4 CPU. Recursos solicitados y efectivos de cada trabajo: 10 GiB/3 CPU/2 hilos. Un trabajo pesado a la vez, Mac despierta y TLS validado. Los 9 archivos de la demo original y los 10 del full original conservaron sus SHA-256. No se evaluó test ni se inició T4.
+
+| Paso / Release | Estado | Tiempo de job | Pico RSS / cgroup |
+| --- | --- | ---: | ---: |
+| Entrenamiento demo: [train-mac24-20261020T055728Z-18b99f69](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T055728Z-18b99f69) | passed | 6.559 s | 0.418 / 0.458 GiB |
+| Comparación demo: [diagnose-mac24-20261020T055813Z-1a6f12b6](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T055813Z-1a6f12b6) | passed | 4.491 s | 0.331 / 0.458 GiB |
+| Entrenamiento full: [train-mac24-20261020T055912Z-d76319c1](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T055912Z-d76319c1) | passed | 790.859 s | 1.871 / 4.122 GiB |
+| Comparación full: [diagnose-mac24-20261020T061256Z-b53ce9d7](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T061256Z-b53ce9d7) | passed | 353.868 s | 2.515 / 3.857 GiB |
+
+Los tiempos del job excluyen construcción de imagen. Swap pico y eventos OOM: cero en los cuatro trabajos. El límite combinado memoria+swap es 20 GiB; no representa uso de swap. La demo consumió 1,152 ejemplos en tres épocas y empató sus métricas con la referencia de dos épocas: los tres intervalos candidato−referencia fueron [0, 0]. Es una comprobación operativa, no evidencia de mejora en H&M.
+
+Full se entrenó desde cero: **3 épocas, 68,023,995 ejemplos** (22,674,665 por época), 1,351,314 usuarios de entrenamiento y 16,767 pasos. Entrenamiento: 735.978 s; job con evaluación y tracking: 790.859 s. MLflow verificado: `d824eff3faca45b18ccc24248e373770` (la demo no requiere registro MLflow). Verificación: salida 0.
+
+Ambas comparaciones reprodujeron los dos checkpoints y marcaron `comparison.completed=true`. Full evaluó 72,019 compradores y 102,967 artículos. Las diez permutaciones por modelo terminaron con semillas 42–51 y cero posiciones fijas: 4,583 usuarios conocidos, excluidos 417 desconocidos de la muestra de 5,000.
+
+| Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | ---: | ---: | ---: |
+| Full 3 épocas | 0.004903911 | 0.010222874 | 0.145741838 |
+| Full 1 época | 0.005768773 | 0.011201051 | 0.138934855 |
+| Popularidad histórica | 0.003444009 | 0.006318059 | 0.064267564 |
+| Popularidad 7 días | 0.006604104 | 0.012604620 | 0.167579202 |
+| Popularidad 28 días | 0.005592524 | 0.011816721 | 0.144753568 |
+
+Intervalos pareados percentiles al 95%, 2,000 remuestreos de usuarios, semilla 42. Son condicionales a estos checkpoints; no estiman variabilidad entre semillas ni prueban causalidad. Las métricas secundarias son descriptivas, sin corrección por comparaciones múltiples.
+
+| Contraste | Métrica | Delta | IC 95% |
+| --- | --- | ---: | --- |
+| 3 épocas − 1 época | MAP@12 | -0.000864861 | [-0.001195255, -0.000538909] |
+| 3 épocas − 1 época | NDCG@12 | -0.000978177 | [-0.001403608, -0.000565990] |
+| 3 épocas − 1 época | Recall@200 | +0.006806984 | [+0.005286360, +0.008311503] |
+| 3 épocas − pop. 7 días | MAP@12 | -0.001700193 | [-0.002085518, -0.001305536] |
+| 3 épocas − pop. 7 días | NDCG@12 | -0.002381746 | [-0.002832486, -0.001945498] |
+| 3 épocas − pop. 7 días | Recall@200 | -0.021837364 | [-0.023539295, -0.020120733] |
+| 1 época − pop. 7 días | MAP@12 | -0.000835332 | [-0.001160955, -0.000533405] |
+| 1 época − pop. 7 días | NDCG@12 | -0.001403569 | [-0.001821447, -0.001006177] |
+| 1 época − pop. 7 días | Recall@200 | -0.028644347 | [-0.030455026, -0.026896716] |
+
+El candidato empeora MAP y NDCG frente a una época, aunque mejora Recall. Popularidad de siete días lo supera en las tres métricas, con los tres intervalos por debajo de cero. **Éxito operativo; criterio de calidad no cumplido, `quality_accepted=false`.** No se ajustaron hiperparámetros después del resultado.
+
+| Concentración del candidato | Top12 | Top200 |
+| --- | ---: | ---: |
+| Artículos distintos | 126 | 1,113 |
+| Listas ordenadas distintas | 53,035 | 66,625 |
+| Conjuntos distintos | 3,340 | 66,614 |
+| Cobertura | 0.12237% | 1.08093% |
+| Artículos efectivos | 25.46 | 345.01 |
+| Exposición top10 | 66.21% | 5.00% |
+
+La cobertura top12 pasó de 53 a 126 artículos y top200 de 536 a 1,113. La coincidencia media top12 entre usuarios bajó de 74.82% a 62.05% (Jaccard 0.4855; listas ordenadas idénticas 0.64%). Esta mayor diversidad no compensa la pérdida de relevancia.
+
+Controles individuales sobre los mismos 5,000 compradores; deltas control−normal:
+
+| Control | Delta MAP | Delta NDCG | Delta Recall | Coincidencia top12 |
+| --- | ---: | ---: | ---: | ---: |
+| ID cero | -0.001767768 | -0.003382740 | -0.042131998 | 32.44% |
+| ID permutado | -0.001016663 | -0.000951030 | -0.004530148 | 64.44% |
+| Historial permutado | -0.000845353 | -0.001074152 | -0.005492117 | 79.78% |
+
+Contraste repetido sólo entre conocidos: normal menos el promedio de diez permutaciones por usuario.
+
+| Modelo | Métrica | Delta | IC 95% |
+| --- | --- | ---: | --- |
+| 3 épocas | MAP@12 | +0.001175736 | [+0.000318894, +0.002192310] |
+| 3 épocas | NDCG@12 | +0.001289001 | [+0.000271031, +0.002418885] |
+| 3 épocas | Recall@200 | +0.002138982 | [-0.000972546, +0.005360723] |
+| 1 época | MAP@12 | -0.000012620 | [-0.000338513, +0.000298688] |
+| 1 época | NDCG@12 | -0.000014739 | [-0.000519756, +0.000440985] |
+| 1 época | Recall@200 | +0.000669827 | [-0.001325094, +0.002625671] |
+
+La asignación correcta del ID aporta MAP y NDCG al candidato frente a estas permutaciones; el intervalo de Recall incluye cero. Esto no demuestra causalidad ni aceptación de calidad. Siguiente acción: revisar en la máquina principal los cuatro reportes y decidir otro experimento mediante una nueva instrucción; T4 permanece pendiente.
