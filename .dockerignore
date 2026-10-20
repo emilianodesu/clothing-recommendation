@@ -5,6 +5,8 @@
 !src/**
 !tests/
 !tests/**
+!scripts/
+!scripts/handoff.py
 !configs/
 !configs/**
 !migrations/
