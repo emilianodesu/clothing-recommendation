@@ -60,4 +60,28 @@ La [evidencia local](../evidence/cpu-feasibility.json) corresponde a una Mac de 
 | 1,000 usuarios | 15,415 | 0.886 GiB | 0.000000 | 0.003729 |
 | 10,000 usuarios | 163,472 | 0.976 GiB | 0.001865 | 0.003341 |
 
-Estos resultados comprueban ejecución, sin demostrar todavía calidad suficiente: los pilotos omiten muchos usuarios del vocabulario entrenado y ambos están por debajo de popularidad. mac24 debe ejecutar la época completa y devolver validación/segmentos antes de aceptar el modelo o decidir ajustes. Cualquier ajuste posterior usa validación; test sigue reservado. No se extrapola duración ni RAM de estos pilotos para afirmar factibilidad de full.
+Estos resultados comprueban ejecución, sin demostrar todavía calidad suficiente: los pilotos omiten muchos usuarios del vocabulario entrenado y ambos están por debajo de popularidad. La ejecución posterior de mac24, documentada abajo, completa la época y aporta validación/segmentos para revisar el modelo antes de aceptarlo o decidir ajustes. Cualquier ajuste posterior usa validación; test sigue reservado. No se extrapola duración ni RAM de estos pilotos para afirmar factibilidad de full.
+
+
+## Evidencia física de mac24
+
+El 19 de octubre de 2026 (America/Mexico_City; run_id fechados el 20 en UTC), las cuatro corridas pasaron desde el commit limpio `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. La suite model pasó 61 pruebas: 14 de contenedor y 47 de host. Colima tuvo 14 GiB/4 CPU y cada job verificó 10 GiB/3 CPU/2 hilos. Todos fueron primer intento, sin swap ni eventos OOM. La [evidencia agregada](../evidence/mac24-t3-2026-10-19.json) conserva identidades, límites, segmentos, MLflow, huellas y enlaces de Releases.
+
+| Configuración | Filas consumidas | Épocas | Entrenamiento / job (s) | Pico RSS / cgroup del job (GiB) |
+| --- | ---: | ---: | ---: | ---: |
+| demo | 768 | 2 | 0.088 / 6.525 | 0.425 / 0.458 |
+| hm-small | 15,415 | 1 | 3.234 / 16.045 | 1.126 / 1.628 |
+| hm-medium | 163,472 | 1 | 4.687 / 17.213 | 1.128 / 1.654 |
+| hm-full | 22,674,665 | 1 | 247.391 / 309.936 | 1.912 / 4.089 |
+
+Full evaluó los 72,019 compradores de validación contra 102,967 artículos, sin muestreo de compradores:
+
+| Métrica | Modelo | Popularidad |
+| --- | ---: | ---: |
+| MAP@12 | 0.005768773 | 0.003444009 |
+| NDCG@12 | 0.011201051 | 0.006318059 |
+| Recall@200 | 0.138934855 | 0.064267564 |
+
+La cobertura top-12 fue 0.000514728 (0.05147%): 53 artículos distintos. La época completa demuestra capacidad en este presupuesto y supera popularidad en estas métricas de validación; la concentración requiere revisión antes de aceptar calidad. Los pilotos tienen poblaciones diferentes y no acreditan una mejora gradual comparable. Test permanece reservado; no se inició T4.
+
+Los tres trabajos H&M verificaron tracking HTTP en MLflow local, puerto 5001; la demo guarda su reporte local por diseño. Los reportes se publicaron y verificaron por descarga antes del siguiente tamaño. Datos, pesos y checkpoints permanecen en mac24. Los tiempos de entrenamiento excluyen evaluación/tracking; el tiempo de job los incluye, pero excluye construcción.

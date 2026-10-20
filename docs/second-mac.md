@@ -273,3 +273,17 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py artifacts/incomi
 ```
 
 La descarga valida inventario, SHA-256 y la identidad del paquete; repetirla es idempotente y rechaza contenido distinto. Los reportes se leen sin ejecutar nada ni importar pesos. La publicación no despierta automáticamente al agente de la otra Mac: avisa aquí cuando esté disponible.
+
+
+### Resultado T3 de mac24 disponible para la máquina principal
+
+Las cuatro corridas terminaron `passed` en el commit `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. Full completó una época de 22,674,665 ejemplos; ver [métricas y limitaciones](evaluation.md#evidencia-física-de-mac24) y [evidencia agregada](../evidence/mac24-t3-2026-10-19.json). Cada run_id coincide con experiment_id, intento 1.
+
+| Configuración | Reporte publicado y verificado |
+| --- | --- |
+| demo | [train-mac24-20261020T004703Z-a09df9b2](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004703Z-a09df9b2) |
+| hm-small | [train-mac24-20261020T004742Z-07e2f111](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004742Z-07e2f111) |
+| hm-medium | [train-mac24-20261020T004826Z-f8b7869f](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004826Z-f8b7869f) |
+| hm-full | [train-mac24-20261020T004913Z-9d2fb726](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004913Z-9d2fb726) |
+
+Para recibirlos, usa `SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download RUN_ID` con cada identificador de la tabla. La descarga valida el paquete. Los IDs MLflow y las métricas/segmentos están en la evidencia; no es necesario acceder a MLflow de mac24 para leerlos. Revisar la cobertura baja antes de aceptar calidad o decidir nuevos experimentos. Esta publicación no inicia T4 ni ejecuta al agente de la máquina principal.

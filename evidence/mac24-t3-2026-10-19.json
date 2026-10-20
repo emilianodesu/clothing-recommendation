@@ -1,0 +1,553 @@
+{
+  "schema_version": 1,
+  "stage": "T3",
+  "machine_id": "mac24",
+  "status": "passed",
+  "local_date": "2026-10-19",
+  "timezone": "America/Mexico_City",
+  "source_commit": "6ba7e6e7972c655fb780cdade995a2bf8f54db36",
+  "physical_ram_gib": 24,
+  "colima": {
+    "profile": "hm-project",
+    "configured_memory_gib": 14,
+    "engine_memory_bytes": 14623768576,
+    "cpus": 4
+  },
+  "verification": {
+    "suite": "model",
+    "status": "passed",
+    "container_tests": 14,
+    "host_tests": 47,
+    "total": 61,
+    "warning": "PyTorch sparse tensor invariant checks warning; tests passed"
+  },
+  "full_epoch_proven": true,
+  "full_epoch_required_rows": 22674665,
+  "test_evaluated": false,
+  "runs": [
+    {
+      "run_id": "train-mac24-20261020T004703Z-a09df9b2",
+      "experiment_id": "train-mac24-20261020T004703Z-a09df9b2",
+      "attempt": 1,
+      "configuration": "demo",
+      "source_commit": "6ba7e6e7972c655fb780cdade995a2bf8f54db36",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004703Z-a09df9b2",
+      "archive_sha256": "1d956abb1c0796d94b5e9d470f31daa7e8a26b073a60bfadb730de4426c40d2d",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rows_consumed": 768,
+      "eligible_train_labels": 384,
+      "epochs": 2,
+      "training_duration_seconds": 0.08765333500014094,
+      "job_duration_seconds": 6.5250977309997324,
+      "training_peak_rss_bytes": 456237056,
+      "job_peak_rss_bytes": 456630272,
+      "job_cgroup_peak_bytes": 491745280,
+      "job_swap_peak_bytes": 0,
+      "job_memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "evaluation": {
+        "coverage": 1.0,
+        "evaluated_users": 33,
+        "exact_catalog_size": 24,
+        "excluded_population": "registered customers",
+        "excluded_users": 0,
+        "map_at_12": 0.9747474747474747,
+        "ndcg_at_12": 0.9817057694109114,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 1,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.20251596047050593,
+          "ndcg_at_12": 0.3371445045045612,
+          "recall_at_200": 0.9898989898989898
+        },
+        "recall_at_200": 0.9898989898989898,
+        "sampled_out_users": 0,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.9895833333333333,
+            "ndcg_at_12": 0.9926675199058944,
+            "recall_at_200": 0.9895833333333333,
+            "users": 32
+          },
+          "new_user": {
+            "map_at_12": 0.5,
+            "ndcg_at_12": 0.6309297535714575,
+            "recall_at_200": 1.0,
+            "users": 1
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.6666666666666666,
+            "ndcg_at_12": 0.7653606369886217,
+            "recall_at_200": 0.6666666666666666,
+            "users": 1
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 33
+      },
+      "mlflow": null,
+      "input_identity": {
+        "config": {
+          "batch_size": 64,
+          "checkpoint_steps": 2,
+          "demo": true,
+          "epochs": 2,
+          "eval_users": 0,
+          "learning_rate": 0.05,
+          "max_users": 0,
+          "min_free_bytes": 1073741824,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "1bdb8e8f6ebfbb792152cc978a28677f6daecc0250055f67584b9afaadeaf42e",
+        "feature_manifest_sha256": "21450e6b6e51df56681185dd86c266adb9b57ad57d08fd603e0adc4c58cb96de",
+        "model_input_sha256": "98e1e446d9de562573a53c89dfcce57f3f16880fa11427fc6f942131f0481c33",
+        "sha256": "c06aa02c8b129af923a45254c620ba6e032568aa840ebae01006746b6632ab03",
+        "source_sha256": "bf9a6176acb626253a422fce3e96bb3ce8331d7be6cd60b768f4956d284c12ee"
+      },
+      "verification_exit_code": 0
+    },
+    {
+      "run_id": "train-mac24-20261020T004742Z-07e2f111",
+      "experiment_id": "train-mac24-20261020T004742Z-07e2f111",
+      "attempt": 1,
+      "configuration": "hm-small",
+      "source_commit": "6ba7e6e7972c655fb780cdade995a2bf8f54db36",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004742Z-07e2f111",
+      "archive_sha256": "b5b6d193b019ff7b28477da5dfd288b690cc18dd11c78598958dcf8cc3a6dbd8",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rows_consumed": 15415,
+      "eligible_train_labels": 22674665,
+      "epochs": 1,
+      "training_duration_seconds": 3.2343586950000827,
+      "job_duration_seconds": 16.045030835000034,
+      "training_peak_rss_bytes": 943202304,
+      "job_peak_rss_bytes": 1209147392,
+      "job_cgroup_peak_bytes": 1748459520,
+      "job_swap_peak_bytes": 0,
+      "job_memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "evaluation": {
+        "coverage": 0.0010003204910311071,
+        "evaluated_users": 1000,
+        "exact_catalog_size": 102967,
+        "excluded_population": "registered customers",
+        "excluded_users": 1299961,
+        "map_at_12": 0.0,
+        "ndcg_at_12": 0.0,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 141,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.003729008451865595,
+          "ndcg_at_12": 0.007641339866399013,
+          "recall_at_200": 0.07152647352647352
+        },
+        "recall_at_200": 0.002565079365079365,
+        "sampled_out_users": 71019,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.0,
+            "users": 38
+          },
+          "new_user": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.002666402666402666,
+            "users": 962
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": 0.0,
+            "recall_at_200": 0.005791505791505791,
+            "users": 111
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 72019
+      },
+      "mlflow": {
+        "artifact_uri": "mlflow-artifacts:/1/6d95c02884a84e4d976596b7bf14d3fc/artifacts",
+        "run_id": "6d95c02884a84e4d976596b7bf14d3fc",
+        "transport": "http",
+        "verified": true
+      },
+      "input_identity": {
+        "config": {
+          "batch_size": 4096,
+          "checkpoint_steps": 250,
+          "demo": false,
+          "epochs": 1,
+          "eval_users": 1000,
+          "learning_rate": 0.05,
+          "max_users": 1000,
+          "min_free_bytes": 10737418240,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+        "feature_manifest_sha256": "1cb1482a13aeba66c3eb9ad7338ae0a54f4df72d967574c10f6264dd99dab225",
+        "model_input_sha256": "7288f2530dbdff37c8c959e9b5f2505bf05c114153e51d057ea2ff6856ebe693",
+        "sha256": "3fb896774dab05d690aacfe402d66df1ac87d36fe851c2b10ac7b653712a246f",
+        "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+      },
+      "verification_exit_code": 0
+    },
+    {
+      "run_id": "train-mac24-20261020T004826Z-f8b7869f",
+      "experiment_id": "train-mac24-20261020T004826Z-f8b7869f",
+      "attempt": 1,
+      "configuration": "hm-medium",
+      "source_commit": "6ba7e6e7972c655fb780cdade995a2bf8f54db36",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004826Z-f8b7869f",
+      "archive_sha256": "7222019fed1f263c6add7b00e01bccebe71b633d27f98a3366aaffdba0c8f394",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rows_consumed": 163472,
+      "eligible_train_labels": 22674665,
+      "epochs": 1,
+      "training_duration_seconds": 4.686633157999495,
+      "job_duration_seconds": 17.21312589399986,
+      "training_peak_rss_bytes": 1058803712,
+      "job_peak_rss_bytes": 1210867712,
+      "job_cgroup_peak_bytes": 1775980544,
+      "job_swap_peak_bytes": 0,
+      "job_memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "evaluation": {
+        "coverage": 0.0002525080851146484,
+        "evaluated_users": 2000,
+        "exact_catalog_size": 102967,
+        "excluded_population": "registered customers",
+        "excluded_users": 1299961,
+        "map_at_12": 0.0018649786556036556,
+        "ndcg_at_12": 0.004389054078439159,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 303,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.0033411170806706522,
+          "ndcg_at_12": 0.006970180018839161,
+          "recall_at_200": 0.06744059343434343
+        },
+        "recall_at_200": 0.05500021991896992,
+        "sampled_out_users": 70019,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.00075830865898586,
+            "ndcg_at_12": 0.0023268780835941113,
+            "recall_at_200": 0.045530190902651396,
+            "users": 443
+          },
+          "new_user": {
+            "map_at_12": 0.002179850080460228,
+            "ndcg_at_12": 0.004975787518205605,
+            "recall_at_200": 0.057694646928750974,
+            "users": 1557
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.0004679470139996456,
+            "ndcg_at_12": 0.0017378859568189012,
+            "recall_at_200": 0.034899305129568285,
+            "users": 228
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 72019
+      },
+      "mlflow": {
+        "artifact_uri": "mlflow-artifacts:/1/8dbf378f557140d9bd92fb7eb58c88b7/artifacts",
+        "run_id": "8dbf378f557140d9bd92fb7eb58c88b7",
+        "transport": "http",
+        "verified": true
+      },
+      "input_identity": {
+        "config": {
+          "batch_size": 4096,
+          "checkpoint_steps": 250,
+          "demo": false,
+          "epochs": 1,
+          "eval_users": 2000,
+          "learning_rate": 0.05,
+          "max_users": 10000,
+          "min_free_bytes": 10737418240,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+        "feature_manifest_sha256": "1cb1482a13aeba66c3eb9ad7338ae0a54f4df72d967574c10f6264dd99dab225",
+        "model_input_sha256": "7288f2530dbdff37c8c959e9b5f2505bf05c114153e51d057ea2ff6856ebe693",
+        "sha256": "4e5df9c4036accc46ddb6c5dc795f89398f4925f4c60a26f09335e7004e642ca",
+        "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+      },
+      "verification_exit_code": 0
+    },
+    {
+      "run_id": "train-mac24-20261020T004913Z-9d2fb726",
+      "experiment_id": "train-mac24-20261020T004913Z-9d2fb726",
+      "attempt": 1,
+      "configuration": "hm-full",
+      "source_commit": "6ba7e6e7972c655fb780cdade995a2bf8f54db36",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004913Z-9d2fb726",
+      "archive_sha256": "13ef876adf2955e3a33c4bcd18b95db054fce5c46a8a9bae64d8888cc7356fd7",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "requested_limits": {
+        "memory_bytes": 10737418240,
+        "cpus": 3,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rows_consumed": 22674665,
+      "eligible_train_labels": 22674665,
+      "epochs": 1,
+      "training_duration_seconds": 247.39128836299915,
+      "job_duration_seconds": 309.9357041409994,
+      "training_peak_rss_bytes": 1906593792,
+      "job_peak_rss_bytes": 2053414912,
+      "job_cgroup_peak_bytes": 4390334464,
+      "job_swap_peak_bytes": 0,
+      "job_memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "evaluation": {
+        "coverage": 0.0005147280196567832,
+        "evaluated_users": 72019,
+        "exact_catalog_size": 102967,
+        "excluded_population": "registered customers",
+        "excluded_users": 1299961,
+        "map_at_12": 0.005768772780180198,
+        "ndcg_at_12": 0.011201051085701753,
+        "new_item_recall_at_200": 0.0,
+        "out_of_catalog_relevant_items": 11385,
+        "period_end": "2020-09-16",
+        "period_start": "2020-09-09",
+        "popularity": {
+          "map_at_12": 0.0034440087457057516,
+          "ndcg_at_12": 0.006318058900555215,
+          "recall_at_200": 0.064267563886081
+        },
+        "recall_at_200": 0.1389348547991153,
+        "sampled_out_users": 0,
+        "segments": {
+          "known_user": {
+            "map_at_12": 0.005853223972399668,
+            "ndcg_at_12": 0.011331051652699913,
+            "recall_at_200": 0.1401797255513596,
+            "users": 66624
+          },
+          "new_user": {
+            "map_at_12": 0.004725867084085673,
+            "ndcg_at_12": 0.009595646493359701,
+            "recall_at_200": 0.12356168167631133,
+            "users": 5395
+          },
+          "users_with_new_items": {
+            "map_at_12": 0.0036932217754958065,
+            "ndcg_at_12": 0.009374596207316436,
+            "recall_at_200": 0.08439651279336584,
+            "users": 8418
+          }
+        },
+        "test_evaluated": false,
+        "validation_buyers": 72019
+      },
+      "mlflow": {
+        "artifact_uri": "mlflow-artifacts:/1/a2f532d44719452dbc0f301ff424574f/artifacts",
+        "run_id": "a2f532d44719452dbc0f301ff424574f",
+        "transport": "http",
+        "verified": true
+      },
+      "input_identity": {
+        "config": {
+          "batch_size": 4096,
+          "checkpoint_steps": 250,
+          "demo": false,
+          "epochs": 1,
+          "eval_users": 0,
+          "learning_rate": 0.05,
+          "max_users": 0,
+          "min_free_bytes": 10737418240,
+          "negatives": 8,
+          "seed": 42,
+          "temperature": 0.1
+        },
+        "examples_manifest_sha256": "649de8f9149b0d840c4ce5034510b9f2075c67f6cd611d24a1c62722b8cd164f",
+        "feature_manifest_sha256": "1cb1482a13aeba66c3eb9ad7338ae0a54f4df72d967574c10f6264dd99dab225",
+        "model_input_sha256": "7288f2530dbdff37c8c959e9b5f2505bf05c114153e51d057ea2ff6856ebe693",
+        "sha256": "827e25c39d08409ca81c68e40a2a9345aa530cdc4a049ce2cf6c9895cb5be11f",
+        "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+      },
+      "verification_exit_code": 0
+    }
+  ],
+  "quality_conclusion": "Full exceeds popularity MAP@12, NDCG@12 and Recall@200 for all 72019 validation buyers. Top-12 coverage is only 53 of 102967 catalog items (0.05147%); quality requires review before acceptance. Pilot populations differ.",
+  "scope": "CPU capacity and validation; no test evaluation or T4. Weights remain local.",
+  "notes": [
+    "All runs attempt 1; experiment_id equals run_id.",
+    "Job RSS/cgroup peaks include evaluation and tracking; cgroup includes file cache.",
+    "Training duration excludes evaluation/tracking; job duration includes them but excludes build.",
+    "Reports published and download-verified sequentially.",
+    "cpu-feasibility.json preserves prior dev16 evidence."
+  ]
+}

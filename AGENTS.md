@@ -4,7 +4,7 @@ Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md
 
 ## Si tu tarea es continuar con T3 en mac24
 
-Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. Entrenamiento ya está implementado; su época completa debe demostrarse con resultados reales. Usa el commit recibido, clon limpio, Colima `hm-project` 14 GiB/4 CPU y `--resources mac24` 10 GiB/3 CPU/2 hilos. Conserva el prefijo `SSL_CERT_FILE=/etc/ssl/cert.pem`.
+Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. La época completa ya pasó en mac24: `evidence/mac24-t3-2026-10-19.json` contiene cuatro corridas aprobadas y sus Releases. Revisa esa evidencia antes de repetir. La calidad requiere revisión por cobertura baja; T4 no se inició. Usa el commit recibido, clon limpio, Colima `hm-project` 14 GiB/4 CPU y `--resources mac24` 10 GiB/3 CPU/2 hilos. Conserva el prefijo `SSL_CERT_FILE=/etc/ssl/cert.pem`.
 
 - Reutiliza los datos/features T2; no los borres ni modifiques. Prepara `tracking-up --port 5001` y `verify --suite model` con `DOCKER_CONTEXT=colima-hm-project`.
 - Ejecuta `train-job start` con configuraciones demo, hm-small, hm-medium y hm-full, una por una. Cada una exige `--expected-commit SHA_COMPLETO`. Espera estado final, exporta, valida y publica cada intento por GitHub Releases privado; ya está autorizado. Ante fallo, conserva evidencia y no avances al siguiente tamaño.
@@ -13,7 +13,7 @@ Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. Entrenamiento
 
 ## Si tu tarea es continuar con T2 en mac24
 
-T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`. T2 sintético y completo también pasaron en mac24; consulta `evidence/mac24-t2-2026-10-19.json` y sus Releases antes de solicitar otra ejecución. T3 sigue pendiente.
+T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`. T2 sintético y completo también pasaron en mac24; consulta `evidence/mac24-t2-2026-10-19.json` y sus Releases antes de solicitar otra ejecución. La evidencia T3 posterior está en `evidence/mac24-t3-2026-10-19.json`.
 
 - En futuros intentos de host usa el prefijo solicitado por el usuario: `SSL_CERT_FILE=/etc/ssl/cert.pem`. No desactives TLS. En otra red, cualquier CA adicional debe proceder de la confianza local del equipo.
 - Fija el commit recibido en un clon limpio; conserva cambios existentes. Descarga H&M directamente de Kaggle con una credencial propia y `scripts/project.py download-data`; no transfieras el ZIP por GitHub.
