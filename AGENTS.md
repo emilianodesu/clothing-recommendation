@@ -2,6 +2,10 @@
 
 Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Stack acordado: Docker local, PostgreSQL, Qdrant y PyTorch CPU; sin TensorFlow, Hopsworks ni servicios de nube de pago.
 
+## Si tu tarea es ejecutar el experimento de tres épocas en mac24
+
+Sigue `docs/three-epochs.md` con el commit recibido. El usuario eligió continuar por GitHub; no configures SSH ni claves. Secuencia: `train-job --config demo-3epochs` → comparación con `train-mac24-20261020T004703Z-a09df9b2` → `train-job --config hm-full-3epochs` → comparación con `train-mac24-20261020T004913Z-9d2fb726`. Para comparar usa `diagnose-job start --source-run-id NUEVO --reference-run-id ORIGINAL`. Espera estados finales y exporta, valida y publica cada reporte, incluso si falla. Un fallo operativo detiene la secuencia; una métrica peor es un resultado válido, no motivo para ajustar código o hiperparámetros. El candidato full parte de cero y consume68,023,995 ejemplos en tres épocas. No reanudes el original cambiando epochs. Mantén Colima14GiB/4CPU, recursos mac24, SSL_CERT_FILE y checkpoints originales. No uses test ni inicies T4. Esta sección corresponde al siguiente experimento y prevalece sobre repetir la secuencia histórica T3 de abajo.
+
 ## Si tu tarea es continuar con T3 en mac24
 
 Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. La época completa ya pasó en mac24: `evidence/mac24-t3-2026-10-19.json` contiene cuatro corridas aprobadas y sus Releases. Revisa esa evidencia antes de repetir. La calidad requiere revisión por cobertura baja; T4 no se inició. Usa el commit recibido, clon limpio, Colima `hm-project` 14 GiB/4 CPU y `--resources mac24` 10 GiB/3 CPU/2 hilos. Conserva el prefijo `SSL_CERT_FILE=/etc/ssl/cert.pem`.

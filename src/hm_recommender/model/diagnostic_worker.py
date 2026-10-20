@@ -12,14 +12,18 @@ from hm_recommender.data.ingest import load_dataset
 from hm_recommender.model.inputs import TrainConfig, Inputs, load_features
 from hm_recommender.model.diagnostics import DiagnosticConfig, diagnose, verified_model
 from hm_recommender.model.train import telemetry
+from hm_recommender.model.comparison import ComparisonConfig, compare_models
+from hm_recommender.model.comparison_contract import validate_comparison_sources
 
 
 def run(config_path, run_dir, *, verify=True):
     metadata = json.loads((run_dir / 'environment.json').read_text())
     source = metadata['diagnostic_source']
+    reference = metadata.get('diagnostic_reference')
     artifacts = run_dir.parent.parent
     result = {'stage': 'T3-diagnostics', 'status': 'running', 'source_commit': metadata['source_commit'],
-              'source_run_id': source['run_id'], 'verification_exit_code': None}
+              'source_run_id': source['run_id'], 'verification_exit_code': None,
+              'comparison_required': bool(reference), 'reference_run_id': reference['run_id'] if reference else None}
     started = time.monotonic()
     code = None
     def phase(name):
@@ -28,9 +32,9 @@ def run(config_path, run_dir, *, verify=True):
         print('Diagnostic phase: ' + name, flush=True)
     try:
         phase('verification')
-        config = DiagnosticConfig.model_validate_json(config_path.read_text())
+        config = (ComparisonConfig if reference else DiagnosticConfig).model_validate_json(config_path.read_text())
         atomic_json(run_dir / 'config.resolved.json', config.model_dump())
-        code = subprocess.run([sys.executable, '-m', 'pytest', 'tests/unit', 'tests/integration/test_diagnostics.py', '-q']).returncode if verify else 0
+        code = subprocess.run([sys.executable, '-m', 'pytest', 'tests/unit', 'tests/integration/test_diagnostics.py', 'tests/integration/test_epoch_comparison.py', '-q']).returncode if verify else 0
         result['verification_exit_code'] = code
         if code:
             raise ValueError('Diagnostic image tests failed')
@@ -48,6 +52,16 @@ def run(config_path, run_dir, *, verify=True):
         model = verified_model(model_dir, inputs, source)
         dataset = load_dataset(artifacts / 'training-demo-v1/dataset' if training_config.demo else Path('/data/processed/hm-v1'))
         result['diagnostic'] = diagnose(model, inputs, dataset, source['evaluation'], config, progress=phase)
+        if reference:
+            phase('reference_integrity')
+            validate_comparison_sources(source, reference)
+            reference_archive = safe_file(artifacts, 'handoff/' + reference['run_id'] + '.zip')
+            if sha256(reference_archive) != reference['archive_sha256']:
+                raise ValueError('Reference archive checksum changed')
+            reference_inputs = Inputs(features, TrainConfig.model_validate(reference['config']))
+            reference_model = verified_model(safe_file(artifacts, 'training/' + reference['experiment_id']), reference_inputs, reference)
+            del reference_inputs
+            result['comparison'] = compare_models(model, reference_model, inputs, dataset, source, reference, config, progress=phase)
         result['status'] = 'passed'
         phase('complete')
         return 0

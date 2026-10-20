@@ -94,3 +94,44 @@ class DiagnosticSourceTests(unittest.TestCase):
             self.assertEqual(len(source['archive_sha256']), 64)
             with self.assertRaises(ValueError): diagnose_job.source_for(artifacts, 'train-fixture', 'e'*64)
             with self.assertRaises(ValueError): diagnose_job.source_for(artifacts, '../train-fixture', 'b'*64)
+
+class ThreeEpochLaunchTests(unittest.TestCase):
+    setUp = resource_tests.ResourceLaunchTests.setUp
+    capture = resource_tests.ResourceLaunchTests.capture
+
+    def test_three_epoch_profiles_reach_correct_worker_and_tracking_mode(self):
+        import train_job
+        from contextlib import redirect_stdout
+        from io import StringIO
+        original = Path(__file__).resolve().parents[2]
+        (self.root/'configs/training').mkdir()
+        for name, dataset in [('demo-3epochs','synthetic'), ('hm-full-3epochs','hm')]:
+            with self.subTest(name=name):
+                (self.root/'configs/training'/(name+'.json')).write_bytes((original/'configs/training'/(name+'.json')).read_bytes())
+                self.build.reset_mock(); self.commands.clear()
+                with redirect_stdout(StringIO()):
+                    self.assertEqual(train_job.main(['start','--config',name,'--expected-commit','a'*40,'--resources','mac24']),0)
+                create=next(c for c in self.commands if c[:2]==('docker','create'))
+                self.assertIn('/opt/hmrec/configs/training/'+name+'.json',create)
+                self.assertEqual(create[create.index('--network')+1], 'none' if dataset=='synthetic' else 'fixture_backend')
+                tracking=any('mlflow' in call.args for call in self.build.call_args_list)
+                self.assertEqual(tracking,dataset=='hm')
+
+    def test_missing_comparison_cannot_mark_a_comparison_job_passed(self):
+        result={'stage':'T3-diagnostics','status':'passed','verification_exit_code':0}
+        state={'Running':False,'ExitCode':0,'OOMKilled':False}
+        self.assertNotEqual(data_job.classify_result(state,result,'T3-diagnostics',require_comparison=True),'passed')
+
+
+class ComparisonReportTests(unittest.TestCase):
+    def test_passed_package_requires_completed_comparison_when_requested(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory=Path(tmp)/'diagnose-mac24-incomplete';directory.mkdir()
+            (directory/'job.log').write_text('incomplete comparison')
+            result={'stage':'T3-diagnostics','status':'passed','verification_exit_code':0,'comparison_required':True,
+                    'diagnostic':{'replay_verified':True,'quality_accepted':False,'test_evaluated':False}}
+            (directory/'result.json').write_text(json.dumps(result))
+            report=dict(schema_version=1,kind='diagnostic-handoff',run_id=directory.name,machine_id='mac24',context='colima',
+                        source_commit='a'*40,source_clean=True,status='passed',result=result,
+                        steps=[dict(name='diagnose',log='job.log',status='passed',exit_code=0)])
+            with self.assertRaises(ValueError):package_report(directory,report)

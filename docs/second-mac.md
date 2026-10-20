@@ -303,3 +303,7 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download diagn
 ```
 
 La descarga valida los paquetes. La conclusión requiere revisión: full pierde frente a popularidad de 7 días y comparte muchas recomendaciones entre usuarios. `passed` acredita ejecución e integridad; `quality_accepted` sigue en false. No se inició T4 ni se repitieron entrenamientos. La publicación no activa automáticamente al agente principal.
+
+## T3: siguiente experimento de tres épocas
+
+Continúa con [el protocolo de tres épocas](three-epochs.md). Reutiliza datos y modelos originales; crea un candidato aparte y publica cuatro reportes cerrados. Esta secuencia reemplaza repetir los pilotos históricos. Todo el intercambio sigue por GitHub, sin SSH.

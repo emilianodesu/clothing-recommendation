@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from data_job import capture, export, inspect_run, start
+from data_job import TRAINING_PROFILES, capture, export, inspect_run, start
 
 
 def main(argv=None):
@@ -16,7 +16,7 @@ def main(argv=None):
     launch.add_argument('--machine-id', default='mac24')
     launch.add_argument('--profile', default='hm-project')
     launch.add_argument('--resources', default='mac24')
-    launch.add_argument('--config', choices=('demo', 'hm-small', 'hm-medium', 'hm-full'), required=True)
+    launch.add_argument('--config', choices=TRAINING_PROFILES, required=True)
     launch.add_argument('--expected-commit', required=True)
     for name in ('status', 'stop', 'resume', 'export'):
         command = commands.add_parser(name)
@@ -24,7 +24,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.action == 'start':
-            start(args.machine_id, args.profile, 'synthetic' if args.config == 'demo' else 'hm',
+            start(args.machine_id, args.profile, 'synthetic' if args.config.startswith('demo') else 'hm',
                   args.expected_commit, args.resources, training_config=args.config)
         else:
             if not args.run_id.startswith('train-'):

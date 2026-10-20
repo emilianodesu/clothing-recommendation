@@ -15,10 +15,11 @@ import uuid
 from datetime import datetime, timezone
 
 from bootstrap import read_configuration
-from handoff import NAME, execute, local_environment, now, package_report, validate_context, write_json
+from handoff import comparison_complete, NAME, execute, local_environment, now, package_report, validate_context, write_json
 from project import compose
 
 ROOT = Path(__file__).resolve().parents[1]
+TRAINING_PROFILES = ('demo', 'demo-3epochs', 'hm-small', 'hm-medium', 'hm-full', 'hm-full-3epochs')
 
 
 def validate_run_id(value):
@@ -27,13 +28,15 @@ def validate_run_id(value):
     return value
 
 
-def classify_result(state, result, stage='T2'):
+def classify_result(state, result, stage='T2', *, require_comparison=False):
     if state.get('Running'):
         return 'running'
     if state.get('ExitCode') == 130 and not state.get('OOMKilled'):
         return 'interrupted'
     if state.get('OOMKilled') or state.get('ExitCode', 0) != 0:
         return 'failed'
+    if require_comparison and not comparison_complete(result or {}):
+        return 'interrupted'
     if result and result.get('status') == 'passed' and result.get('stage') == stage and result.get('verification_exit_code') == 0:
         return 'passed'
     return 'interrupted'
@@ -104,19 +107,21 @@ def effective_limits(info):
             'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
 
 
-def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None):
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None, reference_run=None):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
     resources = load_resources(resource_profile)
     if expected_resources is not None and resources != expected_resources:
         raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
+    if reference_run and not diagnostic_run:
+        raise ValueError('La referencia requiere un diagnóstico')
     if diagnostic_run and (training_config or resume_run):
         raise ValueError('Diagnóstico y entrenamiento son trabajos separados')
-    if training_config is not None and training_config not in ('demo', 'hm-small', 'hm-medium', 'hm-full'):
+    if training_config is not None and training_config not in TRAINING_PROFILES:
         raise ValueError('Perfil de entrenamiento desconocido')
     config_file = ROOT / 'configs/training' / (training_config + '.json') if training_config else ROOT / 'configs' / ('hm.yaml' if dataset == 'hm' else 'demo.yaml')
     if diagnostic_run:
-        config_file = ROOT / 'configs/diagnostics/validation.json'
+        config_file = ROOT / 'configs/diagnostics' / ('epochs.json' if reference_run else 'validation.json')
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
     limits = requested_limits(resources)
@@ -128,11 +133,15 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         raise ValueError('El clon debe estar limpio; conserva cambios y haz commit antes de la corrida oficial')
     values = read_configuration(ROOT / '.env')
     dirs = paths(values)
-    diagnostic_source = None
+    diagnostic_source = diagnostic_reference = None
     if diagnostic_run:
         from diagnose_job import source_for
         diagnostic_source = source_for(dirs['ARTIFACTS_DIR'], diagnostic_run, fingerprint(ROOT / 'uv.lock'))
         dataset = 'synthetic' if diagnostic_source['config']['demo'] else 'hm'
+        if reference_run:
+            from diagnose_job import validate_comparison_sources
+            diagnostic_reference = source_for(dirs['ARTIFACTS_DIR'], reference_run, fingerprint(ROOT / 'uv.lock'))
+            validate_comparison_sources(diagnostic_source, diagnostic_reference)
     config = 'hm' if dataset == 'hm' else 'demo'
     run_id = ('diagnose-' if diagnostic_run else 'train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     directory = dirs['ARTIFACTS_DIR'] / 'data-jobs' / run_id
@@ -153,6 +162,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
                    scope='T3 training and validation only; no test tuning or serving')
     if diagnostic_source:
         run.update(diagnostic_source=diagnostic_source, scope='T3 read-only validation diagnostics; no retraining or test evaluation')
+    if diagnostic_reference:
+        run.update(diagnostic_reference=diagnostic_reference, scope='T3 paired epoch comparison; no test evaluation or serving')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
@@ -179,7 +190,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             os.environ.clear(); os.environ.update(env)
             compose(ROOT, values, 'build', 'jobs', log_path=directory / 'build.log')
             run['build_exit_code'] = 0
-            if training_config and training_config != 'demo':
+            if training_config and not training_config.startswith('demo'):
                 compose(ROOT, values, 'up', '--detach', '--wait', '--wait-timeout', '240', 'mlflow', log_path=directory / 'tracking.log')
                 run['tracking_exit_code'] = 0
         except subprocess.CalledProcessError as error:
@@ -196,13 +207,13 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
                   '--run-dir', '/artifacts/data-jobs/' + run_id]
         if diagnostic_run:
             worker = ['python', '-m', 'hm_recommender.model.diagnostic_worker',
-                      '--config', '/opt/hmrec/configs/diagnostics/validation.json',
+                      '--config', '/opt/hmrec/configs/diagnostics/' + config_file.name,
                       '--run-dir', '/artifacts/data-jobs/' + run_id]
         mounts = ['--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data' + (',readonly' if diagnostic_run else ''),
                   '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts' + (',readonly' if diagnostic_run else '')]
         if diagnostic_run:
             mounts += ['--mount', 'type=bind,source=' + str(directory) + ',target=/artifacts/data-jobs/' + run_id]
-        network = values['COMPOSE_PROJECT_NAME'] + '_backend' if training_config and training_config != 'demo' else 'none'
+        network = values['COMPOSE_PROJECT_NAME'] + '_backend' if training_config and not training_config.startswith('demo') else 'none'
         container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', network,
             '--read-only', '--tmpfs', '/tmp', '--memory', str(resources['config']['job']['memory_gib']) + 'g',
             '--cpus', str(limits['cpus']),
@@ -290,7 +301,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2')
+        status = classify_result(state, result, 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2', require_comparison=bool(run.get('diagnostic_reference')))
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
     return directory, run, env, state, result, status

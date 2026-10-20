@@ -144,6 +144,16 @@ def summary(report):
     return '\n'.join(lines) + '\n'
 
 
+def comparison_complete(result):
+    comparison = result.get('comparison') or {}
+    return (comparison.get('completed') is True and comparison.get('reference_replay_verified') is True
+            and comparison.get('candidate_replay_verified') is True
+            and comparison.get('test_evaluated') is False and comparison.get('quality_accepted') is False
+            and result.get('reference_run_id') is not None
+            and comparison.get('reference_run_id') == result.get('reference_run_id')
+            and comparison.get('candidate_run_id') == result.get('source_run_id'))
+
+
 def package_report(run, report):
     (run / 'summary.md').write_text(summary(report))
     names = ['summary.md']
@@ -215,6 +225,9 @@ def read_report(archive):
                     or diagnostic.get('quality_accepted') is not False or result.get('verification_exit_code') != 0
                     or report.get('result') != result):
                 raise ValueError('Diagnóstico incompleto o contradictorio')
+            environment = json.loads(bundle.read('environment.json')) if 'environment.json' in names else {}
+            if (result.get('comparison_required') or environment.get('diagnostic_reference')) and not comparison_complete(result):
+                raise ValueError('Comparación requerida incompleta')
         if report.get('kind') in ('training-handoff', 'diagnostic-handoff'):
             identity = dict(report)
             package_id = identity.pop('package_id', None)

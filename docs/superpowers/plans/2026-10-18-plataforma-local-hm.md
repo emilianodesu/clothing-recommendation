@@ -207,6 +207,8 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 
 Paso previo a aceptar calidad: [diagnóstico reproducible](../../diagnostics.md) sobre el checkpoint cerrado. Reproduce métricas, mide concentración y sensibilidad a entradas, y compara popularidad reciente usando únicamente validación. El código puede estar implementado sin que la ejecución full en mac24 haya concluido.
 
+El siguiente experimento autorizado se especifica en [tres épocas](../../three-epochs.md): candidato desde cero y comparación pareada contra la época original y popularidad reciente. La calidad sigue abierta hasta revisar resultados físicos; test y T4 permanecen pendientes.
+
 ## Task 4 · T4 — Versión portable, índice y API de recomendaciones
 
 **Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`. T1 ya incorporó `001_bootstrap.sql`.

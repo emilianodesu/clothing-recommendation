@@ -119,3 +119,7 @@ En la muestra determinista de 5,000 compradores, la coincidencia top12 media ent
 | Historiales permutados, ID conservado | +0.000056738 | -0.000311192 | -0.002501999 | 78.93% |
 
 Eliminar el ID reduce las métricas; permutar IDs o historiales apenas las empeora en agregado. Estos controles y la concentración requieren revisión antes de aceptar personalización; no prueban causalidad. Próximo paso: revisar esta evidencia en la máquina principal y decidir experimentos con validación mediante una nueva instrucción.
+
+## Comparación del siguiente candidato
+
+El [experimento de tres épocas](three-epochs.md) añade `--reference-run-id` para comparar dos checkpoints cerrados con intervalos pareados y permutaciones repetidas. La ejecución anterior de este documento permanece como evidencia del modelo de una época; no se sobrescribe ni acredita el candidato nuevo.

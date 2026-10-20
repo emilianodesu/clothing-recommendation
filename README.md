@@ -26,6 +26,10 @@ Sigue [T3 en la segunda Mac](docs/second-mac.md#t3-entrenar-y-devolver-evidencia
 
 El diagnóstico de demo y full en mac24 ya pasó; la [evidencia](evidence/mac24-t3-diagnostics-2026-10-19.json) muestra que popularidad de 7 días supera al modelo y confirma concentración alta. La calidad permanece pendiente de revisión. Para [diagnosticar concentración y personalización](docs/diagnostics.md) se usa `diagnose-job`: reproduce la evaluación del checkpoint full, compara popularidad de 7/28 días y mide cambios al modificar las entradas del usuario. Reutiliza pesos en lectura y devuelve agregados por GitHub. No entrena ni evalúa test; la aceptación de calidad sigue pendiente.
 
+## Siguiente experimento: tres épocas
+
+El [procedimiento de tres épocas](docs/three-epochs.md) prepara un candidato nuevo con una sola variable modificada y compara ambos checkpoints con bootstrap pareado y diez permutaciones entre usuarios conocidos. La secuencia de mac24 produce cuatro reportes por GitHub: entrenamiento/comparación demo y entrenamiento/comparación full. Test sigue reservado; no configura SSH ni inicia T4.
+
 ## Instalar la infraestructura del proyecto
 
 Requisitos del host: Docker con Compose y Buildx, Python 3.9+ y Git si se obtiene el código por clonación. No se necesita instalar PyTorch, uv ni bibliotecas científicas en el host. La primera construcción descarga imágenes y paquetes.
