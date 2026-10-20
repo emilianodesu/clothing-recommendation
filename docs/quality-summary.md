@@ -29,11 +29,12 @@ Conservar Colima `hm-project` 14 GiB/4 CPU, perfil job `mac24` 10 GiB/3 CPU/2 hi
 ```bash
 export SSL_CERT_FILE=/etc/ssl/cert.pem
 export DOCKER_CONTEXT=colima-hm-project
+docker compose --env-file .env --file compose.yaml build jobs
 python3 scripts/project.py verify --suite quality
 python3 scripts/project.py quality-job summarize --campaign configs/quality/campaign-mac24.json --machine-id mac24 --profile hm-project --resources mac24 --expected-commit SHA_COMPLETO_RECIBIDO
 ```
 
-`verify` sólo usa fixtures sintéticos. Si pasa, lanzar una única corrida Q4 full. `summarize` construye la imagen desde código limpio y usa la reserva acumulada `summary` de 1,800 s, independiente de las 23.5 h asignadas a Q1–Q3. Registra límites efectivos, RSS/cgroup/swap/OOM, disco, duración y consumo acumulado. No hay reanudación ni ampliación automática del presupuesto. Si falla, conservar y publicar el intento; detenerse antes de reintentar o cambiar parámetros.
+Actualizar Git no actualiza la imagen Docker. El paso `build jobs` anterior incluye Q4 antes de verificar; usar el `.env` y `.runtime/build-ca.pem` propios ya preparados en mac24. No copiar certificados ni credenciales entre equipos. `verify` sólo usa fixtures sintéticos. Si pasa, lanzar una única corrida Q4 full. `summarize` construye la imagen desde código limpio y usa la reserva acumulada `summary` de 1,800 s, independiente de las 23.5 h asignadas a Q1–Q3. Registra límites efectivos, RSS/cgroup/swap/OOM, disco, duración y consumo acumulado. No hay reanudación ni ampliación automática del presupuesto. Si falla, conservar y publicar el intento; detenerse antes de reintentar o cambiar parámetros.
 
 Guardar el `run_id` anunciado, consultar hasta estado final y cerrar el intercambio:
 
