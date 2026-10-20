@@ -205,3 +205,75 @@ La asignación correcta del ID aporta MAP y NDCG al candidato frente a estas per
 Los cuatro ZIP anteriores se descargaron y verificaron por inventario, tamaños, SHA-256, package ID y commit limpio. Se conciliaron límites efectivos de 10 GiB/3 CPU/2 hilos, tres épocas/filas, ambos replay, población, diez permutaciones y deltas pareados. La evidencia coincide con los reportes. Los hashes intactos de los pesos son una comprobación realizada en mac24: aquí sólo se recibieron reportes, no los modelos. Auditoría local: `artifacts/reviews/mac24-three-epochs-review.json`.
 
 Se mantiene `quality_accepted=false`; aumentar épocas no resolvió la calidad. El siguiente paso solicitado queda preparado en [recent-history.md](recent-history.md): medir compras recientes explícitas con popularidad como respaldo y el aporte incremental del modelo de una época. Reglas fijadas antes de ejecutarlo, dos diagnósticos por GitHub, sin nuevo entrenamiento ni test/T4.
+
+
+## Historial reciente validado en mac24 (20 de octubre de 2026)
+
+Protocolo `recent-history-v1`, commit limpio `d4a4f8495bc05d4458e1fb084d9411f3b9e06385`. Demo y full finalizaron `passed`, verificación 0, replay del modelo confirmado, cinco comparaciones pareadas y diez permutaciones por variante. Ambos ZIP se exportaron, validaron y publicaron con descarga verificada. [Evidencia agregada completa](../evidence/mac24-recent-history-2026-10-20.json).
+
+Colima `hm-project`: 14 GiB/4 CPU; cada job solicitó y recibió 10 GiB/3 CPU/2 hilos. Ejecución secuencial con suspensión inhibida y TLS validado. Los 19 archivos de los dos entrenamientos originales conservaron sus SHA-256. No hubo entrenamiento, evaluación de test ni T4.
+
+| Corrida / Release | Tiempo job | Pico RSS / contenedor | Swap / OOM |
+| --- | ---: | ---: | --- |
+| [diagnose-mac24-20261020T184027Z-02396100](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T184027Z-02396100) | 4.888 s | 0.333 / 0.461 GiB | 0 / 0 |
+| [diagnose-mac24-20261020T184112Z-4b76ee72](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T184112Z-4b76ee72) | 132.132 s | 1.923 / 2.568 GiB | 0 / 0 |
+
+Los tiempos excluyen construcción de imagen. Demo: 33 compradores, catálogo de 24 artículos, 32 compradores con historial y uno sin historial. Full: 72,019 compradores y 102,967 artículos; 32,414 con historial reciente y 39,605 sin historial. Prefijo medio retenido: 2.36353 artículos; 3,043 compradores llenan top12 con su historial.
+
+### Demo: métricas e intervalos
+
+| Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | ---: | ---: | ---: |
+| model | 0.97474747 | 0.98170577 | 0.98989899 |
+| popular_7d | 0.20251596 | 0.33714450 | 0.98989899 |
+| recent_then_model | 0.96565657 | 0.97430950 | 0.98989899 |
+| recent_then_popular | 0.96565657 | 0.97430950 | 0.98989899 |
+
+Contrastes pareados: delta [IC95%], 2,000 remuestreos de compradores, semilla 42.
+
+| Contraste | MAP@12 | NDCG@12 | Recall@200 |
+| --- | --- | --- | --- |
+| recent_model_vs_model | -0.00909091 [-0.02727273, +0.00000000] | -0.00739627 [-0.02218881, +0.00000000] | +0.00000000 [+0.00000000, +0.00000000] |
+| recent_model_vs_popular | +0.76314061 [+0.67306079, +0.84525809] | +0.63716499 [+0.53534391, +0.74169109] | +0.00000000 [+0.00000000, +0.00000000] |
+| recent_model_vs_recent_popular | +0.00000000 [+0.00000000, +0.00000000] | +0.00000000 [+0.00000000, +0.00000000] | +0.00000000 [+0.00000000, +0.00000000] |
+| recent_popular_vs_model | -0.00909091 [-0.02727273, +0.00000000] | -0.00739627 [-0.02218881, +0.00000000] | +0.00000000 [+0.00000000, +0.00000000] |
+| recent_popular_vs_popular | +0.76314061 [+0.67306079, +0.84525809] | +0.63716499 [+0.53534391, +0.74169109] | +0.00000000 [+0.00000000, +0.00000000] |
+
+### Full: métricas e intervalos
+
+| Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | ---: | ---: | ---: |
+| model | 0.00576877 | 0.01120105 | 0.13893485 |
+| popular_7d | 0.00660410 | 0.01260462 | 0.16757920 |
+| recent_then_model | 0.02452712 | 0.03533274 | 0.17976476 |
+| recent_then_popular | 0.02458902 | 0.03549285 | 0.19078554 |
+
+Contrastes pareados: delta [IC95%], 2,000 remuestreos de compradores, semilla 42.
+
+| Contraste | MAP@12 | NDCG@12 | Recall@200 |
+| --- | --- | --- | --- |
+| recent_model_vs_model | +0.01875834 [+0.01790050, +0.01961420] | +0.02413169 [+0.02315741, +0.02511934] | +0.04082991 [+0.03920126, +0.04249339] |
+| recent_model_vs_popular | +0.01792301 [+0.01709919, +0.01877571] | +0.02272812 [+0.02177902, +0.02370243] | +0.01218556 [+0.01075088, +0.01365701] |
+| recent_model_vs_recent_popular | -0.00006190 [-0.00012972, +0.00000903] | -0.00016011 [-0.00031133, -0.00001950] | -0.01102078 [-0.01210342, -0.00992418] |
+| recent_popular_vs_model | +0.01882025 [+0.01796394, +0.01966486] | +0.02429180 [+0.02330044, +0.02530256] | +0.05185069 [+0.04989939, +0.05395356] |
+| recent_popular_vs_popular | +0.01798491 [+0.01716408, +0.01882157] | +0.02288823 [+0.02195755, +0.02386316] | +0.02320634 [+0.02223473, +0.02420027] |
+
+### Cobertura y controles full
+
+| Método | Artículos top12 / top200 | Cobertura top12 / top200 | Exposición top10 en top12 |
+| --- | ---: | ---: | ---: |
+| model | 53 / 536 | 0.0515% / 0.5206% | 73.87% |
+| popular_7d | 12 / 200 | 0.0117% / 0.1942% | 83.33% |
+| recent_then_model | 18,370 / 19,238 | 17.8407% / 18.6837% | 58.45% |
+| recent_then_popular | 18,370 / 19,237 | 17.8407% / 18.6827% | 72.86% |
+
+Controles sobre 2,224 compradores con historial, de una muestra de 5,000 (2,776 excluidos sin historial). Diez permutaciones por variante, semillas 42–51, cero propietarios en su posición original. El reporte registra por réplica historiales idénticos pese al cambio de propietario. Normal menos promedio de diez permutaciones, delta [IC95%]:
+
+| Variante | MAP@12 | NDCG@12 | Recall@200 |
+| --- | --- | --- | --- |
+| recent_then_popular | +0.04529379 [+0.03871746, +0.05247017] | +0.05904768 [+0.05153870, +0.06734188] | +0.05806492 [+0.04988059, +0.06709963] |
+| recent_then_model | +0.04507289 [+0.03843840, +0.05226380] | +0.05865314 [+0.05128939, +0.06690224] | +0.06083768 [+0.05246759, +0.06983217] |
+
+**Éxito operativo; aceptación de calidad pendiente (`quality_accepted=false`).** Historial+popularidad mejora MAP, NDCG y Recall frente a popularidad7d, con intervalos positivos. Añadir el modelo al mismo prefijo no demuestra ganancia de MAP (IC incluye cero) y reduce NDCG y Recall respecto a historial+popularidad. Los controles miden el aporte del historial correcto; no prueban causalidad. Todos los segmentos, exposiciones y réplicas están en la evidencia agregada.
+
+Los intervalos son condicionales al checkpoint, reglas y permutaciones. Se reutilizó validación: resultados exploratorios, sin corrección por comparaciones múltiples ni evaluación de test. No se modificaron reglas, hiperparámetros o recursos tras observar resultados. La máquina principal debe revisar ambos reportes antes de aceptar calidad o autorizar otro paso.
