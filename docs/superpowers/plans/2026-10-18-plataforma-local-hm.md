@@ -207,7 +207,7 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 
 Paso previo a aceptar calidad: [diagnóstico reproducible](../../diagnostics.md) sobre el checkpoint cerrado. Reproduce métricas, mide concentración y sensibilidad a entradas, y compara popularidad reciente usando únicamente validación. El código puede estar implementado sin que la ejecución full en mac24 haya concluido.
 
-El experimento de [tres épocas](../../three-epochs.md) ya se ejecutó y sus cuatro reportes fueron verificados: empeoró MAP/NDCG frente a una época y no superó popularidad7d. La calidad sigue abierta. El siguiente paso preparado es [historial reciente](../../recent-history.md), con un prefijo de compras recientes y respaldo de popularidad o del modelo existente; no requiere reentrenar. Test y T4 permanecen pendientes.
+El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no superó popularidad7d. La campaña de [historial reciente](../../recent-history.md) también terminó y sus dos reportes fueron revisados: historial+popularidad cumple el criterio principal de validación; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. Se recomienda congelar ese candidato y revisar el diseño de T4 antes de implementarlo, porque es una regla personalizada, no un motor neuronal entrenado. El objetivo inicial de usar el modelo como ranking principal requiere una decisión de alcance; el contrato T4 de abajo se conserva como plan anterior, todavía sin adaptar. Test, aceptación final y T4 permanecen pendientes; no se inicia otro entrenamiento automáticamente.
 
 ## Task 4 · T4 — Versión portable, índice y API de recomendaciones
 

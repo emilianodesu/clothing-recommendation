@@ -59,7 +59,32 @@ Ambos reprodujeron el modelo original, completaron los cinco contrastes y los di
 
 En el piloto, MAP@12 fue 0.00619763 para popularidad7d, 0.02215935 para historial+popularidad y 0.02138851 para historial+modelo. La mejora principal tuvo intervalo [0.01118998, 0.02074775]; el aporte incremental del modelo tuvo intervalo [-0.00163704, -0.00009828]. Esto no sustituye la medición de mac24: el piloto usa otro checkpoint y sólo 2000 compradores. No se modificaron las reglas después de observarlo; calidad y comportamiento full siguen pendientes.
 
-## Ejecutar en mac24
+## Revisión de los reportes de mac24
+
+La [revisión de la máquina principal](../evidence/mac24-recent-history-review-2026-10-20.json) verificó ambos ZIP contra su inventario, SHA-256, package ID y evidencia publicada. También concilió los reportes originales de entrenamiento, configuración, replay, cinco contrastes, diez controles por variante, medias ponderadas de segmentos, recursos y aislamiento. Los 19 archivos originales intactos son una comprobación informada por mac24; los pesos no se transfirieron ni se recalcularon sus hashes aquí.
+
+Full: 72,019 compradores, 102,967 artículos, 132.132 s y 2.568 GiB de pico de contenedor, sin swap ni OOM. Estos recursos corresponden al diagnóstico offline; no prueban latencia de API.
+
+| Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | ---: | ---: | ---: |
+| Modelo de una época | 0.00576877 | 0.01120105 | 0.13893485 |
+| Popularidad7d | 0.00660410 | 0.01260462 | 0.16757920 |
+| Historial+modelo | 0.02452712 | 0.03533274 | 0.17976476 |
+| Historial+popularidad | 0.02458902 | 0.03549285 | 0.19078554 |
+
+**Candidato recomendado: historial+popularidad.** Su mejora de MAP frente a popularidad es +0.01798491, IC95% [0.01716408, 0.01882157], equivalente a +272.33% relativo. NDCG y Recall también mejoran con intervalos positivos. Cubre 18,370 artículos en top12 (17.84% del catálogo). Entre 32,414 compradores con historial, MAP es 0.04670710; los otros 39,605 reciben exactamente el respaldo popular y conservan sus métricas. En los 2,224 compradores del control, asignar el historial correcto mejora MAP frente al promedio de permutaciones, IC95% [0.03871746, 0.05247017].
+
+Añadir el modelo al mismo prefijo da un delta MAP de -0.00006190, IC95% [-0.00012972, 0.00000903]: no demuestra mejora ni una pérdida concluyente de MAP. Sí reduce NDCG y Recall con intervalos negativos. Conforme al criterio fijado, no se recomienda incorporar ese componente al ranking principal por calidad.
+
+La selección en validación cumple el criterio previsto; no equivale a aceptación final sobre test. Se mantienen inmutables los reportes con `quality_accepted=false`. La validación reutilizada es exploratoria. No se inicia otra campaña ni se evalúa test como parte de esta revisión.
+
+### Implicación para el siguiente paso
+
+El ganador es una regla personalizada de historial y popularidad, no un modelo entrenado. El entrenamiento PyTorch masivo y su evaluación siguen siendo entregables válidos, pero no se puede afirmar que aporten la mejora observada. Esto afecta el objetivo original de usar el modelo entrenado como motor principal: esa parte aún no está resuelta.
+
+Se recomienda congelar este candidato y revisar el diseño de T4 para definir un paquete portable de catálogo, historiales, popularidad, reglas y manifiesto; conservar los artefactos PyTorch como referencia experimental. Después podrán concretarse API, activación/rollback, filtros y medición de latencia/reproducción entre Macs. El papel de Qdrant debe corresponder a una estrategia que lo necesite; la regla ganadora no hace búsquedas vectoriales. Esto es una recomendación de diseño, no una implementación ni modificación automática del contrato de T4. Si sigue siendo indispensable que el modelo entrenado sirva el ranking principal, hace falta decidir ese alcance antes de cambiarlo. No se prescribe otro ajuste de entrenamiento a partir de estos resultados.
+
+## Reproducir en mac24, sólo cuando se solicite
 
 Lee AGENTS.md y fija el SHA completo recibido, con el clon limpio. Conserva cambios y trabajos existentes. No actualices código durante una corrida. Reutiliza dataset, features y checkpoints; no repitas T1/T2/entrenamiento. Colima `hm-project`: 14 GiB/4 CPU; `--resources mac24`: 10 GiB/3 CPU/2 hilos. Mantén la Mac despierta durante el worker; no basta envolver sólo `start` con `caffeinate`. Conserva `SSL_CERT_FILE=/etc/ssl/cert.pem` y TLS.
 

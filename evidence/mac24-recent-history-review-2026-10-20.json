@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-20",
+  "review_location": "primary development Mac",
+  "scope": "Read-only review of closed mac24 reports; no training, test evaluation or T4 execution",
+  "runs": [
+    {
+      "run_id": "diagnose-mac24-20261020T184027Z-02396100",
+      "source_run_id": "train-mac24-20261020T004703Z-a09df9b2",
+      "status": "passed",
+      "source_commit": "d4a4f8495bc05d4458e1fb084d9411f3b9e06385",
+      "package_id": "19de63e4721766ce997425783d911b75f18e0112e72ec80223fc38fc725e0aa8",
+      "zip_sha256": "ef039e9148a62dfdfd33b0cbce8b3aca2769718ec3b7b7b66dcbbf31d05436c9",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T184027Z-02396100",
+      "integrity_and_evidence_match": true,
+      "source_training_archive_match": true,
+      "population": {
+        "catalog_size": 24,
+        "users": 33,
+        "with_recent_history": 32,
+        "without_recent_history": 1
+      },
+      "job_duration_seconds": 4.888409,
+      "peak_rss_gib": 0.332634,
+      "cgroup_peak_gib": 0.461052,
+      "swap_peak_gib": 0,
+      "oom_events": 0
+    },
+    {
+      "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72",
+      "source_run_id": "train-mac24-20261020T004913Z-9d2fb726",
+      "status": "passed",
+      "source_commit": "d4a4f8495bc05d4458e1fb084d9411f3b9e06385",
+      "package_id": "9164c9465a6423018600c3459a55f8777e29c370d09b2ca42bf1f8bb405cb2d2",
+      "zip_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T184112Z-4b76ee72",
+      "integrity_and_evidence_match": true,
+      "source_training_archive_match": true,
+      "population": {
+        "catalog_size": 102967,
+        "users": 72019,
+        "with_recent_history": 32414,
+        "without_recent_history": 39605
+      },
+      "job_duration_seconds": 132.132405,
+      "peak_rss_gib": 1.923454,
+      "cgroup_peak_gib": 2.567974,
+      "swap_peak_gib": 0,
+      "oom_events": 0
+    }
+  ],
+  "validation_selection": {
+    "recommended_candidate": "recent_then_popular",
+    "primary_criterion_met": true,
+    "all_primary_metrics_ci_positive": true,
+    "model_incremental_gain_demonstrated": false,
+    "final_test_quality_accepted": false,
+    "metrics": {
+      "model": {
+        "map_at_12": 0.00576877,
+        "ndcg_at_12": 0.01120105,
+        "recall_at_200": 0.13893485
+      },
+      "popular_7d": {
+        "map_at_12": 0.0066041,
+        "ndcg_at_12": 0.01260462,
+        "recall_at_200": 0.1675792
+      },
+      "recent_then_model": {
+        "map_at_12": 0.02452712,
+        "ndcg_at_12": 0.03533274,
+        "recall_at_200": 0.17976476
+      },
+      "recent_then_popular": {
+        "map_at_12": 0.02458902,
+        "ndcg_at_12": 0.03549285,
+        "recall_at_200": 0.19078554
+      }
+    },
+    "recent_popular_vs_popular": {
+      "bootstrap_resamples": 2000,
+      "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+      "metrics": {
+        "map_at_12": {
+          "ci95": [
+            0.01716408,
+            0.01882157
+          ],
+          "delta": 0.01798491,
+          "left_mean": 0.02458902,
+          "right_mean": 0.0066041
+        },
+        "ndcg_at_12": {
+          "ci95": [
+            0.02195755,
+            0.02386316
+          ],
+          "delta": 0.02288823,
+          "left_mean": 0.03549285,
+          "right_mean": 0.01260462
+        },
+        "recall_at_200": {
+          "ci95": [
+            0.02223473,
+            0.02420027
+          ],
+          "delta": 0.02320634,
+          "left_mean": 0.19078554,
+          "right_mean": 0.1675792
+        }
+      },
+      "seed": 42,
+      "users": 72019
+    },
+    "recent_model_vs_recent_popular": {
+      "bootstrap_resamples": 2000,
+      "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+      "metrics": {
+        "map_at_12": {
+          "ci95": [
+            -0.00012972,
+            9.03e-06
+          ],
+          "delta": -6.19e-05,
+          "left_mean": 0.02452712,
+          "right_mean": 0.02458902
+        },
+        "ndcg_at_12": {
+          "ci95": [
+            -0.00031133,
+            -1.95e-05
+          ],
+          "delta": -0.00016011,
+          "left_mean": 0.03533274,
+          "right_mean": 0.03549285
+        },
+        "recall_at_200": {
+          "ci95": [
+            -0.01210342,
+            -0.00992418
+          ],
+          "delta": -0.01102078,
+          "left_mean": 0.17976476,
+          "right_mean": 0.19078554
+        }
+      },
+      "seed": 42,
+      "users": 72019
+    },
+    "relative_map_gain_vs_popular_percent": 272.32933886,
+    "history_control_users": 2224,
+    "history_control_map_ci": [
+      0.03871746,
+      0.05247017
+    ],
+    "recent_then_popular_segments": {
+      "unknown_model_user": {
+        "metrics": {
+          "map_at_12": 0.00639293,
+          "ndcg_at_12": 0.01244933,
+          "recall_at_200": 0.16879946
+        },
+        "users": 5395
+      },
+      "with_recent_history": {
+        "metrics": {
+          "map_at_12": 0.0467071,
+          "ndcg_at_12": 0.06323709,
+          "recall_at_200": 0.21515683
+        },
+        "users": 32414
+      },
+      "without_recent_history": {
+        "metrics": {
+          "map_at_12": 0.00648687,
+          "ndcg_at_12": 0.01278607,
+          "recall_at_200": 0.1708393
+        },
+        "users": 39605
+      }
+    },
+    "recent_then_popular_exposure_at_12": {
+      "coverage": 0.17840667,
+      "distinct_items": 18370,
+      "effective_items": 56.62772679,
+      "k": 12,
+      "top_exposure_share": {
+        "1": 0.07986666,
+        "10": 0.72862717,
+        "5": 0.39012853,
+        "50": 0.83659636
+      },
+      "unique_ordered_lists": 29646,
+      "unique_sets": 29437
+    }
+  },
+  "verification": {
+    "closed_zip_inventories_sizes_and_sha256": true,
+    "published_evidence_matches_raw_results": true,
+    "worker_verification_tests_per_job": 20,
+    "config_source_checkpoint_and_lock_match": true,
+    "resource_profile": "mac24",
+    "job_memory_gib": 10,
+    "job_cpus": 3,
+    "threads": 2,
+    "colima_cpus": 4,
+    "sequential_runs": true,
+    "model_replay_verified": true,
+    "paired_comparisons_per_run": 5,
+    "bootstrap_resamples": 2000,
+    "permutations_per_variant": 10,
+    "seed_sequence": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "segment_weighted_means_reconcile": true,
+    "no_recent_history_equals_popularity": true,
+    "network": "none",
+    "writable_mounts": "new diagnostic run directory only"
+  },
+  "original_weights": "mac24 reports 19 unchanged files; source checkpoint identity matches prior reports, but model bytes were not transferred or rehashed here",
+  "limitations": [
+    "Validation reused across experiments; conditional exploratory intervals, not independent test evidence.",
+    "No evidence of online latency or deployment from offline job duration.",
+    "Winning candidate is a history/popularity rule, not a trained neural model."
+  ],
+  "next_step_recommendation": "Freeze the candidate and revise the T4 serving/package design; no new training campaign or T4 execution initiated."
+}

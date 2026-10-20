@@ -4,6 +4,8 @@ Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md
 
 ## Si tu tarea es validar historial reciente en mac24
 
+La campaña demo/full ya terminó y fue revisada en la máquina principal: consulta `evidence/mac24-recent-history-review-2026-10-20.json`. No la repitas salvo petición explícita. Historial+popularidad cumple el criterio principal; el modelo no demuestra aporte incremental de MAP. La recomendación es revisar el diseño de T4; no hay autorización automática para iniciar otro experimento, evaluar test ni ejecutar T4. El procedimiento siguiente se conserva para reproducción.
+
 El experimento de tres épocas ya pasó operativamente, pero perdió MAP/NDCG y no cumplió calidad; no repetirlo. Sigue `docs/recent-history.md` con el commit recibido. Ejecuta `diagnose-job start --protocol recent-history` primero sobre la demo original `train-mac24-20261020T004703Z-a09df9b2` y después sobre full de una época `train-mac24-20261020T004913Z-9d2fb726`. No uses `--reference-run-id`. Son dos diagnósticos sin reentrenamiento: compras de 28 días con respaldo popularidad7d y una variante con el ranking del modelo. Comprueba estados finales, replay, todas las comparaciones y diez permutaciones por variante; exporta, valida y publica cada ZIP incluso si falla. Un fallo operativo detiene la secuencia; malas métricas son evidencia válida. Conserva recursos mac24, SSL_CERT_FILE, los originales y el commit durante las corridas. No uses test ni inicies T4. Esta sección prevalece sobre repetir los procedimientos históricos de abajo. Al terminar, actualiza evidencia y documentación según la guía; mantén calidad pendiente de revisión.
 
 ## Si tu tarea es ejecutar el experimento de tres épocas en mac24

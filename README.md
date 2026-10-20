@@ -30,11 +30,11 @@ El diagnóstico de demo y full en mac24 ya pasó; la [evidencia](evidence/mac24-
 
 El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro reportes aprobados en mac24, descargados y verificados en la máquina principal. [Resultados](evidence/mac24-three-epochs-2026-10-20.json): MAP/NDCG empeoraron frente a una época, aunque Recall y cobertura mejoraron; popularidad7d supera ambos modelos. La calidad no se aceptó. Test sigue reservado y T4 permanece pendiente.
 
-## Siguiente paso: historial reciente
+## Historial reciente: resultados revisados
 
-La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. `diagnose-job --protocol recent-history` reutiliza pesos en lectura: mac24 devuelve dos reportes, demo y full. No requiere otro entrenamiento ni nuevas dependencias.
+La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. Los dos reportes de mac24, demo y full, ya se descargaron y revisaron. Historial+popularidad cumple el criterio principal de validación; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. La [revisión](evidence/mac24-recent-history-review-2026-10-20.json) recomienda conservar historial+popularidad como candidato y revisar el diseño de T4 antes de implementarlo. Este candidato es una regla de historial y popularidad; no acredita superioridad del modelo PyTorch. Test y aceptación final siguen pendientes.
 
-La [verificación local](evidence/local-recent-history.json) pasó 96 pruebas y dos diagnósticos, demo y piloto H&M; conserva también un intento fallido de empaquetado y su corrección. La validación completa de este protocolo en mac24 está pendiente.
+La [verificación local](evidence/local-recent-history.json) pasó 96 pruebas y dos diagnósticos, demo y piloto H&M; conserva también un intento fallido de empaquetado y su corrección. La [ejecución full en mac24](evidence/mac24-recent-history-2026-10-20.json) completó 72,019 compradores y 102,967 artículos en 132.132 s, con pico de 2.568 GiB, sin swap ni OOM. Es tiempo del diagnóstico offline, no latencia del servicio.
 
 ## Instalar la infraestructura del proyecto
 
