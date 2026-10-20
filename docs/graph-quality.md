@@ -101,3 +101,44 @@ La [evidencia local Q2](../evidence/local-quality-q2.json) registra 133 pruebas 
 La [demo oficial](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T204855Z-99a612bd), commit `db3d7389da74a2d45022da37b4262f2b02a898ff`, pasó con 33 compradores, 24 artículos, 224 cestas y 48 aristas. Las 32 ejecuciones PPR con semillas convergieron; un comprador quedó fuera del contraste de personalización por no tener semillas. Duración 6.047426 s, RSS 0.434319 GiB, sin swap/OOM. Se exportó, validó, publicó y verificó la descarga del ZIP privado. G empató con H y las permutaciones no alteraron materialmente las métricas de esta fixture: no es una mejora demostrada en H&M.
 
 La implementación preserva la incidencia dispersa en RAM y persiste coocurrencias por bloques; la prueba de escala real corresponde a mac24. Reutilizar Q1 requiere conservar sus tablas privadas. El fallback G de un donante no convergente entra explícitamente en el control de permutaciones; el reporte permite separar esa limitación. La revisión no acreditó resultados H&M, selección Q3/Q4 ni despliegue T4. No hay hallazgos menores aplazados.
+
+
+## Resultados mac24: 20 de octubre de 2026
+
+Los cinco intentos Q2 pasaron desde el commit limpio `77267d02248e082259cccc4c573f9adff72d2114`. La suite `quality` pasó en mac24 después de la demo y antes del piloto. Cada ZIP se exportó, validó, publicó y descargó/verificó antes del siguiente intento. [Evidencia agregada Q2](../evidence/quality-q2-mac24.json).
+
+Colima 14 GiB/4 CPU; jobs 10 GiB/3 CPU/2 hilos, secuenciales, con suspensión inhibida. Los 500 archivos de features, entrenamientos/checkpoints y cinco `work` Q1 conservaron SHA-256 antes/después. Inventarios y tablas individuales permanecen locales. No se repitió Q1 ni entrenamiento ni se evaluó test.
+
+| Corrida / Release | Compradores | Tiempo job | RSS / cgroup GiB |
+| --- | ---: | ---: | ---: |
+| V3 demo: [quality-mac24-20261020T211723Z-03cfe799](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T211723Z-03cfe799) | 33 | 6.012 s | 0.434818 / 0.355473 |
+| V3 pilot: [quality-mac24-20261020T211825Z-12071578](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T211825Z-12071578) | 2,000 | 29.050 s | 1.838543 / 1.924377 |
+| V1 full: [quality-mac24-20261020T211909Z-cf26a40a](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T211909Z-cf26a40a) | 80,253 | 75.176 s | 1.884926 / 2.054413 |
+| V2 full: [quality-mac24-20261020T212038Z-fd730ff0](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T212038Z-fd730ff0) | 75,822 | 72.177 s | 1.885216 / 1.991974 |
+| V3 full: [quality-mac24-20261020T212206Z-00c9a0ec](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T212206Z-00c9a0ec) | 72,019 | 71.196 s | 1.853237 / 1.958664 |
+
+Sin swap ni OOM. Todas las referencias Q1 y sus artefactos privados pasaron verificación. Costes offline; no representan latencia de servicio.
+
+| Fold full | Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | --- | ---: | ---: | ---: |
+| V1 | P | 0.00682845 | 0.01336663 | 0.17618543 |
+| V1 | H | 0.01936354 | 0.02936683 | 0.19345198 |
+| V1 | G | 0.02051416 | 0.03136443 | 0.18380591 |
+| V2 | P | 0.00673213 | 0.01400663 | 0.18032371 |
+| V2 | H | 0.02272145 | 0.03416696 | 0.20157019 |
+| V2 | G | 0.02407240 | 0.03628144 | 0.19334432 |
+| V3 | P | 0.00660410 | 0.01260462 | 0.16757920 |
+| V3 | H | 0.02458902 | 0.03549285 | 0.19078554 |
+| V3 | G | 0.02640059 | 0.03835016 | 0.18292317 |
+
+G mejora MAP y NDCG frente a H en los tres folds, pero reduce Recall. Esto no acredita selección final. PPR se evaluó únicamente como control separado, con 5,000 compradores por full y diez permutaciones; no se mezcla con la población full ni autoriza promoción del motor.
+
+| Fold | Nodos / aristas | Cestas | Coste candidato (construcción + recuperación) | PPR: con semillas / convergentes / fallback por no converger |
+| --- | ---: | ---: | ---: | ---: |
+| V1 | 101,151 / 1,466,299 | 1,084,449 | 27.475 s | 3697 / 3697 / 0 |
+| V2 | 101,945 / 1,474,641 | 1,080,058 | 26.122 s | 3702 / 3702 / 0 |
+| V3 | 102,967 / 1,484,325 | 1,079,003 | 25.092 s | 3667 / 3667 / 0 |
+
+Presupuesto acumulado Q1+Q2: full 326.898137 s, piloto 41.213648 s, demo 13.286877 s. Entradas Q1 intactas, ninguna reserva abierta; se conserva el ledger local. Espacio libre mínimo de los intentos: 198.446957 GiB.
+
+La evidencia incluye segmentos, recompra/descubrimiento, exposición, fuentes del pool, PPR y sus controles, construcción/recuperación/evaluación, disco y presupuesto. Se conservaron grafos y métricas individuales privados para las fases posteriores. `quality_accepted=false`: revisión pendiente en la máquina principal, sin iniciar Q3/Q4/T4.
