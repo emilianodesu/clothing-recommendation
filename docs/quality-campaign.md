@@ -98,3 +98,22 @@ La demo oficial de la primera Mac usa `--machine-id local --profile default --re
 La [evidencia estructurada](../evidence/local-quality-q1.json) registra 116 pruebas distintas: 65 host, 43 unitarias/integración científica y 8 de infraestructura Docker. La revisión final detectó tres problemas operativos; sus regresiones fallaron antes de corregirlos y pasaron después. La imagen final se probó sin montajes auxiliares de código y conserva compatibilidad con los 19 ZIP históricos recibidos.
 
 La [demo oficial final](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T200951Z-1f9c6a28), ejecutada en `502e4a932e22374ae3d78ceda2f7c4c6903083fc`, pasó con 33 compradores, 24 artículos y paridad exacta V3. Duró 6.006559 s, con RSS máximo 0.412128 GiB, sin swap ni OOM. El ZIP se exportó, validó, publicó y volvió a descargar/verificar. Se conserva la primera demo anterior a las correcciones. Estas son mediciones sintéticas de la primera Mac; no acreditan calidad ni rendimiento H&M en mac24.
+
+
+## Ejecución mac24: 20 de octubre de 2026
+
+Los cinco intentos pasaron desde `120e8f3f68c1b1c7efe0786585d52490dc0e299a`, con clon limpio, Colima 14 GiB/4 CPU y límites efectivos 10 GiB/3 CPU/2 hilos. Se ejecutaron secuencialmente y cada ZIP se validó, publicó y descargó/verificó antes del siguiente. [Evidencia mac24](../evidence/quality-q1-mac24.json).
+
+| Fold / tamaño y Release | Compradores / catálogo | Tiempo job | Pico RSS / cgroup GiB | MAP P / H |
+| --- | ---: | ---: | ---: | ---: |
+| V3 demo: [quality-mac24-20261020T201526Z-09fc3714](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201526Z-09fc3714) | 33 / 24 | 7.013 s | 0.408321 / 0.344849 | 0.20251596 / 0.96565657 |
+| V3 pilot: [quality-mac24-20261020T201604Z-9415f25d](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201604Z-9415f25d) | 2,000 / 102,967 | 12.034 s | 2.197918 / 2.524887 | 0.00619763 / 0.02215935 |
+| V1 full: [quality-mac24-20261020T201629Z-9e5fc20a](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201629Z-9e5fc20a) | 80,253 / 101,151 | 35.060 s | 2.189018 / 2.510223 | 0.00682845 / 0.01936354 |
+| V2 full: [quality-mac24-20261020T201718Z-80c2b832](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201718Z-80c2b832) | 75,822 / 101,945 | 34.055 s | 2.239624 / 2.563431 | 0.00673213 / 0.02272145 |
+| V3 full: [quality-mac24-20261020T201805Z-63eb4569](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201805Z-63eb4569) | 72,019 / 102,967 | 39.065 s | 2.202866 / 2.529861 | 0.00660410 / 0.02458902 |
+
+Sin swap ni OOM. Full V3 verificó rankings P/H exactos contra las funciones históricas y el ZIP `diagnose-mac24-20261020T184112Z-4b76ee72`, tolerancia 1e-10. Presupuesto cerrado acumulado: demo 7.146425 s, piloto 12.151669 s, full 108.349356 s; ninguna reserva pendiente. Se conservan `work` privados y el registro local de presupuesto para la revisión y Q4 posterior.
+
+Los 606 archivos inventariados de datos procesados y entrenamientos coinciden antes/después. Limitación del inventario: las features no se incluyeron en el inventario nuevo previo; al cierre se verificaron 113 archivos de features de entrenamiento/validación contra sus manifiestos históricos y se enlazaron los dos manifiestos H&M con sus hashes del entrenamiento original. No se leyeron payloads de features de test. Inventarios detallados permanecen fuera de Git.
+
+Las métricas P/H, segmentos, recompra/descubrimiento, exposición, espacio libre, presupuesto y SHA de cada ZIP están en la evidencia. `passed` acredita ejecución; Q1 queda pendiente de revisión de los cinco reportes en la máquina principal. No hubo entrenamiento ni evaluación de test ni avance a Q2–Q4 o T4.

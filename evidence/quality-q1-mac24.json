@@ -1,0 +1,1450 @@
+{
+  "execution_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+  "machine_id": "mac24",
+  "operational_status": "passed",
+  "campaign_review_pending": true,
+  "quality_accepted": false,
+  "original_verification": {
+    "before_after_files": 606,
+    "before_after_match": true,
+    "feature_files_checked_against_manifests": 113,
+    "hm_feature_manifests_match_original_training": true,
+    "limitation": "Features were not included in fresh pre-run inventory; train/validation feature files checked against historical manifests after runs. No test feature payload read."
+  },
+  "private_work_preserved": true,
+  "budget_ledger": {
+    "protocol": "quality-v1",
+    "attempts": {
+      "quality-mac24-20261020T201526Z-09fc3714": {
+        "size": "demo",
+        "allowance": 7200,
+        "seconds": 7.146425
+      },
+      "quality-mac24-20261020T201604Z-9415f25d": {
+        "size": "pilot",
+        "allowance": 7200,
+        "seconds": 12.151669
+      },
+      "quality-mac24-20261020T201629Z-9e5fc20a": {
+        "size": "full",
+        "allowance": 7200,
+        "seconds": 35.079984
+      },
+      "quality-mac24-20261020T201718Z-80c2b832": {
+        "size": "full",
+        "allowance": 7200,
+        "seconds": 34.084998
+      },
+      "quality-mac24-20261020T201805Z-63eb4569": {
+        "size": "full",
+        "allowance": 7200,
+        "seconds": 39.184374
+      }
+    }
+  },
+  "runs": [
+    {
+      "run_id": "quality-mac24-20261020T201526Z-09fc3714",
+      "status": "passed",
+      "source_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+      "source_clean": true,
+      "started_at": "2026-10-20T20:15:26.926525+00:00",
+      "finished_at": "2026-10-20T20:15:45.834458+00:00",
+      "package_id": "d6df38e2da4d526356994f757d2237aa66d1449695ca2bfc1ea5bddacfede9f5",
+      "oom_killed": false,
+      "fold": {
+        "cutoff": "2020-09-09",
+        "fold_id": "V3",
+        "label_end": "2020-09-16",
+        "parent_fold": null,
+        "role": "evaluation"
+      },
+      "size": "demo",
+      "population": {
+        "catalog_size": 24,
+        "sampled_out_users": 0,
+        "users": 33,
+        "validation_buyers": 33
+      },
+      "methods": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.98989899,
+            "out_of_catalog_relevant_items": 1,
+            "relevant_items": 66
+          },
+          "exposure": {
+            "12": {
+              "coverage": 1.0,
+              "distinct_items": 24,
+              "effective_items": 14.90443966,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 25,
+              "unique_sets": 17
+            },
+            "200": {
+              "coverage": 1.0,
+              "distinct_items": 24,
+              "effective_items": 24.0,
+              "k": 24,
+              "top_exposure_share": {
+                "1": 0.04166667,
+                "10": 0.41666667,
+                "5": 0.20833333,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 25,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.96565657,
+            "ndcg_at_12": 0.9743095,
+            "recall_at_200": 0.98989899
+          },
+          "population": {
+            "catalog_size": 24,
+            "users": 33
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": null,
+              "users": 0
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "older_history": {
+              "metrics": null,
+              "users": 0
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.98958333,
+                "ndcg_at_12": 0.99266752,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.1,
+                "ndcg_at_12": 0.1934264,
+                "recall_at_200": 0.5
+              },
+              "relevant_items": 2,
+              "users": 2
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 1.0,
+                "ndcg_at_12": 1.0,
+                "recall_at_200": 1.0
+              },
+              "relevant_items": 64,
+              "users": 32
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.98989899,
+            "out_of_catalog_relevant_items": 1,
+            "relevant_items": 66
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.5,
+              "distinct_items": 12,
+              "effective_items": 12.0,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 1.0,
+              "distinct_items": 24,
+              "effective_items": 24.0,
+              "k": 24,
+              "top_exposure_share": {
+                "1": 0.04166667,
+                "10": 0.41666667,
+                "5": 0.20833333,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.20251596,
+            "ndcg_at_12": 0.3371445,
+            "recall_at_200": 0.98989899
+          },
+          "population": {
+            "catalog_size": 24,
+            "users": 33
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": null,
+              "users": 0
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "older_history": {
+              "metrics": null,
+              "users": 0
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.20259458,
+                "ndcg_at_12": 0.33559112,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.1,
+                "ndcg_at_12": 0.1934264,
+                "recall_at_200": 0.5
+              },
+              "relevant_items": 2,
+              "users": 2
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.20988625,
+                "ndcg_at_12": 0.34182626,
+                "recall_at_200": 1.0
+              },
+              "relevant_items": 64,
+              "users": 32
+            }
+          }
+        }
+      },
+      "disk": {
+        "end_free_bytes": 217631735808,
+        "min_free_bytes": 217631735808,
+        "start_free_bytes": 217633284096
+      },
+      "job_duration_seconds": 7.01296466,
+      "verification_exit_code": 0,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "parity": {
+        "buyers": 33,
+        "legacy_ranking_verified": true
+      },
+      "historical_reference": null,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rss_peak_gib": 0.408321,
+      "cgroup_peak_gib": 0.344849,
+      "swap_peak_bytes": 0,
+      "oom_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "budget_accumulated_seconds": {
+        "pilot": 0,
+        "full": 0,
+        "summary": 0,
+        "demo": 7.146425
+      },
+      "zip_sha256": "f1d6efc898743304fed2fc331b23cc97a94b9a4c426d6340c5d317724035c1e1",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201526Z-09fc3714",
+      "publication_download_verified": true
+    },
+    {
+      "run_id": "quality-mac24-20261020T201604Z-9415f25d",
+      "status": "passed",
+      "source_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+      "source_clean": true,
+      "started_at": "2026-10-20T20:16:04.017632+00:00",
+      "finished_at": "2026-10-20T20:16:17.253523+00:00",
+      "package_id": "9a54b2f35f654da4f87f1d3d7067bbeb59787b54d8833a808243a482e5c3d84a",
+      "oom_killed": false,
+      "fold": {
+        "cutoff": "2020-09-09",
+        "fold_id": "V3",
+        "label_end": "2020-09-16",
+        "parent_fold": null,
+        "role": "evaluation"
+      },
+      "size": "pilot",
+      "population": {
+        "catalog_size": 102967,
+        "sampled_out_users": 70019,
+        "users": 2000,
+        "validation_buyers": 72019
+      },
+      "methods": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.96101573,
+            "out_of_catalog_relevant_items": 303,
+            "relevant_items": 6144
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.02744569,
+              "distinct_items": 2826,
+              "effective_items": 45.33527509,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.07970833,
+                "10": 0.730875,
+                "5": 0.38945833,
+                "50": 0.843125
+              },
+              "unique_ordered_lists": 855,
+              "unique_sets": 849
+            },
+            "200": {
+              "coverage": 0.03042722,
+              "distinct_items": 3133,
+              "effective_items": 216.69866711,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 855,
+              "unique_sets": 822
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.02215935,
+            "ndcg_at_12": 0.03361742,
+            "recall_at_200": 0.18668955
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 2000
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00484143,
+                "ndcg_at_12": 0.01123782,
+                "recall_at_200": 0.14994677
+              },
+              "users": 610
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.0028238,
+                "ndcg_at_12": 0.00723154,
+                "recall_at_200": 0.19348672
+              },
+              "users": 166
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00575551,
+                "ndcg_at_12": 0.0134564,
+                "recall_at_200": 0.17022413
+              },
+              "users": 363
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.04507251,
+                "ndcg_at_12": 0.06306001,
+                "recall_at_200": 0.2183524
+              },
+              "users": 861
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00393112,
+                "ndcg_at_12": 0.00904893,
+                "recall_at_200": 0.15852343
+              },
+              "relevant_items": 5887,
+              "users": 1952
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.29108829,
+                "ndcg_at_12": 0.35670532,
+                "recall_at_200": 0.62541667
+              },
+              "relevant_items": 257,
+              "users": 200
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.96101573,
+            "out_of_catalog_relevant_items": 303,
+            "relevant_items": 6144
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.00011654,
+              "distinct_items": 12,
+              "effective_items": 12.0,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 0.00194237,
+              "distinct_items": 200,
+              "effective_items": 200.0,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.00619763,
+            "ndcg_at_12": 0.01200578,
+            "recall_at_200": 0.16088554
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 2000
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00484143,
+                "ndcg_at_12": 0.01123782,
+                "recall_at_200": 0.14994677
+              },
+              "users": 610
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.0028238,
+                "ndcg_at_12": 0.00723154,
+                "recall_at_200": 0.19348672
+              },
+              "users": 166
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00575551,
+                "ndcg_at_12": 0.0134564,
+                "recall_at_200": 0.17022413
+              },
+              "users": 363
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.00799533,
+                "ndcg_at_12": 0.01285875,
+                "recall_at_200": 0.15841276
+              },
+              "users": 861
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00622267,
+                "ndcg_at_12": 0.01195811,
+                "recall_at_200": 0.15924918
+              },
+              "relevant_items": 5887,
+              "users": 1952
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.00421429,
+                "ndcg_at_12": 0.0079077,
+                "recall_at_200": 0.17333333
+              },
+              "relevant_items": 257,
+              "users": 200
+            }
+          }
+        }
+      },
+      "disk": {
+        "end_free_bytes": 217566224384,
+        "min_free_bytes": 217566224384,
+        "start_free_bytes": 217627230208
+      },
+      "job_duration_seconds": 12.03430431,
+      "verification_exit_code": 0,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "parity": {
+        "buyers": 2000,
+        "legacy_ranking_verified": true
+      },
+      "historical_reference": null,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rss_peak_gib": 2.197918,
+      "cgroup_peak_gib": 2.524887,
+      "swap_peak_bytes": 0,
+      "oom_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "budget_accumulated_seconds": {
+        "pilot": 12.151669,
+        "full": 0,
+        "summary": 0,
+        "demo": 7.146425
+      },
+      "zip_sha256": "b98a359f793b11f9804c7923e9542f0c3f593a0e8fb766e2a9dc26a82ef7b585",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201604Z-9415f25d",
+      "publication_download_verified": true
+    },
+    {
+      "run_id": "quality-mac24-20261020T201629Z-9e5fc20a",
+      "status": "passed",
+      "source_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+      "source_clean": true,
+      "started_at": "2026-10-20T20:16:29.418243+00:00",
+      "finished_at": "2026-10-20T20:17:06.376413+00:00",
+      "package_id": "a465cd4fe4fc78574bebc7bf5358ee29a76133350bb167d6616e7d64c0238913",
+      "oom_killed": false,
+      "fold": {
+        "cutoff": "2020-08-26",
+        "fold_id": "V1",
+        "label_end": "2020-09-02",
+        "parent_fold": null,
+        "role": "evaluation"
+      },
+      "size": "full",
+      "population": {
+        "catalog_size": 101151,
+        "sampled_out_users": 0,
+        "users": 80253,
+        "validation_buyers": 80253
+      },
+      "methods": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.97434873,
+            "out_of_catalog_relevant_items": 6330,
+            "relevant_items": 255172
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.18712618,
+              "distinct_items": 18928,
+              "effective_items": 57.34836846,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.07982983,
+                "10": 0.728195,
+                "5": 0.38983797,
+                "50": 0.83495736
+              },
+              "unique_ordered_lists": 32424,
+              "unique_sets": 32258
+            },
+            "200": {
+              "coverage": 0.1957865,
+              "distinct_items": 19804,
+              "effective_items": 220.40898729,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 32424,
+              "unique_sets": 31095
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.01936354,
+            "ndcg_at_12": 0.02936683,
+            "recall_at_200": 0.19345198
+          },
+          "population": {
+            "catalog_size": 101151,
+            "users": 80253
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00670833,
+                "ndcg_at_12": 0.01312456,
+                "recall_at_200": 0.18029986
+              },
+              "users": 24612
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.00489409,
+                "ndcg_at_12": 0.01090441,
+                "recall_at_200": 0.17975503
+              },
+              "users": 5940
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00611842,
+                "ndcg_at_12": 0.01267363,
+                "recall_at_200": 0.17715857
+              },
+              "users": 14733
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.03630928,
+                "ndcg_at_12": 0.05096836,
+                "recall_at_200": 0.21190059
+              },
+              "users": 34968
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00456927,
+                "ndcg_at_12": 0.00981075,
+                "recall_at_200": 0.17107214
+              },
+              "relevant_items": 246170,
+              "users": 78475
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.26711498,
+                "ndcg_at_12": 0.32283112,
+                "recall_at_200": 0.60988628
+              },
+              "relevant_items": 9002,
+              "users": 7266
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.97434873,
+            "out_of_catalog_relevant_items": 6330,
+            "relevant_items": 255172
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.00011863,
+              "distinct_items": 12,
+              "effective_items": 12.0,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 0.00197724,
+              "distinct_items": 200,
+              "effective_items": 200.0,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.00682845,
+            "ndcg_at_12": 0.01336663,
+            "recall_at_200": 0.17618543
+          },
+          "population": {
+            "catalog_size": 101151,
+            "users": 80253
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00670833,
+                "ndcg_at_12": 0.01312456,
+                "recall_at_200": 0.18029986
+              },
+              "users": 24612
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.00489409,
+                "ndcg_at_12": 0.01090441,
+                "recall_at_200": 0.17975503
+              },
+              "users": 5940
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00611842,
+                "ndcg_at_12": 0.01267363,
+                "recall_at_200": 0.17715857
+              },
+              "users": 14733
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.00754074,
+                "ndcg_at_12": 0.01424724,
+                "recall_at_200": 0.17227313
+              },
+              "users": 34968
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00654421,
+                "ndcg_at_12": 0.01271148,
+                "recall_at_200": 0.17206316
+              },
+              "relevant_items": 246170,
+              "users": 78475
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.01068657,
+                "ndcg_at_12": 0.01965252,
+                "recall_at_200": 0.25342933
+              },
+              "relevant_items": 9002,
+              "users": 7266
+            }
+          }
+        }
+      },
+      "disk": {
+        "end_free_bytes": 217493307392,
+        "min_free_bytes": 217493307392,
+        "start_free_bytes": 217573486592
+      },
+      "job_duration_seconds": 35.05959538,
+      "verification_exit_code": 0,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "parity": null,
+      "historical_reference": null,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rss_peak_gib": 2.189018,
+      "cgroup_peak_gib": 2.510223,
+      "swap_peak_bytes": 0,
+      "oom_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "budget_accumulated_seconds": {
+        "pilot": 12.151669,
+        "full": 35.079984,
+        "summary": 0,
+        "demo": 7.146425
+      },
+      "zip_sha256": "a948ebcf770fd2fc063f0e1f8cf96969c8da8febe4fd7794643e7aecbb48a729",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201629Z-9e5fc20a",
+      "publication_download_verified": true
+    },
+    {
+      "run_id": "quality-mac24-20261020T201718Z-80c2b832",
+      "status": "passed",
+      "source_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+      "source_clean": true,
+      "started_at": "2026-10-20T20:17:18.201666+00:00",
+      "finished_at": "2026-10-20T20:17:53.415141+00:00",
+      "package_id": "33d8f77268fdecebf0ae97ef121a70737b6087c02a01a5522b6ea7d6d105210a",
+      "oom_killed": false,
+      "fold": {
+        "cutoff": "2020-09-02",
+        "fold_id": "V2",
+        "label_end": "2020-09-09",
+        "parent_fold": null,
+        "role": "evaluation"
+      },
+      "size": "full",
+      "population": {
+        "catalog_size": 101945,
+        "sampled_out_users": 0,
+        "users": 75822,
+        "validation_buyers": 75822
+      },
+      "methods": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.95348341,
+            "out_of_catalog_relevant_items": 12877,
+            "relevant_items": 238074
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.18319682,
+              "distinct_items": 18676,
+              "effective_items": 56.27709953,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.07994491,
+                "10": 0.73014978,
+                "5": 0.39059684,
+                "50": 0.83781862
+              },
+              "unique_ordered_lists": 30818,
+              "unique_sets": 30644
+            },
+            "200": {
+              "coverage": 0.19103438,
+              "distinct_items": 19475,
+              "effective_items": 219.80688783,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 30818,
+              "unique_sets": 29305
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.02272145,
+            "ndcg_at_12": 0.03416696,
+            "recall_at_200": 0.20157019
+          },
+          "population": {
+            "catalog_size": 101945,
+            "users": 75822
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00650334,
+                "ndcg_at_12": 0.01364068,
+                "recall_at_200": 0.17976143
+              },
+              "users": 22595
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.0059117,
+                "ndcg_at_12": 0.012489,
+                "recall_at_200": 0.18378392
+              },
+              "users": 5714
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00609839,
+                "ndcg_at_12": 0.01355183,
+                "recall_at_200": 0.18382465
+              },
+              "users": 14076
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.04355123,
+                "ndcg_at_12": 0.06042045,
+                "recall_at_200": 0.22681725
+              },
+              "users": 33437
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00463638,
+                "ndcg_at_12": 0.01054459,
+                "recall_at_200": 0.17500977
+              },
+              "relevant_items": 228879,
+              "users": 73863
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.29412536,
+                "ndcg_at_12": 0.35362372,
+                "recall_at_200": 0.65548445
+              },
+              "relevant_items": 9195,
+              "users": 7383
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.95348341,
+            "out_of_catalog_relevant_items": 12877,
+            "relevant_items": 238074
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.00011771,
+              "distinct_items": 12,
+              "effective_items": 12.0,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 0.00196184,
+              "distinct_items": 200,
+              "effective_items": 200.0,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.00673213,
+            "ndcg_at_12": 0.01400663,
+            "recall_at_200": 0.18032371
+          },
+          "population": {
+            "catalog_size": 101945,
+            "users": 75822
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00650334,
+                "ndcg_at_12": 0.01364068,
+                "recall_at_200": 0.17976143
+              },
+              "users": 22595
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.0059117,
+                "ndcg_at_12": 0.012489,
+                "recall_at_200": 0.18378392
+              },
+              "users": 5714
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00609839,
+                "ndcg_at_12": 0.01355183,
+                "recall_at_200": 0.18382465
+              },
+              "users": 14076
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.00729372,
+                "ndcg_at_12": 0.01470473,
+                "recall_at_200": 0.17863856
+              },
+              "users": 33437
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00652767,
+                "ndcg_at_12": 0.01345312,
+                "recall_at_200": 0.17597977
+              },
+              "relevant_items": 228879,
+              "users": 73863
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.01051355,
+                "ndcg_at_12": 0.01940272,
+                "recall_at_200": 0.26982644
+              },
+              "relevant_items": 9195,
+              "users": 7383
+            }
+          }
+        }
+      },
+      "disk": {
+        "end_free_bytes": 217411366912,
+        "min_free_bytes": 217411366912,
+        "start_free_bytes": 217490051072
+      },
+      "job_duration_seconds": 34.05480025,
+      "verification_exit_code": 0,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "parity": null,
+      "historical_reference": null,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rss_peak_gib": 2.239624,
+      "cgroup_peak_gib": 2.563431,
+      "swap_peak_bytes": 0,
+      "oom_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "budget_accumulated_seconds": {
+        "pilot": 12.151669,
+        "full": 69.164982,
+        "summary": 0,
+        "demo": 7.146425
+      },
+      "zip_sha256": "3c5f89bfea9edf50664e40e733d267e6c4613cdec835163375375913d7177fa4",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201718Z-80c2b832",
+      "publication_download_verified": true
+    },
+    {
+      "run_id": "quality-mac24-20261020T201805Z-63eb4569",
+      "status": "passed",
+      "source_commit": "120e8f3f68c1b1c7efe0786585d52490dc0e299a",
+      "source_clean": true,
+      "started_at": "2026-10-20T20:18:05.481915+00:00",
+      "finished_at": "2026-10-20T20:18:45.554055+00:00",
+      "package_id": "8d7f9a8300318f3d1b1b83f52e2cd13bc3889cadc591c4db3a4699ca8dbf5253",
+      "oom_killed": false,
+      "fold": {
+        "cutoff": "2020-09-09",
+        "fold_id": "V3",
+        "label_end": "2020-09-16",
+        "parent_fold": null,
+        "role": "evaluation"
+      },
+      "size": "full",
+      "population": {
+        "catalog_size": 102967,
+        "sampled_out_users": 0,
+        "users": 72019,
+        "validation_buyers": 72019
+      },
+      "methods": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.95734007,
+            "out_of_catalog_relevant_items": 11385,
+            "relevant_items": 227910
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.17840667,
+              "distinct_items": 18370,
+              "effective_items": 56.62772679,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.07986666,
+                "10": 0.72862717,
+                "5": 0.39012853,
+                "50": 0.83659636
+              },
+              "unique_ordered_lists": 29646,
+              "unique_sets": 29437
+            },
+            "200": {
+              "coverage": 0.18682685,
+              "distinct_items": 19237,
+              "effective_items": 219.5959908,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 29646,
+              "unique_sets": 28013
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.02458902,
+            "ndcg_at_12": 0.03549285,
+            "recall_at_200": 0.19078554
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 72019
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00582979,
+                "ndcg_at_12": 0.01196364,
+                "recall_at_200": 0.1677196
+              },
+              "users": 20970
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.00639293,
+                "ndcg_at_12": 0.01244933,
+                "recall_at_200": 0.16879946
+              },
+              "users": 5395
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00756586,
+                "ndcg_at_12": 0.0142259,
+                "recall_at_200": 0.17661159
+              },
+              "users": 13240
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.0467071,
+                "ndcg_at_12": 0.06323709,
+                "recall_at_200": 0.21515683
+              },
+              "users": 32414
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00456282,
+                "ndcg_at_12": 0.00954169,
+                "recall_at_200": 0.16256622
+              },
+              "relevant_items": 218955,
+              "users": 70127
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.32364806,
+                "ndcg_at_12": 0.38317808,
+                "recall_at_200": 0.66633174
+              },
+              "relevant_items": 8955,
+              "users": 7148
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.95734007,
+            "out_of_catalog_relevant_items": 11385,
+            "relevant_items": 227910
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.00011654,
+              "distinct_items": 12,
+              "effective_items": 12.0,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333,
+                "10": 0.83333333,
+                "5": 0.41666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 0.00194237,
+              "distinct_items": 200,
+              "effective_items": 200.0,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "metrics": {
+            "map_at_12": 0.0066041,
+            "ndcg_at_12": 0.01260462,
+            "recall_at_200": 0.1675792
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 72019
+          },
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.00582979,
+                "ndcg_at_12": 0.01196364,
+                "recall_at_200": 0.1677196
+              },
+              "users": 20970
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.00639293,
+                "ndcg_at_12": 0.01244933,
+                "recall_at_200": 0.16879946
+              },
+              "users": 5395
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.00756586,
+                "ndcg_at_12": 0.0142259,
+                "recall_at_200": 0.17661159
+              },
+              "users": 13240
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.00674734,
+                "ndcg_at_12": 0.01238291,
+                "recall_at_200": 0.16359586
+              },
+              "users": 32414
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.00624032,
+                "ndcg_at_12": 0.01189349,
+                "recall_at_200": 0.16334145
+              },
+              "relevant_items": 218955,
+              "users": 70127
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.01145241,
+                "ndcg_at_12": 0.01919588,
+                "recall_at_200": 0.25202343
+              },
+              "relevant_items": 8955,
+              "users": 7148
+            }
+          }
+        }
+      },
+      "disk": {
+        "end_free_bytes": 217329311744,
+        "min_free_bytes": 217329307648,
+        "start_free_bytes": 217408376832
+      },
+      "job_duration_seconds": 39.06501541,
+      "verification_exit_code": 0,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "parity": {
+        "buyers": 72019,
+        "legacy_ranking_verified": true
+      },
+      "historical_reference": {
+        "absolute_tolerance": 0.0,
+        "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
+        "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72",
+        "verified": true
+      },
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "rss_peak_gib": 2.202866,
+      "cgroup_peak_gib": 2.529861,
+      "swap_peak_bytes": 0,
+      "oom_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "budget_accumulated_seconds": {
+        "pilot": 12.151669,
+        "full": 108.349356,
+        "summary": 0,
+        "demo": 7.146425
+      },
+      "zip_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T201805Z-63eb4569",
+      "publication_download_verified": true
+    }
+  ]
+}
