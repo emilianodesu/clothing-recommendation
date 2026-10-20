@@ -64,7 +64,7 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality"), required=True)
     download = sub.add_parser("download-data", help="Descargar H&M desde Kaggle con credencial propia del host")
     download.add_argument("--check-access", action="store_true")
     validate = sub.add_parser("validate-data", help="Verificar el ZIP completo o sólo estructura/tamaño")
@@ -75,12 +75,17 @@ def main():
     job.add_argument("job_args", nargs=argparse.REMAINDER)
     training = sub.add_parser("train-job", help="Entrenamiento T3 desacoplado, checkpoint y reporte por GitHub")
     training.add_argument("job_args", nargs=argparse.REMAINDER)
+    quality = sub.add_parser("quality-job", help="Q1: evaluación temporal y reportes agregados")
+    quality.add_argument("job_args", nargs=argparse.REMAINDER)
     diagnostic = sub.add_parser("diagnose-job", help="Diagnóstico T3 en lectura, sobre un checkpoint existente")
     diagnostic.add_argument("job_args", nargs=argparse.REMAINDER)
     tracking = sub.add_parser("tracking-up", help="Arrancar MLflow local; --port se conserva en .env")
     tracking.add_argument("--port", type=int)
     args = parser.parse_args()
     try:
+        if args.action == "quality-job":
+            from quality_job import main as quality_main
+            return quality_main(args.job_args)
         if args.action == "diagnose-job":
             from diagnose_job import main as diagnose_job_main
             return diagnose_job_main(args.job_args)
@@ -134,6 +139,9 @@ def main():
             if args.suite == "data":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_ingest.py", "tests/integration/test_data_pipeline.py", "-q")
+            if args.suite == "quality":
+                compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
+                        "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "-q")
             if args.suite == "diagnostics":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_diagnostics.py", "tests/integration/test_epoch_comparison.py", "tests/integration/test_recent_history.py", "-q")
@@ -144,7 +152,7 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "-e", "HMREC_TRACKING_TESTS=1",
                         "-e", "MLFLOW_TRACKING_URI=http://mlflow:5000", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_tracking.py", "-q")
-            if args.suite in ("bootstrap", "data", "model", "diagnostics"):
+            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality"):
                 subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
                                cwd=ROOT, check=True)
             if args.suite == "bootstrap":

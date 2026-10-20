@@ -17,3 +17,5 @@
 !docker/airflow/**
 **/__pycache__/
 **/*.pyc
+
+!scripts/quality_handoff.py

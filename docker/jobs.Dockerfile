@@ -10,7 +10,7 @@ COPY src ./src
 COPY configs ./configs
 COPY migrations ./migrations
 COPY tests ./tests
-COPY scripts/handoff.py ./scripts/handoff.py
+COPY scripts/handoff.py scripts/quality_handoff.py ./scripts/
 RUN --mount=type=cache,target=/root/.cache/uv --mount=type=secret,id=build_ca,required=true \
     SSL_CERT_FILE=/run/secrets/build_ca uv sync --locked --extra tracking --group build --group test --no-editable --no-build-isolation
 USER 10001:10001

@@ -1,6 +1,6 @@
 # T3: validación de compras recientes y respaldo
 
-**Estado vigente:** esta campaña ya se ejecutó y revisó. El usuario aprobó después [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), con historial+popularidad como referencia provisional. Las decisiones y órdenes siguientes documentan el experimento histórico; no ejecutarlas de nuevo para sustituir la campaña temporal, cuyos comandos siguen pendientes de implementar.
+**Estado vigente:** esta campaña ya se ejecutó y revisó. El usuario aprobó después [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), con historial+popularidad como referencia provisional. Las decisiones y órdenes siguientes documentan el experimento histórico; no ejecutarlas de nuevo para sustituir la campaña temporal, con comandos Q1 disponibles en [la guía de campaña](quality-campaign.md).
 
 ## Decisión tras revisar los cuatro reportes
 
