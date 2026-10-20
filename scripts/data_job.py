@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def validate_run_id(value):
-    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith(('data-', 'train-')):
+    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith(('data-', 'train-', 'diagnose-')):
         raise ValueError('Run ID de datos inválido')
     return value
 
@@ -104,15 +104,19 @@ def effective_limits(info):
             'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
 
 
-def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None):
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
     resources = load_resources(resource_profile)
     if expected_resources is not None and resources != expected_resources:
         raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
+    if diagnostic_run and (training_config or resume_run):
+        raise ValueError('Diagnóstico y entrenamiento son trabajos separados')
     if training_config is not None and training_config not in ('demo', 'hm-small', 'hm-medium', 'hm-full'):
         raise ValueError('Perfil de entrenamiento desconocido')
     config_file = ROOT / 'configs/training' / (training_config + '.json') if training_config else ROOT / 'configs' / ('hm.yaml' if dataset == 'hm' else 'demo.yaml')
+    if diagnostic_run:
+        config_file = ROOT / 'configs/diagnostics/validation.json'
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
     limits = requested_limits(resources)
@@ -124,8 +128,13 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         raise ValueError('El clon debe estar limpio; conserva cambios y haz commit antes de la corrida oficial')
     values = read_configuration(ROOT / '.env')
     dirs = paths(values)
+    diagnostic_source = None
+    if diagnostic_run:
+        from diagnose_job import source_for
+        diagnostic_source = source_for(dirs['ARTIFACTS_DIR'], diagnostic_run, fingerprint(ROOT / 'uv.lock'))
+        dataset = 'synthetic' if diagnostic_source['config']['demo'] else 'hm'
     config = 'hm' if dataset == 'hm' else 'demo'
-    run_id = ('train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+    run_id = ('diagnose-' if diagnostic_run else 'train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     directory = dirs['ARTIFACTS_DIR'] / 'data-jobs' / run_id
     directory.mkdir(parents=True, mode=0o700)
     run = {'run_id':run_id, 'machine_id':machine_id, 'context':env['DOCKER_CONTEXT'], 'profile':profile,
@@ -142,6 +151,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
                    attempt=resume_run['attempt'] + 1 if resume_run else 1,
                    resumed_from=resume_run['run_id'] if resume_run else None,
                    scope='T3 training and validation only; no test tuning or serving')
+    if diagnostic_source:
+        run.update(diagnostic_source=diagnostic_source, scope='T3 read-only validation diagnostics; no retraining or test evaluation')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
@@ -183,6 +194,14 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         worker = ['python', '-m', 'hm_recommender.model.worker' if training_config else 'hm_recommender.data.worker',
                   '--config', '/opt/hmrec/configs/training/' + training_config + '.json' if training_config else '/opt/hmrec/configs/' + config + '.yaml',
                   '--run-dir', '/artifacts/data-jobs/' + run_id]
+        if diagnostic_run:
+            worker = ['python', '-m', 'hm_recommender.model.diagnostic_worker',
+                      '--config', '/opt/hmrec/configs/diagnostics/validation.json',
+                      '--run-dir', '/artifacts/data-jobs/' + run_id]
+        mounts = ['--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data' + (',readonly' if diagnostic_run else ''),
+                  '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts' + (',readonly' if diagnostic_run else '')]
+        if diagnostic_run:
+            mounts += ['--mount', 'type=bind,source=' + str(directory) + ',target=/artifacts/data-jobs/' + run_id]
         network = values['COMPOSE_PROJECT_NAME'] + '_backend' if training_config and training_config != 'demo' else 'none'
         container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', network,
             '--read-only', '--tmpfs', '/tmp', '--memory', str(resources['config']['job']['memory_gib']) + 'g',
@@ -198,11 +217,15 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             '--env', 'MLFLOW_TRACKING_URI=http://mlflow:5000',
             '--env', 'MLFLOW_ENABLE_ARTIFACTS_PROGRESS_BAR=false',
             '--env', 'MLFLOW_DISABLE_TELEMETRY=true',
-            '--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data',
-            '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts',
+            *mounts,
             image['Id'], *worker)
         run['container_id'] = container
         info = json.loads(capture(env, 'docker', 'inspect', container))[0]
+        if diagnostic_run:
+            access = {m['Destination']: m['RW'] for m in info['Mounts']}
+            if access != {'/data': False, '/artifacts': False, '/artifacts/data-jobs/' + run_id: True} or info['HostConfig']['NetworkMode'] != 'none':
+                raise ValueError('El aislamiento efectivo del diagnóstico no coincide')
+            run['isolation'] = {'network': 'none', 'writable_mounts': [k for k, rw in access.items() if rw]}
         applied = effective_limits(info)
         run['effective_limits'] = applied
         if (applied['memory_bytes'] != limits['memory_bytes'] or applied['nano_cpus'] != limits['cpus'] * 10**9
@@ -267,7 +290,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, 'T3' if run.get('training_config') else 'T2')
+        status = classify_result(state, result, 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
     return directory, run, env, state, result, status
@@ -310,7 +333,7 @@ def export(run_id):
         steps.append({'name':'tracking', 'log':'tracking.log', 'exit_code':tracking_code,
                       'status':'passed' if tracking_code == 0 else ('interrupted' if tracking_code == 130 else 'failed')})
     steps.append({'name':'data','log':'job.log','status':status,'exit_code':code})
-    report = {'schema_version':1, 'kind':'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
+    report = {'schema_version':1, 'kind':'diagnostic-handoff' if run.get('diagnostic_source') else 'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
         'context':run['context'], 'source_commit':run['source_commit'], 'source_clean':run['source_clean'],
         'started_at':run['started_at'], 'finished_at':now(), 'status':status, 'warnings':[],
         'steps':steps, 'experiment_id':run.get('experiment_id'), 'attempt':run.get('attempt'),

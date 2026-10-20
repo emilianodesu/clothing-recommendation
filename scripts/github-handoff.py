@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = 'emilianodesu/clothing-recommendation'
 MARKER = '<!-- hmrec-bootstrap-handoff-v1 -->'
 TRAIN_MARKER = '<!-- hmrec-training-handoff-v1 -->'
+DIAGNOSTIC_MARKER = '<!-- hmrec-diagnostic-handoff-v1 -->'
 DATA_MARKER = '<!-- hmrec-data-handoff-v1 -->'
 STEPS = ('setup-docker', 'doctor-before', 'docker-smoke', 'bootstrap', 'check', 'verify', 'doctor')
 ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {name + '.log' for name in STEPS}
@@ -26,10 +27,10 @@ ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {n
 DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'build.log', 'result.json', 'config.resolved.json'}
 
 def marker_for(run_id):
-    return TRAIN_MARKER if run_id.startswith('train-') else DATA_MARKER if run_id.startswith('data-') else MARKER
+    return DIAGNOSTIC_MARKER if run_id.startswith('diagnose-') else TRAIN_MARKER if run_id.startswith('train-') else DATA_MARKER if run_id.startswith('data-') else MARKER
 
 def tag_for(run_id):
-    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-')):
+    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-')):
         raise ValueError('Run ID inválido; usa el identificador bootstrap-... o data-... del reporte')
     return 'handoff-' + run_id
 
@@ -45,13 +46,15 @@ def validate_archive(path, run_id=None):
     tag_for(report['run_id'])
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
-    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff') else ALLOWED
+    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff') else ALLOWED
     if report['kind'] == 'training-handoff':
         allowed = allowed | {'tracking.log'}
     if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
         raise ValueError('Tipo y nombre de reporte incompatibles')
     if report['run_id'].startswith('train-') != (report['kind'] == 'training-handoff'):
         raise ValueError('Tipo y nombre de entrenamiento incompatibles')
+    if report['run_id'].startswith('diagnose-') != (report['kind'] == 'diagnostic-handoff'):
+        raise ValueError('Tipo y nombre de diagnóstico incompatibles')
     if any(item['path'] not in allowed for item in report['files']):
         raise ValueError('El inventario contiene archivos ajenos al reporte de infraestructura')
     return report
@@ -233,7 +236,7 @@ def main():
             reports = []
             for release in client.releases():
                 tag = release.get('tag_name', '')
-                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
+                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-', 'handoff-diagnose-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
                     run_id = tag[len('handoff-'):]
                     tag_for(run_id)
                     reports.append({'run_id': run_id, 'draft': release['draft'], 'url': release['html_url']})

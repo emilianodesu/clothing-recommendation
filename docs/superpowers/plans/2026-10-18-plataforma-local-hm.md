@@ -205,6 +205,8 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 
 **Estado operativo T3:** demo, pilotos y época completa en mac24 aprobados; ver [evidencia física](../../../evidence/mac24-t3-2026-10-19.json) y [evaluación](../../evaluation.md#evidencia-física-de-mac24). Full consumió 22,674,665 filas en 247.391 s de entrenamiento (309.936 s de job), sin swap ni OOM. La medición de capacidad está demostrada; la aceptación de calidad requiere revisar cobertura de 0.05147%, aunque supera popularidad en validación. Test permanece reservado y T4 no se inició. Los intentos reutilizan `train-job` y reportes privados con experiment_id estable.
 
+Paso previo a aceptar calidad: [diagnóstico reproducible](../../diagnostics.md) sobre el checkpoint cerrado. Reproduce métricas, mide concentración y sensibilidad a entradas, y compara popularidad reciente usando únicamente validación. El código puede estar implementado sin que la ejecución full en mac24 haya concluido.
+
 ## Task 4 · T4 — Versión portable, índice y API de recomendaciones
 
 **Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`. T1 ya incorporó `001_bootstrap.sql`.

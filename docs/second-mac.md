@@ -287,3 +287,7 @@ Las cuatro corridas terminaron `passed` en el commit `6ba7e6e7972c655fb780cdade9
 | hm-full | [train-mac24-20261020T004913Z-9d2fb726](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-mac24-20261020T004913Z-9d2fb726) |
 
 Para recibirlos, usa `SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download RUN_ID` con cada identificador de la tabla. La descarga valida el paquete. Los IDs MLflow y las métricas/segmentos están en la evidencia; no es necesario acceder a MLflow de mac24 para leerlos. Revisar la cobertura baja antes de aceptar calidad o decidir nuevos experimentos. Esta publicación no inicia T4 ni ejecuta al agente de la máquina principal.
+
+## T3: diagnóstico sobre el checkpoint ya entrenado
+
+Demo, pilotos y full ya pasaron en mac24. Continúa con [el procedimiento de diagnóstico](diagnostics.md), primero sobre el origen demo y después sobre el full. `diagnose-job` fija origen/commit/recursos y produce reportes privados separados; no repitas entrenamiento ni abras test. La guía incluye comandos, interpretación de métricas y entrega al agente de desarrollo.

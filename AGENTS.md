@@ -11,6 +11,10 @@ Lee `docs/evaluation.md` y la sección T3 de `docs/second-mac.md`. La época com
 - `train-job stop` guarda al finalizar el lote. `resume` exige mismo commit/configuración/recursos/entradas, devuelve otro run_id y conserva experiment_id. Usa el intento más reciente; no cambies código para ocultar fallos. Mantén el equipo sin suspensión.
 - Devuelve estado, identidad, filas, época, tiempo, RSS/cgroup/swap/OOM, métricas, popularidad, ID MLflow y URL de Release. Full requiere 22,674,665 filas por época. No uses test para ajustar; no implementes T4. Los pesos permanecen locales: este intercambio sólo publica reportes sin clientes.
 
+## Si tu tarea es diagnosticar T3 en mac24
+
+T3 ya completó demo, pilotos y una época full; no repetirlos. El siguiente paso es [diagnóstico de concentración y personalización](docs/diagnostics.md). Usa `diagnose-job` con el commit recibido, primero sobre `train-mac24-20261020T004703Z-a09df9b2` y, si pasa, sobre `train-mac24-20261020T004913Z-9d2fb726`. Conserva el Colima/perfil de recursos mac24, el prefijo SSL y los checkpoints originales. El worker monta las entradas en lectura y escribe sólo el diagnóstico. Espera estados finales, exporta, valida y publica ambos ZIP por el canal privado autorizado, también ante fallo. `passed` acredita el diagnóstico, no la aceptación de calidad. No entrenes ni abras test ni avances a T4 en esta tarea. Si faltan datos/pesos, devuelve el bloqueo; los reportes de GitHub no contienen modelos.
+
 ## Si tu tarea es continuar con T2 en mac24
 
 T1 ya se reprodujo en la Mac física de 24 GB: reporte `bootstrap-mac24-20261019T171240Z-52229e97`, 35 pruebas. Para T2, lee `docs/data.md` y la sección T2 de `docs/second-mac.md`. T2 sintético y completo también pasaron en mac24; consulta `evidence/mac24-t2-2026-10-19.json` y sus Releases antes de solicitar otra ejecución. La evidencia T3 posterior está en `evidence/mac24-t3-2026-10-19.json`.

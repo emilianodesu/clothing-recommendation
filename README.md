@@ -22,6 +22,10 @@ T1 ya pasó en la Mac física de 24 GB (35 pruebas). Para continuar allí con lo
 
 Sigue [T3 en la segunda Mac](docs/second-mac.md#t3-entrenar-y-devolver-evidencia-desde-mac24): verifica MLflow, ejecuta demo → hm-small → hm-medium → hm-full secuencialmente y publica cada reporte. El [contrato de evaluación](docs/evaluation.md) describe métricas, cortes, recursos y recuperación. `train-job start/status/stop/resume/export` reutiliza el transporte privado de T1/T2. No necesita TensorFlow, Hopsworks, nube ni librerías científicas en el host. El despliegue de la API y el transporte de pesos siguen siendo T4.
 
+## Diagnosticar el modelo existente
+
+El siguiente paso en mac24 es [diagnosticar concentración y personalización](docs/diagnostics.md) con `diagnose-job`: reproduce la evaluación del checkpoint full, compara popularidad de 7/28 días y mide cambios al modificar las entradas del usuario. Reutiliza pesos en lectura y devuelve agregados por GitHub. No entrena ni evalúa test; la aceptación de calidad sigue pendiente.
+
 ## Instalar la infraestructura del proyecto
 
 Requisitos del host: Docker con Compose y Buildx, Python 3.9+ y Git si se obtiene el código por clonación. No se necesita instalar PyTorch, uv ni bibliotecas científicas en el host. La primera construcción descarga imágenes y paquetes.
