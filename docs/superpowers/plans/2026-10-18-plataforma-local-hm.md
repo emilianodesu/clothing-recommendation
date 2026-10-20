@@ -4,7 +4,7 @@
 
 **Goal:** Entregar el mejor recomendador personalizado entre los candidatos evaluados con H&M, operado localmente y reproducible desde una instalación limpia, con evidencia de calidad, latencia y recuperación; conservar los experimentos del curso y explicar la selección.
 
-**Architecture:** El pipeline transforma H&M completo a Parquet; los experimentos PyTorch permanecen reproducibles y se selecciona historial28d+popularidad7d para el primer servicio. Una versión portable reúne catálogo, historiales, popularidad, reglas y evidencia; FastAPI sirve ese ranking y PostgreSQL conserva el estado operativo. Airflow coordinará preparación/publicación y MLflow conserva los experimentos; Docker Compose separa servicio y trabajos pesados.
+**Architecture:** El pipeline transforma H&M completo a Parquet; los experimentos PyTorch permanecen reproducibles e historial28d+popularidad7d es referencia provisional. La nueva campaña Q1–Q4 seleccionará el motor antes del servicio. FastAPI servirá una versión portable verificada y PostgreSQL conservará estado operativo; Airflow coordinará preparación/publicación y MLflow conservará experimentos. Docker Compose separa servicio y trabajos pesados.
 
 **Tech Stack:** Polars, Parquet, PostgreSQL, FastAPI, Streamlit, Airflow LocalExecutor, uv y Docker Compose para datos/servicio; PyTorch CPU y MLflow para experimentos. Qdrant queda disponible para experimentos vectoriales, sin ser dependencia del futuro perfil `serve` del motor seleccionado.
 
@@ -12,7 +12,7 @@
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Estado vigente del 20 de octubre:** T1–T3 y selección en validación completados; motor historial+popularidad elegido bajo el criterio confirmado del usuario. T4-A/T4-B se adaptan abajo; aún no hay servicio API, transporte de paquetes completos ni medida de latencia. La aceptación final sobre test sigue pendiente.
+**Estado vigente del 20 de octubre:** T1–T3 y la primera selección en validación están completados; el usuario aprobó después ampliar calidad temporal, grafos y ranking. El [plan Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) y su [diseño](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) preceden ahora a T4. El siguiente desarrollo es Q1-A/Q1-B; no existen sus comandos todavía. Historial+popularidad queda como referencia provisional. T4–T7 conservan abajo el diseño aplicable si gana H; Q4 deberá adaptarlo al ganador real. No hay API, paquete portable completo ni latencia medida. Test sigue reservado.
 
 **Antecedente del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
@@ -28,7 +28,7 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados | T2 probada también en mac24 | Parquet completo, cortes y ejemplos semanales conciliados; evidencia mac24-t2-2026-10-19.json |
-| Motor y servicios | T3 medida y selección realizada; T4 y siguientes pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad seleccionado; API, paquete de servicio, interfaz y DAG pendientes |
+| Motor y servicios | T3 medida; ampliación Q1–Q4 y T4 pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad como referencia provisional; API, paquete de servicio, interfaz y DAG pendientes |
 | Otra computadora | T1, T2 y T3 probadas en mac24 | Reportes publicados y verificados; transferencia de pesos y servicio pendientes |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
@@ -39,8 +39,8 @@ Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [eviden
 
 ## Global Constraints
 
-- Todo local, sin servicios de pago, Hopsworks ni dependencia del runtime de Codex. No se necesita GPU. El framework es una decisión técnica subordinada a la evidencia; el motor seleccionado no necesita añadir uno nuevo.
-- Motor seleccionado `recent_then_popular`: historial de 28 días antes de `data_as_of`, por última compra descendente/frecuencia descendente/article_id ascendente; completar con popularidad de 7 días (frecuencia descendente/article_id ascendente). Hasta 200 candidatos y 12 artículos únicos. Sin historial, popularidad. El framework no determina la selección; dos torres/64 dimensiones quedan como experimento.
+- Todo local, sin servicios de pago, Hopsworks ni dependencia del runtime de Codex. No se necesita GPU. El framework es una decisión técnica subordinada a la evidencia; Q3 probará LightGBM CPU y fijará su dependencia después de verificar compatibilidad.
+- Referencia provisional H, `recent_then_popular`: historial de 28 días antes de `data_as_of`, por última compra descendente/frecuencia descendente/article_id ascendente; completar con popularidad de 7 días (frecuencia descendente/article_id ascendente). Hasta 200 candidatos y 12 artículos únicos. Sin historial, popularidad. Q4 decide el motor con el protocolo nuevo; dos torres/64 dimensiones quedan como experimento.
 - Procesar el histórico completo; cada algoritmo sólo utiliza datos anteriores a su corte y ventana documentados. Conservar la evidencia de entrenamiento masivo PyTorch ya obtenida; preparar la regla elegida no se denomina entrenamiento neuronal. Los pilotos no sustituyen una evaluación full.
 - CPU, lotes acotados y un trabajo pesado a la vez. Evitar cargar todas las transacciones en memoria. Entrenamiento y medición de latencia se ejecutan por separado en la prueba de referencia.
 - Perfiles Compose `demo`, `serve` y `pipeline`. La demo funciona con datos sintéticos y sin Kaggle. Servir una versión importada no exige reentrenar ni conectar al MLflow original.
@@ -77,7 +77,7 @@ Estimación inicial: **8 semanas, 12–15 horas por semana**, sujeta a disponibi
 | E7 · Rendimiento | 7 | Informe de carga y ajustes | Comparar resultados medidos con las metas; registrar limitaciones |
 | E8 · Entrega académica | 8 | Informe final, evidencia, demo y guía del evaluador | Evaluación final aislada y procedimiento completo ejecutado |
 
-T1–T8 siguientes corresponden a estos entregables, con T3 iniciada tempranamente para dimensionar CPU. E4 es el primer despliegue funcional; E8 es la entrega completa, con pruebas operativas. Grafos es una ampliación posterior al núcleo y no condiciona este calendario.
+T1–T8 siguientes corresponden a estos entregables, con T3 iniciada tempranamente para dimensionar CPU. E4 es el primer despliegue funcional; E8 es la entrega completa, con pruebas operativas. **El calendario anterior es histórico:** la ampliación aprobada Q1–Q4 se inserta antes de E4; estima 6–9 jornadas de ingeniería más ejecución/intercambio, sin prometer mantener fechas originales. Grafos pasa a ser parte de esa campaña; no queda relegado a después de la entrega.
 
 ## Estructura objetivo
 
@@ -137,6 +137,8 @@ FinalProject/
 ```
 
 ## Contratos compartidos
+
+Los contratos de servicio siguientes describen la alternativa H preparada anteriormente. No fijan el formato de G/RH/RG: Q4 debe revisar inventario, modelos/grafos, paridad y actualización según el ganador antes de implementar T4. La infraestructura y las garantías de integridad/versionado se conservan.
 
 Los contratos existentes se conservan en `src/hm_recommender/contracts.py`; T4-A añadirá los contratos de servicio schema2 en `src/hm_recommender/releases/contracts.py`, importados por API y publicación sin duplicarlos. Los manifiestos usan JSON versionado con rutas relativas y huellas SHA-256. Las tablas usan Parquet. Los identificadores se conservan como cadenas, incluidos ceros iniciales de artículos.
 
@@ -216,7 +218,9 @@ El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no s
 
 ## Task 4 · T4 — Motor seleccionado, versión portable y API
 
-Se divide en dos entregables independientes. T4-A es el siguiente trabajo de implementación: no requiere otro entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. Las interfaces de esta sección son futuras; no ejecutar estos comandos hasta implementarlos.
+**Dependencia nueva:** completar [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md). El detalle siguiente se aplica si H sigue seleccionado; Q4 lo revisa si gana otro candidato. No implementar estos contratos como obligatorios antes de esa decisión.
+
+Se divide en dos entregables independientes después de Q4. T4-A empaqueta el procedimiento elegido; si gana H, no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. Las interfaces de esta sección son futuras; no ejecutar estos comandos hasta implementarlos.
 
 ### T4-A · Paquete y paridad offline
 
@@ -301,12 +305,14 @@ Se divide en dos entregables independientes. T4-A es el siguiente trabajo de imp
 | 4.4 Modelo de factor latente | Experimento académico implementado | Embeddings de 64 dimensiones/producto punto, sin atribuir implementación de SVD |
 | 4.5 Evaluación de sistemas | Central | Cortes temporales, MAP@12, NDCG@12, Recall@200, cobertura, segmentos y errores |
 | 4.6 Desafío Netflix | Contextual | Discusión bibliográfica y diferencias con feedback implícito; no es el dataset del proyecto |
-| 1.1–1.5 | Fuera del núcleo | Embeddings por sí solos no acreditan SVD/PCA/NMF/t-SNE ni método de potencias |
+| 1.1 | Herramienta prevista en Q2 | Iteración de potencias y convergencia de PageRank, pendiente de implementar/explicar |
+| 1.2–1.5 | Fuera del núcleo | Embeddings por sí solos no acreditan SVD/PCA/NMF/t-SNE |
 | 2.1–2.6 | Fuera del núcleo | No se promete Apriori, FP-Growth ni PrefixSpan |
-| 3.3 y 5.1–5.3, 5.5 | Ampliación opcional de grafos | Grafo de coocurrencia de artículos con pesos normalizados, comunidades y similitud; explicar que es una red de interacción comercial |
-| 3.1, 3.2, 3.4 y 5.4 | No comprometidos | PageRank, HITS, análisis espectral/caminatas y comunidades traslapadas no quedan cubiertos automáticamente |
+| 3.1, 3.3 y caminatas de 3.4 | Campaña Q2 aprobada, pendiente | Grafo ponderado y control PageRank personalizado en subgrafos; declarar límites de escala/aproximación |
+| 5.5 | Aplicación prevista en red comercial | Similitud de nodos; no equivale a una red social observada |
+| 3.2 y 5.1–5.4 | Fuera de esta campaña | Sin HITS, comunidades ni comunidades traslapadas; no declarar cobertura completa del tema 5 |
 
-La ampliación de grafos sólo comienza con E1–E7 terminados y tiempo disponible: construir aristas de compras de usuarios dentro de ventanas temporales, limitar grado para controlar memoria, obtener comunidades y usarlas para explicar diversidad de las recomendaciones. Requiere plan y evaluación propios; no se presenta el grafo interno de Qdrant ni el DAG de Airflow como análisis de redes del curso. La entrega principal cubre el tema 4; el deseo de combinar recomendaciones y grafos queda explícitamente como extensión, sin desplazar la infraestructura priorizada.
+La ampliación de grafos se ejecuta en Q2 antes de T4, siguiendo el protocolo y presupuesto propios de la campaña aprobada. No se presenta el grafo interno de Qdrant ni el DAG de Airflow como análisis de redes del curso. La entrega combina tema 4 y parte del tema 3; la infraestructura T4–T8 sigue siendo obligatoria. Comunidades y una red social real no forman parte de esta campaña.
 
 ## Pendientes que sí deben cerrarse
 
@@ -325,4 +331,4 @@ No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de
 
 La propuesta académica conserva la motivación y las referencias del proyecto. El [diseño técnico](../specs/2026-10-18-despliegue-local-reproducible-design.md#referencias-técnicas) reúne las fuentes oficiales de Kaggle, MLflow, Airflow, Docker, Colima, PyTorch y uv; T1 ya fijó las versiones verificadas en ARM64. Las instrucciones operativas vigentes están en README y `docs/`, sin depender de este chat.
 
-Revisión del plan: datos y tiempo → T2; modelo y escala → T3; publicación y servicio → T4; interfaz/eventos → T5; operación → T6; independencia y recuperación → T7; medición y curso → T8. Los cinco modos de fallo de Review Focus tienen pruebas asignadas. Este documento es planificación: ninguna casilla pendiente representa funcionalidad ya entregada.
+Revisión del plan: datos y tiempo → T2; modelo y escala → T3; ampliación temporal/grafos/ranking y selección → Q1–Q4; publicación y servicio → T4; interfaz/eventos → T5; operación → T6; independencia y recuperación → T7; medición y curso → T8. Los cinco modos de fallo de Review Focus tienen pruebas asignadas. Este documento es planificación: ninguna casilla pendiente representa funcionalidad ya entregada.

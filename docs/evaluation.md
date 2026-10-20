@@ -1,5 +1,7 @@
 # Entrenamiento y evaluación T3
 
+**Actualización del 20 de octubre:** este documento conserva el contrato y evidencia T3. La campaña nueva [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), aún por implementar, añade tres cortes y otros métodos con [protocolo propio](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). No reutilizar el checkpoint entrenado hasta septiembre 9 en cortes anteriores; no reentrenar T3 por esta actualización. Test sigue reservado.
+
 ## Qué ejecuta
 
 PyTorch CPU aprende dos torres de 64 dimensiones normalizadas. La torre de usuario combina ID e historial (compras, precio medio, fracción online y recencia); la de artículo combina ID, tipo, grupo y color. El score es su producto punto. Adagrad no fusionado actualiza embeddings dispersos y capas densas, con cross-entropy, temperatura 0.1 y ocho negativos. Los negativos proceden del catálogo disponible antes de la semana y excluyen todas las etiquetas positivas de ese usuario en esa semana. Si una cesta ocupa todo el catálogo, el trabajo falla explícitamente, sin convertir un positivo en negativo.

@@ -6,7 +6,13 @@ Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/e
 
 **Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. T3 incorpora el entrenamiento de dos torres PyTorch, checkpoints, evaluación exacta y MLflow local. La API de recomendaciones, Streamlit y los DAG todavía están pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
 
-**Decisión vigente (20 de octubre):** el usuario prioriza el mejor resultado medido, independientemente del framework. El primer motor de servicio será historial28d+popularidad7d; los experimentos de contenido, filtrado colaborativo y representaciones latentes conservan su valor académico. [Selección y explicación de resultados](docs/model-selection.md) distingue evidencia, hipótesis y límites. El plan T4 ya está adaptado; su implementación sigue pendiente. Test permanece reservado.
+**Decisión vigente (20 de octubre):** el usuario aprobó ampliar la validación antes de cerrar el motor. Historial28d+popularidad7d queda como referencia provisional. El [plan Q1–Q4](docs/superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) añade tres cortes temporales, recuperación por grafo y ordenamiento LightGBM, con presupuesto y criterios de selección fijados antes de medir. [Selección y explicación de resultados](docs/model-selection.md) distingue evidencia, hipótesis y límites. El siguiente desarrollo es Q1 (evaluador y reportes); los nuevos comandos aún no existen. T4 sigue pendiente y test reservado.
+
+## Siguiente entrega: calidad temporal, grafos y ranking
+
+Secuencia: Q1 referencias temporales → Q2 grafo y control PageRank → Q3 ordenamiento aprendido → Q4 selección → T4–T8 despliegue y aceptación. El [diseño](docs/superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija fechas, candidatos, límites, cobertura del curso y cierre de experimentos. Los experimentos PyTorch existentes se conservan sin repetirlos. PageRank se estudia en una cohorte acotada; no se promueve un motor por resultados de esa muestra.
+
+Primero se implementa y prueba Q1 en la Mac de desarrollo. Después se publicarán un commit ejecutable y el prompt mac24 para demo, piloto y tres evaluaciones completas. **Este cambio es planificación; todavía no hay nuevas órdenes que ejecutar en mac24.** El intercambio continúa mediante GitHub privado y reportes cerrados.
 
 ## Empezar en la segunda Mac
 
@@ -34,7 +40,7 @@ El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro repor
 
 ## Historial reciente: resultados revisados
 
-La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. Los dos reportes de mac24, demo y full, ya se descargaron y revisaron. Historial+popularidad cumple el criterio principal de validación; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. La [revisión](evidence/mac24-recent-history-review-2026-10-20.json) sustenta la selección para el primer despliegue. La decisión de priorizar calidad sobre framework ya está confirmada y T4 adaptado en el plan. Este candidato es una regla de historial y popularidad; no acredita superioridad del modelo PyTorch. Test y aceptación final siguen pendientes.
+La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. Los dos reportes de mac24, demo y full, ya se descargaron y revisaron. Historial+popularidad cumple el criterio principal de validación; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. La [revisión](evidence/mac24-recent-history-review-2026-10-20.json) sustenta la referencia provisional de la nueva campaña Q1–Q4. El diseño T4 basado en esa regla se conserva, condicionado a la selección final. Este candidato no acredita superioridad del modelo PyTorch. Test y aceptación final siguen pendientes.
 
 La [verificación local](evidence/local-recent-history.json) pasó 96 pruebas y dos diagnósticos, demo y piloto H&M; conserva también un intento fallido de empaquetado y su corrección. La [ejecución full en mac24](evidence/mac24-recent-history-2026-10-20.json) completó 72,019 compradores y 102,967 artículos en 132.132 s, con pico de 2.568 GiB, sin swap ni OOM. Es tiempo del diagnóstico offline, no latencia del servicio.
 
@@ -79,7 +85,8 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 
 - [Infraestructura inicial y operación](docs/bootstrap.md): qué instala esta entrega y cómo repetirla.
 - [Trabajo entre dos Macs](docs/superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md): instalación en la Mac Apple Silicon de 24 GB, reportes por GitHub Releases privado y diseño pendiente de entrenamiento; H&M se descargará de Kaggle en esa Mac.
-- [Plan de implementación, entregables y estructura](docs/superpowers/plans/2026-10-18-plataforma-local-hm.md): estado actual, ocho etapas, tareas verificables, contratos, estructura objetivo y cobertura del curso. Es la referencia operativa más reciente; distingue lo preparado de lo pendiente.
+- [Plan de plataforma, entregables y estructura](docs/superpowers/plans/2026-10-18-plataforma-local-hm.md): ocho etapas, contratos, estructura objetivo y cobertura del curso; incorpora Q1–Q4 como nueva dependencia antes de T4 y distingue lo preparado de lo pendiente.
+- [Ampliación Q1–Q4: calidad temporal, grafos y ranking](docs/superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md): siguiente desarrollo, previo a T4; incluye protocolo, pruebas, entregas entre Macs y criterios de cierre.
 - [Selección del motor y explicación académica](docs/model-selection.md): criterio confirmado, resultados comparables, experimentos del temario y límites de las conclusiones.
 - Propuesta académica en Word: archivo local `Propuesta_proyecto_final_Datos_Masivos.docx`, fuera de Git. El diseño y el plan en Markdown contienen las decisiones técnicas versionadas.
 - [Diseño de ejecución local y reproducibilidad](docs/superpowers/specs/2026-10-18-despliegue-local-reproducible-design.md): recursos verificados, arquitectura local, contrato del futuro repositorio y pruebas para otra computadora.

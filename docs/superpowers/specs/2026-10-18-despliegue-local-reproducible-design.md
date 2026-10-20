@@ -8,7 +8,7 @@ Diseño del 18 de octubre de 2026, con nota de avance del 19 de octubre. Complem
 
 ## Actualización de alcance del 20 de octubre de 2026
 
-El usuario confirmó [selección por calidad medida, independientemente del framework](../../model-selection.md). Esta decisión reemplaza en este diseño la obligación de desplegar dos torres con Qdrant: historial28d+popularidad7d es el motor seleccionado y PyTorch se conserva como experimento académico. El [plan vigente](../plans/2026-10-18-plataforma-local-hm.md) adapta los contratos y T4–T8; API, perfiles de servicio y paquetes siguen pendientes de implementar. Se mantienen requisitos locales, reproducibilidad, evaluación temporal, publicación segura y recursos. Las secciones siguientes conservan el diseño original como antecedente, no como prueba de capacidad ni mandato de reinstalar lo ya construido.
+El usuario confirmó [selección por calidad medida, independientemente del framework](../../model-selection.md), y posteriormente aprobó ampliar la validación antes de cerrar el motor. El [diseño Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking-design.md) añade cortes temporales, grafos y ranking; historial28d+popularidad7d queda como referencia provisional y PyTorch se conserva como experimento académico. El [plan vigente](../plans/2026-10-18-plataforma-local-hm.md) conserva T4–T8 después de esa selección; API, perfiles de servicio y paquetes siguen pendientes de implementar. Se mantienen requisitos locales, reproducibilidad, publicación segura y recursos, sin obligación de servir dos torres/Qdrant. Las secciones siguientes conservan el diseño original como antecedente, no como prueba de capacidad ni mandato de reinstalar lo ya construido.
 
 ## Decisión y estado original del proyecto
 

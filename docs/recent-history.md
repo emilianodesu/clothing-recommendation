@@ -1,5 +1,7 @@
 # T3: validación de compras recientes y respaldo
 
+**Estado vigente:** esta campaña ya se ejecutó y revisó. El usuario aprobó después [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), con historial+popularidad como referencia provisional. Las decisiones y órdenes siguientes documentan el experimento histórico; no ejecutarlas de nuevo para sustituir la campaña temporal, cuyos comandos siguen pendientes de implementar.
+
 ## Decisión tras revisar los cuatro reportes
 
 La máquina principal descargó los cuatro ZIP de mac24 y verificó inventario, tamaños, SHA-256, package ID, commit limpio, límites, conciliación de épocas y comparación completa. Coinciden con [la evidencia de tres épocas](../evidence/mac24-three-epochs-2026-10-20.json). La auditoría local queda en `artifacts/reviews/mac24-three-epochs-review.json`, fuera de Git.

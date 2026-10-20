@@ -6,7 +6,9 @@ El 20 de octubre de 2026 el usuario confirmó que importa obtener el mejor resul
 
 Esto reemplaza el requisito anterior de que el ranking principal fuera necesariamente el modelo PyTorch. Se mantienen ejecución local, presupuesto propio, Docker, portabilidad, datos verificables y comunicación entre Macs por GitHub. No se requiere cambiar de framework para adoptar el candidato actual.
 
-**Selección técnica para el primer despliegue:** `recent_then_popular`, protocolo `recent-history-v1`. Es el mejor candidato medido en esta validación, no un óptimo global ni una garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
+**Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
+
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Ambos son planificación: no hay nuevas métricas ni jobs ejecutables todavía.
 
 ## Evidencia que decide la selección
 
@@ -17,7 +19,7 @@ La [revisión independiente de los ZIP recibidos](../evidence/mac24-recent-histo
 | Popularidad de 7 días | 0.00660410 | 0.01260462 | 0.16757920 | Referencia y respaldo |
 | PyTorch, una época | 0.00576877 | 0.01120105 | 0.13893485 | Experimento académico |
 | Historial + PyTorch | 0.02452712 | 0.03533274 | 0.17976476 | Experimento de aporte incremental |
-| Historial + popularidad | 0.02458902 | 0.03549285 | 0.19078554 | Motor seleccionado para implementar |
+| Historial + popularidad | 0.02458902 | 0.03549285 | 0.19078554 | Referencia provisional H |
 
 Historial+popularidad mejora MAP frente a popularidad en +0.01798491, IC95% [0.01716408, 0.01882157]: +272.33% relativo. Los intervalos de NDCG y Recall también son positivos. No es una mejora de conversión comercial: no hay experimento online.
 
@@ -48,22 +50,22 @@ El diagnóstico full consumió 132.132 s y 2.568 GiB de pico de contenedor, sin 
 | 4.4 Factores latentes | Embeddings de 64 dimensiones y producto punto | Representaciones latentes aprendidas; no equivale a haber implementado SVD |
 | 4.5 Evaluación | Cortes temporales, métricas, segmentos, cobertura, bootstrap y permutaciones | Parte central de la selección y de la explicación de resultados negativos |
 | 4.6 Netflix | Comparación conceptual con datos de calificaciones | Contexto del informe, pendiente de desarrollo bibliográfico |
-| 3 y 5, grafos | Todavía no hay PageRank, HITS o comunidades implementados | Extensión académica posible, con protocolo y presupuesto propios; Qdrant y Airflow no acreditan esos subtemas |
+| 3 y 5, grafos | Todavía no hay PageRank, HITS o comunidades implementados | Q2 compromete pesos, vecinos y control PageRank; no comunidades ni red social observada. Qdrant y Airflow no acreditan esos subtemas |
 | 1 y 2 | No se implementaron PCA, NMF, t-SNE, Apriori o FP-Growth | No declarar cobertura por usar embeddings, frecuencias o historial |
 
 La comparación, sus fallos y sus límites son parte del resultado académico. No hace falta introducir cada experimento en producción para demostrar que se implementó y evaluó correctamente. El informe final enlazará código, configuración, dataset/corte, commit, reportes y recursos; no sólo una gráfica de puntuaciones.
 
 ## Reglas para mantener una selección honesta
 
-1. Conservar fijo el candidato actual durante el empaquetado y el servicio. No ajustar ventanas o desempates a partir de la prueba de despliegue.
+1. Conservar fijo H como referencia en Q1–Q4. Q4 congela el ganador antes del empaquetado; no ajustar ventanas o desempates a partir de la prueba de despliegue.
 2. Un candidato futuro se compara con el motor seleccionado, además de popularidad, sobre la misma población, corte, catálogo y denominadores. Fijar hipótesis y configuración antes de ejecutarlo.
 3. MAP@12 es la métrica principal acordada para esta campaña; NDCG, Recall, cobertura, segmentos y coste son controles de decisión. Documentar cualquier compromiso entre métricas; una pérdida menor de entrenamiento no acredita una mejor recomendación.
 4. No elegir un método por el nombre del framework, su complejidad o su presencia en el temario. Tampoco afirmar que el método más simple siempre gana.
-5. Reservar test para la evaluación final del procedimiento congelado. Los reportes actuales conservan `quality_accepted=false`: selección de despliegue en validación y aceptación final son decisiones distintas. Con la estrategia congelada se reconstruirá el estado usando sólo datos anteriores al corte de test; no se reentrena una regla que no tiene pesos.
+5. Reservar test para la evaluación final del procedimiento congelado. Los reportes actuales conservan `quality_accepted=false`: selección en validación y aceptación final son decisiones distintas. Se reconstruirá el estado usando sólo datos anteriores al corte de test; si gana un ranker se hará el refit predeclarado, mientras que una regla sin pesos sólo requiere preparar su estado.
 
 ## Consecuencias para el despliegue
 
-El [plan actualizado](superpowers/plans/2026-10-18-plataforma-local-hm.md) conserva T4–T8 y reemplaza la dependencia obligatoria de inferencia neuronal por un motor versionado de historial y popularidad. El objetivo industrial permanece: pipeline reproducible, publicación atómica, API, eventos, observabilidad, rollback y reproducción en otra Mac.
+El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) conserva T4–T8. Su diseño de historial y popularidad se aplica si H permanece ganador; Q4 debe adaptar los artefactos y la actualización al método seleccionado antes de implementar. El objetivo industrial permanece: pipeline reproducible, publicación atómica, API, eventos, observabilidad, rollback y reproducción en otra Mac. La siguiente lista describe el diseño disponible para H, no requisitos invariables de los candidatos de grafo/ranking:
 
 - **Paquete portable:** catálogo, historiales anteriores al corte, popularidad ordenada, reglas, manifiesto y evidencia. Sin pesos ni vectores obligatorios.
 - **Servicio:** FastAPI carga una versión verificada y responde con su identidad, estrategia, orden y motivo de recomendación. PostgreSQL conserva versiones y, en T5, eventos.
@@ -71,4 +73,4 @@ El [plan actualizado](superpowers/plans/2026-10-18-plataforma-local-hm.md) conse
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-El siguiente entregable es **T4-A: paquete de servicio y prueba de paridad con el diagnóstico**, seguido de **T4-B: API y activación**, antes de la demo y eventos de T5. Los comandos y contratos futuros del plan todavía no están implementados. No hace falta ejecutar otra campaña de mac24 para confirmar esta decisión; la próxima ejecución allí comprobará el código de T4 cuando esté listo.
+El siguiente entregable es **Q1: evaluador temporal y reportes**, seguido de Q2 grafo, Q3 ranking y Q4 selección. Se implementa/probará aquí y luego se publicará un commit con instrucciones mac24; esta actualización no requiere ejecutar nada allá. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.

@@ -1,5 +1,7 @@
 # T3: diagnóstico de concentración y personalización
 
+**Estado vigente:** los diagnósticos, comparación de épocas y validación de historial de este documento ya se ejecutaron y revisaron. Sus resultados se conservan como antecedentes. El siguiente desarrollo es [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), todavía sin comandos nuevos implementados; no repetir estos procedimientos ni abrir test por recibir la actualización.
+
 La época completa de mac24 supera popularidad histórica, pero sus primeras 12 recomendaciones cubren sólo 53 de los 102,967 artículos elegibles. Antes de aceptar la calidad y avanzar a T4, `diagnose-job` analiza el checkpoint existente. No ejecuta entrenamiento, no selecciona hiperparámetros y no evalúa test.
 
 ## Qué se mide
