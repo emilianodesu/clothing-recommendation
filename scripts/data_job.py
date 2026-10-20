@@ -170,8 +170,9 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             run['build_exit_code'] = 0
             if training_config and training_config != 'demo':
                 compose(ROOT, values, 'up', '--detach', '--wait', '--wait-timeout', '240', 'mlflow', log_path=directory / 'tracking.log')
+                run['tracking_exit_code'] = 0
         except subprocess.CalledProcessError as error:
-            run['build_exit_code'] = error.returncode
+            run['tracking_exit_code' if run.get('build_exit_code') == 0 else 'build_exit_code'] = error.returncode
             raise
         finally:
             os.environ.clear(); os.environ.update(original)
@@ -282,7 +283,7 @@ def export(run_id):
         read_report(archive)
         return archive
     export_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
-    for name in ('environment.json', 'commit.txt', 'result.json', 'config.resolved.json', 'preflight.log', 'build.log'):
+    for name in ('environment.json', 'commit.txt', 'result.json', 'config.resolved.json', 'preflight.log', 'build.log', 'tracking.log'):
         if (directory / name).exists():shutil.copyfile(directory / name, export_dir / name)
     if state.get('Status') in ('missing','not-created'):
         (export_dir / 'job.log').write_text('Contenedor ausente o no creado: revisar diagnóstico de lanzamiento.\n')
@@ -293,7 +294,10 @@ def export(run_id):
         if result is None:
             result = {'stage':'T3', 'status':status, 'worker_result_missing':True}
         if progress_path.exists():
-            result = dict(result, last_durable_progress=json.loads(progress_path.read_text()))
+            result = dict(result, last_observed_progress=json.loads(progress_path.read_text()))
+        durable_path = progress_path.with_name('latest.json')
+        if durable_path.exists():
+            result = dict(result, last_durable_progress=json.loads(durable_path.read_text()))
         write_json(export_dir / 'result.json', result)
     code = 0 if status == 'passed' else (130 if status == 'interrupted' else state.get('ExitCode') or 1)
     steps = []
@@ -301,6 +305,10 @@ def export(run_id):
         build_code = run.get('build_exit_code',1)
         steps.append({'name':'build','log':'build.log','exit_code':build_code,
                       'status':'passed' if build_code == 0 else ('interrupted' if build_code == 130 else 'failed')})
+    if (export_dir / 'tracking.log').exists():
+        tracking_code = run.get('tracking_exit_code', 1)
+        steps.append({'name':'tracking', 'log':'tracking.log', 'exit_code':tracking_code,
+                      'status':'passed' if tracking_code == 0 else ('interrupted' if tracking_code == 130 else 'failed')})
     steps.append({'name':'data','log':'job.log','status':status,'exit_code':code})
     report = {'schema_version':1, 'kind':'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
         'context':run['context'], 'source_commit':run['source_commit'], 'source_clean':run['source_clean'],

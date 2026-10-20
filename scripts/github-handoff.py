@@ -46,6 +46,8 @@ def validate_archive(path, run_id=None):
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
     allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff') else ALLOWED
+    if report['kind'] == 'training-handoff':
+        allowed = allowed | {'tracking.log'}
     if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
         raise ValueError('Tipo y nombre de reporte incompatibles')
     if report['run_id'].startswith('train-') != (report['kind'] == 'training-handoff'):

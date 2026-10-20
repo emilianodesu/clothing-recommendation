@@ -132,3 +132,47 @@ class DataJobRecoveryTests(unittest.TestCase):
             self.run.pop('container_id')
             (self.directory/'environment.json').write_text(json.dumps(self.run))
         self.assertEqual(self.module.inspect_run(self.run_id)[-1], 'interrupted')
+
+    def test_tracking_failure_preserves_successful_build_and_tracking_log(self):
+        from unittest import mock
+        from contextlib import redirect_stdout
+        from io import StringIO
+        import subprocess
+        from handoff import read_report
+        (self.root/'configs/training').mkdir()
+        (self.root/'configs/training/hm-small.json').write_text('{}')
+        def capture(env, *command, **kwargs):
+            if command[:2] == ('git','rev-parse'):return 'a'*40
+            if command[:2] == ('git','status'):return ''
+            if command[:3] == ('docker','context','inspect'):return json.dumps([{'Endpoints':{'docker':{'Host':'unix:///synthetic'}}}])
+            if command[:2] == ('docker','info'):return json.dumps({'Architecture':'aarch64','MemTotal':8*2**30,'NCPU':4,'ServerVersion':'synthetic'})
+            if command[:2] == ('docker','ps'):return ''
+            self.fail('Unexpected boundary ' + str(command[:3]))
+        def compose(root, values, action, *args, log_path):
+            log_path.write_text('image built' if action == 'build' else 'tracking port occupied')
+            if action == 'up':raise subprocess.CalledProcessError(1, ['docker','compose','up'])
+        with mock.patch.object(self.module,'capture',side_effect=capture), mock.patch.object(self.module,'compose',side_effect=compose), redirect_stdout(StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.module.start('fixture','default','hm',training_config='hm-small')
+            run = next((self.root/'artifacts/data-jobs').glob('train-*'))
+            report = read_report(self.module.export(run.name))
+        self.assertEqual(report['steps'][0]['status'], 'passed')
+        self.assertEqual(report['steps'][1]['name'], 'tracking')
+        self.assertEqual(report['steps'][1]['status'], 'failed')
+        self.assertIn('tracking.log', [entry['path'] for entry in report['files']])
+
+    def test_export_separates_observed_and_durable_training_progress(self):
+        from unittest import mock
+        import zipfile
+        self.run.update(training_config='hm-small', experiment_id='train-fixture', attempt=1)
+        (self.directory/'environment.json').write_text(json.dumps(self.run))
+        model = self.root/'artifacts/training/train-fixture'; model.mkdir(parents=True)
+        (model/'progress.json').write_text(json.dumps({'step':240,'rows_consumed':24000}))
+        (model/'latest.json').write_text(json.dumps({'step':0,'rows_consumed':0,'path':'checkpoint.pt','sha256':'a'*64}))
+        def logs(command, root, env, path):path.write_text('killed');return 0,False
+        with mock.patch.object(self.module,'capture',return_value=json.dumps(self.info(137,True))), mock.patch.object(self.module,'execute',side_effect=logs):
+            archive = self.module.export(self.run_id)
+        with zipfile.ZipFile(archive) as bundle:
+            result = json.loads(bundle.read('result.json'))
+        self.assertEqual(result['last_durable_progress']['step'],0)
+        self.assertEqual(result['last_observed_progress']['step'],240)

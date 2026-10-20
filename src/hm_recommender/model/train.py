@@ -64,7 +64,8 @@ def checkpoint(directory, payload):
         torch.save(payload, stream)
         stream.flush(); os.fsync(stream.fileno())
     partial.replace(path)
-    atomic_json(directory / 'latest.json', {'path': name, 'sha256': sha256(path)})
+    atomic_json(directory / 'latest.json', {'path': name, 'sha256': sha256(path), 'step': payload['step'],
+        'rows_consumed': payload['rows'], 'cursor': payload['cursor'], 'duration_seconds': payload['seconds']})
     generations = sorted(directory.glob('checkpoint-*.pt'), key=lambda p: int(p.stem.split('-')[-1]), reverse=True)
     for old in generations[2:]:
         old.unlink()

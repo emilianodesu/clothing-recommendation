@@ -14,6 +14,8 @@ def test_checkpoint_resume_preserves_progress(tmp_path):
     config = {'batch_size': 16, 'epochs': 2, 'min_free_bytes': 0, 'checkpoint_steps': 4}
     complete = train(features, config, tmp_path / 'complete')
     stopped = train(features, config, tmp_path / 'resumed', stop_after_steps=3)
+    durable = json.loads((tmp_path / 'resumed/latest.json').read_text())
+    assert durable['step'] == 3 and durable['rows_consumed'] == 48
     assert stopped.rows_consumed == 48 and stopped.epochs == 0
     assert json.loads((tmp_path / 'resumed/training.json').read_text())['status'] == 'interrupted'
     resumed = train(features, config, tmp_path / 'resumed', resume=True)
