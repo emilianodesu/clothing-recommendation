@@ -44,6 +44,21 @@ Config: `configs/diagnostics/recent-history.json`. Lógica: `src/hm_recommender/
 
 La fuente debe ser un ZIP T3 aprobado en `artifacts/handoff/`, con checkpoint local intacto. El contenedor conserva red deshabilitada, datos/artefactos en lectura y únicamente el reporte nuevo en escritura. Se conserva el límite de un trabajo pesado. El lector y `status` rechazan un resultado aprobado si falta la validación de historial requerida. Los ZIP contienen agregados, no IDs de compradores, transacciones, rankings individuales o pesos.
 
+## Verificación local antes de mac24
+
+La [evidencia local](../evidence/local-recent-history.json) registra 96 pruebas únicas aprobadas: 56 host, 16 unitarias y 24 de integración (datos, entrenamiento, diagnósticos y bootstrap). El código probado es `dd90fd12860e30bd89aef389bea82a397c8cd21a`. Las pruebas de la imagen final se ejecutaron sin montar código desde el host.
+
+El primer intento falló en la verificación porque la imagen no incluía el lector importado por la nueva prueba; su reporte fallido se conservó y publicó. Tras incluir ese archivo en la imagen, pasaron los dos diagnósticos oficiales locales:
+
+| Comprobación en dev16 | Compradores | Tiempo del job | Pico del contenedor |
+| --- | ---: | ---: | ---: |
+| Demo sintética | 33 | 4.329 s | 0.460 GiB |
+| Piloto H&M existente | 2000 | 12.181 s | 1.008 GiB |
+
+Ambos reprodujeron el modelo original, completaron los cinco contrastes y los diez controles por variante, sin swap ni OOM. Los 19 archivos de los experimentos originales conservaron su SHA-256. Los tres ZIP se publicaron por Releases privadas con descarga verificada; sus enlaces están en la evidencia.
+
+En el piloto, MAP@12 fue 0.00619763 para popularidad7d, 0.02215935 para historial+popularidad y 0.02138851 para historial+modelo. La mejora principal tuvo intervalo [0.01118998, 0.02074775]; el aporte incremental del modelo tuvo intervalo [-0.00163704, -0.00009828]. Esto no sustituye la medición de mac24: el piloto usa otro checkpoint y sólo 2000 compradores. No se modificaron las reglas después de observarlo; calidad y comportamiento full siguen pendientes.
+
 ## Ejecutar en mac24
 
 Lee AGENTS.md y fija el SHA completo recibido, con el clon limpio. Conserva cambios y trabajos existentes. No actualices código durante una corrida. Reutiliza dataset, features y checkpoints; no repitas T1/T2/entrenamiento. Colima `hm-project`: 14 GiB/4 CPU; `--resources mac24`: 10 GiB/3 CPU/2 hilos. Mantén la Mac despierta durante el worker; no basta envolver sólo `start` con `caffeinate`. Conserva `SSL_CERT_FILE=/etc/ssl/cert.pem` y TLS.

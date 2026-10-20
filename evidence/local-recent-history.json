@@ -1,0 +1,1186 @@
+{
+  "schema_version": 1,
+  "scope": "Local dev16 operational verification: synthetic demo and H&M pilot; not mac24 full recent-history evidence",
+  "physical_machine": "Apple Silicon 16 GiB",
+  "docker_profile": "default",
+  "resource_profile": "base",
+  "job_memory_gib": 5,
+  "job_cpus": 3,
+  "threads": 2,
+  "verification": {
+    "host_tests": 56,
+    "container_unit_tests": 16,
+    "training_integration_tests": 4,
+    "diagnostic_integration_tests": 2,
+    "comparison_integration_tests": 1,
+    "recent_history_integration_tests": 1,
+    "data_integration_tests": 8,
+    "bootstrap_integration_tests": 8,
+    "unique_tests": 96,
+    "source_commit": "dd90fd12860e30bd89aef389bea82a397c8cd21a",
+    "image_tests_without_code_mounts": true,
+    "original_training_files_unchanged": true,
+    "original_files_checked": 19,
+    "network": "none",
+    "writable_mounts": "new diagnostic run directory only",
+    "closed_zip_reader_exit_codes": [
+      1,
+      0,
+      0
+    ],
+    "fresh_review": "One Important: incomplete reports accepted. Fixed; positive report and nine corruption cases verified."
+  },
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "failed_attempt": {
+    "run_id": "diagnose-dev16-20261020T182855Z-69819fc7",
+    "status": "failed",
+    "source_commit": "1d4f99c63e3b2b7c97dfc50d5d810e21148d1942",
+    "package_id": "67322987da3b2ee653a3c41532cdb91b7d95199f9ab7be74a8da263a68a77815",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T182855Z-69819fc7",
+    "phase": "verification",
+    "verification_exit_code": 2,
+    "cause": "Image did not include the report validator imported by the new integration test.",
+    "fix_commit": "dd90fd12860e30bd89aef389bea82a397c8cd21a",
+    "resolution": "Explicit COPY and Docker build-context allowance for scripts/handoff.py; both subsequent jobs passed."
+  },
+  "runs": [
+    {
+      "scope": "demo",
+      "run_id": "diagnose-dev16-20261020T183217Z-e9d31c2e",
+      "source_run_id": "train-dev16-20261020T003525Z-18df5ba5",
+      "status": "passed",
+      "source_commit": "dd90fd12860e30bd89aef389bea82a397c8cd21a",
+      "source_clean": true,
+      "package_id": "f45c1d6335f76cfb88de6ef6f221d03f6245399207ca5b1eba01ed138d6bced2",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T183217Z-e9d31c2e",
+      "duration_seconds": 4.329323,
+      "peak_rss_gib": 0.336067,
+      "cgroup_peak_gib": 0.45985,
+      "swap_peak_gib": 0.0,
+      "oom_events": 0,
+      "oom_killed": false,
+      "verification_exit_code": 0,
+      "model_replay_verified": true,
+      "protocol": "recent-history-v1",
+      "config": {
+        "bootstrap_resamples": 2000,
+        "history_days": 28,
+        "permutation_repeats": 10,
+        "popularity_days": 7,
+        "sample_users": 5000,
+        "seed": 42
+      },
+      "population": {
+        "catalog_size": 24,
+        "users": 33,
+        "with_recent_history": 32,
+        "without_recent_history": 1
+      },
+      "history_summary": {
+        "cutoff_exclusive": "2020-09-09",
+        "mean_prefix_items": 1.93939394,
+        "users_with_prefix_filling_top12": 0,
+        "window_start_inclusive": "2020-08-12"
+      },
+      "methods": {
+        "model": {
+          "exposure_at_12": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 23.82335179,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.0530303,
+              "10": 0.45959596,
+              "5": 0.24242424,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 33
+          },
+          "exposure_at_200": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 24.0,
+            "k": 24,
+            "top_exposure_share": {
+              "1": 0.04166667,
+              "10": 0.41666667,
+              "5": 0.20833333,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.97474747,
+            "ndcg_at_12": 0.98170577,
+            "recall_at_200": 0.98989899
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.5,
+                "ndcg_at_12": 0.63092975,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.98958333,
+                "ndcg_at_12": 0.99266752,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.5,
+                "ndcg_at_12": 0.63092975,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            }
+          }
+        },
+        "popular_7d": {
+          "exposure_at_12": {
+            "coverage": 0.5,
+            "distinct_items": 12,
+            "effective_items": 12.0,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.08333333,
+              "10": 0.83333333,
+              "5": 0.41666667,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 1,
+            "unique_sets": 1
+          },
+          "exposure_at_200": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 24.0,
+            "k": 24,
+            "top_exposure_share": {
+              "1": 0.04166667,
+              "10": 0.41666667,
+              "5": 0.20833333,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 1,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.20251596,
+            "ndcg_at_12": 0.3371445,
+            "recall_at_200": 0.98989899
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.20259458,
+                "ndcg_at_12": 0.33559112,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            }
+          }
+        },
+        "recent_then_model": {
+          "exposure_at_12": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 23.83849136,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.05050505,
+              "10": 0.46464646,
+              "5": 0.23989899,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 33
+          },
+          "exposure_at_200": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 24.0,
+            "k": 24,
+            "top_exposure_share": {
+              "1": 0.04166667,
+              "10": 0.41666667,
+              "5": 0.20833333,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.96565657,
+            "ndcg_at_12": 0.9743095,
+            "recall_at_200": 0.98989899
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.98958333,
+                "ndcg_at_12": 0.99266752,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            }
+          }
+        },
+        "recent_then_popular": {
+          "exposure_at_12": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 14.90443966,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.08333333,
+              "10": 0.83333333,
+              "5": 0.41666667,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 25,
+            "unique_sets": 17
+          },
+          "exposure_at_200": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 24.0,
+            "k": 24,
+            "top_exposure_share": {
+              "1": 0.04166667,
+              "10": 0.41666667,
+              "5": 0.20833333,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 25,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.96565657,
+            "ndcg_at_12": 0.9743095,
+            "recall_at_200": 0.98989899
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.98958333,
+                "ndcg_at_12": 0.99266752,
+                "recall_at_200": 0.98958333
+              },
+              "users": 32
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.2,
+                "ndcg_at_12": 0.38685281,
+                "recall_at_200": 1.0
+              },
+              "users": 1
+            }
+          }
+        }
+      },
+      "paired": {
+        "recent_model_vs_model": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                -0.02727273,
+                0.0
+              ],
+              "delta": -0.00909091,
+              "left_mean": 0.96565657,
+              "right_mean": 0.97474747
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                -0.02218881,
+                0.0
+              ],
+              "delta": -0.00739627,
+              "left_mean": 0.9743095,
+              "right_mean": 0.98170577
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.98989899,
+              "right_mean": 0.98989899
+            }
+          },
+          "seed": 42,
+          "users": 33
+        },
+        "recent_model_vs_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.67306079,
+                0.84525809
+              ],
+              "delta": 0.76314061,
+              "left_mean": 0.96565657,
+              "right_mean": 0.20251596
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.53534391,
+                0.74169109
+              ],
+              "delta": 0.63716499,
+              "left_mean": 0.9743095,
+              "right_mean": 0.3371445
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.98989899,
+              "right_mean": 0.98989899
+            }
+          },
+          "seed": 42,
+          "users": 33
+        },
+        "recent_model_vs_recent_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.96565657,
+              "right_mean": 0.96565657
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.9743095,
+              "right_mean": 0.9743095
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.98989899,
+              "right_mean": 0.98989899
+            }
+          },
+          "seed": 42,
+          "users": 33
+        },
+        "recent_popular_vs_model": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                -0.02727273,
+                0.0
+              ],
+              "delta": -0.00909091,
+              "left_mean": 0.96565657,
+              "right_mean": 0.97474747
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                -0.02218881,
+                0.0
+              ],
+              "delta": -0.00739627,
+              "left_mean": 0.9743095,
+              "right_mean": 0.98170577
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.98989899,
+              "right_mean": 0.98989899
+            }
+          },
+          "seed": 42,
+          "users": 33
+        },
+        "recent_popular_vs_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.67306079,
+                0.84525809
+              ],
+              "delta": 0.76314061,
+              "left_mean": 0.96565657,
+              "right_mean": 0.20251596
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.53534391,
+                0.74169109
+              ],
+              "delta": 0.63716499,
+              "left_mean": 0.9743095,
+              "right_mean": 0.3371445
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "delta": 0.0,
+              "left_mean": 0.98989899,
+              "right_mean": 0.98989899
+            }
+          },
+          "seed": 42,
+          "users": 33
+        }
+      },
+      "history_controls": {
+        "excluded_without_history": 1,
+        "sample_users": 33,
+        "selection_seed": 42,
+        "users": 32,
+        "recent_then_popular": {
+          "permutation_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ],
+          "unchanged_owner_rows": 0,
+          "normal_vs_mean_permuted": {
+            "bootstrap_resamples": 2000,
+            "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+            "metrics": {
+              "map_at_12": {
+                "ci95": [
+                  0.75988792,
+                  0.86751075
+                ],
+                "delta": 0.81341501,
+                "left_mean": 0.98958333,
+                "right_mean": 0.17616832
+              },
+              "ndcg_at_12": {
+                "ci95": [
+                  0.61729614,
+                  0.76504265
+                ],
+                "delta": 0.68935506,
+                "left_mean": 0.99266752,
+                "right_mean": 0.30331246
+              },
+              "recall_at_200": {
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "delta": 0.0,
+                "left_mean": 0.98958333,
+                "right_mean": 0.98958333
+              }
+            },
+            "seed": 42,
+            "users": 32
+          }
+        },
+        "recent_then_model": {
+          "permutation_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ],
+          "unchanged_owner_rows": 0,
+          "normal_vs_mean_permuted": {
+            "bootstrap_resamples": 2000,
+            "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+            "metrics": {
+              "map_at_12": {
+                "ci95": [
+                  0.51102214,
+                  0.54817708
+                ],
+                "delta": 0.53081597,
+                "left_mean": 0.98958333,
+                "right_mean": 0.45876736
+              },
+              "ndcg_at_12": {
+                "ci95": [
+                  0.37467341,
+                  0.40181596
+                ],
+                "delta": 0.38917733,
+                "left_mean": 0.99266752,
+                "right_mean": 0.60349019
+              },
+              "recall_at_200": {
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "delta": 0.0,
+                "left_mean": 0.98958333,
+                "right_mean": 0.98958333
+              }
+            },
+            "seed": 42,
+            "users": 32
+          }
+        }
+      }
+    },
+    {
+      "scope": "pilot",
+      "run_id": "diagnose-dev16-20261020T183246Z-fa8c2c9c",
+      "source_run_id": "train-dev16-20261020T003707Z-cdc0d09d",
+      "status": "passed",
+      "source_commit": "dd90fd12860e30bd89aef389bea82a397c8cd21a",
+      "source_clean": true,
+      "package_id": "2ba4a823d1a36beb3fda2f1351f8c76afc17e296a3f1d32ba77269d116d0a468",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T183246Z-fa8c2c9c",
+      "duration_seconds": 12.181415,
+      "peak_rss_gib": 1.003387,
+      "cgroup_peak_gib": 1.007629,
+      "swap_peak_gib": 0.0,
+      "oom_events": 0,
+      "oom_killed": false,
+      "verification_exit_code": 0,
+      "model_replay_verified": true,
+      "protocol": "recent-history-v1",
+      "config": {
+        "bootstrap_resamples": 2000,
+        "history_days": 28,
+        "permutation_repeats": 10,
+        "popularity_days": 7,
+        "sample_users": 5000,
+        "seed": 42
+      },
+      "population": {
+        "catalog_size": 102967,
+        "users": 2000,
+        "with_recent_history": 861,
+        "without_recent_history": 1139
+      },
+      "history_summary": {
+        "cutoff_exclusive": "2020-09-09",
+        "mean_prefix_items": 2.3085,
+        "users_with_prefix_filling_top12": 89,
+        "window_start_inclusive": "2020-08-12"
+      },
+      "methods": {
+        "model": {
+          "exposure_at_12": {
+            "coverage": 0.00025251,
+            "distinct_items": 26,
+            "effective_items": 13.99959749,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.08333333,
+              "10": 0.812625,
+              "5": 0.41666667,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 473,
+            "unique_sets": 147
+          },
+          "exposure_at_200": {
+            "coverage": 0.00356425,
+            "distinct_items": 367,
+            "effective_items": 223.12741126,
+            "k": 200,
+            "top_exposure_share": {
+              "1": 0.005,
+              "10": 0.05,
+              "5": 0.025,
+              "50": 0.25
+            },
+            "unique_ordered_lists": 1833,
+            "unique_sets": 621
+          },
+          "metrics": {
+            "map_at_12": 0.00186498,
+            "ndcg_at_12": 0.00438905,
+            "recall_at_200": 0.05500022
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.00217985,
+                "ndcg_at_12": 0.00497579,
+                "recall_at_200": 0.05769465
+              },
+              "users": 1557
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00129961,
+                "ndcg_at_12": 0.00343293,
+                "recall_at_200": 0.05094831
+              },
+              "users": 861
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00229235,
+                "ndcg_at_12": 0.00511181,
+                "recall_at_200": 0.05806316
+              },
+              "users": 1139
+            }
+          }
+        },
+        "popular_7d": {
+          "exposure_at_12": {
+            "coverage": 0.00011654,
+            "distinct_items": 12,
+            "effective_items": 12.0,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.08333333,
+              "10": 0.83333333,
+              "5": 0.41666667,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 1,
+            "unique_sets": 1
+          },
+          "exposure_at_200": {
+            "coverage": 0.00194237,
+            "distinct_items": 200,
+            "effective_items": 200.0,
+            "k": 200,
+            "top_exposure_share": {
+              "1": 0.005,
+              "10": 0.05,
+              "5": 0.025,
+              "50": 0.25
+            },
+            "unique_ordered_lists": 1,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.00619763,
+            "ndcg_at_12": 0.01200578,
+            "recall_at_200": 0.16088554
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.00617173,
+                "ndcg_at_12": 0.01201385,
+                "recall_at_200": 0.16257202
+              },
+              "users": 1557
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00799533,
+                "ndcg_at_12": 0.01285875,
+                "recall_at_200": 0.15841276
+              },
+              "users": 861
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00483869,
+                "ndcg_at_12": 0.011361,
+                "recall_at_200": 0.16275477
+              },
+              "users": 1139
+            }
+          }
+        },
+        "recent_then_model": {
+          "exposure_at_12": {
+            "coverage": 0.02750396,
+            "distinct_items": 2832,
+            "effective_items": 71.47616581,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.077625,
+              "10": 0.50775,
+              "5": 0.26954167,
+              "50": 0.84004167
+            },
+            "unique_ordered_lists": 861,
+            "unique_sets": 859
+          },
+          "exposure_at_200": {
+            "coverage": 0.03235017,
+            "distinct_items": 3331,
+            "effective_items": 395.40304998,
+            "k": 200,
+            "top_exposure_share": {
+              "1": 0.005,
+              "10": 0.05,
+              "5": 0.025,
+              "50": 0.207715
+            },
+            "unique_ordered_lists": 862,
+            "unique_sets": 861
+          },
+          "metrics": {
+            "map_at_12": 0.02138851,
+            "ndcg_at_12": 0.03222054,
+            "recall_at_200": 0.14351133
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.02073256,
+                "ndcg_at_12": 0.03163253,
+                "recall_at_200": 0.14614311
+              },
+              "users": 1557
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.04328193,
+                "ndcg_at_12": 0.05981521,
+                "recall_at_200": 0.11805456
+              },
+              "users": 861
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00483869,
+                "ndcg_at_12": 0.011361,
+                "recall_at_200": 0.16275477
+              },
+              "users": 1139
+            }
+          }
+        },
+        "recent_then_popular": {
+          "exposure_at_12": {
+            "coverage": 0.02744569,
+            "distinct_items": 2826,
+            "effective_items": 45.33527509,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.07970833,
+              "10": 0.730875,
+              "5": 0.38945833,
+              "50": 0.843125
+            },
+            "unique_ordered_lists": 855,
+            "unique_sets": 849
+          },
+          "exposure_at_200": {
+            "coverage": 0.03042722,
+            "distinct_items": 3133,
+            "effective_items": 216.69866711,
+            "k": 200,
+            "top_exposure_share": {
+              "1": 0.005,
+              "10": 0.05,
+              "5": 0.025,
+              "50": 0.25
+            },
+            "unique_ordered_lists": 855,
+            "unique_sets": 822
+          },
+          "metrics": {
+            "map_at_12": 0.02215935,
+            "ndcg_at_12": 0.03361742,
+            "recall_at_200": 0.18668955
+          },
+          "segments": {
+            "unknown_model_user": {
+              "metrics": {
+                "map_at_12": 0.02136182,
+                "ndcg_at_12": 0.03288369,
+                "recall_at_200": 0.18734984
+              },
+              "users": 1557
+            },
+            "with_recent_history": {
+              "metrics": {
+                "map_at_12": 0.04507251,
+                "ndcg_at_12": 0.06306001,
+                "recall_at_200": 0.2183524
+              },
+              "users": 861
+            },
+            "without_recent_history": {
+              "metrics": {
+                "map_at_12": 0.00483869,
+                "ndcg_at_12": 0.011361,
+                "recall_at_200": 0.16275477
+              },
+              "users": 1139
+            }
+          }
+        }
+      },
+      "paired": {
+        "recent_model_vs_model": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.01492584,
+                0.02433028
+              ],
+              "delta": 0.01952353,
+              "left_mean": 0.02138851,
+              "right_mean": 0.00186498
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.02224003,
+                0.03372151
+              ],
+              "delta": 0.02783148,
+              "left_mean": 0.03222054,
+              "right_mean": 0.00438905
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.07710115,
+                0.10010085
+              ],
+              "delta": 0.08851111,
+              "left_mean": 0.14351133,
+              "right_mean": 0.05500022
+            }
+          },
+          "seed": 42,
+          "users": 2000
+        },
+        "recent_model_vs_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.01018236,
+                0.02012367
+              ],
+              "delta": 0.01519088,
+              "left_mean": 0.02138851,
+              "right_mean": 0.00619763
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.01438082,
+                0.02591068
+              ],
+              "delta": 0.02021476,
+              "left_mean": 0.03222054,
+              "right_mean": 0.01200578
+            },
+            "recall_at_200": {
+              "ci95": [
+                -0.02732827,
+                -0.00703547
+              ],
+              "delta": -0.01737421,
+              "left_mean": 0.14351133,
+              "right_mean": 0.16088554
+            }
+          },
+          "seed": 42,
+          "users": 2000
+        },
+        "recent_model_vs_recent_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                -0.00163704,
+                -9.828e-05
+              ],
+              "delta": -0.00077085,
+              "left_mean": 0.02138851,
+              "right_mean": 0.02215935
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                -0.00277081,
+                -0.00018043
+              ],
+              "delta": -0.00139688,
+              "left_mean": 0.03222054,
+              "right_mean": 0.03361742
+            },
+            "recall_at_200": {
+              "ci95": [
+                -0.05125286,
+                -0.03526337
+              ],
+              "delta": -0.04317822,
+              "left_mean": 0.14351133,
+              "right_mean": 0.18668955
+            }
+          },
+          "seed": 42,
+          "users": 2000
+        },
+        "recent_popular_vs_model": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.01573557,
+                0.02535754
+              ],
+              "delta": 0.02029437,
+              "left_mean": 0.02215935,
+              "right_mean": 0.00186498
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.02366268,
+                0.03512193
+              ],
+              "delta": 0.02922837,
+              "left_mean": 0.03361742,
+              "right_mean": 0.00438905
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.11802741,
+                0.14508165
+              ],
+              "delta": 0.13168933,
+              "left_mean": 0.18668955,
+              "right_mean": 0.05500022
+            }
+          },
+          "seed": 42,
+          "users": 2000
+        },
+        "recent_popular_vs_popular": {
+          "bootstrap_resamples": 2000,
+          "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+          "metrics": {
+            "map_at_12": {
+              "ci95": [
+                0.01118998,
+                0.02074775
+              ],
+              "delta": 0.01596172,
+              "left_mean": 0.02215935,
+              "right_mean": 0.00619763
+            },
+            "ndcg_at_12": {
+              "ci95": [
+                0.01618961,
+                0.02718659
+              ],
+              "delta": 0.02161164,
+              "left_mean": 0.03361742,
+              "right_mean": 0.01200578
+            },
+            "recall_at_200": {
+              "ci95": [
+                0.01990997,
+                0.03199335
+              ],
+              "delta": 0.02580401,
+              "left_mean": 0.18668955,
+              "right_mean": 0.16088554
+            }
+          },
+          "seed": 42,
+          "users": 2000
+        }
+      },
+      "history_controls": {
+        "excluded_without_history": 1139,
+        "sample_users": 2000,
+        "selection_seed": 42,
+        "users": 861,
+        "recent_then_popular": {
+          "permutation_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ],
+          "unchanged_owner_rows": 0,
+          "normal_vs_mean_permuted": {
+            "bootstrap_resamples": 2000,
+            "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+            "metrics": {
+              "map_at_12": {
+                "ci95": [
+                  0.03254534,
+                  0.05300325
+                ],
+                "delta": 0.04214172,
+                "left_mean": 0.04507251,
+                "right_mean": 0.00293078
+              },
+              "ndcg_at_12": {
+                "ci95": [
+                  0.04488057,
+                  0.06890058
+                ],
+                "delta": 0.05612053,
+                "left_mean": 0.06306001,
+                "right_mean": 0.00693948
+              },
+              "recall_at_200": {
+                "ci95": [
+                  0.0479004,
+                  0.07413376
+                ],
+                "delta": 0.06060827,
+                "left_mean": 0.2183524,
+                "right_mean": 0.15774413
+              }
+            },
+            "seed": 42,
+            "users": 861
+          }
+        },
+        "recent_then_model": {
+          "permutation_seeds": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ],
+          "unchanged_owner_rows": 0,
+          "normal_vs_mean_permuted": {
+            "bootstrap_resamples": 2000,
+            "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+            "metrics": {
+              "map_at_12": {
+                "ci95": [
+                  0.03259311,
+                  0.05294836
+                ],
+                "delta": 0.04221349,
+                "left_mean": 0.04328193,
+                "right_mean": 0.00106844
+              },
+              "ndcg_at_12": {
+                "ci95": [
+                  0.04611752,
+                  0.06986804
+                ],
+                "delta": 0.05722768,
+                "left_mean": 0.05981521,
+                "right_mean": 0.00258753
+              },
+              "recall_at_200": {
+                "ci95": [
+                  0.05316195,
+                  0.08348031
+                ],
+                "delta": 0.06753502,
+                "left_mean": 0.11805456,
+                "right_mean": 0.05051954
+              }
+            },
+            "seed": 42,
+            "users": 861
+          }
+        }
+      }
+    }
+  ],
+  "numeric_precision": "Metrics rounded to eight decimal places, memory in GiB; private release ZIPs retain full precision."
+}

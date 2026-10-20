@@ -34,6 +34,8 @@ El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro repor
 
 La [validación de compras recientes](docs/recent-history.md) compara un prefijo personal de artículos comprados en 28 días, completado con popularidad7d o con el modelo de una época. Usa los mismos compradores, bootstrap pareado y diez permutaciones del historial. `diagnose-job --protocol recent-history` reutiliza pesos en lectura: mac24 devuelve dos reportes, demo y full. No requiere otro entrenamiento ni nuevas dependencias.
 
+La [verificación local](evidence/local-recent-history.json) pasó 96 pruebas y dos diagnósticos, demo y piloto H&M; conserva también un intento fallido de empaquetado y su corrección. La validación completa de este protocolo en mac24 está pendiente.
+
 ## Instalar la infraestructura del proyecto
 
 Requisitos del host: Docker con Compose y Buildx, Python 3.9+ y Git si se obtiene el código por clonación. No se necesita instalar PyTorch, uv ni bibliotecas científicas en el host. La primera construcción descarga imágenes y paquetes.
