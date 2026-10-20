@@ -69,3 +69,11 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py artifacts/incomi
 ```
 
 GitHub transporta evidencia; no activa al otro agente. El usuario avisa cuando los reportes estén publicados. Las pruebas del código se ejecutan con `project.py verify --suite diagnostics` después de construir la imagen; además se ejecutan pruebas host y de bootstrap al cambiar el lanzador. La evidencia local no se atribuye a mac24.
+
+## Evidencia de esta entrega
+
+Se probaron 84 casos únicos: 50 host, 12 unitarios, 4 de entrenamiento, 2 de diagnóstico, 8 de datos y 8 de bootstrap. En la Mac de desarrollo de 16 GiB se ejecutaron dos diagnósticos desacoplados desde `bfa7b7a`: demo (4.185 s, 0.455 GiB pico de contenedor) y checkpoint H&M del piloto de 10,000 usuarios entrenados (13.539 s, 1.008 GiB; evaluación de 2,000 compradores y 102,967 artículos). Ambos reprodujeron las métricas originales, sin swap/OOM y con hashes del entrenamiento intactos. Los tiempos excluyen construir la imagen. Véase [evidencia local](../evidence/local-t3-diagnostics.json); no representa ejecución full en mac24.
+
+En ese piloto, popularidad reciente supera al modelo y hay mucha coincidencia entre recomendaciones de distintos compradores. Esto demuestra que el diagnóstico detecta diferencias útiles; todavía debe ejecutarse sobre el checkpoint full de mac24 para decidir cambios al modelo.
+
+Revisión independiente: sin defectos bloqueantes. Mejoras menores diferidas: el esquema acepta hasta 10,000 usuarios aunque el perfil entregado fija 5,000; los fallos de integridad muestran fase y tipo de error, pero la causa precisa dentro de `source` requiere inspección local. No se modificó el perfil para ampliar la muestra.

@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "scope": "Local dev16 diagnostic verification; not mac24 full diagnostic evidence",
+  "physical_machine": "Apple Silicon 16 GiB",
+  "docker_profile": "default",
+  "resource_profile": "base",
+  "job_memory_gib": 5,
+  "job_cpus": 3,
+  "threads": 2,
+  "verification": {
+    "host_tests": 50,
+    "container_unit_tests": 12,
+    "training_integration_tests": 4,
+    "diagnostic_integration_tests": 2,
+    "data_integration_tests": 8,
+    "bootstrap_integration_tests": 8,
+    "unique_tests": 84,
+    "original_training_files_unchanged": true,
+    "network": "none",
+    "writable_mounts": "new diagnostic run directory only"
+  },
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "runs": [
+    {
+      "run_id": "diagnose-dev16-20261020T011738Z-9dc05d60",
+      "source_run_id": "train-dev16-20261020T003525Z-18df5ba5",
+      "source_commit": "bfa7b7a9e33c9776276a07af5a6508a3ea51076c",
+      "status": "passed",
+      "package_id": "74ffe88634b11702c31d78fe73128518ad6f22f3a79eaaedef6b66296cccc55c",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T011738Z-9dc05d60",
+      "duration_seconds": 4.18466,
+      "peak_rss_gib": 0.333603,
+      "cgroup_peak_gib": 0.454502,
+      "swap_peak_gib": 0.0,
+      "oom_killed": false,
+      "replay_verified": true,
+      "population": {
+        "catalog_size": 24,
+        "known_users": 32,
+        "new_users": 1,
+        "users": 33
+      },
+      "normal_metrics": {
+        "map_at_12": 0.9747474747474747,
+        "ndcg_at_12": 0.9817057694109114,
+        "recall_at_200": 0.9898989898989898
+      },
+      "exposure_at_12": {
+        "coverage": 1.0,
+        "distinct_items": 24,
+        "effective_items": 23.823351790223935,
+        "k": 12,
+        "top_exposure_share": {
+          "1": 0.05303030303030303,
+          "10": 0.4595959595959596,
+          "5": 0.24242424242424243,
+          "50": 1.0
+        },
+        "unique_ordered_lists": 33,
+        "unique_sets": 33
+      },
+      "sample": {
+        "inter_user_comparison_at_12": {
+          "identical_order_fraction": 0.0,
+          "mean_jaccard": 0.36292114865151737,
+          "mean_overlap": 0.5025252525252526
+        },
+        "known_users": 32,
+        "new_users": 1,
+        "normal_metrics": {
+          "map_at_12": 0.9747474747474747,
+          "ndcg_at_12": 0.9817057694109114,
+          "recall_at_200": 0.9898989898989898
+        },
+        "seed": 42,
+        "users": 33
+      },
+      "baselines": {
+        "historical": {
+          "map_at_12": 0.20251596047050593,
+          "ndcg_at_12": 0.3371445045045612,
+          "recall_at_200": 0.9898989898989898
+        },
+        "recent_28d": {
+          "map_at_12": 0.20251596047050593,
+          "ndcg_at_12": 0.3371445045045612,
+          "recall_at_200": 0.9898989898989898
+        },
+        "recent_7d": {
+          "map_at_12": 0.20251596047050593,
+          "ndcg_at_12": 0.3371445045045612,
+          "recall_at_200": 0.9898989898989898
+        }
+      }
+    },
+    {
+      "run_id": "diagnose-dev16-20261020T011800Z-0e096a3e",
+      "source_run_id": "train-dev16-20261020T003707Z-cdc0d09d",
+      "source_commit": "bfa7b7a9e33c9776276a07af5a6508a3ea51076c",
+      "status": "passed",
+      "package_id": "79b0fb80be7cef9e5bed8bcfc0d5e0ad2874e94fbafc5bd8c9970a8a4cb8c56b",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T011800Z-0e096a3e",
+      "duration_seconds": 13.539237,
+      "peak_rss_gib": 1.005066,
+      "cgroup_peak_gib": 1.008389,
+      "swap_peak_gib": 0.0,
+      "oom_killed": false,
+      "replay_verified": true,
+      "population": {
+        "catalog_size": 102967,
+        "known_users": 443,
+        "new_users": 1557,
+        "users": 2000
+      },
+      "normal_metrics": {
+        "map_at_12": 0.0018649786556036556,
+        "ndcg_at_12": 0.004389054078439159,
+        "recall_at_200": 0.05500021991896992
+      },
+      "exposure_at_12": {
+        "coverage": 0.0002525080851146484,
+        "distinct_items": 26,
+        "effective_items": 13.999597491068075,
+        "k": 12,
+        "top_exposure_share": {
+          "1": 0.08333333333333333,
+          "10": 0.812625,
+          "5": 0.4166666666666667,
+          "50": 1.0
+        },
+        "unique_ordered_lists": 473,
+        "unique_sets": 147
+      },
+      "sample": {
+        "inter_user_comparison_at_12": {
+          "identical_order_fraction": 0.076,
+          "mean_jaccard": 0.8504573691014866,
+          "mean_overlap": 0.9123333333333332
+        },
+        "known_users": 443,
+        "new_users": 1557,
+        "normal_metrics": {
+          "map_at_12": 0.0018649786556036556,
+          "ndcg_at_12": 0.004389054078439159,
+          "recall_at_200": 0.05500021991896992
+        },
+        "seed": 42,
+        "users": 2000
+      },
+      "baselines": {
+        "historical": {
+          "map_at_12": 0.0033411170806706522,
+          "ndcg_at_12": 0.006970180018839161,
+          "recall_at_200": 0.06744059343434343
+        },
+        "recent_28d": {
+          "map_at_12": 0.005099564831212558,
+          "ndcg_at_12": 0.011360312700930176,
+          "recall_at_200": 0.1366392739205239
+        },
+        "recent_7d": {
+          "map_at_12": 0.0061976280663780655,
+          "ndcg_at_12": 0.012005782588343878,
+          "recall_at_200": 0.16088553737928737
+        }
+      }
+    }
+  ]
+}
