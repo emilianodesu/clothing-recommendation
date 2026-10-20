@@ -58,3 +58,5 @@ Tras esa revisión se escribe `evidence/quality-decision-mac24.json`, se congela
 ## Resultado esperado y límites
 
 Los reportes actuales muestran mejoras de MAP medio G +6.47%, RH +4.03% y RG +14.48% frente a H. G/RG incumplen el límite de Recall; RH/RG incumplen segmentos. H sigue provisional hasta el resumen formal. El bootstrap completa la incertidumbre y la trazabilidad, sin borrar esos incumplimientos. Un framework más complejo no explica por sí solo la calidad: importan el pool, las señales, la ventana temporal y el criterio de evaluación. La [cobertura del curso](course-coverage.md) distingue experimentos realizados de temas pendientes.
+
+La [evidencia local Q4](../evidence/local-quality-q4.json) registra 155 pruebas distintas aprobadas (77 científicas, 70 host, 8 de infraestructura Docker), una prueba externa de MLflow omitida, revisión independiente y demo desacoplada de 33 compradores. Se conservaron los reportes del primer fallo de preparación y del nuevo intento aprobado. La prueba de escala sintética de 152,019 compradores no representa calidad H&M ni tiempo de IO del resumen completo.

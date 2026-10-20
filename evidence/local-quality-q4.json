@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "scope": "Q4 implementation and local synthetic verification; full mac24 summary and formal selection pending",
+  "executable_commit": "f4806f8f35f418028a0bdcd6ff77fb60ccbf8abe",
+  "protocol": "quality-v1",
+  "checks": {
+    "host_tests": 70,
+    "scientific_distinct_tests": 77,
+    "scientific_skipped_external_mlflow": 1,
+    "quality_suite_unit_tests": 46,
+    "quality_suite_integration_tests": 15,
+    "bootstrap_docker_integration_tests": 8,
+    "distinct_tests": 155,
+    "historical_archives_verified": {
+      "counts": {
+        "handoff": 23,
+        "incoming": 39
+      },
+      "stages": {
+        "Q1": 7,
+        "T3-diagnostics": 12,
+        "Q3": 12,
+        "T3": 10,
+        "data-handoff": 1,
+        "T2": 10,
+        "bootstrap-handoff": 4,
+        "Q2": 6
+      }
+    },
+    "actual_jobs_image_built_without_code_mount_overrides": true,
+    "documented_build_then_verify_passed": true,
+    "published_archives_download_verified": true,
+    "linux_arm64_runtime": true,
+    "physical_amd64_tested": false
+  },
+  "review": {
+    "base": "4b80a388093d19a67ec8362173e32fb2a44c9f83",
+    "head": "be168bbc5fb9056c548a8557a3d37326040f10aa",
+    "fresh_reviewer": true,
+    "critical": 0,
+    "important": 1,
+    "important_fixed": 1,
+    "minor_actionable": 0,
+    "fix": "Add explicit Compose build jobs before verify so mac24 does not verify the stale Q3 image.",
+    "verification": "Documented build then quality suite passed; documentation-only change, no new implementation test.",
+    "scope_limit": "Unchanged Q1–Q3 prediction generation and private remote predictions were not reassessed."
+  },
+  "synthetic_scale": {
+    "unique_buyers": 152019,
+    "observations": 228094,
+    "replicates": 2000,
+    "seconds": 1.916706,
+    "rss_mib": 152.5742,
+    "cgroup_peak_mib": 135.625,
+    "swap_bytes": 0,
+    "oom_kills": 0,
+    "full_HM_quality_or_IO_claim": false
+  },
+  "decisions_and_limits": [
+    {
+      "decision": "Use a native isolated worktree and manual Q4 brief; run official demo from a clean clone with its own configuration.",
+      "reason": "Preserve main and private artifacts; approved plan uses Q4 headings rather than helper Task N headings; Colima mounts the original workspace.",
+      "cost_if_wrong": "Extra checkout/storage and manual tracking; clean commit checks and review guard source consistency."
+    },
+    {
+      "decision": "Reject and redraw bootstrap replicas with an empty fold, reporting the count.",
+      "reason": "Equal-fold means are undefined for an empty resampled fold; only tiny fixtures are likely to encounter this.",
+      "cost_if_wrong": "Conditional bootstrap for very small/sparse fold populations; real-fold discarded count remains visible."
+    },
+    {
+      "decision": "Tie cohort includes eligible candidates within 0.0001 of the maximum mean MAP, then cost, memory, stable G/RH/RG order.",
+      "reason": "Deterministic interpretation without transitive pairwise ties.",
+      "cost_if_wrong": "Alternative tie interpretation could select a different method; rule and tests are explicit."
+    },
+    {
+      "decision": "Hash actual per-buyer metric bytes; bind ranking manifests/hashes to closed source reports without rereading ranking bytes.",
+      "reason": "Q4 uses metrics, while Q1–Q3 already checked predictions. Reports explicitly record ranking_bytes_rehashed=false.",
+      "cost_if_wrong": "Q4 would not detect later changes to unused ranking bytes; selection still uses hashed metrics."
+    },
+    {
+      "decision": "Retain prior Q1–Q3 audits rather than reassess unchanged prediction generation in the final Q4 code review.",
+      "reason": "Q4 checks immutable ancestry, identities and metrics, not retraining or generating predictions.",
+      "cost_if_wrong": "An undetected bug in original prediction generation is outside this new review; source evidence and prior tests remain available."
+    }
+  ],
+  "fixture_issue_fixed": "Compose /tmp is about 4 GiB, below the 5 GiB production disk floor; component tests mock disk capacity. Official detached demo uses real artifact disk and unchanged limits.",
+  "runs": [
+    {
+      "run_id": "quality-local-20261020T234244Z-ffdf95c1",
+      "status": "failed",
+      "source_commit": "f4806f8f35f418028a0bdcd6ff77fb60ccbf8abe",
+      "source_clean": true,
+      "image_id": null,
+      "container_exit_code": 1,
+      "oom_killed": false,
+      "package_id": "034e11ac302f917a8e90a3ed769b08307d8e622745a2f0cdd3e41b0400c8dab0",
+      "archive_sha256": "95b3f8f9a6dfcf81d6905e4c94923c6c063daf6b0e19f5fe196a78cef2dea291",
+      "archive_bytes": 2689,
+      "release": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T234244Z-ffdf95c1",
+      "stage": null,
+      "scope": null,
+      "selection_finalized": null,
+      "failure_stage": null,
+      "failure_reason": null,
+      "preflight_failure": "Synthetic fixture archives were in data-jobs, not handoff/incoming; no worker launched."
+    },
+    {
+      "run_id": "quality-local-20261020T234316Z-3460537c",
+      "status": "passed",
+      "source_commit": "f4806f8f35f418028a0bdcd6ff77fb60ccbf8abe",
+      "source_clean": true,
+      "image_id": "sha256:9f4f6d44f7282511205d4a5e5c2c6d7fdd2fa360f44e77434619393d264332b8",
+      "container_exit_code": 0,
+      "oom_killed": false,
+      "package_id": "9f3a7c07b745cb4dff27c4a68d431f26853a7ee4c0b912f87e948af2bfec1855",
+      "archive_sha256": "642550ff87c8c38203d14d6785f395abb02732e216728dba9c4d3ace3eae18ab",
+      "archive_bytes": 18735,
+      "release": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T234316Z-3460537c",
+      "stage": "Q4",
+      "scope": "demo",
+      "selection_finalized": false,
+      "failure_stage": null,
+      "failure_reason": null,
+      "duration_seconds": 2.01032,
+      "rss_mib": 134.0391,
+      "cgroup_peak_mib": 103.8555,
+      "swap_peak_bytes": 0,
+      "oom_kills": 0,
+      "selected_method": "H",
+      "bootstrap_replicates": 2000,
+      "buyers": 33,
+      "observations": 97,
+      "source_reports": 12,
+      "evaluations": 15,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "min_disk_free_gib": 164.006474
+    }
+  ],
+  "limits": [
+    "Synthetic sources were component fixtures, not physical mac24 executions. Only the Q4 wrapper ran as an official detached job.",
+    "Source fixture ZIPs were copied byte-for-byte into handoff after the first preflight refusal; failed attempt was exported and published.",
+    "No H&M training, test evaluation, T4 service or formal full selection executed here.",
+    "External MLflow integration was skipped; tracking implementation was unchanged.",
+    "Final full Q4 requires private per-buyer metrics and twelve closed full reports retained in mac24."
+  ]
+}
