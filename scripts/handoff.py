@@ -2,6 +2,7 @@
 import datetime
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -155,27 +156,92 @@ def comparison_complete(result):
 
 
 def history_complete(result):
-    """A completed replay alone is insufficient for the recent-history protocol."""
-    value = result.get('history_validation')
-    if not isinstance(value, dict):
-        return False
+    """Validate the fixed v1 protocol, including numeric evidence and cohort sizes."""
+    keys = {'map_at_12','ndcg_at_12','recall_at_200'}
+    config = {'seed':42,'sample_users':5000,'bootstrap_resamples':2000,'permutation_repeats':10,
+              'history_days':28,'popularity_days':7}
+    contrasts = {'recent_popular_vs_popular':('recent_then_popular','popular_7d'),
+                 'recent_popular_vs_model':('recent_then_popular','model'),
+                 'recent_model_vs_recent_popular':('recent_then_model','recent_then_popular'),
+                 'recent_model_vs_popular':('recent_then_model','popular_7d'),
+                 'recent_model_vs_model':('recent_then_model','model')}
+    def number(value, low=0, high=1):
+        return type(value) in (int,float) and math.isfinite(value) and low <= value <= high
+    def count(value, high):
+        return type(value) is int and 0 <= value <= high
+    def metrics(value, low=0):
+        return isinstance(value,dict) and set(value)==keys and all(number(v,low) for v in value.values())
+    def pair(value, users):
+        if not (isinstance(value,dict) and value['users']==users and value['seed']==42 and
+                value['bootstrap_resamples']==2000 and set(value['metrics'])==keys):
+            return False
+        for row in value['metrics'].values():
+            interval=row['ci95']
+            if not (number(row['left_mean']) and number(row['right_mean']) and number(row['delta'],-1) and
+                    math.isclose(row['left_mean']-row['right_mean'],row['delta'],abs_tol=1e-10,rel_tol=0) and
+                    isinstance(interval,list) and len(interval)==2 and all(number(v,-1) for v in interval) and interval[0]<=interval[1]):
+                return False
+        return True
+    def exposure_valid(value, k, users, catalog):
+        return (isinstance(value,dict) and value['k']==min(k,catalog) and
+                count(value['distinct_items'],catalog) and value['distinct_items']>0 and
+                number(value['coverage']) and math.isclose(value['coverage'],value['distinct_items']/catalog,abs_tol=1e-10,rel_tol=0) and
+                count(value['unique_ordered_lists'],users) and value['unique_ordered_lists']>0 and
+                count(value['unique_sets'],users) and value['unique_sets']>0 and
+                number(value['effective_items'],1,catalog+1e-8) and
+                set(value['top_exposure_share'])=={'1','5','10','50'} and all(number(v) for v in value['top_exposure_share'].values()))
     try:
-        controls = value['history_controls']
-        expected = value['config']['permutation_repeats']
-        return (value['completed'] is True and value['model_replay_verified'] is True
-                and value['protocol'] == 'recent-history-v1'
-                and value['test_evaluated'] is False and value['quality_accepted'] is False
-                and value['source_run_id'] == result['source_run_id']
-                and set(value['methods']) == {'model','popular_7d','recent_then_popular','recent_then_model'}
-                and set(value['paired']) == {'recent_popular_vs_popular','recent_popular_vs_model',
-                    'recent_model_vs_recent_popular','recent_model_vs_popular','recent_model_vs_model'}
-                and value['population']['users'] >= controls['users'] >= 2
-                and type(expected) is int and 2 <= expected <= 30
-                and all(len(controls[name]['permutations']) == expected and
-                        all(row['unchanged_owner_rows'] == 0 for row in controls[name]['permutations']) and
-                        controls[name]['normal_vs_mean_permuted']['users'] == controls['users']
-                        for name in ('recent_then_popular','recent_then_model')))
-    except (KeyError, TypeError):
+        value=result['history_validation']
+        if not (isinstance(value,dict) and value['completed'] is True and value['model_replay_verified'] is True and
+                value['protocol']=='recent-history-v1' and value['test_evaluated'] is False and value['quality_accepted'] is False and
+                isinstance(value['source_run_id'],str) and value['source_run_id']==result['source_run_id'] and
+                value['config']==config and all(type(v) is int for v in value['config'].values())):
+            return False
+        population, controls, methods, replay = value['population'], value['history_controls'], value['methods'], value['replay']
+        users, catalog = population['users'], population['catalog_size']
+        if not (type(users) is int and users>=2 and type(catalog) is int and catalog>0 and
+                count(population['with_recent_history'],users) and count(population['without_recent_history'],users) and
+                population['with_recent_history']+population['without_recent_history']==users and
+                replay['evaluated_users']==users and replay['exact_catalog_size']==catalog and replay['test_evaluated'] is False and
+                set(methods)=={'model','popular_7d','recent_then_popular','recent_then_model'} and set(value['paired'])==set(contrasts)):
+            return False
+        segments = {'with_recent_history':population['with_recent_history'], 'without_recent_history':population['without_recent_history'],
+                    'unknown_model_user':replay['segments']['new_user']['users']}
+        for name, method in methods.items():
+            if not (metrics(method['metrics']) and exposure_valid(method['exposure_at_12'],12,users,catalog) and
+                    exposure_valid(method['exposure_at_200'],200,users,catalog) and set(method['segments'])==set(segments)):
+                return False
+            for segment, size in segments.items():
+                record=method['segments'][segment]
+                if not (count(size,users) and record['users']==size and
+                        (metrics(record['metrics']) if size else record['metrics'] is None)):
+                    return False
+        if any(not number(replay[key]) or not math.isclose(methods['model']['metrics'][key],replay[key],abs_tol=1e-10,rel_tol=0) for key in keys):
+            return False
+        for name,(left,right) in contrasts.items():
+            statistic=value['paired'][name]
+            if not pair(statistic,users): return False
+            for key in keys:
+                row=statistic['metrics'][key]
+                if not (math.isclose(row['left_mean'],methods[left]['metrics'][key],abs_tol=1e-10,rel_tol=0) and
+                        math.isclose(row['right_mean'],methods[right]['metrics'][key],abs_tol=1e-10,rel_tol=0)):
+                    return False
+        n=controls['users']
+        if not (count(n,min(population['with_recent_history'],5000)) and n>=2 and
+                controls['sample_users']==min(5000,users) and controls['excluded_without_history']==controls['sample_users']-n and
+                controls['selection_seed']==42):
+            return False
+        for name in ('recent_then_popular','recent_then_model'):
+            control=controls[name]
+            if not (pair(control['normal_vs_mean_permuted'],n) and len(control['permutations'])==10): return False
+            for seed,row in enumerate(control['permutations'],42):
+                comparison=row['comparison_with_normal_at_12']
+                if not (row['seed']==seed and row['unchanged_owner_rows']==0 and count(row['unchanged_history_rows'],n) and
+                        metrics(row['normal_minus_permuted'],-1) and
+                        set(comparison)=={'mean_overlap','mean_jaccard','identical_order_fraction'} and all(number(v) for v in comparison.values())):
+                    return False
+        return True
+    except (KeyError,TypeError,AttributeError,ZeroDivisionError,ValueError):
         return False
 
 

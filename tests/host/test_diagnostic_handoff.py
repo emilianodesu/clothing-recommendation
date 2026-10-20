@@ -159,3 +159,17 @@ class HistoryReportTests(unittest.TestCase):
             'source_run_id':'train-fixture','completed':True,'model_replay_verified':True,
             'quality_accepted':False,'test_evaluated':False}}
         self.assertFalse(history_complete(result))
+
+    def test_history_report_rejects_named_but_empty_metrics_and_short_controls(self):
+        from handoff import history_complete
+        names = ('model','popular_7d','recent_then_popular','recent_then_model')
+        pairs = ('recent_popular_vs_popular','recent_popular_vs_model','recent_model_vs_recent_popular',
+                 'recent_model_vs_popular','recent_model_vs_model')
+        result={'source_run_id':'train-fixture','history_validation':{
+            'source_run_id':'train-fixture','completed':True,'model_replay_verified':True,
+            'protocol':'recent-history-v1','quality_accepted':False,'test_evaluated':False,
+            'config':{'permutation_repeats':2},'population':{'users':2},
+            'methods':dict.fromkeys(names),'paired':dict.fromkeys(pairs),
+            'history_controls':{'users':2,**{name:{'permutations':[{'unchanged_owner_rows':0}]*2,
+                'normal_vs_mean_permuted':{'users':2}} for name in names[2:]}}}}
+        self.assertFalse(history_complete(result))
