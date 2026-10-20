@@ -61,6 +61,8 @@ def test_summary_rejects_changed_archive_private_metric_and_wrong_ancestry(sourc
 
 
 def test_summary_worker_and_report_contract(source_campaign,tmp_path):
+    from unittest.mock import patch
+    from collections import namedtuple
     from hm_recommender.quality.worker import run
     from hm_recommender.data.io import atomic_json
     sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
@@ -72,7 +74,10 @@ def test_summary_worker_and_report_contract(source_campaign,tmp_path):
         'quality_campaign':{'declaration':campaign,'entries':entries}}
     atomic_json(tmp_path/'environment.json',env)
     config=tmp_path/'config.json';atomic_json(config,QualityConfig().model_dump())
-    assert run(config,tmp_path,verify=False)==0
+    # Component fixture writes to Compose tmpfs, not the production artifact mount.
+    disk=namedtuple('disk_usage','total used free')(100*2**30,20*2**30,80*2**30)
+    with patch('hm_recommender.quality.summary_worker.shutil.disk_usage',return_value=disk):
+        assert run(config,tmp_path,verify=False)==0
     result=json.loads((tmp_path/'result.json').read_text())
     validate_quality_result(result)
     assert result['stage']=='Q4' and result['size']=='summary'
