@@ -93,3 +93,59 @@ Siguiente paso: ejecutar la secuencia mac24 anterior con el commit de entrega, c
 ## Referencias técnicas
 
 [LightGBM 4.7.0 en PyPI](https://pypi.org/project/lightgbm/4.7.0/), [Dataset y grupos](https://lightgbm.readthedocs.io/en/v4.7.0/pythonapi/lightgbm.Dataset.html) y [parámetros](https://lightgbm.readthedocs.io/en/v4.7.0/Parameters.html). Las pruebas locales acreditan la instalación observada; la documentación de la biblioteca no sustituye la medición de escala en mac24.
+
+
+## Ejecución Q3 en mac24: 20 de octubre de 2026
+
+Las diez corridas pasaron desde el commit limpio `b0c93b85ea3dd96a4218fbae4882ca177214691f`, en el orden fijado. Cada ZIP se exportó, validó y publicó con descarga verificada antes del siguiente intento. La suite `quality` pasó tras demo H y antes de piloto H: 41 unitarias, 12 integraciones y 68 host. [Evidencia Q3 completa](../evidence/quality-q3-mac24.json).
+
+Colima 14 GiB/4 CPU; trabajos 10 GiB/3 CPU/2 hilos, uno a la vez, Mac sin suspensión y TLS validado. Los 1,725 archivos inventariados de datos procesados, features, entrenamientos/checkpoints y `work` Q1/Q2 conservaron SHA-256 antes/después. Inventarios y artefactos privados Q3 permanecen en mac24; no se publicaron modelos ni filas individuales.
+
+| Corrida / Release | Compradores | Job (s) | RSS / cgroup (GiB) | Iteraciones / árboles reales |
+| --- | ---: | ---: | ---: | ---: |
+| H demo V3: [quality-mac24-20261020T221804Z-9d6db5b0](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T221804Z-9d6db5b0) | 33 | 10.019 | 0.529896 / 0.394764 | 1 / 1 |
+| H pilot V3: [quality-mac24-20261020T221923Z-b563ed9c](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T221923Z-b563ed9c) | 2,000 | 65.063 | 2.475777 / 3.234974 | 56 / 56 |
+| G demo V3: [quality-mac24-20261020T222042Z-de0b3baa](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T222042Z-de0b3baa) | 33 | 10.033 | 0.529690 / 0.392975 | 1 / 1 |
+| G pilot V3: [quality-mac24-20261020T222108Z-ed1929b6](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T222108Z-ed1929b6) | 2,000 | 67.096 | 2.493530 / 3.260471 | 154 / 154 |
+| H full V1: [quality-mac24-20261020T222229Z-5226fbce](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T222229Z-5226fbce) | 80,253 | 373.597 | 2.572201 / 3.400448 | 15 / 15 |
+| H full V2: [quality-mac24-20261020T222857Z-732b9e7a](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T222857Z-732b9e7a) | 75,822 | 358.586 | 2.541401 / 3.407280 | 8 / 8 |
+| H full V3: [quality-mac24-20261020T223509Z-8f0895b5](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T223509Z-8f0895b5) | 72,019 | 352.462 | 2.585171 / 3.450287 | 3 / 3 |
+| G full V1: [quality-mac24-20261020T224119Z-94bf95ca](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T224119Z-94bf95ca) | 80,253 | 613.153 | 2.582432 / 3.553280 | 167 / 167 |
+| G full V2: [quality-mac24-20261020T225147Z-7620af5d](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T225147Z-7620af5d) | 75,822 | 450.696 | 2.572979 / 3.667202 | 10 / 10 |
+| G full V3: [quality-mac24-20261020T225935Z-24b0b976](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261020T225935Z-24b0b976) | 72,019 | 526.050 | 2.637104 / 3.606720 | 89 / 89 |
+
+Sin swap ni OOM en los diez intentos. Se verificó la cadena de referencias Q2/Q1 y la igualdad del pool regenerado. RH/RG conservaron exactamente Recall@200 de H/G respectivamente. Los costes son offline, no latencia de servicio.
+
+| Fold full | Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | --- | ---: | ---: | ---: |
+| V1 | H | 0.01936354 | 0.02936683 | 0.19345198 |
+| V1 | RH | 0.01978710 | 0.03043014 | 0.19345198 |
+| V1 | G | 0.02051416 | 0.03136443 | 0.18380591 |
+| V1 | RG | 0.02179049 | 0.03371571 | 0.18380591 |
+| V2 | H | 0.02272145 | 0.03416696 | 0.20157019 |
+| V2 | RH | 0.02474579 | 0.03694299 | 0.20157019 |
+| V2 | G | 0.02407240 | 0.03628144 | 0.19334432 |
+| V2 | RG | 0.02596160 | 0.03960858 | 0.19334432 |
+| V3 | H | 0.02458902 | 0.03549285 | 0.19078554 |
+| V3 | RH | 0.02482558 | 0.03694293 | 0.19078554 |
+| V3 | G | 0.02640059 | 0.03835016 | 0.18292317 |
+| V3 | RG | 0.02857874 | 0.04221045 | 0.18292317 |
+
+### Preparación y ajuste full
+
+Cada intento reconstruyó las cuatro semanas internas con sus propios cortes; tres semanas para ajuste, cuarta para selección interna y cuatro para refit. No se usaron etiquetas externas para elegir iteraciones. Conteos sumados de cuatro semanas:
+
+| Pool / fold | Grupos totales / entrenables | Positivos recuperados / ausentes | Grupos sin positivos / sin negativos | Filas muestreadas |
+| --- | ---: | ---: | ---: | ---: |
+| H V1 | 300,764 / 96,809 | 139,654 / 875,543 | 203,955 / 0 | 2,075,834 |
+| H V2 | 298,215 / 102,535 | 150,335 / 832,334 | 195,680 / 0 | 2,201,035 |
+| H V3 | 299,204 / 106,292 | 156,216 / 805,015 | 192,912 / 0 | 2,282,056 |
+| G V1 | 300,764 / 96,143 | 140,830 / 874,367 | 204,621 / 0 | 2,063,690 |
+| G V2 | 298,215 / 99,873 | 146,898 / 835,771 | 198,342 / 0 | 2,144,358 |
+| G V3 | 299,204 / 102,915 | 150,719 / 810,512 | 196,289 / 0 | 2,209,019 |
+
+La evidencia incluye los conteos de cada semana, fechas, compradores muestreados, curva NDCG interna, iteraciones evaluadas/seleccionadas, árboles reales, costes por componente, segmentos, recompra/descubrimiento, exposición y hashes. No se inyectaron positivos ausentes ni se modificaron parámetros tras observar resultados.
+
+Presupuesto acumulado Q1–Q3: full 3001.522436 s, pilotos 173.372630 s y demos 33.523709 s. Entradas previas intactas y ninguna reserva abierta; se conserva el ledger local. Espacio libre mínimo: 186.095436 GiB.
+
+**Éxito operativo; calidad pendiente de revisión.** RH y RG mejoraron MAP/NDCG frente a sus pools en los tres folds. RH conserva Recall de H; RG hereda la pérdida de Recall de G y continúa como ablación académica. No se declara ganador ni se calcula aquí el bootstrap formal de Q4. No se repitió Q1/Q2 ni entrenamiento PyTorch; no se inició Q4/T4 ni se evaluó test. La siguiente acción es revisar los diez reportes desde la máquina principal.
