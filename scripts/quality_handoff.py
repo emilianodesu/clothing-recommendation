@@ -1,4 +1,4 @@
-"""Standard-library validation of closed Q1–Q3 aggregate evidence, never raw buyer rows."""
+"""Standard-library validation of closed Q1–Q4 aggregate evidence, never raw buyer rows."""
 import math
 import re
 
@@ -8,7 +8,7 @@ CUTOFFS={'V1':('2020-08-26','2020-09-02'),'V2':('2020-09-02','2020-09-09'),'V3':
 METRICS={'map_at_12','ndcg_at_12','recall_at_200'}
 SEGMENTS={'recent28d','history29_90d','older_history','no_history'}
 ALLOWED={'summary.md','environment.json','commit.txt','preflight.log','job.log','build.log','result.json','config.resolved.json'}
-STAGES={'Q1':'baselines','Q2':'graph','Q3':'ranker'}
+STAGES={'Q1':'baselines','Q2':'graph','Q3':'ranker','Q4':'summary'}
 
 
 def require(condition):
@@ -37,6 +37,10 @@ def no_private_rows(value):
 def validate_quality_result(result):
     try:
         no_private_rows(result)
+        if result.get('stage')=='Q4':
+            from quality_summary import validate_summary
+            validate_summary(result)
+            return
         require(result['stage'] in STAGES and result['protocol']=='quality-v1' and result['status']=='passed')
         require(result['test_evaluated'] is False and result['quality_accepted'] is False and result['verification_exit_code']==0)
         require(result['size'] in ('demo','pilot','full'))
@@ -86,7 +90,10 @@ def validate_quality_execution(result,environment):
     try:
         require(result['source_commit']==environment['source_commit'])
         require(environment['quality']['stage']==STAGES[result['stage']] and environment['quality']['size']==result['size'])
-        require(environment['quality']['fold']==result['fold']['fold_id'])
+        if result['stage']=='Q4':
+            from quality_summary import validate_summary_execution
+            validate_summary_execution(result,environment)
+        else:require(environment['quality']['fold']==result['fold']['fold_id'])
         if result['stage'] in ('Q2','Q3'):
             require(environment['quality']['reference_run_id']==result['reference']['run_id'])
             require(all(environment['quality_reference'][k]==result['reference'][k] for k in ('run_id','archive_sha256')))
@@ -112,7 +119,7 @@ def validate_quality_envelope(report,result,environment,names):
     require(report['result']==result and report['source_commit']==environment['source_commit']==result['source_commit'])
     require(report['run_id']==environment['run_id'] and report['run_id'].startswith('quality-'))
     require(environment['quality']['stage']==STAGES[result['stage']] and environment['quality']['size']==result['size'])
-    require(environment['quality']['fold']==result['fold']['fold_id'])
+    if result['stage']!='Q4':require(environment['quality']['fold']==result['fold']['fold_id'])
     require(report.get('oom_killed') is False and report.get('container_exit_code')==0)
     for key in ('resources','limits','effective_limits'):require(report[key]==environment[key])
     limits=report['limits'];effective=report['effective_limits']

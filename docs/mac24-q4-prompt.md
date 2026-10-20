@@ -1,0 +1,7 @@
+# Prompt para mac24: Q4
+
+Actualizar `main` por fast-forward preservando cambios locales, fijar el SHA completo recibido y comprobar clon limpio. Si el árbol tiene cambios, conservarlos y resolver la ubicación de trabajo antes de ejecutar; no usar reset/clean. Leer README, AGENTS y `docs/quality-summary.md`.
+
+Ejecutar exclusivamente el resumen Q4 sobre la campaña declarada en `configs/quality/campaign-mac24.json`. Verificar primero la suite quality con `SSL_CERT_FILE=/etc/ssl/cert.pem` y `DOCKER_CONTEXT=colima-hm-project`. Después usar el comando `quality-job summarize` de la guía con ese SHA, perfil hm-project y recursos mac24. Mantener Colima 14 GiB/4 CPU, job 10 GiB/3 CPU/2 hilos, inputs y ledger originales. Las tablas privadas y los doce ZIP full deben existir. ZIP faltantes pueden descargarse de GitHub; tablas privadas faltantes bloquean. No entrenar, repetir Q1–Q3, regenerar predicciones, cambiar umbrales, evaluar test ni iniciar T4.
+
+Esperar estado final. Exportar, validar y publicar el reporte privado, también ante fallo válido. No reintentar automáticamente ni ampliar los 1,800 s acumulados. Devolver estado, commit, run_id, fuente/campaña, compradores únicos y por fold, método seleccionado, motivos de exclusión, deltas/intervalos, costes, tiempo, RSS/cgroup/swap/OOM, presupuesto y URL de Release. Sólo después del cierre actualizar evidencia agregada `evidence/mac24-quality-q4.json` y hacer commit/push; no publicar IDs ni tablas. Avisar al usuario: GitHub no activa al agente de la otra Mac.

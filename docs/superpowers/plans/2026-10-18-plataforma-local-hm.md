@@ -12,7 +12,7 @@
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Estado vigente del 20 de octubre:** T1–T3 y la primera selección en validación están completados; el usuario aprobó después ampliar calidad temporal, grafos y ranking. El [plan Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) y su [diseño](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) preceden ahora a T4. Q1–Q3 ya completaron veinte corridas mac24 descargadas y auditadas. El siguiente desarrollo es Q4: intervalos y decisión formal; aún no existe su comando. Historial+popularidad permanece provisional porque G/RH/RG incumplen al menos un control determinista. T4–T7 conservan abajo el diseño aplicable si gana H; Q4 deberá confirmar/adaptarlo. No hay API, paquete portable completo ni latencia medida. Test sigue reservado.
+**Estado vigente del 20 de octubre:** T1–T3 y la primera selección en validación están completados; el usuario aprobó después ampliar calidad temporal, grafos y ranking. El [plan Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) y su [diseño](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) preceden ahora a T4. Q1–Q3 ya completaron veinte corridas mac24 descargadas y auditadas. Q4 ya está implementada: intervalos y decisión formal; el siguiente paso es ejecutar y revisar su resumen en mac24 según [la guía](../../quality-summary.md). Historial+popularidad permanece provisional porque G/RH/RG incumplen al menos un control determinista. T4–T7 conservan abajo el diseño aplicable si gana H; Q4 deberá confirmar/adaptarlo. No hay API, paquete portable completo ni latencia medida. Test sigue reservado.
 
 **Antecedente del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
@@ -28,7 +28,7 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados | T2 probada también en mac24 | Parquet completo, cortes y ejemplos semanales conciliados; evidencia mac24-t2-2026-10-19.json |
-| Motor y servicios | T3 medida; ampliación Q1–Q4 y T4 pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad como referencia provisional; API, paquete de servicio, interfaz y DAG pendientes |
+| Motor y servicios | T3 y Q1–Q3 medidos; resumen Q4 remoto y T4 pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad como referencia provisional; API, paquete de servicio, interfaz y DAG pendientes |
 | Otra computadora | T1, T2 y T3 probadas en mac24 | Reportes publicados y verificados; transferencia de pesos y servicio pendientes |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.

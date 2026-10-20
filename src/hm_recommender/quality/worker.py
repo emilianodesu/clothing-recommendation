@@ -66,6 +66,9 @@ def run(config_path,run_dir,*,verify=True):
     result={'stage':'Q1','protocol':'quality-v1','status':'failed','test_evaluated':False,'quality_accepted':False}
     try:
         config=load_config(config_path);environment=json.loads((run_dir/'environment.json').read_text())
+        if environment['quality']['stage']=='summary':
+            from hm_recommender.quality.summary_worker import run_summary
+            return run_summary(config,environment,run_dir,verify=verify)
         options=environment['quality'];size=options['size'];fold=FoldSpec.evaluation(options['fold'])
         if options['stage'] not in ('baselines','graph','ranker') or size not in ('demo','pilot','full'):raise ValueError('Only Q1–Q3 are implemented')
         result['stage']={'baselines':'Q1','graph':'Q2','ranker':'Q3'}[options['stage']]

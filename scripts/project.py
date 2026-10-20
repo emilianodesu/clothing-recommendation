@@ -75,7 +75,7 @@ def main():
     job.add_argument("job_args", nargs=argparse.REMAINDER)
     training = sub.add_parser("train-job", help="Entrenamiento T3 desacoplado, checkpoint y reporte por GitHub")
     training.add_argument("job_args", nargs=argparse.REMAINDER)
-    quality = sub.add_parser("quality-job", help="Q1–Q3: evaluación temporal, ranking y reportes agregados")
+    quality = sub.add_parser("quality-job", help="Q1–Q4: evaluación temporal, ranking y selección reproducible")
     quality.add_argument("job_args", nargs=argparse.REMAINDER)
     diagnostic = sub.add_parser("diagnose-job", help="Diagnóstico T3 en lectura, sobre un checkpoint existente")
     diagnostic.add_argument("job_args", nargs=argparse.REMAINDER)
@@ -141,7 +141,7 @@ def main():
                         "tests/integration/test_ingest.py", "tests/integration/test_data_pipeline.py", "-q")
             if args.suite == "quality":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
-                        "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "-q")
+                        "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "tests/integration/test_quality_campaign.py", "-q")
             if args.suite == "diagnostics":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_diagnostics.py", "tests/integration/test_epoch_comparison.py", "tests/integration/test_recent_history.py", "-q")

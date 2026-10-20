@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "protocol": "quality-v1",
+  "size": "full",
+  "folds": {
+    "V1": {
+      "Q1": "quality-mac24-20261020T201629Z-9e5fc20a",
+      "Q2": "quality-mac24-20261020T211909Z-cf26a40a",
+      "RH": "quality-mac24-20261020T222229Z-5226fbce",
+      "RG": "quality-mac24-20261020T224119Z-94bf95ca"
+    },
+    "V2": {
+      "Q1": "quality-mac24-20261020T201718Z-80c2b832",
+      "Q2": "quality-mac24-20261020T212038Z-fd730ff0",
+      "RH": "quality-mac24-20261020T222857Z-732b9e7a",
+      "RG": "quality-mac24-20261020T225147Z-7620af5d"
+    },
+    "V3": {
+      "Q1": "quality-mac24-20261020T201805Z-63eb4569",
+      "Q2": "quality-mac24-20261020T212206Z-00c9a0ec",
+      "RH": "quality-mac24-20261020T223509Z-8f0895b5",
+      "RG": "quality-mac24-20261020T225935Z-24b0b976"
+    }
+  }
+}

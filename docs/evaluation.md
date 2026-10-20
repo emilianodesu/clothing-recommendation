@@ -1,6 +1,6 @@
 # Entrenamiento y evaluación T3
 
-**Actualización del 20 de octubre:** este documento conserva el contrato y evidencia T3. La campaña nueva [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), aún por implementar, añade tres cortes y otros métodos con [protocolo propio](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). No reutilizar el checkpoint entrenado hasta septiembre 9 en cortes anteriores; no reentrenar T3 por esta actualización. Test sigue reservado.
+**Actualización del 20 de octubre:** este documento conserva el contrato y evidencia T3. La campaña nueva [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), con Q1–Q3 cerradas y [Q4 implementada, pendiente de ejecución mac24](quality-summary.md), añade tres cortes y otros métodos con [protocolo propio](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). No reutilizar el checkpoint entrenado hasta septiembre 9 en cortes anteriores; no reentrenar T3 por esta actualización. Test sigue reservado.
 
 ## Qué ejecuta
 

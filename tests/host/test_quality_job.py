@@ -8,6 +8,34 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
 
 
 class QualityBudgetTests(unittest.TestCase):
+    def test_summary_declaration_requires_unique_sources_and_explicit_availability(self):
+        from quality_summary import validate_declaration
+        from copy import deepcopy
+        campaign={'schema_version':1,'protocol':'quality-v1','size':'full',
+            'folds':{f:{'Q1':'quality-'+f,'Q2':None,'RH':None,'RG':None} for f in ('V1','V2','V3')}}
+        validate_declaration(campaign)
+        for mutation in ('duplicate','missing','pilot','orphan'):
+            bad=deepcopy(campaign)
+            if mutation=='duplicate':bad['folds']['V2']['Q1']='quality-V1'
+            elif mutation=='missing':del bad['folds']['V1']['RG']
+            elif mutation=='pilot':bad['size']='pilot'
+            else:bad['folds']['V1']['RH']='quality-rh'
+            with self.assertRaises(ValueError):validate_declaration(bad)
+
+    def test_summary_dispatches_separate_budget_and_requires_campaign(self):
+        from quality_job import main
+        from unittest.mock import patch
+        args=['summarize','--campaign','campaign.json','--expected-commit','a'*40]
+        with patch('quality_job.start') as start:
+            self.assertEqual(main(args),0)
+            self.assertEqual(start.call_args.kwargs['quality_options'],
+                {'stage':'summary','size':'summary','campaign_file':'campaign.json'})
+        from quality_budget import reserve,settle
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(reserve(Path(tmp),'quality-summary','summary'),1800)
+            settle(Path(tmp),'quality-summary',1800)
+            with self.assertRaises(ValueError):reserve(Path(tmp),'quality-summary-again','summary')
+
     def test_budget_counts_failures_and_cannot_reset_by_run_id(self):
         from quality_budget import reserve,settle
         with tempfile.TemporaryDirectory() as temporary:

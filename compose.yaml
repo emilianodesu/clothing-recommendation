@@ -11,6 +11,7 @@ x-job-environment: &job-environment
   QDRANT_URL: http://qdrant:6333
   OMP_NUM_THREADS: "2"
   MKL_NUM_THREADS: "2"
+  OPENBLAS_NUM_THREADS: "2"
   POLARS_MAX_THREADS: "2"
   PYTEST_ADDOPTS: "-o cache_dir=/tmp/pytest-cache"
 
