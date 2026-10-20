@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "scope": "Q1-A/Q1-B local verification; synthetic demo only, mac24 pending",
+  "executable_commit": "502e4a932e22374ae3d78ceda2f7c4c6903083fc",
+  "protocol": "quality-v1",
+  "checks": {
+    "host_tests": 65,
+    "scientific_unit_and_integration_tests": 43,
+    "bootstrap_docker_integration_tests": 8,
+    "distinct_tests": 116,
+    "historical_incoming_reports_verified": 19,
+    "image_built_without_code_mount_overrides": true,
+    "published_archives_download_verified": true
+  },
+  "review": {
+    "critical_findings": 0,
+    "important_findings_fixed": 3,
+    "regressions": [
+      "closure checks between polls",
+      "operational evidence required in passed report",
+      "normative quality-v1 configuration hash"
+    ]
+  },
+  "runs": [
+    {
+      "run_id": "quality-local-20261020T200223Z-ea7119fe",
+      "status": "passed",
+      "source_commit": "9bd65d356e73af24973efbc06ecdfd289b44f8cb",
+      "archive_sha256": "20e3ea6636fcbfd7f25c77a0a4be707794f67567a6799289dffb89fe2a0cbc96",
+      "package_id": "bbe00d99f115fba58fdfffa4292ac231c809353022bf7f18dee93838377f13d2",
+      "release": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T200223Z-ea7119fe",
+      "population": {
+        "catalog_size": 24,
+        "sampled_out_users": 0,
+        "users": 33,
+        "validation_buyers": 33
+      },
+      "methods": {
+        "H": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "P": {
+          "map_at_12": 0.20251596,
+          "ndcg_at_12": 0.3371445,
+          "recall_at_200": 0.98989899
+        }
+      },
+      "legacy_ranking_verified": true,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "duration_seconds": 7.023035,
+      "peak_rss_gib": 0.412441,
+      "cgroup_peak_gib": 0.344109,
+      "swap_peak_gib": 0.0,
+      "oom_killed": false,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_gib": {
+        "end_free_gib": 177.669201,
+        "min_free_gib": 177.669201,
+        "start_free_gib": 177.670792
+      },
+      "budget_seconds": {
+        "pilot": 0,
+        "full": 0,
+        "summary": 0,
+        "demo": 6.917408
+      },
+      "resource_profile": "base",
+      "memory_limit_gib": 5.0,
+      "cpus": 3.0,
+      "threads": 2,
+      "network": "none",
+      "code_mount_overrides": false
+    },
+    {
+      "run_id": "quality-local-20261020T200951Z-1f9c6a28",
+      "status": "passed",
+      "source_commit": "502e4a932e22374ae3d78ceda2f7c4c6903083fc",
+      "archive_sha256": "270e1e876ebddb0e23324b256a0cbbc602d6d2c50c1ee8b096a07de7b075ddf4",
+      "package_id": "92dd8ca681381cbe6cbc237532d54fa2f4eee697cb1016c21f0bc87f8e85b57d",
+      "release": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T200951Z-1f9c6a28",
+      "population": {
+        "catalog_size": 24,
+        "sampled_out_users": 0,
+        "users": 33,
+        "validation_buyers": 33
+      },
+      "methods": {
+        "H": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "P": {
+          "map_at_12": 0.20251596,
+          "ndcg_at_12": 0.3371445,
+          "recall_at_200": 0.98989899
+        }
+      },
+      "legacy_ranking_verified": true,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "duration_seconds": 6.006559,
+      "peak_rss_gib": 0.412128,
+      "cgroup_peak_gib": 0.343739,
+      "swap_peak_gib": 0.0,
+      "oom_killed": false,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_gib": {
+        "end_free_gib": 177.645947,
+        "min_free_gib": 177.645947,
+        "start_free_gib": 177.646194
+      },
+      "budget_seconds": {
+        "pilot": 0,
+        "full": 0,
+        "summary": 0,
+        "demo": 12.923967
+      },
+      "resource_profile": "base",
+      "memory_limit_gib": 5.0,
+      "cpus": 3.0,
+      "threads": 2,
+      "network": "none",
+      "code_mount_overrides": false
+    }
+  ],
+  "current_run_id": "quality-local-20261020T200951Z-1f9c6a28",
+  "notes": [
+    "First demo is preserved as pre-review evidence; use the second corrected revision for rollout.",
+    "Both runs use the deterministic 33-buyer/24-item fixture; these metrics are not H&M quality estimates.",
+    "Bootstrap and scientific suites were executed separately; repeated unit runs are not counted twice.",
+    "No local full H&M quality campaign, new H&M training, Q2-Q4 or T4 was started; test remains reserved.",
+    "mac24 must run demo, pilot V3 and full V1/V2/V3; full V3 must match the original closed recent-history report.",
+    "Physical AMD64 execution remains unverified."
+  ]
+}

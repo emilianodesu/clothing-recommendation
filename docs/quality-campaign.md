@@ -92,3 +92,9 @@ SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima python3 scripts/project.py
 ```
 
 La demo oficial de la primera Mac usa `--machine-id local --profile default --resources base`; no representa rendimiento ni calidad de mac24.
+
+## Evidencia local de esta entrega
+
+La [evidencia estructurada](../evidence/local-quality-q1.json) registra 116 pruebas distintas: 65 host, 43 unitarias/integración científica y 8 de infraestructura Docker. La revisión final detectó tres problemas operativos; sus regresiones fallaron antes de corregirlos y pasaron después. La imagen final se probó sin montajes auxiliares de código y conserva compatibilidad con los 19 ZIP históricos recibidos.
+
+La [demo oficial final](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T200951Z-1f9c6a28), ejecutada en `502e4a932e22374ae3d78ceda2f7c4c6903083fc`, pasó con 33 compradores, 24 artículos y paridad exacta V3. Duró 6.006559 s, con RSS máximo 0.412128 GiB, sin swap ni OOM. El ZIP se exportó, validó, publicó y volvió a descargar/verificar. Se conserva la primera demo anterior a las correcciones. Estas son mediciones sintéticas de la primera Mac; no acreditan calidad ni rendimiento H&M en mac24.

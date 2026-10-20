@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1-A implementado y probado; Q1-B preparado para verificación oficial local y campaña mac24. Q2–Q4 pendientes**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1-A/Q1-B implementados, verificados y publicados; cinco reportes mac24 pendientes. Q2–Q4 pendientes**.
 
 ## Global Constraints
 
@@ -104,8 +104,8 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 - [x] Implementar `quality-handoff`, run_id `quality-...`, marcador GitHub propio y lista blanca de archivos de reporte/log/config/recursos; validar por etapa/método. Mantener ≤50 MiB e integridad del transporte existente. Copiar el validador auxiliar a la imagen si las pruebas lo importan; verificar sin montajes de código que oculten omisiones.
 - [x] Implementar presupuesto acumulado con identificador de campaña y registro local de intentos, incluidos fallidos. No permitir reiniciar el contador con un nuevo run_id. Reservar 30 minutos de las 24 h para Q4 (Q1–Q3 hasta 23.5 h). Incluir horas acumuladas y espacio libre en los reportes; preservar error si no se puede validar el registro.
 - [x] Añadir `verify --suite quality` (unitarias, integración de la etapa y host). Ejecutar `SSL_CERT_FILE=/etc/ssl/cert.pem python3 -m unittest discover -s tests/host -v`; reconstruir imagen y ejecutar suite quality, diagnóstico histórico y `verify --suite bootstrap` con `DOCKER_CONTEXT=colima`. Esperado: salida 0; no declarar mac24 probada aquí.
-- [ ] Ejecutar demo oficial desacoplada aquí; exportar/validar/publicar incluso el intento fallido. Ejecutar piloto real local sólo si necesario para verificar IO; no hacer full ni nuevos entrenamientos sin el código de sus etapas.
-- [ ] Publicar commit probado y guía Q1. Preparar prompt mac24 con secuencia fija **demo → piloto H&M V3 → full V1 → full V2 → full V3**, recursos actuales y hashes de originales antes/después. La demo genera fechas sintéticas que cubren las cuatro semanas de ajuste y folds; sus métricas no acreditan H&M. Los comandos exactos van en la guía sólo al estar implementados.
+- [x] Ejecutar demo oficial desacoplada aquí; exportar/validar/publicar incluso el intento fallido. Ejecutar piloto real local sólo si necesario para verificar IO; no hacer full ni nuevos entrenamientos sin el código de sus etapas.
+- [x] Publicar commit probado y guía Q1. Preparar prompt mac24 con secuencia fija **demo → piloto H&M V3 → full V1 → full V2 → full V3**, recursos actuales y hashes de originales antes/después. La demo genera fechas sintéticas que cubren las cuatro semanas de ajuste y folds; sus métricas no acreditan H&M. Los comandos exactos van en la guía sólo al estar implementados.
 - [ ] Recibir y validar los cinco ZIP, comparar V3 H/P contra ZIP original completo y registrar `evidence/quality-q1-mac24.json`. Cerrar Q1 si todos son válidos; pérdida de calidad entre semanas se documenta sin modificar el protocolo. Siguiente entrega es Q2, no T4.
 
 ## Q2 · Grafo a escala completa y PageRank académico

@@ -12,7 +12,7 @@ Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/e
 
 Secuencia: Q1 referencias temporales → Q2 grafo y control PageRank → Q3 ordenamiento aprendido → Q4 selección → T4–T8 despliegue y aceptación. El [diseño](docs/superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija fechas, candidatos, límites, cobertura del curso y cierre de experimentos. Los experimentos PyTorch existentes se conservan sin repetirlos. PageRank se estudia en una cohorte acotada; no se promueve un motor por resultados de esa muestra.
 
-Q1 dispone de comandos para demo, piloto y tres evaluaciones completas; sigue [la guía](docs/quality-campaign.md) con el commit recibido. Los cinco reportes mac24 permitirán cerrar esta etapa antes de implementar el grafo. El intercambio continúa mediante GitHub privado y reportes cerrados.
+Q1 dispone de comandos para demo, piloto y tres evaluaciones completas; sigue [la guía](docs/quality-campaign.md) con el commit recibido. La [verificación local](evidence/local-quality-q1.json) pasó 116 pruebas y la demo oficial. Los cinco reportes mac24 permitirán cerrar esta etapa antes de implementar el grafo. El intercambio continúa mediante GitHub privado y reportes cerrados.
 
 ## Empezar en la segunda Mac
 
