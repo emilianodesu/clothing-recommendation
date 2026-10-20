@@ -8,7 +8,7 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1 y Q2 están cerradas operativamente tras revisar cinco reportes mac24 por etapa: [revisión Q1](../evidence/quality-q1-review.json) y [revisión Q2](../evidence/quality-q2-review.json). Las guías [Q1](quality-campaign.md) y [Q2](graph-quality.md) conservan resultados y reproducción. Q3 está implementada y pendiente de ejecución H&M en mac24; Q4 sigue pendiente.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1, Q2 y Q3 están cerradas operativamente tras descargar y revisar cinco, cinco y diez reportes mac24 respectivamente: [Q1](../evidence/quality-q1-review.json), [Q2](../evidence/quality-q2-review.json) y [Q3](../evidence/quality-q3-review.json). Q4 sigue pendiente; ningún candidato nuevo cumple todos los controles deterministas, aunque mejore MAP promedio.
 
 ## Evidencia que decide la selección
 
@@ -39,7 +39,17 @@ La caída de Recall se concentra en historia de 29–90 días: −19.13%/−19.7
 
 El control PPR converge para todos los compradores con semillas de su muestra; usar la personalización correcta mejora las tres métricas respecto a diez permutaciones. No muestra una ventaja consistente de MAP frente a G en esa misma muestra y no permite seleccionar un motor full. Acredita un experimento de PageRank personalizado acotado, no superioridad universal ni causalidad.
 
-Q3 conserva RH y RG conforme al protocolo: el primero reordena H y el segundo G. **Ordenar el mismo pool mantiene Recall@200:** RH puede mejorar MAP sin sacrificar la recuperación de H; RG hereda el incumplimiento de G y conserva valor como ablación académica. No se ampliará el pool ni se relajará el umbral después de ver estos resultados. No repetir Q1/Q2 ni usar test.
+Q3 conservó RH y RG conforme al protocolo: el primero reordena H y el segundo G. **Ordenar el mismo pool mantiene Recall@200:** RH mejora MAP sin sacrificar la recuperación de H; RG hereda el incumplimiento de G y conserva valor como ablación académica. No se ampliará el pool ni se relajará el umbral después de ver estos resultados. No repetir Q1/Q2 ni usar test.
+
+## Resultado Q3: mejora global con regresiones por segmento
+
+La [auditoría de los diez ZIP Q3](../evidence/quality-q3-review.json) confirma entrenamiento y evaluación temporal completos, parámetros congelados, referencias y recursos. RH mejora MAP medio de 0.02222467 a 0.02311949 (+4.03%) y NDCG +5.34%, conservando Recall. RG alcanza MAP 0.02544361 (+14.48% frente a H, +7.53% frente a G) y NDCG +16.67% frente a H, pero mantiene la pérdida de Recall −4.39% de G.
+
+El control por segmentos impide promover RH: en V1 pierde MAP −27.66% para compradores sin compras previas y −16.19% con sólo historia anterior a 90 días; en V3 pierde −11.62% y −9.93% respectivamente. Todos esos segmentos superan 1,000 compradores y exceden la pérdida máxima del 5% fijada antes de medir. RG también incumple segmentos (V1 −22.24%/−19.24%; V3 sin historial −6.48%). V2 mejora esos segmentos; el promedio global oculta esa variación temporal.
+
+Aprender el orden aporta señal, pero también cambia el respaldo que H conserva para usuarios sin historia90. Es un mecanismo compatible con las regresiones observadas, no un diagnóstico causal de sobreajuste ni una comparación universal entre frameworks. La [guía Q3](ranker-quality.md) incluye las ablaciones, recompra/descubrimiento, cobertura y costes. Las seis corridas full sumaron 44.58 minutos, con cgroup máximo 3.667202 GiB y sin swap/OOM.
+
+H sigue provisional. G falla Recall; RH falla segmentos; RG falla ambos. Q4 debe completar los intervalos pareados por comprador y la decisión formal sin cambiar esos criterios. Un intervalo global positivo no vuelve elegible un candidato que ya incumple un límite determinista. No se propone otro entrenamiento, fallback o búsqueda de parámetros a partir de estos resultados.
 
 ## Qué podemos explicar y con qué certeza
 
@@ -51,6 +61,7 @@ Q3 conserva RH y RG conforme al protocolo: el primero reordena H y el segundo G.
 | Popularidad7d supera a popularidad histórica y al modelo aislado en esta validación | La popularidad reciente es una referencia exigente y útil en este corte temporal | La estacionalidad o cambios de catálogo son hipótesis; no están aislados causalmente |
 | La torre de usuario recibe ID y cuatro agregados numéricos, no la lista de artículos recientes | El modelo actual no recibe explícitamente la misma señal que utiliza la regla seleccionada; su representación es una explicación plausible de la diferencia | No prueba que todas las redes neuronales sean inferiores ni atribuye la diferencia al framework |
 | Tres épocas reducen MAP/NDCG | Más entrenamiento no resolvió la relevancia en esta configuración | No basta para diagnosticar sobreajuste, un problema concreto del optimizador o el número óptimo de épocas |
+| RH/RG mejoran el MAP global, pero pierden en algunos segmentos/cortes | La regla de selección debe considerar heterogeneidad temporal y arranque en frío, además de promedios | No demuestra que LightGBM sea peor en general ni autoriza ajustar un respaldo después de ver los folds |
 
 La descripción de la torre se puede contrastar con [el contrato de evaluación](evaluation.md) y [su implementación](../src/hm_recommender/model/two_tower.py); el ranking reciente está en [recent_history.py](../src/hm_recommender/model/recent_history.py).
 
@@ -61,7 +72,7 @@ El diagnóstico full consumió 132.132 s y 2.568 GiB de pico de contenedor, sin 
 | Subtema | Evidencia real | Cómo se presenta |
 | --- | --- | --- |
 | 4.1 Retroalimentación y arranque en frío | Compras como señal implícita, usuarios desconocidos y respaldo popular | Implementado; no hay retroalimentación explícita de calificaciones |
-| 4.2 Contenido | Categoría, grupo y color en la torre de artículos | Componente de un modelo híbrido; no llamarlo un recomendador puro basado en contenido |
+| 4.2 Contenido | Categoría, grupo y color en la torre de artículos y afinidades de contenido entre las 20 características Q3 | Componentes híbridos evaluados; no llamarlos un recomendador puro basado en contenido |
 | 4.3 Filtrado colaborativo | Aprendizaje de interacciones usuario–artículo | Experimento PyTorch entrenado con H&M, aunque no gane |
 | 4.4 Factores latentes | Embeddings de 64 dimensiones y producto punto | Representaciones latentes aprendidas; no equivale a haber implementado SVD |
 | 4.5 Evaluación | Cortes temporales, métricas, segmentos, cobertura, bootstrap y permutaciones | Parte central de la selección y de la explicación de resultados negativos |
@@ -89,4 +100,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-Q1/Q2 están cerradas. El siguiente entregable es **Q3: ordenamiento LightGBM RH/RG**, seguido de Q4 selección. La [guía Q3](ranker-quality.md) y su prompt fijan la ejecución mac24 con el commit de entrega; conservar los artefactos privados Q1/Q2 y el presupuesto. El código local no acredita todavía calidad o coste H&M. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.
+Q1–Q3 están cerradas operativamente. El siguiente entregable es **Q4: intervalos, decisión formal y explicación**, con bootstrap en mac24 sobre las tablas por comprador ya preservadas. Todavía no existe su comando ejecutable. Conservar todos los artefactos privados Q1–Q3 y el presupuesto; no repetir sus corridas. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.

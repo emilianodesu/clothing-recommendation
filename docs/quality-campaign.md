@@ -1,6 +1,6 @@
 # Q1: referencias temporales reproducibles
 
-Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q1 y [Q2](graph-quality.md) están cerradas tras revisión de sus reportes mac24. [Q3](ranker-quality.md) ya está implementada y verificada localmente; falta su campaña mac24. Q4 y T4 siguen pendientes. Esta página conserva la reproducción histórica Q1, no debe repetirse por defecto. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
+Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q1, [Q2](graph-quality.md) y [Q3](ranker-quality.md) están cerradas tras revisión de sus reportes mac24. Q4 y T4 siguen pendientes. Esta página conserva la reproducción histórica Q1, no debe repetirse por defecto. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
 
 ## Protocolo y archivos
 
@@ -138,4 +138,4 @@ Las tres evaluaciones full sumaron 108.179411 s de job; máximo RSS 2.239624 GiB
 
 La preservación de 606 archivos y la comprobación posterior de 113 features son declaraciones de mac24 respaldadas por sus inventarios locales; no se recalcularon esos hashes en la primera Mac. Se mantiene visible la omisión de features en el inventario previo, sin atribuirle un fallo de calidad. El aislamiento de los jobs se verificó en los reportes.
 
-**Decisión Q1:** conservar H como referencia fija y no repetir entrenamiento ni Q1. Posteriormente también se cerró [Q2](graph-quality.md): G mejora MAP, pero incumple el límite de pérdida de Recall. La siguiente ejecución es [Q3](ranker-quality.md), con su [prompt mac24](mac24-q3-prompt.md); test, selección final y T4 siguen pendientes.
+**Decisión Q1:** conservar H como referencia fija y no repetir entrenamiento ni Q1. Posteriormente también se cerraron [Q2](graph-quality.md) y [Q3](ranker-quality.md): G/RG incumplen Recall; RH/RG incumplen segmentos pese a mejorar MAP promedio. El siguiente desarrollo es Q4; test, selección final y T4 siguen pendientes.

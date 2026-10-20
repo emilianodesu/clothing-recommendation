@@ -1,8 +1,8 @@
 # Q3: ordenamiento LightGBM sobre H y G
 
-Q3 implementa RH y RG del [protocolo quality-v1](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). RH reordena exactamente los candidatos H; RG reordena G. Ambos conservan Recall@200. Q2 ya mostró que G incumple el límite de pérdida de Recall: RG se mantiene como ablación académica; no se cambia su pool ni la regla para hacerlo elegible. Q4 hará la selección formal. Test permanece reservado.
+Q3 implementa RH y RG del [protocolo quality-v1](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). RH reordena exactamente los candidatos H; RG reordena G. Ambos conservan Recall@200. Las diez corridas mac24 se descargaron y [auditaron](../evidence/quality-q3-review.json): **Q3 está cerrada operativamente**. RH mejora MAP medio, pero incumple el límite de pérdida por segmento; RG mejora más MAP, pero incumple Recall y segmentos. Q4 hará la selección formal con sus intervalos. Test permanece reservado. Esta guía conserva la reproducción histórica; no repetir Q3 por defecto.
 
-Esta entrega incorpora código, revisión y pruebas locales cerradas en [la evidencia Q3](../evidence/local-quality-q3.json). La calidad, memoria y duración de entrenamiento H&M deben medirse en mac24; una demo no las acredita. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes.
+La implementación y pruebas locales están en [la evidencia Q3](../evidence/local-quality-q3.json); los resultados H&M y recursos ya medidos están al final de esta guía. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes. La auditoría de agregados no sustituye el bootstrap por comprador ni la aceptación final.
 
 ## Contrato implementado
 
@@ -23,6 +23,8 @@ Para medir preparación, Q3 vuelve a generar únicamente la lista externa H o G 
 Las cuatro semanas internas se construyen dentro de cada intento. No hay caché mutable compartida ni resume Q3; un reintento produce otro run_id y conserva el anterior y su cargo al presupuesto.
 
 ## Preparación en mac24
+
+Procedimiento ya ejecutado en las diez corridas de abajo. Conservar originales, tablas Q3 y presupuesto para Q4; no volver a lanzar este procedimiento salvo petición explícita.
 
 1. Fijar el commit recibido en un clon limpio; conservar cambios existentes. Leer AGENTS.md y las revisiones Q1/Q2. No cambiar de revisión durante las corridas.
 2. Conservar Colima `hm-project` 14 GiB/4 CPU y recursos `mac24` 10 GiB/3 CPU/2 hilos. Mantener la Mac despierta; un solo trabajo pesado a la vez.
@@ -149,3 +151,37 @@ La evidencia incluye los conteos de cada semana, fechas, compradores muestreados
 Presupuesto acumulado Q1–Q3: full 3001.522436 s, pilotos 173.372630 s y demos 33.523709 s. Entradas previas intactas y ninguna reserva abierta; se conserva el ledger local. Espacio libre mínimo: 186.095436 GiB.
 
 **Éxito operativo; calidad pendiente de revisión.** RH y RG mejoraron MAP/NDCG frente a sus pools en los tres folds. RH conserva Recall de H; RG hereda la pérdida de Recall de G y continúa como ablación académica. No se declara ganador ni se calcula aquí el bootstrap formal de Q4. No se repitió Q1/Q2 ni entrenamiento PyTorch; no se inició Q4/T4 ni se evaluó test. La siguiente acción es revisar los diez reportes desde la máquina principal.
+
+## Revisión de los diez ZIP en la Mac principal
+
+La actualización `0e1afd8` se integró por avance rápido. Se descargaron las diez Releases privadas, se validaron inventario/tamaños/SHA-256 y contratos completos y se conciliaron los agregados de Git contra los ZIP sin redondear. Todos proceden del commit limpio solicitado `b0c93b85ea3dd96a4218fbae4882ca177214691f`; orden de corridas y tiempos no muestran solapamiento. Configuración, lock, perfil mac24, límites efectivos, aislamiento y cadena Q2→Q1 coinciden. P/H/G, poblaciones, entradas y hashes de sus artefactos coinciden exactamente con las referencias originales. [Auditoría estructurada](../evidence/quality-q3-review.json).
+
+Se comprobaron las cuatro fechas internas por corrida, conciliaciones de grupos/filas/positivos, validación interna completa, selección de iteraciones/refit, costes y conservación reportada de candidatos y Recall. Los modelos, tablas individuales, inventarios privados y log independiente de `verify --suite quality` siguen en mac24: su preservación y esa suite son declaraciones del equipo emisor. Aquí se verificaron los ZIP y cálculos agregados, sin recalcular predicciones ni intervalos desde archivos que no se recibieron.
+
+Medias simples de los tres folds full (cálculos con precisión original):
+
+| Método | MAP@12 | Cambio MAP frente a H | NDCG@12 | Recall@200 | Límite determinista incumplido |
+| --- | ---: | ---: | ---: | ---: | --- |
+| H | 0.02222467 | referencia | 0.03300888 | 0.19526924 | — |
+| G | 0.02366238 | +6.47% | 0.03533201 | 0.18669113 | Recall −4.39% |
+| RH | 0.02311949 | +4.03% | 0.03477202 | 0.19526924 | Caídas de MAP por segmento mayores al 5% |
+| RG | 0.02544361 | +14.48% | 0.03851158 | 0.18669113 | Recall −4.39% y segmentos |
+
+**RH no queda habilitado para promoción por mejorar el promedio.** El protocolo exige que ningún segmento/corte con al menos 1,000 compradores pierda más del 5% relativo de MAP frente a H. Hay cuatro incumplimientos en RH y tres en RG:
+
+| Fold | Segmento | Compradores | RH frente a H | RG frente a H |
+| --- | --- | ---: | ---: | ---: |
+| V1 | Sin compras previas | 5,940 | −27.66% | −22.24% |
+| V1 | Sólo historia anterior a 90 días | 14,733 | −16.19% | −19.24% |
+| V3 | Sin compras previas | 5,395 | −11.62% | −6.48% |
+| V3 | Sólo historia anterior a 90 días | 13,240 | −9.93% | +0.18% |
+
+V2 no presenta incumplimientos de segmentos para RH/RG. Los porcentajes son pérdidas relativas en MAP, no puntos porcentuales de precisión. Estos límites fueron fijados antes de medir: un intervalo global favorable en Q4 no anularía un incumplimiento por segmento o Recall.
+
+La ablación sí muestra aporte del ordenamiento: RH supera H en MAP en los tres folds (+2.19%, +8.91%, +0.96%); RG supera G y mejora su MAP medio +7.53% manteniendo su Recall. RG supera a RH en MAP medio +10.05%, pero recupera menos relevantes. Estos contrastes son descriptivos; no demuestran significancia ni una causa aislada. El MAP de descubrimiento de RH/RG mejora en los tres folds, mientras RH pierde MAP de recompra en V3. La cobertura top12 de RH es ligeramente menor que H; RG reduce la cobertura top12 respecto a G y H en los tres folds. El mayor promedio no implica mejora para todos los compradores ni mayor diversidad.
+
+Una explicación compatible con la implementación es que LightGBM reordena también el respaldo de popularidad cuando no hay historial90, mientras H conserva ese respaldo. La mejora de esos mismos segmentos en V2 y su caída en V1/V3 muestran variación temporal; no prueban sobreajuste ni inferioridad de LightGBM como framework. No se agrega ahora un fallback condicionado al segmento: sería otro candidato y requeriría un protocolo nuevo.
+
+Los seis jobs full sumaron **2,674.543 s (44.58 min)**; se cobraron 2,674.624 s al presupuesto, por la conciliación conservadora entre relojes. Pico RSS 2.637104 GiB y cgroup 3.667202 GiB, sin swap/OOM; mínimo libre 186.095436 GiB. Los costes de preparación+ajuste+ranking sumaron 1,043.217 s para RH y 1,542.589 s para RG. Son costes batch, no latencia de API. El presupuesto Q1–Q3 acumulado quedó en 3,001.522 s full y 173.373 s de pilotos; los 1,800 s de Q4 permanecen íntegros.
+
+**Decisión de esta revisión:** cerrar Q3 operativamente y conservar H como referencia provisional. Todos los candidatos nuevos incumplen al menos un control determinista; falta Q4 para calcular los intervalos por comprador, registrar la decisión formal y congelar el procedimiento de servicio. No repetir entrenamiento, modificar umbrales, iniciar T4 ni evaluar test durante esta revisión.

@@ -1,5 +1,7 @@
 # Prompt para ejecutar Q3 en mac24
 
+**Histórico, ya ejecutado:** las diez corridas se descargaron y [revisaron](../evidence/quality-q3-review.json). No volver a usar este prompt por defecto. Conservar los artefactos privados para Q4; su comando y prompt se entregarán cuando estén implementados.
+
 Sustituir `SHA_COMPLETO_RECIBIDO` por el commit de entrega de la Mac principal.
 
 > Actualiza desde GitHub y fija `SHA_COMPLETO_RECIBIDO` en un clon limpio, conservando cambios existentes. Lee AGENTS.md, docs/ranker-quality.md y evidence/quality-q2-review.json. Q1/Q2 están cerradas: no repetirlas ni reentrenar PyTorch.
