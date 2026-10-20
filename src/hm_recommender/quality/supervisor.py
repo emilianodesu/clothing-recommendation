@@ -43,12 +43,16 @@ def supervise(command,run_dir,seconds,min_free_bytes,*,interval=1):
     path=run_dir/'result.json'
     try: result=json.loads(path.read_text()) if path.exists() else {}
     except (ValueError,OSError):result={}
+    elapsed=time.monotonic()-started
+    final_free=shutil.disk_usage(run_dir).free
+    minimum_free=min(minimum_free,final_free)
+    if reason is None and elapsed>=seconds:reason='timeout'
+    if reason is None and minimum_free<min_free_bytes:reason='disk'
     if reason or code or result.get('status')!='passed':
         result.update(status='failed',failure_reason=reason or 'worker_exit')
         code=code or 1
-    final_free=shutil.disk_usage(run_dir).free
     result['disk']={'start_free_bytes':initial_free,'min_free_bytes':min(minimum_free,final_free),'end_free_bytes':final_free}
-    result.update(job_duration_seconds=time.monotonic()-started,job_resources=resources())
+    result.update(job_duration_seconds=elapsed,job_resources=resources())
     atomic_json(path,result)
     return code if code>0 else (1 if code else 0)
 

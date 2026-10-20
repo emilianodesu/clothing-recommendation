@@ -2,6 +2,8 @@
 import math
 import re
 
+# Canonical SHA-256 of the complete fixed quality-v1 configuration, including future stages.
+QUALITY_V1_SHA256='05caf396db1e427b982d3809960109f6f219ce435b69c40b4925323acfec76e7'
 CUTOFFS={'V1':('2020-08-26','2020-09-02'),'V2':('2020-09-02','2020-09-09'),'V3':('2020-09-09','2020-09-16')}
 METRICS={'map_at_12','ndcg_at_12','recall_at_200'}
 SEGMENTS={'recent28d','history29_90d','older_history','no_history'}
@@ -80,7 +82,9 @@ def validate_quality_result(result):
         for segment in SEGMENTS:
             require(p['segments'][segment]['users']==h['segments'][segment]['users'])
             if segment!='recent28d': require(p['segments'][segment]==h['segments'][segment])
-        require(result['inputs']['max_feature_date']<fold['cutoff'])
+        from datetime import date
+        require(date.fromisoformat(result['inputs']['max_feature_date'])<date.fromisoformat(fold['cutoff']))
+        require(result['inputs']['protocol_sha256']==QUALITY_V1_SHA256)
         for key in ('source_sha256','dataset_manifest_sha256','protocol_sha256','snapshot_sha256'):
             require(isinstance(result['inputs'][key],str) and re.fullmatch('[a-f0-9]{64}',result['inputs'][key]))
         require(set(result['artifacts'])=={'P','H'})
@@ -90,9 +94,32 @@ def validate_quality_result(result):
         if fold['fold_id']=='V3':require(result['parity']['legacy_ranking_verified'] is True)
         if fold['fold_id']=='V3' and result['size']=='full':
             require(result['reference']['verified'] is True and re.fullmatch('[a-f0-9]{64}',result['reference']['archive_sha256']))
-        require(number(result['job_duration_seconds']) and count(result['job_resources']['peak_rss_bytes'],1))
+        require(number(result['job_duration_seconds'],0,7200) and count(result['job_resources']['peak_rss_bytes'],1))
+        disk=result['disk']; require(set(disk)=={'start_free_bytes','min_free_bytes','end_free_bytes'})
+        require(all(count(v,5*2**30) for v in disk.values()))
+        require(disk['min_free_bytes']<=min(disk['start_free_bytes'],disk['end_free_bytes']))
     except (KeyError,TypeError,AttributeError,OverflowError) as error:
         raise ValueError('Malformed quality report') from error
+
+
+
+def validate_quality_execution(result,environment):
+    validate_quality_result(result)
+    try:
+        require(result['source_commit']==environment['source_commit'])
+        require(environment['quality']['stage']=='baselines' and environment['quality']['size']==result['size'])
+        require(environment['quality']['fold']==result['fold']['fold_id'])
+        require(count(environment['start_free_bytes'],20*2**30))
+        allowance=environment['quality_budget_seconds'];require(number(allowance,0,7200) and allowance>0)
+        require(result['job_duration_seconds']<=allowance)
+        budget=environment['quality_budget'];require(set(budget)=={'demo','pilot','full','summary'})
+        require(all(number(v) for v in budget.values()))
+        require(budget['pilot']<=7200 and budget['full']<=84600 and budget['summary']<=1800)
+        # Docker timestamps and the VM monotonic clock may differ by fractions of
+        # a second. This tolerance only reconciles charged time, never the deadline.
+        require(budget[result['size']]>=result['job_duration_seconds']-1)
+    except (KeyError,TypeError,AttributeError) as error:
+        raise ValueError('Missing or malformed quality operational evidence') from error
 
 
 def validate_quality_envelope(report,result,environment,names):
@@ -107,4 +134,4 @@ def validate_quality_envelope(report,result,environment,names):
     require(effective['memory_bytes']==limits['memory_bytes'] and effective['nano_cpus']==limits['cpus']*10**9)
     require(all(effective[k]==limits[k] for k in ('polars_threads','omp_threads','mkl_threads')))
     require(environment['isolation']=={'network':'none','writable_mounts':['/artifacts/data-jobs/'+report['run_id']]})
-    validate_quality_result(result)
+    validate_quality_execution(result,environment)

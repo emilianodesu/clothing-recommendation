@@ -38,6 +38,8 @@ def fixture(directory):
     report={'schema_version':1,'kind':'quality-handoff','run_id':directory.name,'machine_id':'local','context':'colima','source_commit':'a'*40,'source_clean':True,
         'status':'passed','steps':[{'name':'quality','log':'job.log','status':'passed','exit_code':0}],'result':result,
         'container_exit_code':0,'oom_killed':False,**{k:env[k] for k in ('resources','limits','effective_limits')}}
+    result['disk']={'start_free_bytes':21*2**30,'min_free_bytes':20*2**30,'end_free_bytes':20*2**30}
+    env.update(start_free_bytes=21*2**30,quality_budget_seconds=7200,quality_budget={'pilot':0,'full':0,'summary':0,'demo':1})
     return result,env,config,report
 
 
@@ -83,3 +85,18 @@ class QualityHandoffTests(unittest.TestCase):
         from quality_job import reference_for
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(ValueError):reference_for(Path(tmp),'diagnose-missing')
+
+    def test_closed_report_requires_operational_evidence_and_fixed_protocol(self):
+        for mutation in ('disk','budget','over_budget','coherent_config','spent','small_reservation','low_disk'):
+            with self.subTest(mutation=mutation),tempfile.TemporaryDirectory() as tmp:
+                directory=Path(tmp)/'quality-local-test';directory.mkdir();result,env,config,report=fixture(directory)
+                if mutation=='disk':result.pop('disk',None)
+                if mutation=='budget':env.pop('quality_budget_seconds',None)
+                if mutation=='over_budget':result['job_duration_seconds']=100000000
+                if mutation=='spent':env['quality_budget']['pilot']=7201
+                if mutation=='small_reservation':env['quality_budget_seconds']=.5
+                if mutation=='low_disk':result['disk']['end_free_bytes']=1
+                if mutation=='coherent_config':
+                    config['history_days']=27
+                    result['inputs']['protocol_sha256']=hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                with self.assertRaises(ValueError):package(directory,result,env,config,report)

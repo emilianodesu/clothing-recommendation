@@ -314,6 +314,11 @@ def settle_quality(directory,run,state):
             start=datetime.fromisoformat(state['StartedAt'].replace('Z','+00:00'))
             end=datetime.fromisoformat(state['FinishedAt'].replace('Z','+00:00'))
             seconds=max(0,(end-start).total_seconds())
+        result_path=directory / 'result.json'
+        if result_path.exists():
+            import math
+            reported=json.loads(result_path.read_text()).get('job_duration_seconds')
+            if type(reported) in (int,float) and math.isfinite(reported) and reported>=0:seconds=max(seconds,reported)
         run['quality_budget']=settle(budget_root,run['run_id'],seconds)
         write_json(directory / 'environment.json',run)
 
@@ -362,11 +367,11 @@ def inspect_run(run_id):
             require_comparison=bool(run.get('diagnostic_reference')), require_history=run.get('diagnostic_protocol') == 'recent-history')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
-    if run.get('quality') and status == 'passed':
-        from quality_handoff import validate_quality_result
-        try:validate_quality_result(result)
-        except ValueError:status='failed'
     settle_quality(directory,run,state)
+    if run.get('quality') and status == 'passed':
+        from quality_handoff import validate_quality_execution
+        try:validate_quality_execution(result,run)
+        except ValueError:status='failed'
     return directory, run, env, state, result, status
 
 

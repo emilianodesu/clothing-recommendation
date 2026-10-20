@@ -15,7 +15,7 @@ Cada job escribe en `ARTIFACTS_DIR/data-jobs/RUN_ID/`:
 - `work/ranking-P/`, `work/ranking-H/`: rankings privados por comprador, puntuación y fuente.
 - `work/evaluation-P/`, `work/evaluation-H/`: métricas privadas por comprador para el futuro bootstrap Q4.
 
-Los directorios `work` permanecen en mac24. El ZIP `quality-handoff` incluye únicamente archivos permitidos de reporte, configuración y logs. SHA-256, tamaños e identidad del paquete se verifican antes de publicar/leer. El lector rechaza reportes aprobados incompletos, métricas no finitas, fechas incoherentes, recursos incompatibles y archivos ajenos al contrato. Los reportes históricos mantienen sus contratos.
+Los directorios `work` permanecen en mac24. El ZIP `quality-handoff` incluye únicamente archivos permitidos de reporte, configuración y logs. SHA-256, tamaños e identidad del paquete se verifican antes de publicar/leer. El lector también exige la huella normativa completa de `quality-v1`, el presupuesto y la evidencia de disco/tiempo; no basta con un hash coherente de una configuración diferente. El lector rechaza reportes aprobados incompletos, métricas no finitas, fechas incoherentes, recursos incompatibles y archivos ajenos al contrato. Los reportes históricos mantienen sus contratos.
 
 ## Preparar mac24
 
@@ -75,9 +75,9 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload RUTA_EX
 
 Cada job dispone de hasta dos horas de contenedor, incluyendo verificación de pruebas e IO; la construcción de imagen se registra por separado y no consume ese tiempo de cómputo. Pilotos H&M comparten dos horas acumuladas. Los full Q1–Q3 comparten 23.5 horas y reservan 30 minutos para Q4. Demo tiene límite de dos horas por job y se contabiliza aparte. Fallos e interrupciones consumen presupuesto; cambiar run_id no lo reinicia.
 
-El registro persistente `ARTIFACTS_DIR/quality-budget/quality-v1.json` se actualiza bajo el bloqueo de trabajos pesados. `status`/`export` cierran la reserva usando tiempos Docker; si desaparece el contenedor se cobra toda la reserva. Una reserva sin cerrar impide el siguiente job. No borres ni edites el registro para continuar; conserva el bloqueo y su diagnóstico. El presupuesto es local a la instalación de mac24, no un contador distribuido entre clones.
+El registro persistente `ARTIFACTS_DIR/quality-budget/quality-v1.json` se actualiza bajo el bloqueo de trabajos pesados. `status`/`export` cierran la reserva cobrando el mayor tiempo entre Docker y la duración monotónica informada; si desaparece el contenedor se cobra toda la reserva. Una reserva sin cerrar impide el siguiente job. No borres ni edites el registro para continuar; conserva el bloqueo y su diagnóstico. El presupuesto es local a la instalación de mac24, no un contador distribuido entre clones.
 
-Se exigen 20 GiB libres al inicio. El supervisor comprueba espacio cada segundo y mata el worker al bajar de 5 GiB o agotar tiempo; guarda motivo y recursos. El job usa red `none`, raíz de contenedor en lectura, entradas `/data` y `/artifacts` en lectura y sólo su directorio nuevo en escritura. No hay dos jobs pesados simultáneos. Reinicio de Docker/VM o terminación abrupta puede impedir el cierre del worker; `status` no lo interpreta como aprobado. No se borra nada automáticamente para liberar espacio.
+Se exigen 20 GiB libres al inicio. El supervisor comprueba espacio cada segundo y mata el worker al bajar de 5 GiB o agotar tiempo; guarda motivo y recursos. Repite la comprobación al cerrar, aunque el worker haya terminado entre sondeos. El job usa red `none`, raíz de contenedor en lectura, entradas `/data` y `/artifacts` en lectura y sólo su directorio nuevo en escritura. No hay dos jobs pesados simultáneos. Reinicio de Docker/VM o terminación abrupta puede impedir el cierre del worker; `status` no lo interpreta como aprobado. No se borra nada automáticamente para liberar espacio.
 
 ## Devolver y revisar resultados
 

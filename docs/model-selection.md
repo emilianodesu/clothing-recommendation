@@ -8,7 +8,7 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Ambos son planificación: no hay nuevas métricas ni jobs ejecutables todavía.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Las nuevas métricas H&M requieren los cinco reportes mac24; Q2–Q4 siguen pendientes.
 
 ## Evidencia que decide la selección
 

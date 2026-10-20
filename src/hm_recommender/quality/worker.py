@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import math
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -61,6 +62,7 @@ def compare_reference(reference,source_sha,methods,population):
 
 def run(config_path,run_dir,*,verify=True):
     started=time.monotonic();run_dir=Path(run_dir)
+    initial_free=shutil.disk_usage(run_dir).free
     result={'stage':'Q1','protocol':'quality-v1','status':'failed','test_evaluated':False,'quality_accepted':False}
     try:
         config=load_config(config_path);environment=json.loads((run_dir/'environment.json').read_text())
@@ -103,6 +105,8 @@ def run(config_path,run_dir,*,verify=True):
         # Aggregate error only; private row data never enters report fields.
         result.update(status='failed',failure_reason=type(error).__name__)
         print('Q1 failed: '+type(error).__name__+': '+str(error),flush=True)
+    final_free=shutil.disk_usage(run_dir).free
+    result['disk']={'start_free_bytes':initial_free,'min_free_bytes':min(initial_free,final_free),'end_free_bytes':final_free}
     result.update(job_duration_seconds=time.monotonic()-started,job_resources=resources())
     atomic_json(run_dir/'result.json',result)
     return 0 if result['status']=='passed' else 1
