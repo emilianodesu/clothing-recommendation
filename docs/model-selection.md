@@ -8,7 +8,7 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Los cinco reportes mac24 ya se [revisaron](../evidence/quality-q1-review.json) y cierran Q1; Q2–Q4 siguen pendientes.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) es el siguiente trabajo. Q1 ya dispone de jobs ejecutables en [la guía de campaña](quality-campaign.md). Los cinco reportes mac24 ya se [revisaron](../evidence/quality-q1-review.json) y cierran Q1; Q2 ya dispone de [grafo y control PageRank ejecutables](graph-quality.md), pendiente de los cinco resultados mac24; Q3/Q4 siguen pendientes.
 
 ## Evidencia que decide la selección
 
@@ -56,7 +56,7 @@ El diagnóstico full consumió 132.132 s y 2.568 GiB de pico de contenedor, sin 
 | 4.4 Factores latentes | Embeddings de 64 dimensiones y producto punto | Representaciones latentes aprendidas; no equivale a haber implementado SVD |
 | 4.5 Evaluación | Cortes temporales, métricas, segmentos, cobertura, bootstrap y permutaciones | Parte central de la selección y de la explicación de resultados negativos |
 | 4.6 Netflix | Comparación conceptual con datos de calificaciones | Contexto del informe, pendiente de desarrollo bibliográfico |
-| 3 y 5, grafos | Todavía no hay PageRank, HITS o comunidades implementados | Q2 compromete pesos, vecinos y control PageRank; no comunidades ni red social observada. Qdrant y Airflow no acreditan esos subtemas |
+| 3 y 5, grafos | Q2 implementa pesos, vecinos, similitud y PageRank personalizado en subgrafos acotados | Calidad/coste H&M pendientes de mac24; no implementa HITS o comunidades ni supone una red social observada. Qdrant y Airflow no acreditan esos subtemas |
 | 1 y 2 | No se implementaron PCA, NMF, t-SNE, Apriori o FP-Growth | No declarar cobertura por usar embeddings, frecuencias o historial |
 
 La comparación, sus fallos y sus límites son parte del resultado académico. No hace falta introducir cada experimento en producción para demostrar que se implementó y evaluó correctamente. El informe final enlazará código, configuración, dataset/corte, commit, reportes y recursos; no sólo una gráfica de puntuaciones.
@@ -79,4 +79,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-Q1 ya está cerrada. El siguiente entregable es **Q2: grafo y control PageRank**, seguido de Q3 ranking y Q4 selección. Q2 se implementará/probará aquí y luego se publicará un commit con instrucciones mac24; esta revisión no requiere ejecutar nada allá. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.
+Q1 ya está cerrada. El siguiente entregable es **Q2: grafo y control PageRank**, seguido de Q3 ranking y Q4 selección. La implementación Q2 y sus instrucciones están en `docs/graph-quality.md`; el siguiente paso remoto exige el commit recibido y las cinco referencias Q1 conservadas. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.

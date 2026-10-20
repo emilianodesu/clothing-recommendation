@@ -70,3 +70,17 @@ def test_empty_90_day_window_keeps_isolated_catalog(tmp_path):
     _,g=make_graph(tmp_path,[])
     assert load_csr(g).nnz==0 and g.statistics['isolated_nodes']==60
     assert g.statistics['baskets']==0 and frame(g,'seeds').is_empty()
+
+
+def test_sparse_partitions_preserve_global_offsets_and_seed_decay(tmp_path):
+    from hm_recommender.graph.build import load_csr
+    rows=[('2020-09-08','u','000'),('2020-09-08','u','599'),
+          ('2020-08-25','u','257'),('2020-08-25','u','599')]
+    _,g=make_graph(tmp_path,rows,n=600);m=load_csr(g)
+    assert len(g.statistics['partitions'])==3 and m.nnz==4
+    assert m[599,0]==pytest.approx(1/np.sqrt(2)) and m[599,257]==pytest.approx(1/np.sqrt(2))
+    assert m[0,257]==0
+    seeds=frame(g,'seeds');weights=dict(seeds.select('article_id','weight').iter_rows())
+    assert weights['000']/weights['257']==pytest.approx(2.)
+    assert weights['599']/weights['000']==pytest.approx(np.log1p(2)/np.log1p(1))
+    assert sum(weights.values())==pytest.approx(1.)
