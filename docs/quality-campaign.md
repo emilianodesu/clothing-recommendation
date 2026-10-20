@@ -1,6 +1,6 @@
 # Q1: referencias temporales reproducibles
 
-Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q2, Q3, Q4 y T4 siguen pendientes. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
+Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q1 está cerrada; Q2 ya tiene [implementación y procedimiento propio](graph-quality.md), pendiente de ejecución mac24. Q3, Q4 y T4 siguen pendientes. Esta página conserva la reproducción histórica Q1, no debe repetirse por defecto. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
 
 ## Protocolo y archivos
 
@@ -32,7 +32,7 @@ El descargador conserva el ZIP recibido. Valídalo con `scripts/read-handoff.py 
 
 ## Ejecutar la secuencia
 
-Sustituye `SHA_COMPLETO_RECIBIDO` por el commit indicado en el prompt, no por una revisión distinta. `start` reconstruye la imagen desde el clon limpio, verifica límites/aislamiento y lanza un supervisor desacoplado. El worker ejecuta unitarias y paridad temporal antes de evaluar. Sólo `baselines` está implementado; `graph` y `ranker` se rechazan.
+Sustituye `SHA_COMPLETO_RECIBIDO` por el commit indicado en el prompt, no por una revisión distinta. `start` reconstruye la imagen desde el clon limpio, verifica límites/aislamiento y lanza un supervisor desacoplado. El worker ejecuta unitarias y paridad temporal antes de evaluar. `baselines` reproduce Q1; `graph` usa el procedimiento Q2 enlazado y exige una referencia Q1 en cada intento. `ranker` sigue rechazado.
 
 Ejecuta **una orden por vez**. Antes de la siguiente, espera estado final y completa exportación, validación y publicación. Un fallo operativo detiene la secuencia; una métrica peor no la detiene ni autoriza cambiar parámetros.
 

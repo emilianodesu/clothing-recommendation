@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run fixed Q1 baselines and exchange closed aggregate reports; no Q2/test/T4."""
+"""Run fixed Q1/Q2 and exchange closed aggregate reports; no test/T4."""
 import argparse
 import json
 from pathlib import Path
@@ -23,6 +23,22 @@ def reference_for(artifacts,run_id):
     return {'run_id':run_id,'archive_sha256':fingerprint(archive),'path':'/artifacts/'+str(archive.relative_to(artifacts))}
 
 
+
+def graph_reference_for(artifacts,run_id,fold,size):
+    validate_run_id(run_id)
+    if not run_id.startswith('quality-'):raise ValueError('Q2 requires a Q1 quality reference')
+    archive=next((artifacts/folder/(run_id+'.zip') for folder in ('handoff','incoming') if (artifacts/folder/(run_id+'.zip')).is_file()),None)
+    if archive is None:raise ValueError('Missing closed Q1 reference ZIP; download from private Release')
+    report=read_report(archive);result=report.get('result',{})
+    if (report['run_id']!=run_id or report['kind']!='quality-handoff' or report['status']!='passed'
+        or result.get('stage')!='Q1' or result.get('size')!=size or result.get('fold',{}).get('fold_id')!=fold):
+        raise ValueError('Q1 reference fold/size/stage mismatch')
+    work=artifacts/'data-jobs'/run_id/'work'
+    for name in ('snapshot','ranking-P','ranking-H','evaluation-P','evaluation-H'):
+        if not (work/name/'manifest.json').is_file():raise ValueError('Missing private Q1 artifacts; ZIP alone is insufficient')
+    return {'run_id':run_id,'archive_sha256':fingerprint(archive),'path':'/artifacts/'+str(archive.relative_to(artifacts)),
+        'work_path':'/artifacts/'+str(work.relative_to(artifacts))}
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__);commands=parser.add_subparsers(dest='action',required=True)
     launch=commands.add_parser('start')
@@ -35,8 +51,8 @@ def main(argv=None):
     args=parser.parse_args(argv)
     try:
         if args.action=='start':
-            if args.stage!='baselines' or args.config!='quality-v1':raise ValueError('Only Q1 baselines / quality-v1 implemented')
-            if (args.fold=='V3' and args.size=='full')!=bool(args.reference_run_id):raise ValueError('Only full V3 requires --reference-run-id')
+            if args.stage not in ('baselines','graph') or args.config!='quality-v1':raise ValueError('Only Q1/Q2 / quality-v1 implemented')
+            if (args.stage=='graph' or (args.fold=='V3' and args.size=='full'))!=bool(args.reference_run_id):raise ValueError('Q2 always requires a Q1 reference; Q1 only full V3 needs its diagnostic reference')
             start(args.machine_id,args.profile,'synthetic' if args.size=='demo' else 'hm',args.expected_commit,args.resources,
                 quality_options={'stage':args.stage,'fold':args.fold,'size':args.size,'reference_run_id':args.reference_run_id})
         else:

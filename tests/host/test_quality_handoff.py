@@ -100,3 +100,21 @@ class QualityHandoffTests(unittest.TestCase):
                     config['history_days']=27
                     result['inputs']['protocol_sha256']=hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
                 with self.assertRaises(ValueError):package(directory,result,env,config,report)
+
+    def test_Q2_reference_requires_matching_closed_Q1_and_local_artifacts(self):
+        from quality_job import graph_reference_for
+        with tempfile.TemporaryDirectory() as tmp:
+            artifacts=Path(tmp);directory=artifacts/'data-jobs/quality-q1';directory.mkdir(parents=True)
+            result,env,config,report=fixture(directory)
+            archive=package(directory,result,env,config,report)
+            # package_report stores beside the run; reproduce the actual handoff directory.
+            incoming=artifacts/'incoming';incoming.mkdir()
+            import shutil
+            shutil.copy2(archive,incoming/'quality-q1.zip')
+            with self.assertRaises(ValueError):graph_reference_for(artifacts,'quality-q1','V3','demo')
+            for name in ('snapshot','ranking-P','ranking-H','evaluation-P','evaluation-H'):
+                path=directory/'work'/name;path.mkdir(parents=True);(path/'manifest.json').write_text('{}')
+            reference=graph_reference_for(artifacts,'quality-q1','V3','demo')
+            self.assertTrue(reference['work_path'].endswith('/quality-q1/work'))
+            for fold,size in [('V1','demo'),('V3','full')]:
+                with self.assertRaises(ValueError):graph_reference_for(artifacts,'quality-q1',fold,size)

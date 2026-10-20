@@ -131,8 +131,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
     if diagnostic_run:
         config_file = ROOT / 'configs/diagnostics' / ('recent-history.json' if diagnostic_protocol == 'recent-history' else 'epochs.json' if reference_run else 'validation.json')
     if quality_options:
-        if quality_options['stage'] != 'baselines' or quality_options['fold'] not in ('V1','V2','V3') or quality_options['size'] not in ('demo','pilot','full'):
-            raise ValueError('Only Q1 baselines are implemented')
+        if quality_options['stage'] not in ('baselines','graph') or quality_options['fold'] not in ('V1','V2','V3') or quality_options['size'] not in ('demo','pilot','full'):
+            raise ValueError('Only Q1/Q2 are implemented')
         config_file = ROOT / 'configs/quality/quality-v1.json'
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
@@ -178,7 +178,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
     if diagnostic_reference:
         run.update(diagnostic_reference=diagnostic_reference, scope='T3 paired epoch comparison; no test evaluation or serving')
     if quality_options:
-        run.update(quality=quality_options, scope='Q1 baselines only; no test, training, quality acceptance or T4')
+        run.update(quality=quality_options, scope='Q1/Q2 fixed campaign; no test, training, quality acceptance or T4')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
@@ -202,10 +202,11 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         if quality_options:
             run['start_free_bytes'] = shutil.disk_usage(directory).free
             if run['start_free_bytes'] < 20 * 2**30:
-                raise ValueError('Q1 requires 20 GiB free before starting')
+                raise ValueError('Quality requires 20 GiB free before starting')
             if quality_options.get('reference_run_id'):
-                from quality_job import reference_for
-                run['quality_reference'] = reference_for(dirs['ARTIFACTS_DIR'], quality_options['reference_run_id'])
+                from quality_job import reference_for,graph_reference_for
+                run['quality_reference'] = (graph_reference_for(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id'],quality_options['fold'],quality_options['size'])
+                    if quality_options['stage']=='graph' else reference_for(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id']))
             from quality_budget import reserve
             run['quality_budget_seconds'] = reserve(dirs['ARTIFACTS_DIR'] / 'quality-budget', run_id, quality_options['size'])
             write_json(directory / 'environment.json',run)
@@ -363,7 +364,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, 'Q1' if run.get('quality') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
+        status = classify_result(state, result, ('Q2' if run['quality']['stage']=='graph' else 'Q1') if run.get('quality') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
             require_comparison=bool(run.get('diagnostic_reference')), require_history=run.get('diagnostic_protocol') == 'recent-history')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'

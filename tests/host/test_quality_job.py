@@ -29,7 +29,7 @@ class QualityBudgetTests(unittest.TestCase):
 
     def test_quality_cli_rejects_unimplemented_stage_before_docker(self):
         from quality_job import main
-        self.assertEqual(main(['start','--stage','graph','--fold','V3','--size','demo','--config','quality-v1','--expected-commit','a'*40]),1)
+        self.assertEqual(main(['start','--stage','ranker','--fold','V3','--size','demo','--config','quality-v1','--expected-commit','a'*40]),1)
 
     def test_abandoned_launcher_recovers_reservation_and_charges_unknown_runtime(self):
         from quality_budget import reserve
@@ -51,3 +51,12 @@ class QualityBudgetTests(unittest.TestCase):
             run={'run_id':directory.name,'quality':{'stage':'baselines'},'quality_budget_seconds':allowance}
             settle_quality(directory,run,{'Status':'exited','Running':False,'StartedAt':'2026-10-20T10:00:00.000000000Z','FinishedAt':'2026-10-20T10:01:30.500000000Z'})
             self.assertEqual(run['quality_budget']['full'],90.5)
+
+    def test_graph_cli_requires_reference_and_dispatches_stage(self):
+        from quality_job import main
+        from unittest.mock import patch
+        args=['start','--stage','graph','--fold','V1','--size','full','--expected-commit','a'*40]
+        with patch('quality_job.start') as start:
+            self.assertEqual(main(args),1);start.assert_not_called()
+            self.assertEqual(main(args+['--reference-run-id','quality-q1']),0)
+            self.assertEqual(start.call_args.kwargs['quality_options']['stage'],'graph')
