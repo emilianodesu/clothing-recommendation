@@ -14,6 +14,8 @@ El control PageRank selecciona hasta 5,000 compradores por hash antes de separar
 
 Los resultados completos de G y los de la muestra PPR están separados. No se promueve un motor a partir de la muestra. Las membresías/aciertos exclusivos describen las fuentes del pool G finalmente seleccionado; no estiman causalidad ni el valor de cambiar hiperparámetros.
 
+[Prompt listo para copiar en mac24](mac24-q2-prompt.md).
+
 ## Referencias y preparación
 
 No repetir Q1. Cada Q2 exige el ZIP cerrado y los artefactos privados originales de Q1 en **esta misma mac24**. Se verifican hashes de snapshot, rankings y métricas, etiquetas, población, fechas, fuente y protocolo antes de reutilizarlos en lectura. Un ZIP sin `work` no basta. El nuevo lock declara SciPy 1.18.1 directamente; esto no cambia parámetros ni invalida los contratos históricos. No se exige igualdad de locks entre Q1 y Q2.
@@ -91,3 +93,11 @@ Al cerrar los cinco intentos o el primer fallo, actualizar `evidence/quality-q2-
 ## Cobertura académica
 
 Q2 añade pesado de vínculos (3.3), caminatas aleatorias/PageRank personalizado acotado (3.1/3.4), similitud entre nodos (5.5), recomendación por interacción implícita y filtrado colaborativo por artículos (4.1/4.3) y evaluación temporal (4.5). No implementa HITS, comunidades ni comunidades traslapadas; un grafo comprador–artículo/coocurrencia tampoco convierte los datos en una red social real. Q4 consolidará cobertura y conclusiones con los resultados completos.
+
+## Evidencia local y revisión
+
+La [evidencia local Q2](../evidence/local-quality-q2.json) registra 133 pruebas distintas: 58 científicas, 67 host y 8 de infraestructura Docker. La suite completa científica inicial pasó 57; la prueba adicional de offsets/recencia pasó después y la suite quality final pasó 34 unitarias y 7 integraciones. También se verificaron los 24 ZIP históricos. La revisión final independiente no encontró hallazgos accionables.
+
+La [demo oficial](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T204855Z-99a612bd), commit `db3d7389da74a2d45022da37b4262f2b02a898ff`, pasó con 33 compradores, 24 artículos, 224 cestas y 48 aristas. Las 32 ejecuciones PPR con semillas convergieron; un comprador quedó fuera del contraste de personalización por no tener semillas. Duración 6.047426 s, RSS 0.434319 GiB, sin swap/OOM. Se exportó, validó, publicó y verificó la descarga del ZIP privado. G empató con H y las permutaciones no alteraron materialmente las métricas de esta fixture: no es una mejora demostrada en H&M.
+
+La implementación preserva la incidencia dispersa en RAM y persiste coocurrencias por bloques; la prueba de escala real corresponde a mac24. Reutilizar Q1 requiere conservar sus tablas privadas. El fallback G de un donante no convergente entra explícitamente en el control de permutaciones; el reporte permite separar esa limitación. La revisión no acreditó resultados H&M, selección Q3/Q4 ni despliegue T4. No hay hallazgos menores aplazados.

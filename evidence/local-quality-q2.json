@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "scope": "Q2 local implementation and synthetic verification only; H&M mac24 pending",
+  "executable_commit": "db3d7389da74a2d45022da37b4262f2b02a898ff",
+  "protocol": "quality-v1",
+  "checks": {
+    "host_tests": 67,
+    "scientific_distinct_tests": 58,
+    "full_scientific_run_before_added_partition_test": 57,
+    "quality_suite_unit_tests": 34,
+    "quality_suite_integration_tests": 7,
+    "bootstrap_docker_integration_tests": 8,
+    "distinct_tests": 133,
+    "historical_incoming_reports_verified": 24,
+    "image_built_without_code_mount_overrides": true,
+    "published_archive_download_verified": true,
+    "lock_resolved_linux_arm64_and_amd64": true,
+    "physical_amd64_tested": false
+  },
+  "review": {
+    "critical": 0,
+    "important": 0,
+    "minor_actionable": 0,
+    "fresh_reviewer": true
+  },
+  "decisions_and_limits": [
+    "Sparse basket incidence in RAM; cooccurrence persisted in source-node blocks. Actual H&M RAM/time require mac24.",
+    "Q1 private artifacts reused read-only after hash/cohort/label verification. Missing work blocks Q2; aggregate ZIP is insufficient.",
+    "PPR permutations reuse donor lists, including declared G fallback when not converged, keeping recipient history/popularity fixed.",
+    "Q3/Q4 selection, grouped bootstrap, service/model transport and test are deferred to their approved stages; no winner selected."
+  ],
+  "runs": [
+    {
+      "run_id": "quality-local-20261020T204855Z-99a612bd",
+      "status": "passed",
+      "source_commit": "db3d7389da74a2d45022da37b4262f2b02a898ff",
+      "archive_sha256": "cd21d8a8e0f648a7305bc70419a89afaba00a928eb8a0b309b5c9e54fb8c307e",
+      "package_id": "e96149d57f3a496f043110f92062cdd37b0c8cae44c21731629bccde2200dae6",
+      "release": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T204855Z-99a612bd",
+      "population": {
+        "catalog_size": 24,
+        "sampled_out_users": 0,
+        "users": 33,
+        "validation_buyers": 33
+      },
+      "reference": {
+        "archive_sha256": "270e1e876ebddb0e23324b256a0cbbc602d6d2c50c1ee8b096a07de7b075ddf4",
+        "private_artifacts_verified": true,
+        "run_id": "quality-local-20261020T200951Z-1f9c6a28",
+        "stage": "Q1",
+        "verified": true
+      },
+      "methods": {
+        "G": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "H": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "P": {
+          "map_at_12": 0.20251596,
+          "ndcg_at_12": 0.3371445,
+          "recall_at_200": 0.98989899
+        }
+      },
+      "graph": {
+        "basket_days": 7,
+        "basket_semantics": "weekly_proxy",
+        "baskets": 224,
+        "block_nodes": 256,
+        "build_seconds": 0.02474374,
+        "capped_baskets": 0,
+        "discarded_memberships": 0,
+        "edges": 48,
+        "final_bytes": 4577,
+        "isolated_nodes": 0,
+        "max_degree": 2,
+        "nodes": 24,
+        "partitions": [
+          {
+            "end": 24,
+            "rows": 48,
+            "sha256": "0835795ebdcc06c0fedcfbe130b190cee686684ab7a11e2c513323f458124c16",
+            "size_bytes": 1320,
+            "start": 0
+          }
+        ],
+        "retained_memberships": 448,
+        "seed_memberships": 64,
+        "seeded_profiles": 32,
+        "temporary_peak_bytes": 3199,
+        "transactions_window": 448,
+        "unique_memberships": 448,
+        "unpruned_directed_edges": 48,
+        "window_days": 90
+      },
+      "graph_artifacts": {
+        "csr": "889c2ae3ba3cfff84b8bc18b37c6412deda73500f262de3685da036dc878ed0e",
+        "nodes": "aa58f5b062a64e0cb5129eae4a55755b0e9ac7c52db845386c1f77139ea8411a",
+        "seeds": "14221171c0f14a62929ef9fe2fee484752d088e3892154c0be82196b8a33e574"
+      },
+      "retrieval": {
+        "input_graph_memberships": 128,
+        "input_history_memberships": 64,
+        "input_popular_memberships": 792,
+        "no_neighbors": 1,
+        "no_seeds": 1,
+        "selected_graph|popular": 64,
+        "selected_history|graph|popular": 64,
+        "selected_popular": 664,
+        "users": 33
+      },
+      "pool": {
+        "causal_attribution": false,
+        "relevant_memberships": {
+          "history|graph|popular": 64,
+          "popular": 1
+        },
+        "scope": "selected_G_pool_at_200",
+        "selected_memberships": {
+          "graph|popular": 64,
+          "history|graph|popular": 64,
+          "popular": 664
+        },
+        "source_exclusive_hits": {
+          "graph": 0,
+          "history": 0,
+          "popular": 1
+        }
+      },
+      "pagerank": {
+        "cohort_sha256": "7f9884bb813df3c7f509221ce219c81efcfa9e7c84b447123db4a526cdea4974",
+        "cohort_users": 33,
+        "converged_users": 32,
+        "iteration_statistics_sha256": "d5de2c9b868987ec51db5cf04cc4f5e9ee56e151ca688dcae445ca8c8bd26e1f",
+        "max_converged_residual_l1": 9.7e-07,
+        "max_edges": 6,
+        "max_iterations": 20,
+        "max_nodes": 4,
+        "max_residual_l1": 9.7e-07,
+        "mean_nodes": 4.0,
+        "no_seed_fallback_H": 1,
+        "no_seed_users": 1,
+        "nonconverged_fallback_G": 0,
+        "normal_ranking_sha256": "03166c4780acc0db45f259e95eb9b9597b72abf949f5f20ec2f8c927bae1f5fc",
+        "personalization": {
+          "delta": {
+            "map_at_12": 0.0,
+            "ndcg_at_12": -0.0,
+            "recall_at_200": 0.0
+          },
+          "excluded_no_seeds": 1,
+          "normal": {
+            "map_at_12": 0.98958333,
+            "ndcg_at_12": 0.99266752,
+            "recall_at_200": 0.98958333
+          },
+          "permuted_mean": {
+            "map_at_12": 0.98958333,
+            "ndcg_at_12": 0.99266752,
+            "recall_at_200": 0.98958333
+          },
+          "users": 32
+        },
+        "personalization_applicable": true,
+        "promotion_allowed": false,
+        "scope": "sample",
+        "seeded_users": 32,
+        "truncated_nodes": 0,
+        "truncated_users": 0
+      },
+      "pagerank_sample_metrics": {
+        "G": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "H": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        },
+        "PPR": {
+          "map_at_12": 0.96565657,
+          "ndcg_at_12": 0.9743095,
+          "recall_at_200": 0.98989899
+        }
+      },
+      "permutations": 10,
+      "costs": {
+        "candidate_cost_seconds": 0.03954468,
+        "evaluation_seconds": 0.00962052,
+        "graph_build_seconds": 0.02474374,
+        "pagerank_seconds": 0.23279913,
+        "reference_verification_seconds": 0.00860789,
+        "retrieval_seconds": 0.01480094
+      },
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "duration_seconds": 6.047426,
+      "peak_rss_gib": 0.434319,
+      "cgroup_peak_gib": 0.355175,
+      "swap_peak_gib": 0.0,
+      "oom_killed": false,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "disk_gib": {
+        "end_free_gib": 171.310425,
+        "min_free_gib": 171.310425,
+        "start_free_gib": 171.311241
+      },
+      "budget_seconds": {
+        "pilot": 0,
+        "full": 0,
+        "summary": 0,
+        "demo": 19.11409145
+      },
+      "resource_profile": "base",
+      "memory_limit_gib": 5.0,
+      "cpus": 3,
+      "threads": 2,
+      "network": "none",
+      "code_mount_overrides": false
+    }
+  ]
+}
