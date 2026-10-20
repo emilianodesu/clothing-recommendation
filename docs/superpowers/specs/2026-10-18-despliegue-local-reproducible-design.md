@@ -6,7 +6,11 @@ Diseño del 18 de octubre de 2026, con nota de avance del 19 de octubre. Complem
 
 **Avance de implementación del 19 de octubre:** la [base de T1](../../bootstrap.md) incorpora Git local, locks, imágenes y bootstrap comprobado de PostgreSQL/Qdrant. Las tablas siguientes describen la auditoría anterior a T1; el estado ejecutable actualizado está en README y en el plan. Modelo, API, DAG y evaluación siguen pendientes.
 
-## Decisión y estado del proyecto
+## Actualización de alcance del 20 de octubre de 2026
+
+El usuario confirmó [selección por calidad medida, independientemente del framework](../../model-selection.md). Esta decisión reemplaza en este diseño la obligación de desplegar dos torres con Qdrant: historial28d+popularidad7d es el motor seleccionado y PyTorch se conserva como experimento académico. El [plan vigente](../plans/2026-10-18-plataforma-local-hm.md) adapta los contratos y T4–T8; API, perfiles de servicio y paquetes siguen pendientes de implementar. Se mantienen requisitos locales, reproducibilidad, evaluación temporal, publicación segura y recursos. Las secciones siguientes conservan el diseño original como antecedente, no como prueba de capacidad ni mandato de reinstalar lo ya construido.
+
+## Decisión y estado original del proyecto
 
 Construiremos una plataforma de recomendaciones con PyTorch y servicios locales mediante Docker Compose. Usaremos el equipo disponible, sin contratar nube, GPU, bases de datos administradas ni servicios de pago. El sistema deberá poder instalarse bajo otro usuario, en otra ruta y en otra computadora compatible, sin Codex ni credenciales del autor.
 

@@ -2,17 +2,19 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Entregar un recomendador personalizado entrenado con H&M completo, operado localmente y reproducible desde una instalación limpia, con evidencia de calidad, latencia y recuperación.
+**Goal:** Entregar el mejor recomendador personalizado entre los candidatos evaluados con H&M, operado localmente y reproducible desde una instalación limpia, con evidencia de calidad, latencia y recuperación; conservar los experimentos del curso y explicar la selección.
 
-**Architecture:** Un pipeline por lotes transforma el histórico a Parquet y entrena un único modelo de dos torres. Una versión portable reúne modelo, transformaciones, catálogo, perfiles y vectores; FastAPI sirve recomendaciones mediante Qdrant y registra eventos en PostgreSQL. Airflow y MLflow coordinan y documentan los trabajos; Docker Compose permite ejecutar entrenamiento y servicio por separado según la memoria disponible.
+**Architecture:** El pipeline transforma H&M completo a Parquet; los experimentos PyTorch permanecen reproducibles y se selecciona historial28d+popularidad7d para el primer servicio. Una versión portable reúne catálogo, historiales, popularidad, reglas y evidencia; FastAPI sirve ese ranking y PostgreSQL conserva el estado operativo. Airflow coordinará preparación/publicación y MLflow conserva los experimentos; Docker Compose separa servicio y trabajos pesados.
 
-**Tech Stack:** PyTorch CPU, Polars, Parquet, Qdrant, PostgreSQL, FastAPI, Streamlit, MLflow, Airflow LocalExecutor, uv y Docker Compose.
+**Tech Stack:** Polars, Parquet, PostgreSQL, FastAPI, Streamlit, Airflow LocalExecutor, uv y Docker Compose para datos/servicio; PyTorch CPU y MLflow para experimentos. Qdrant queda disponible para experimentos vectoriales, sin ser dependencia del futuro perfil `serve` del motor seleccionado.
 
-**Spec:** [Diseño local y reproducibilidad](../specs/2026-10-18-despliegue-local-reproducible-design.md). Este plan concreta sus entregables y actualiza el calendario preliminar. Elaborado el 18 de octubre de 2026; semanas relativas al inicio de implementación.
+**Spec:** [Diseño local y reproducibilidad](../specs/2026-10-18-despliegue-local-reproducible-design.md). Este plan concreta sus entregables y actualiza el calendario preliminar. Elaborado el 18 de octubre de 2026; revisión del 20 de octubre: [selección por calidad confirmada por el usuario](../../model-selection.md), que prevalece sobre la obligación anterior de desplegar dos torres/Qdrant. Los cambios siguientes son planificación, no servicio implementado.
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Avance del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
+**Estado vigente del 20 de octubre:** T1–T3 y selección en validación completados; motor historial+popularidad elegido bajo el criterio confirmado del usuario. T4-A/T4-B se adaptan abajo; aún no hay servicio API, transporte de paquetes completos ni medida de latencia. La aceptación final sobre test sigue pendiente.
+
+**Antecedente del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
 **Extensión de T1 para la segunda Mac:** instalador, instrucciones para su agente y lector de paquetes implementados. El recorrido completo se verificó en el equipo de desarrollo con 26 pruebas satisfactorias (las 10 originales y 16 de intercambio). La [evidencia del instalador](../../../evidence/second-mac-script-2026-10-19.json) conserva esa distinción: la ejecución física de mac24 ya pasó (35 pruebas, [revisión](../../../evidence/mac24-bootstrap-review-2026-10-19.json)).
 
@@ -26,20 +28,20 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados | T2 probada también en mac24 | Parquet completo, cortes y ejemplos semanales conciliados; evidencia mac24-t2-2026-10-19.json |
-| Modelo y servicios | T3 medida; T4 y siguientes pendientes | Dos torres, checkpoints, MLflow y validación full probados; API, índice de servicio, interfaz y DAG pendientes |
+| Motor y servicios | T3 medida y selección realizada; T4 y siguientes pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad seleccionado; API, paquete de servicio, interfaz y DAG pendientes |
 | Otra computadora | T1, T2 y T3 probadas en mac24 | Reportes publicados y verificados; transferencia de pesos y servicio pendientes |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
 
 **Ampliación del 19 de octubre: segunda Mac.** La decisión vigente del usuario es GitHub privado para código y reportes: Git y adjuntos de Releases, respectivamente. H&M se descargará directamente de Kaggle en la segunda Mac; ya no se necesita carpeta compartida ni AirDrop. El [diseño de ejecución entre equipos](../specs/2026-10-19-entrenamiento-dos-macs-design.md) incluye las instrucciones de T1 que ya se pueden ejecutar y propone adelantar la instalación física de T7. T2–T3 deberán incluir registro de ejecuciones, perfiles de recursos y exportación/importación de reportes antes del primer entrenamiento allá. La Mac actual recibirá los reportes para analizarlos; importar y servir un modelo completo continúa dependiendo de T4/T7. `origin` apunta al repositorio privado [clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation), con autenticación y escritura verificadas para la cuenta propietaria. El instalador `scripts/start-second-mac.py`, el transporte `scripts/github-handoff.py`, el lector `scripts/read-handoff.py` y [la guía del operador](../../second-mac.md) automatizan T1 y su reporte. Los comandos `train-job` ya están implementados y probados en mac24. T2 ya permite perfiles de recursos versionados: `base` (5 GiB) y `mac24` (10 GiB, con Colima recomendado de 14 GiB), comprobación de capacidad, límites efectivos en el reporte y conservación del presupuesto al reanudar. El perfil ampliado ya se midió en T2 y T3 de la Mac física de 24 GB.
 
-**T2 implementada:** descarga portable con reanudación, fuente fijada por SHA-256, ingestión íntegra por lotes, Parquet mensual, snapshots y ejemplos semanales. La primera corrida completa del equipo original concilia 31,788,324 transacciones, con 51 pruebas T2 satisfactorias. Ver [guía de datos](../../data.md) y [medición](../../../evidence/data-pipeline.json). Se añade `data-job` para ejecución desacoplada, identidad de imagen/commit y reportes por GitHub. T2 y la época completa T3 ya pasaron físicamente en mac24; ver las evidencias mac24-t2 y mac24-t3 del 19 de octubre. La aceptación de calidad sigue pendiente de revisión.
+**T2 implementada:** descarga portable con reanudación, fuente fijada por SHA-256, ingestión íntegra por lotes, Parquet mensual, snapshots y ejemplos semanales. La primera corrida completa del equipo original concilia 31,788,324 transacciones, con 51 pruebas T2 satisfactorias. Ver [guía de datos](../../data.md) y [medición](../../../evidence/data-pipeline.json). Se añade `data-job` para ejecución desacoplada, identidad de imagen/commit y reportes por GitHub. T2 y la época completa T3 ya pasaron físicamente en mac24; ver las evidencias mac24-t2 y mac24-t3 del 19 de octubre. La selección en validación ya se revisó; aceptación final sobre test pendiente.
 
 ## Global Constraints
 
-- Todo local, sin servicios de pago, TensorFlow, Hopsworks ni dependencia del runtime de Codex. No se necesita GPU.
-- Un modelo principal de dos torres, vectores iniciales de 64 dimensiones y producto punto. Recuperar hasta 200 candidatos y entregar hasta 12 artículos únicos. Popularidad es respaldo y referencia de evaluación.
-- Procesar el histórico completo; excluir de entrenamiento únicamente lo que exijan los cortes y reglas documentadas. La muestra sirve para desarrollo y dimensionamiento, nunca para acreditar entrenamiento masivo.
+- Todo local, sin servicios de pago, Hopsworks ni dependencia del runtime de Codex. No se necesita GPU. El framework es una decisión técnica subordinada a la evidencia; el motor seleccionado no necesita añadir uno nuevo.
+- Motor seleccionado `recent_then_popular`: historial de 28 días antes de `data_as_of`, por última compra descendente/frecuencia descendente/article_id ascendente; completar con popularidad de 7 días (frecuencia descendente/article_id ascendente). Hasta 200 candidatos y 12 artículos únicos. Sin historial, popularidad. El framework no determina la selección; dos torres/64 dimensiones quedan como experimento.
+- Procesar el histórico completo; cada algoritmo sólo utiliza datos anteriores a su corte y ventana documentados. Conservar la evidencia de entrenamiento masivo PyTorch ya obtenida; preparar la regla elegida no se denomina entrenamiento neuronal. Los pilotos no sustituyen una evaluación full.
 - CPU, lotes acotados y un trabajo pesado a la vez. Evitar cargar todas las transacciones en memoria. Entrenamiento y medición de latencia se ejecutan por separado en la prueba de referencia.
 - Perfiles Compose `demo`, `serve` y `pipeline`. La demo funciona con datos sintéticos y sin Kaggle. Servir una versión importada no exige reentrenar ni conectar al MLflow original.
 - Objetivos de plataforma: `linux/arm64` y `linux/amd64`. Sólo se marcará como probado lo realmente ejecutado; emulación y segunda ruta no equivalen a otra máquina física.
@@ -54,7 +56,7 @@ Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [eviden
 
 1. **Datos futuros o eventos fuera de orden:** ninguna característica incorpora información posterior al corte; los eventos repetidos no duplican compras. Pruebas en T2 y T5.
 2. **Usuario desconocido, atributos ausentes o pocos candidatos:** devolver un resultado válido, sin duplicados y con respaldo declarado; no fallar por los 442 artículos sin imagen. Pruebas en T4 y T5.
-3. **Fallo a mitad de publicación o mezcla de versiones:** cada solicitud usa un conjunto compatible de pesos, esquema, perfiles e índice; la versión anterior continúa disponible. Pruebas en T4 y T6.
+3. **Fallo a mitad de publicación o mezcla de versiones:** cada solicitud usa una sola versión compatible de reglas, catálogo, historiales y popularidad; la versión anterior continúa disponible. Pruebas en T4 y T6.
 4. **Memoria o disco agotado y reintento del trabajo:** conservar entradas, no publicar salidas parciales y permitir reanudar; medir una época completa antes de comprometer capacidad y fechas. Pruebas en T2, T3 y T6.
 5. **Otro usuario, otra ruta o paquete corrupto:** instalación sin rutas personales, importación que verifica huellas y rechaza rutas inseguras, restauración independiente de volúmenes originales. Pruebas en T1 y T7.
 
@@ -68,8 +70,8 @@ Estimación inicial: **8 semanas, 12–15 horas por semana**, sujeta a disponibi
 | --- | --- | --- | --- |
 | E1 · Base reproducible | 1 | Git, locks, imágenes iniciales, configuración y scripts | Bootstrap repetible; dependencias importan dentro de los contenedores |
 | E2 · Datos y factibilidad | 1–2 | Parquet completo, cortes, perfiles y reporte de recursos | Conteos conciliados, ausencia de fuga y una época completa medida |
-| E3 · Recomendador | 3 | Modelo PyTorch, evaluación temporal y registro MLflow | Métricas, memoria y tiempo registrados; selección sólo con validación |
-| E4 · Primer despliegue funcional | 4 | API, Qdrant, Streamlit y versión portable | Demo de punta a punta y servicio de una versión entrenada con H&M |
+| E3 · Recomendador | 3 | Experimentos PyTorch y reglas, evaluación temporal y selección explicada | Métricas, memoria y tiempo registrados; selección sólo con validación |
+| E4 · Primer despliegue funcional | 4 | API, Streamlit y versión portable del motor seleccionado | Demo de punta a punta y servicio de una versión preparada con H&M |
 | E5 · Operación automática | 5 | Eventos, actualización de perfiles y DAG | Eventos idempotentes, reintentos seguros y frescura medida |
 | E6 · Recuperación y traslado | 6 | Exportación, importación, backup, restore y manual | Arranque en instalación limpia sin cuenta ni rutas del autor |
 | E7 · Rendimiento | 7 | Informe de carga y ajustes | Comparar resultados medidos con las metas; registrar limitaciones |
@@ -103,12 +105,13 @@ FinalProject/
 │   ├── data/                       # download.py, validate.py, ingest.py, synthetic.py
 │   ├── features/                   # build.py: perfiles y variables a un corte
 │   ├── model/                      # two_tower.py, train.py, evaluate.py
-│   ├── releases/                   # package.py, registry.py, index.py
+│   ├── ranking/                    # history.py: núcleo compartido con evaluación
+│   ├── releases/                   # package.py, registry.py, contracts.py
 │   ├── api/                        # app.py, schemas.py, recommend.py, events.py
 │   ├── events/                     # aggregate.py, replay.py
 │   └── ui/                         # app.py, images.py
 ├── migrations/                     # Esquema operativo y versiones
-├── dags/                           # train_release.py, refresh_profiles.py
+├── dags/                           # build_release.py, refresh_profiles.py
 ├── scripts/
 │   ├── setup-docker-macos.py        # Ya existe
 │   ├── doctor.py / docker-smoke.sh  # Ya existen; ampliar diagnóstico para el producto
@@ -123,6 +126,7 @@ FinalProject/
 │   ├── setup.md / data.md / architecture.md
 │   ├── operations.md / evaluation.md / reproducibility.md
 │   ├── course-coverage.md / final-report.md / demo.md
+│   ├── model-selection.md          # Criterio vigente y explicación de resultados
 │   └── superpowers/                # Diseño y este plan
 ├── evidence/                       # JSON/CSV/Markdown sanitizados de cada prueba
 ├── notebooks/                      # Exploración; no son el pipeline productivo
@@ -134,7 +138,7 @@ FinalProject/
 
 ## Contratos compartidos
 
-Los tipos se definen una vez en `src/hm_recommender/contracts.py`; los módulos siguientes los importan. Los manifiestos usan JSON versionado con rutas relativas y huellas SHA-256. Las tablas usan Parquet. Los identificadores se conservan como cadenas, incluidos ceros iniciales de artículos.
+Los contratos existentes se conservan en `src/hm_recommender/contracts.py`; T4-A añadirá los contratos de servicio schema2 en `src/hm_recommender/releases/contracts.py`, importados por API y publicación sin duplicarlos. Los manifiestos usan JSON versionado con rutas relativas y huellas SHA-256. Las tablas usan Parquet. Los identificadores se conservan como cadenas, incluidos ceros iniciales de artículos.
 
 | Contrato | Campos / contenido obligatorio |
 | --- | --- |
@@ -142,12 +146,12 @@ Los tipos se definen una vez en `src/hm_recommender/contracts.py`; los módulos 
 | `FeatureManifest` | `schema_version`, `dataset_id`, `data_as_of`, `feature_schema_version`, archivos de vocabulario, catálogo y perfiles; conteos y huellas |
 | `TrainingResult` | `run_id`, `checkpoint_path`, configuración efectiva, semillas, épocas, filas consumidas, dispositivo, tiempo y memoria máxima |
 | `EvaluationReport` | Corte y población, MAP@12, NDCG@12, Recall@200 exacto, cobertura, segmentos y referencia de popularidad; denominadores y filas excluidas |
-| `ReleaseManifest` | `release_id`, commit, hash fuente, corte, contratos de features, dimensión 64, métrica `dot`, archivos con huellas, resultados y versiones de software |
-| `PublicationResult` | `release_id`, colección, total de vectores, pruebas de consulta y estado; activación sólo después de validar |
+| `HistoryReleaseManifest` (nuevo, schema 2) | `release_id`, commit, hash fuente, `data_as_of`, estrategia `recent_then_popular`, protocolo `recent-history-v1`, ventanas 28/7, desempates, inventario con tamaños/SHA-256/conteos, evidencia enlazada por hash y versiones de software; sin campos vectoriales obligatorios |
+| `HistoryPublicationResult` (nuevo) | `release_id`, conteos de catálogo/historiales, comprobaciones de ranking y estado; activación sólo después de validar |
 | `EventInput` | `event_id`, `customer_id`, `article_id`, `event_type`, `event_time`, `origin`, `request_id` opcional; servidor añade `received_at` |
-| `RecommendationResponse` | `request_id`, `release_id`, `features_timestamp`, `fallback`, lista de `{article_id, score}` sin repetidos |
+| `HistoryRecommendationResponse` (nuevo) | `request_id`, `release_id`, `strategy`, `features_timestamp`, `fallback`, lista ordenada de `{article_id, rank, reason}` sin repetidos; `reason` es `recent_purchase` o `popular_7d`, no probabilidad de compra |
 
-La versión incluye `model.pt` con `state_dict`, `model_config.json`, `vocabularies.json`, `feature_schema.json`, `catalog.parquet`, `profiles.parquet`, `item_vectors.parquet`, `popularity.parquet`, `evaluation.json` y `manifest.json`. La tabla de vectores contiene `article_id` y un vector de 64 componentes. Cargar pesos con la opción segura de pesos, sin deserializar objetos de código arbitrarios. Un hash comprueba integridad, no otorga autorización para redistribuir datos.
+La versión seleccionada incluirá `catalog.parquet`, `histories.parquet`, `popularity.parquet`, `rules.json`, `validation-reference.json` y `manifest.json`. Historias: customer_id/article_id/last_purchase/frequency; popularidad: article_id/frequency/rank; catálogo con IDs y atributos. Guardar el orden completo de artículos disponibles en popularidad y todos los artículos únicos por historial para poder filtrar antes de limitar; sin filtros, top200 debe coincidir exactamente con el diagnóstico congelado. Construir historias para todos los compradores observados antes del corte, sin usar etiquetas de validación para decidir a quién incluir. Referenciar el ZIP de validación y su SHA, conservando su corte: un paquete a otro corte no hereda esas métricas como si se hubieran medido de nuevo. Los contratos vectoriales schema1 ya presentes en `src/hm_recommender/contracts.py` se conservan para compatibilidad; los nuevos contratos vivirán en `releases/contracts.py` y no permitirán interpretar schema1 como schema2. Un hash verifica integridad, no autorización de redistribución.
 
 El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depender de un entorno Python científico en el host. Éste invoca Compose; la CLI instalada en las imágenes se llama `hmrec`. Ya funcionan `bootstrap`, `check`, `status`, `down` y `verify --suite bootstrap|unit`. La tabla siguiente conserva el contrato objetivo: las demás acciones se implementarán en etapas posteriores.
 
@@ -155,8 +159,8 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 | --- | --- |
 | `bootstrap` | Configuración privada propia, directorios, imágenes y migraciones; repetible |
 | `download-data` / `validate-data --mode quick\|full` | Descargar con acceso propio o comprobar ZIP importado; reporte de integridad |
-| `demo` | Generar, entrenar y publicar datos sintéticos; después levantar servicio e interfaz |
-| `pipeline --config configs/hm.yaml` | Ejecutar manualmente ingestión → features → entrenamiento → evaluación → publicación |
+| `demo` | Generar datos sintéticos, preparar y publicar el motor seleccionado; después levantar servicio e interfaz |
+| `pipeline --config configs/hm.yaml` | Ejecutar ingestión → estado temporal del motor → controles/evaluación disponible → preparación de versión; entrenamiento experimental separado |
 | `up --profile serve\|pipeline` / `down` | Arrancar servicios elegidos o detener conservando volúmenes |
 | `verify --suite NOMBRE` | Ejecutar pruebas del grupo y guardar resultados; código distinto de cero ante fallo |
 | `export-release --release-id ID --output ARCHIVO` / `import-release --input ARCHIVO` | Trasladar una versión; importación valida y prepara, sin activar automáticamente |
@@ -201,61 +205,79 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [x] Implementar MAP@12 con denominador `min(12, relevantes)`, NDCG@12, Recall@200 exacto, cobertura y segmentos de usuarios/artículos nuevos. Excluir de métricas por usuario a quienes no tengan compras en el periodo y declarar su número. Comparar popularidad con el mismo corte; no convertirla en un segundo sistema de producción.
 - [x] Probar métricas con rankings pequeños de resultado conocido y `test_train_save_load_preserves_scores` con tolerancia `atol=1e-6` en el mismo dispositivo. `test_checkpoint_resume_preserves_progress` comprueba que una interrupción no marca el trabajo como terminado ni pierde el contador de progreso.
 - [x] Ejecutar `python3 scripts/project.py verify --suite model`, entrenar sobre las particiones completas y guardar métricas de validación. Evidencia histórica en `evidence/cpu-feasibility.json`; ejecución física en `evidence/mac24-t3-2026-10-19.json`.
-- [ ] Revisar calidad y seleccionar configuración sólo con validación; al final, reentrenar con train+validación y evaluar una única vez sobre prueba, sin ajustar contra ella. Guardar commit de E3.
+- [x] Revisar candidatos sólo con validación y seleccionar historial+popularidad; conservar controles y explicación en `docs/model-selection.md`.
+- [ ] Al cierre, congelar reglas, reconstruir estado antes del corte de test usando train+validación y evaluar una única vez sobre prueba. Para experimentos aprendidos, reentrenar sólo si forma parte del protocolo final predefinido. No ajustar contra test. Guardar cierre de E3.
 
-**Estado operativo T3:** demo, pilotos y época completa en mac24 aprobados; ver [evidencia física](../../../evidence/mac24-t3-2026-10-19.json) y [evaluación](../../evaluation.md#evidencia-física-de-mac24). Full consumió 22,674,665 filas en 247.391 s de entrenamiento (309.936 s de job), sin swap ni OOM. La medición de capacidad está demostrada; la aceptación de calidad requiere revisar cobertura de 0.05147%, aunque supera popularidad en validación. Test permanece reservado y T4 no se inició. Los intentos reutilizan `train-job` y reportes privados con experiment_id estable.
+**Estado operativo T3:** demo, pilotos y época completa en mac24 aprobados; ver [evidencia física](../../../evidence/mac24-t3-2026-10-19.json) y [evaluación](../../evaluation.md#evidencia-física-de-mac24). Full consumió 22,674,665 filas en 247.391 s de entrenamiento (309.936 s de job), sin swap ni OOM. La medición de capacidad está demostrada; la concentración inicial (cobertura 0.05147%) motivó los diagnósticos que llevaron a la selección actual. La aceptación final sobre test sigue pendiente. Test permanece reservado y T4 no se inició. Los intentos reutilizan `train-job` y reportes privados con experiment_id estable.
 
-Paso previo a aceptar calidad: [diagnóstico reproducible](../../diagnostics.md) sobre el checkpoint cerrado. Reproduce métricas, mide concentración y sensibilidad a entradas, y compara popularidad reciente usando únicamente validación. El código puede estar implementado sin que la ejecución full en mac24 haya concluido.
+El [diagnóstico reproducible](../../diagnostics.md) y sus campañas posteriores ya se ejecutaron sobre los checkpoints cerrados. Sus métricas, concentración y controles explican la selección actual, sin usar test.
 
-El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no superó popularidad7d. La campaña de [historial reciente](../../recent-history.md) también terminó y sus dos reportes fueron revisados: historial+popularidad cumple el criterio principal de validación; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. Se recomienda congelar ese candidato y revisar el diseño de T4 antes de implementarlo, porque es una regla personalizada, no un motor neuronal entrenado. El objetivo inicial de usar el modelo como ranking principal requiere una decisión de alcance; el contrato T4 de abajo se conserva como plan anterior, todavía sin adaptar. Test, aceptación final y T4 permanecen pendientes; no se inicia otro entrenamiento automáticamente.
+El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no superó popularidad7d. La campaña de [historial reciente](../../recent-history.md) selecciona historial+popularidad; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. El usuario confirmó priorizar calidad sobre framework y conservar los experimentos académicos. [Decisión vigente](../../model-selection.md): congelar ese motor para T4, adaptado abajo. Test, aceptación final e implementación T4 permanecen pendientes; no se inicia otra campaña automáticamente.
 
-## Task 4 · T4 — Versión portable, índice y API de recomendaciones
+## Task 4 · T4 — Motor seleccionado, versión portable y API
 
-**Archivos:** crear `src/hm_recommender/releases/{package,registry,index}.py`, `src/hm_recommender/api/{app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py`, `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py` y `scripts/project.py`. T1 ya incorporó `001_bootstrap.sql`.
+Se divide en dos entregables independientes. T4-A es el siguiente trabajo de implementación: no requiere otro entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. Las interfaces de esta sección son futuras; no ejecutar estos comandos hasta implementarlos.
 
-**Interfaces:** `build_release(result: TrainingResult, features: FeatureManifest, report: EvaluationReport, output_dir: Path) -> ReleaseManifest`; `prepare_release(manifest: ReleaseManifest) -> PublicationResult`; `activate_release(release_id: str) -> None`. API `POST /recommend` recibe `{customer_id, k: 1..12, filters}` y devuelve `RecommendationResponse`; `GET /health/live`, `/health/ready` y `/metrics` exponen estado operativo.
+### T4-A · Paquete y paridad offline
 
-- [ ] Generar los archivos del contrato de versión, verificando huellas y compatibilidad. Crear una colección Qdrant por `release_id`, distancia producto punto y dimensión 64. Comprobar cantidad de vectores y consultas antes de considerar publicable la versión.
-- [ ] Precargar modelo, transformaciones y respaldo al iniciar FastAPI, con `eval()` y `inference_mode()`. Comenzar con un proceso de servicio; la solicitud conserva una referencia a la versión completa durante toda su ejecución. Una activación prepara y comprueba el conjunto nuevo antes de intercambiarlo; conservar anterior para rollback y registrar versión activa para recuperación al reiniciar.
-- [ ] Resolver filtros dentro de la búsqueda para evitar perder candidatos por filtrado tardío. Devolver hasta 12 artículos únicos de hasta 200 candidatos; no excluir automáticamente compras anteriores. Usuario sin historial usa popularidad compatible con filtros; Qdrant no disponible usa respaldo precargado y declara `fallback`. Si no hay una versión válida, readiness falla y la API devuelve 503.
-- [ ] Probar `test_activation_failure_keeps_previous_release` y `test_concurrent_requests_never_mix_releases`, incluyendo caída/reinicio entre preparación y activación. Probar usuario desconocido, catálogo menor de 12, filtro sin resultados, `k` inválido y timeout de Qdrant. Consultas vacías válidas devuelven lista vacía; entrada inválida devuelve 422.
-- [ ] Ejecutar `python3 scripts/project.py verify --suite serving`; exigir respuestas HTTP reales con versión identificable, índice íntegro y rollback satisfactorio. Medir Recall@200 del índice aproximado frente a búsqueda exacta, separándolo de Recall@200 de compras relevantes. Guardar evidencia y commit de API/versión.
+**Archivos:** crear `src/hm_recommender/ranking/{__init__,history}.py`, `src/hm_recommender/releases/{__init__,contracts,package,worker}.py`, `scripts/release_job.py`, `tests/unit/test_history_release.py`, `tests/integration/test_release_parity.py`, `tests/host/test_release_handoff.py` y `docs/releases.md`. Modificar `model/recent_history.py`, `model/diagnostics.py`, `cli.py`, `scripts/project.py`, `scripts/data_job.py`, `scripts/handoff.py` y `scripts/github-handoff.py` para compartir el núcleo y transportar **sólo reportes**. Importaciones de `model/` se conservan como wrappers compatibles cuando sea necesario.
+
+**Interfaces:** `build_history_release(dataset: DatasetManifest, data_as_of: date, output_dir: Path, *, evidence_archive: Path | None = None) -> HistoryReleaseManifest`; `verify_history_release(directory: Path) -> HistoryReleaseManifest`; `rank_history(history: list[str], popularity: list[str], eligible: set[str], *, limit: int = 200) -> list[str]`. Archivos y campos: contrato schema2 anterior. El núcleo de ranking no importa Torch y recibe el corte explícito; ningún default usa la fecha de hoy. El worker produce un reporte agregado con identidad de la versión, paridad, recursos y huellas; nunca incluye perfiles o transacciones en el ZIP de intercambio.
+
+- [ ] Escribir y ejecutar RED `test_history_rank_matches_fixed_fixture`: historial por fecha/frecuencia/ID, popularidad por frecuencia/ID, deduplicación, usuario sin historial y hasta 200 candidatos. `test_cutoff_excludes_future_events` excluye eventos en el corte; `test_build_includes_non_validation_buyers` exige incluir compradores anteriores al corte que no aparecen en validación.
+- [ ] Escribir RED `test_unfiltered_parity_with_frozen_diagnostic`: corte 2020-09-09 y ventanas 28/7; fixture con relevantes fuera de catálogo y usuario desconocido. Exigir igualdad de top200 y métricas `atol=1e-10, rtol=0` contra el diagnóstico fijado, sin cambiar sus reportes ni reglas. Generalizar helpers existentes en `ranking/history.py`, implementar contratos y constructor por lotes; pasar las pruebas y las regresiones de diagnóstico.
+- [ ] Escribir RED `test_incomplete_or_corrupt_release_not_publishable`, `test_schema1_not_read_as_schema2` y `test_release_paths_are_relative`: salida temporal más publicación atómica local, sin sobreescribir una versión diferente. Verificar inventario exacto, tamaños, hashes, corte, IDs únicos, orden, conteos y referencias. Si el corte es distinto, registrar la evaluación original como referencia, nunca como métrica del nuevo paquete.
+- [ ] Añadir `release-job start/status/export` con commit limpio, dataset `synthetic` o `hm`, corte explícito, recursos `base`/`mac24`, un job pesado y reporte final también ante fallo. El único protocolo inicial es `recent-history-v1`. Reutilizar controles de recursos existentes; no convertir un `train-job` en constructor ni modificar el contrato de sus reportes históricos. Probar lector/ZIP malformado y ausencia de clientes/pesos en el inventario de intercambio.
+- [ ] Implementar `verify --suite releases` para ejecutar pruebas unitarias, integración de paquetes/paridad y host. Ejecutar desde imagen Docker sin montajes auxiliares; repetir bootstrap si cambia infraestructura. Luego corrida demo local y construcción/paridad H&M en mac24 con recursos actuales. En full, conciliar los 72,019 compradores/102,967 artículos de la validación con el ZIP revisado, pero construir el paquete para todos los compradores anteriores al corte. Reportar memoria, disco, duración y límites; no acreditar capacidad del paquete a partir del diagnóstico anterior.
+- [ ] Exportar/validar/publicar reportes cerrados por GitHub privado, conservando fallos; datos de servicio quedan locales en cada Mac. Registrar `evidence/releases.json`, guía y commit probado antes de preparar el prompt mac24. Una vez recibida la ejecución, cerrar T4-A sin iniciar test ni cambiar el candidato.
+
+### T4-B · API, activación y rollback
+
+**Archivos:** crear `src/hm_recommender/releases/registry.py`, `src/hm_recommender/api/{__init__,app,schemas,recommend}.py`, `migrations/002_releases.sql`, `tests/integration/test_release_activation.py`, `tests/integration/test_recommendations.py` y `docs/architecture.md`. Modificar `compose.yaml`, `docker/app.Dockerfile`, `cli.py`, `scripts/project.py`, `pyproject.toml`/`uv.lock` sólo si se separan extras de servicio. No eliminar la instalación experimental ni volúmenes Qdrant existentes.
+
+**Interfaces:** `prepare_release(directory: Path) -> HistoryPublicationResult`; `activate_release(release_id: str) -> None`. API `POST /recommend` recibe `{customer_id, k: 1..12, filters}` y devuelve `HistoryRecommendationResponse`; filtros iniciales de igualdad por `product_type_name`, `product_group_name`, `colour_group_name`, rechazando claves desconocidas con 422. `GET /health/live`, `/health/ready` y `/metrics` exponen estado operativo. `fallback=true` indica que no hay historial elegible y se usa sólo popularidad; ausencia de versión válida devuelve 503. `rank` es ordinal, no un score neuronal ni una probabilidad.
+
+- [ ] Escribir RED de paridad HTTP sin filtros con T4-A, `test_unknown_user_uses_popularity`, `test_filters_apply_before_candidate_limit`, `test_empty_filter_returns_empty` y rechazo de `k` fuera de 1..12. Aplicar filtros al catálogo antes de seleccionar hasta 200, completar sin duplicados y devolver hasta 12. Si hay menos candidatos válidos, devolver sólo esos; mantener compras previas elegibles. Documentar que calidad bajo filtros todavía no está medida.
+- [ ] Escribir RED `test_activation_failure_keeps_previous_release`, `test_concurrent_requests_never_mix_releases` y `test_restart_recovers_committed_release`. Implementar un proceso FastAPI, estado precargado de una versión inmutable, puntero persistido y actualización completa; una solicitud conserva una referencia durante toda su ejecución. Conservar la versión anterior para rollback, sin cargar parcialmente la siguiente.
+- [ ] Implementar el perfil `serve` con PostgreSQL/API y futuro Streamlit, sin exigir Qdrant, MLflow o entrenamiento. Probar `test_history_serving_without_vector_or_training_services` y que el núcleo no importa Torch. No declarar dependencia científica eliminada de la imagen mientras el lock actual siga instalándola; una separación de extras exige sus pruebas de construcción propias.
+- [ ] Ejecutar `python3 scripts/project.py verify --suite serving` con HTTP real, versión identificable, activación, reinicio, paridad y rollback. Fijar un presupuesto de servicio a partir de la medición de T4-A; no asumir que todos los perfiles caben por haber evaluado 72,019 compradores. Medir las metas de carga en T8; no confundir duración offline con latencia.
+- [ ] Registrar evidencia de API/versión y commit. Reproducir la construcción con los datos propios de cada Mac; cualquier transporte posterior de paquetes completos usa un contrato separado del ZIP de reportes actual. No publicar IDs de compradores como código o reportes.
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
 **Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/003_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
 
-**Interfaces:** `POST /events` recibe `EventInput`; insertar un evento nuevo devuelve 201 y repetir el mismo ID/payload devuelve 200 sin duplicarlo; ID existente con contenido diferente devuelve 409. `aggregate_events(release_id: str, received_before: datetime) -> dict` retorna conteos y última actualización. Los perfiles actualizados conservan el esquema y la versión del modelo activo.
+**Interfaces:** `POST /events` recibe `EventInput`; insertar un evento nuevo devuelve 201 y repetir el mismo ID/payload devuelve 200 sin duplicarlo; ID existente con contenido diferente devuelve 409. `aggregate_events(release_id: str, received_before: datetime) -> dict` retorna conteos y última actualización. Los perfiles actualizados conservan el esquema y la versión de la estrategia activa.
 
-- [ ] Registrar eventos en PostgreSQL con unicidad de `event_id`; si la base no confirma escritura, devolver 503. Separar eventos reales del dataset, eventos sintéticos y simulaciones. Una compra modifica las variables de historial; vistas/clics se registran para trazabilidad, sin introducir señales que el modelo no haya aprendido a interpretar.
-- [ ] Actualizar perfiles operativos en PostgreSQL de forma transaccional y reanudable, conservando inmutables los perfiles iniciales del paquete. Usar `received_at` para detectar trabajo nuevo y `event_time` para ubicarlo temporalmente; eventos tardíos recalculan el perfil afectado. Mantener un reloj de simulación explícito y separar sus datos de validación/prueba.
+- [ ] Registrar eventos en PostgreSQL con unicidad de `event_id`; si la base no confirma escritura, devolver 503. Separar eventos reales del dataset, eventos sintéticos y simulaciones. Una compra modifica el historial; vistas/clics se registran para trazabilidad y no se convierten en compras para el ranking seleccionado.
+- [ ] Actualizar perfiles operativos en PostgreSQL de forma transaccional y reanudable, conservando inmutables los perfiles iniciales del paquete. Usar `received_at` para detectar trabajo nuevo y `event_time` para ubicarlo temporalmente; eventos tardíos recalculan el perfil afectado. Mantener un reloj de simulación explícito y separar sus datos de validación/prueba. Para avanzar ese reloj, conservar conteos diarios por usuario/artículo y popularidad: los agregados last_purchase/frequency de T4 no bastan para caducar contribuciones al salir de las ventanas 28/7. Reconstruir desde las transacciones locales o esos conteos, usando sólo eventos anteriores al nuevo corte, y publicar el estado completo de forma atómica.
 - [ ] Construir Streamlit con selección de cliente, catálogo y 12 recomendaciones, versión activa, corte de datos y frescura. Emitir eventos con ID estable para reintentos. Mostrar imagen de sustitución cuando falta JPEG; cachear sólo imágenes solicitadas, con límite configurable y extracción segura.
-- [ ] Añadir `test_duplicate_event_is_counted_once`, `test_late_event_rebuilds_correct_profile`, `test_database_failure_is_not_acknowledged` y prueba de demo HTTP: generar sintéticos → entrenar → publicar → recomendar → comprar → actualizar → volver a recomendar. Comprobar que la actualización conserva compatibilidad y cambia el perfil; no prometer que toda compra cambie necesariamente el ranking.
+- [ ] Añadir `test_duplicate_event_is_counted_once`, `test_late_event_rebuilds_correct_profile`, `test_database_failure_is_not_acknowledged` y prueba de demo HTTP: generar sintéticos → preparar motor → publicar → recomendar → comprar → actualizar → volver a recomendar. Comprobar que la actualización conserva compatibilidad y cambia el perfil; no prometer que toda compra cambie necesariamente el ranking.
 - [ ] Ejecutar `python3 scripts/project.py demo` y `python3 scripts/project.py verify --suite events`. Probar el mismo flujo con una versión H&M. Guardar evidencia y commit que completa E4; la programación automática se añade en T6.
 
 ## Task 6 · T6 — Orquestación, reintentos y observabilidad
 
-**Archivos:** crear `docker/airflow.Dockerfile`, `docker/airflow/requirements.in`, `docker/airflow/requirements.lock`, `dags/train_release.py`, `dags/refresh_profiles.py`, `tests/integration/test_pipeline.py`, `docs/operations.md`. Modificar `compose.yaml`, `docker/images.lock.json`, `cli.py`, `scripts/project.py` y `api/app.py`.
+**Archivos:** crear `docker/airflow.Dockerfile`, `docker/airflow/requirements.in`, `docker/airflow/requirements.lock`, `dags/build_release.py`, `dags/refresh_profiles.py`, `tests/integration/test_pipeline.py`, `docs/operations.md`. Modificar `compose.yaml`, `docker/images.lock.json`, `cli.py`, `scripts/project.py` y `api/app.py`.
 
-**Interfaces:** el DAG de entrenamiento llama a las funciones T2–T4 a través de la CLI instalada; transmite rutas de manifiestos, no DataFrames por XCom. El DAG de perfiles llama `aggregate_events` de T5 cada cinco minutos. La CLI y Airflow ejecutan las mismas funciones.
+**Interfaces:** el DAG de preparación/publicación llama a T2/T4 a través de la CLI instalada; transmite rutas de manifiestos, no DataFrames por XCom. Los entrenamientos T3 se mantienen como experimentos manuales separados. El DAG de perfiles llama `aggregate_events` de T5 cada cinco minutos. La CLI y Airflow ejecutan las mismas funciones.
 
 - [ ] Construir Airflow LocalExecutor con jobs CPU instalados y versiones resueltas separadamente del servicio web. Incluir los procesos requeridos por la versión elegida. No montar socket Docker ni añadir Celery o Redis. Limitar a un trabajo pesado concurrente.
-- [ ] Configurar entrenamiento manual al inicio, semanal sólo si la duración medida lo permite; `catchup` desactivado para entrenamientos. Reanudar perfiles con cursor de recepción e intervalos acotados después de suspensión, sin perder eventos ni disparar muchos trabajos vencidos.
+- [ ] Configurar publicación manual al inicio; automatizar una cadencia sólo tras medir su coste y validar el nuevo paquete, con `catchup` desactivado para construcciones pesadas. Reanudar perfiles con cursor de recepción e intervalos acotados después de suspensión, sin perder eventos ni disparar muchos trabajos vencidos.
 - [ ] Registrar duración, filas, reintentos, errores, versión y recursos. Añadir métricas de API para latencia, solicitudes, errores y uso de respaldo; no etiquetar métricas con ID de cliente ni registrar tokens. Exportar reportes de cada ejecución.
-- [ ] Probar `test_retry_does_not_duplicate_partition`, `test_failed_training_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que el modelo activo y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
+- [ ] Probar `test_retry_does_not_duplicate_partition`, `test_failed_build_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que la versión activa y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite pipeline` y un DAG sintético completo. Ejecutar el flujo H&M con recursos medidos y demostrar frescura menor de diez minutos mientras el pipeline esté activo, o registrar el incumplimiento. Guardar commit de E5.
 
 ## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 
 **Archivos:** crear `scripts/backup.py`, `scripts/restore.py`, `docs/reproducibility.md`, `tests/integration/test_release_transfer.py`, `tests/integration/test_backup_restore.py`, `tests/integration/test_offline.py`. Modificar `releases/package.py`, `scripts/project.py`, `.gitignore`, `README.md`, `docs/setup.md` y `docs/operations.md`.
 
-**Interfaces:** `export_release(release_id: str, output: Path) -> Path`; `import_release(archive: Path, destination: Path) -> ReleaseManifest`; `backup(output_dir: Path) -> Path`; `restore(input_dir: Path, project_name: str) -> None`. El manifiesto del respaldo enlaza dumps lógicos PostgreSQL, artefactos y versión activa; Qdrant puede reconstruirse desde vectores.
+**Interfaces:** `export_release(release_id: str, output: Path) -> Path`; `import_release(archive: Path, destination: Path) -> HistoryReleaseManifest`; `backup(output_dir: Path) -> Path`; `restore(input_dir: Path, project_name: str) -> None`. El manifiesto del respaldo enlaza dumps lógicos PostgreSQL, artefactos y versión activa. Los experimentos vectoriales, si se respaldan, son un conjunto separado; el motor seleccionado no necesita reconstruir Qdrant.
 
-- [ ] Empaquetar versiones con rutas relativas; comprobar esquema, dimensiones, huellas y archivos antes de importar. Rechazar `../`, rutas absolutas y enlaces que escapen del destino. Reconstruir Qdrant y validar consultas sin MLflow original ni token Kaggle. Activar por orden explícita después de verificar.
+- [ ] Empaquetar versiones con rutas relativas; comprobar estrategia/schema2, corte, orden, huellas, conteos y archivos antes de importar. Rechazar `../`, rutas absolutas y enlaces que escapen del destino. Validar consultas desde el paquete completo autorizado sin MLflow original ni token Kaggle; reconstruir desde cero en otro equipo sí requiere datos propios. El transporte de estos paquetes no reutiliza sin extensión el protocolo de reportes pequeños. Activar por orden explícita después de verificar.
 - [ ] Respaldar PostgreSQL de forma lógica y artefactos con manifiestos. Durante la copia, pausar nuevas ejecuciones y escrituras de eventos, esperar a que terminen los trabajos activos y capturar versión y cursor estables; servir recomendaciones puede continuar. Reanudar las escrituras y programación al terminar o ante error. Restaurar en proyecto Compose nuevo con credenciales propias; comprobar perfil, eventos, versión y recomendaciones antes de declararlo utilizable.
 - [ ] Probar `test_corrupt_or_unsafe_release_is_rejected`, `test_import_without_original_mlflow`, `test_restore_into_empty_volumes` y funcionamiento sin salida a Internet después de precargar recursos. Mantener intactos los volúmenes originales durante la prueba.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite portability` en una instalación limpia, otra ruta con espacios y otro usuario. Repetir en un segundo equipo cuando esté disponible, registrando arquitectura y SO. Transferir imágenes con `docker save/load` si se necesita instalación sin registro; conservar manifiesto de plataforma y digests.
-- [ ] Comparar consultas fijas y puntuaciones de una versión importada con tolerancias registradas antes de la prueba; validar integridad de vectores y separar diferencias de ANN de errores de modelo. Para reentrenamiento, comparar métricas con tolerancias fijadas a partir de repeticiones de referencia; no exigir pesos idénticos entre arquitecturas. Guardar evidencia, límites de soporte y commit de E6.
+- [ ] Comparar IDs, orden y motivos de consultas fijas de la misma versión importada: igualdad exacta, excluyendo request_id. Para reentrenamientos experimentales, comparar métricas con tolerancias fijadas antes de la prueba; no exigir pesos idénticos entre arquitecturas. Guardar evidencia, límites de soporte y commit de E6.
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
@@ -263,20 +285,20 @@ El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no s
 
 **Interfaces:** `benchmark(config_path: Path, output_dir: Path) -> dict` produce percentiles, tasa ofrecida/efectiva, errores y uso de recursos. `verify --suite acceptance` reúne las comprobaciones críticas sin repetir una descarga o entrenamiento completo si existen artefactos verificados de esa ejecución.
 
-- [ ] Implementar carga con tasa de llegada controlada: 20 solicitudes/s, dos minutos de calentamiento y diez de medición. Registrar p50, p95, p99, tasa efectiva y errores; no ocultar solicitudes omitidas por saturación del generador. Objetivos: p95 < 200 ms y errores < 1%. Separar peticiones frías, uso de fallback e inferencia personalizada.
+- [ ] Implementar carga con tasa de llegada controlada: 20 solicitudes/s, dos minutos de calentamiento y diez de medición. Registrar p50, p95, p99, tasa efectiva y errores; no ocultar solicitudes omitidas por saturación del generador. Objetivos: p95 < 200 ms y errores < 1%. Separar peticiones frías, uso de fallback y ranking con historial.
 - [ ] Medir CPU y RAM de servicios y generador, hardware, tamaños del catálogo y perfiles, versión y estado del entrenamiento. Primero servir con entrenamiento pausado; después medir la degradación con trabajo pesado concurrente. Si no cabe todo, documentar el procedimiento secuencial y su impacto en frescura.
 - [ ] Ejecutar evaluación final de T3 una vez cerradas las decisiones, conservar la población y métricas completas y registrar honestamente si no mejora a popularidad. No sustituir esa evaluación por la demo sintética ni prometer de antemano un umbral de calidad sin medición.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite acceptance` y `python3 scripts/project.py benchmark --config configs/benchmark.yaml`. Guardar `evidence/acceptance.json`, `evidence/benchmark.json`, `evidence/reproducibility.md` y un inventario de versiones y pruebas; sólo marcar cumplidas las metas observadas.
-- [ ] Entregar informe, guía de instalación, manual de operación, ficha del modelo, mapa de subtemas y guion de demo. Añadir capturas o video corto de instalación, recomendación, evento, actualización y recuperación; etiquetar la versión Git entregada. Guardar commit de E7/E8.
+- [ ] Entregar informe, guía de instalación, manual de operación, ficha del motor y experimentos, mapa de subtemas y guion de demo. Añadir capturas o video corto de instalación, recomendación, evento, actualización y recuperación; etiquetar la versión Git entregada. Guardar commit de E7/E8.
 
 ## Subtemas del curso y evidencia
 
 | Subtema | Alcance | Evidencia de la entrega |
 | --- | --- | --- |
 | 4.1 Motivación, retroalimentación y arranque en frío | Central | Compras como señal implícita; eventos observados; tratamiento de usuarios/artículos desconocidos |
-| 4.2 Recomendación basada en contenido | Central | Categoría, grupo y color en la torre de artículos; explicar límites ante artículos nuevos |
-| 4.3 Filtrado colaborativo | Central | Relaciones usuario–artículo aprendidas de compras históricas |
-| 4.4 Modelo de factor latente | Central | Representaciones de 64 dimensiones y puntuación por producto punto |
+| 4.2 Recomendación basada en contenido | Experimento académico implementado | Atributos en la torre de artículos: componente de contenido del modelo híbrido, no motor puro de contenido |
+| 4.3 Filtrado colaborativo | Experimento académico implementado | Relaciones usuario–artículo aprendidas de compras; conservar resultados aunque no gane |
+| 4.4 Modelo de factor latente | Experimento académico implementado | Embeddings de 64 dimensiones/producto punto, sin atribuir implementación de SVD |
 | 4.5 Evaluación de sistemas | Central | Cortes temporales, MAP@12, NDCG@12, Recall@200, cobertura, segmentos y errores |
 | 4.6 Desafío Netflix | Contextual | Discusión bibliográfica y diferencias con feedback implícito; no es el dataset del proyecto |
 | 1.1–1.5 | Fuera del núcleo | Embeddings por sí solos no acreditan SVD/PCA/NMF/t-SNE ni método de potencias |

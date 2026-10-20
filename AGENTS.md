@@ -1,10 +1,16 @@
 # Instrucciones para agentes
 
-Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Stack acordado: Docker local, PostgreSQL, Qdrant y PyTorch CPU; sin TensorFlow, Hopsworks ni servicios de nube de pago.
+Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Ejecución local con Docker y PostgreSQL; PyTorch CPU/MLflow y Qdrant existen como infraestructura experimental. No hay presupuesto para nube ni dependencia de Hopsworks.
+
+## Criterio de selección vigente
+
+El usuario confirmó priorizar el mejor resultado medido independientemente del framework, conservando experimentos del temario para explicar la selección. Lee `docs/model-selection.md`. Historial28d+popularidad7d es el motor elegido para el primer despliegue; no hay obligación de hacer ganar PyTorch ni de mantener inferencia neuronal/Qdrant en el perfil de servicio. No borres experimentos ni cambies el stack por preferencia tecnológica sin una necesidad medida.
+
+El plan principal ya adapta T4-A (paquete y paridad) y T4-B (API/activación). Son trabajo pendiente, no comandos disponibles. La decisión de alcance está resuelta: no volver a pedir que el usuario elija calidad frente a framework. Implementa el siguiente paso cuando la tarea sea desarrollo; no repitas campañas remotas por recibir una actualización de documentación. Test final sigue reservado y no se inicia otro entrenamiento por defecto. Los ZIP de intercambio siguen siendo sólo reportes; cada Mac usa sus propios datos de Kaggle.
 
 ## Si tu tarea es validar historial reciente en mac24
 
-La campaña demo/full ya terminó y fue revisada en la máquina principal: consulta `evidence/mac24-recent-history-review-2026-10-20.json`. No la repitas salvo petición explícita. Historial+popularidad cumple el criterio principal; el modelo no demuestra aporte incremental de MAP. La recomendación es revisar el diseño de T4; no hay autorización automática para iniciar otro experimento, evaluar test ni ejecutar T4. El procedimiento siguiente se conserva para reproducción.
+La campaña demo/full ya terminó y fue revisada en la máquina principal: consulta `evidence/mac24-recent-history-review-2026-10-20.json`. No la repitas salvo petición explícita. Historial+popularidad cumple el criterio principal; el modelo no demuestra aporte incremental de MAP. El diseño del siguiente paso está adaptado en el plan; esta tarea de validación remota termina con sus reportes, sin iniciar otro experimento, evaluar test ni ejecutar T4. El procedimiento siguiente se conserva para reproducción.
 
 El experimento de tres épocas ya pasó operativamente, pero perdió MAP/NDCG y no cumplió calidad; no repetirlo. Sigue `docs/recent-history.md` con el commit recibido. Ejecuta `diagnose-job start --protocol recent-history` primero sobre la demo original `train-mac24-20261020T004703Z-a09df9b2` y después sobre full de una época `train-mac24-20261020T004913Z-9d2fb726`. No uses `--reference-run-id`. Son dos diagnósticos sin reentrenamiento: compras de 28 días con respaldo popularidad7d y una variante con el ranking del modelo. Comprueba estados finales, replay, todas las comparaciones y diez permutaciones por variante; exporta, valida y publica cada ZIP incluso si falla. Un fallo operativo detiene la secuencia; malas métricas son evidencia válida. Conserva recursos mac24, SSL_CERT_FILE, los originales y el commit durante las corridas. No uses test ni inicies T4. Esta sección prevalece sobre repetir los procedimientos históricos de abajo. Al terminar, actualiza evidencia y documentación según la guía; mantén calidad pendiente de revisión.
 
