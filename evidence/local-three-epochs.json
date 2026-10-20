@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "scope": "Local dev16 synthetic operational verification; mac24 H&M three-epoch results pending",
+  "physical_machine": "Apple Silicon 16 GiB",
+  "docker_profile": "default",
+  "resource_profile": "base",
+  "job_memory_gib": 5,
+  "job_cpus": 3,
+  "threads": 2,
+  "verification": {
+    "host_tests": 53,
+    "container_unit_tests": 14,
+    "training_integration_tests": 4,
+    "diagnostic_integration_tests": 2,
+    "comparison_integration_tests": 1,
+    "data_integration_tests": 8,
+    "bootstrap_integration_tests": 8,
+    "tracking_integration_tests": 1,
+    "unique_tests": 91,
+    "original_training_files_unchanged": true,
+    "original_files_checked": 9,
+    "network": "none",
+    "writable_mounts": "new diagnostic run directory only",
+    "closed_zip_reader_exit_codes": [
+      0,
+      0
+    ],
+    "fresh_review": "No Critical, Important or Minor findings"
+  },
+  "reference_run_id": "train-dev16-20261020T003525Z-18df5ba5",
+  "reference_epochs": 2,
+  "candidate_epochs": 3,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training": {
+    "run_id": "train-dev16-20261020T015420Z-30eba752",
+    "source_commit": "cd27dce369ba84d23867ccfa1730992595031f29",
+    "status": "passed",
+    "package_id": "8896e2a659fadefc83d4f4c946d86437f1a84ab2f29879b42a0cbb4f252f9dd4",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-train-dev16-20261020T015420Z-30eba752",
+    "job_duration_seconds": 6.149597,
+    "peak_rss_gib": 0.420448,
+    "cgroup_peak_gib": 0.458206,
+    "swap_peak_gib": 0.0,
+    "oom_events": 0,
+    "verification_exit_code": 0,
+    "rows_consumed": 1152,
+    "eligible_rows_per_epoch": 384
+  },
+  "diagnosis": {
+    "run_id": "diagnose-dev16-20261020T015440Z-a889c8a8",
+    "source_commit": "cd27dce369ba84d23867ccfa1730992595031f29",
+    "status": "passed",
+    "package_id": "e315e4422ca03cdddc7e8fb605fefedd6db1bfb393d2220fffe2e6341f107839",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-dev16-20261020T015440Z-a889c8a8",
+    "job_duration_seconds": 4.152177,
+    "peak_rss_gib": 0.334152,
+    "cgroup_peak_gib": 0.458481,
+    "swap_peak_gib": 0.0,
+    "oom_events": 0,
+    "verification_exit_code": 0
+  },
+  "comparison": {
+    "candidate_epochs": 3,
+    "candidate_replay_verified": true,
+    "candidate_run_id": "train-dev16-20261020T015420Z-30eba752",
+    "candidate_vs_recent_7d": {
+      "bootstrap_resamples": 2000,
+      "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+      "metrics": {
+        "map_at_12": {
+          "ci95": [
+            0.68762659,
+            0.84978564
+          ],
+          "delta": 0.77223151,
+          "left_mean": 0.97474747,
+          "right_mean": 0.20251596
+        },
+        "ndcg_at_12": {
+          "ci95": [
+            0.54718495,
+            0.74538723
+          ],
+          "delta": 0.64456126,
+          "left_mean": 0.98170577,
+          "right_mean": 0.3371445
+        },
+        "recall_at_200": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "delta": 0.0,
+          "left_mean": 0.98989899,
+          "right_mean": 0.98989899
+        }
+      },
+      "seed": 42,
+      "users": 33
+    },
+    "candidate_vs_reference": {
+      "bootstrap_resamples": 2000,
+      "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+      "metrics": {
+        "map_at_12": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "delta": 0.0,
+          "left_mean": 0.97474747,
+          "right_mean": 0.97474747
+        },
+        "ndcg_at_12": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "delta": 0.0,
+          "left_mean": 0.98170577,
+          "right_mean": 0.98170577
+        },
+        "recall_at_200": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "delta": 0.0,
+          "left_mean": 0.98989899,
+          "right_mean": 0.98989899
+        }
+      },
+      "seed": 42,
+      "users": 33
+    },
+    "completed": true,
+    "population": {
+      "catalog_size": 24,
+      "users": 33
+    },
+    "quality_accepted": false,
+    "reference_epochs": 2,
+    "reference_replay_verified": true,
+    "reference_run_id": "train-dev16-20261020T003525Z-18df5ba5",
+    "reference_vs_recent_7d": {
+      "bootstrap_resamples": 2000,
+      "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+      "metrics": {
+        "map_at_12": {
+          "ci95": [
+            0.68762659,
+            0.84978564
+          ],
+          "delta": 0.77223151,
+          "left_mean": 0.97474747,
+          "right_mean": 0.20251596
+        },
+        "ndcg_at_12": {
+          "ci95": [
+            0.54718495,
+            0.74538723
+          ],
+          "delta": 0.64456126,
+          "left_mean": 0.98170577,
+          "right_mean": 0.3371445
+        },
+        "recall_at_200": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "delta": 0.0,
+          "left_mean": 0.98989899,
+          "right_mean": 0.98989899
+        }
+      },
+      "seed": 42,
+      "users": 33
+    },
+    "test_evaluated": false
+  },
+  "known_user_controls": {
+    "users": 32,
+    "sample_users": 33,
+    "excluded_unknown_users": 1,
+    "selection_seed": 42,
+    "candidate": {
+      "permutation_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "unchanged_id_rows": 0,
+      "normal_vs_mean_permuted": {
+        "bootstrap_resamples": 2000,
+        "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+        "metrics": {
+          "map_at_12": {
+            "ci95": [
+              0.79042672,
+              0.86007291
+            ],
+            "delta": 0.82685347,
+            "left_mean": 0.98958333,
+            "right_mean": 0.16272987
+          },
+          "ndcg_at_12": {
+            "ci95": [
+              0.6930715,
+              0.76806079
+            ],
+            "delta": 0.73113676,
+            "left_mean": 0.99266752,
+            "right_mean": 0.26153076
+          },
+          "recall_at_200": {
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "delta": 0.0,
+            "left_mean": 0.98958333,
+            "right_mean": 0.98958333
+          }
+        },
+        "seed": 42,
+        "users": 32
+      }
+    },
+    "reference": {
+      "permutation_seeds": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "unchanged_id_rows": 0,
+      "normal_vs_mean_permuted": {
+        "bootstrap_resamples": 2000,
+        "method": "paired user bootstrap; percentile 95%; conditional on fixed trained models",
+        "metrics": {
+          "map_at_12": {
+            "ci95": [
+              0.78987577,
+              0.85871686
+            ],
+            "delta": 0.82562722,
+            "left_mean": 0.98958333,
+            "right_mean": 0.16395612
+          },
+          "ndcg_at_12": {
+            "ci95": [
+              0.69360551,
+              0.76816708
+            ],
+            "delta": 0.73089789,
+            "left_mean": 0.99266752,
+            "right_mean": 0.26176963
+          },
+          "recall_at_200": {
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "delta": 0.0,
+            "left_mean": 0.98958333,
+            "right_mean": 0.98958333
+          }
+        },
+        "seed": 42,
+        "users": 32
+      }
+    }
+  },
+  "numeric_precision": "Summary floating metrics rounded to at most eight decimal places; release ZIPs retain full precision"
+}
