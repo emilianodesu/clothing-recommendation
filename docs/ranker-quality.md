@@ -2,7 +2,7 @@
 
 Q3 implementa RH y RG del [protocolo quality-v1](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). RH reordena exactamente los candidatos H; RG reordena G. Ambos conservan Recall@200. Q2 ya mostró que G incumple el límite de pérdida de Recall: RG se mantiene como ablación académica; no se cambia su pool ni la regla para hacerlo elegible. Q4 hará la selección formal. Test permanece reservado.
 
-Esta entrega incorpora código y pruebas locales. La calidad, memoria y duración de entrenamiento H&M deben medirse en mac24; una demo no las acredita. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes.
+Esta entrega incorpora código, revisión y pruebas locales cerradas en [la evidencia Q3](../evidence/local-quality-q3.json). La calidad, memoria y duración de entrenamiento H&M deben medirse en mac24; una demo no las acredita. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes.
 
 ## Contrato implementado
 
@@ -68,6 +68,27 @@ Cada `work` Q3 contiene `training/week-*/` (snapshot, grafo, ranking, grupos, ej
 El reporte cerrado incluye P/H/G y RH o RG para la misma población, cuatro semanas y sus conteos, positivos ausentes, grupos descartados, iteraciones, curva NDCG interna, hashes, costes y recursos. `passed` acredita ejecución e integridad; mantiene `quality_accepted=false` y `test_evaluated=false`.
 
 Al finalizar los diez intentos o el primer fallo, actualizar `evidence/quality-q3-mac24.json` y esta guía: commit, run_id, tamaño/fold/pool, referencias, estado, poblaciones, métricas, conteos por semana, mejores iteraciones/árboles, duración, RSS/cgroup/swap/OOM, disco, presupuesto, preservación de originales y SHA/URL de cada Release. En Git redondear métricas a ocho decimales y GiB a seis; conservar precisión original en ZIP. Publicar el resumen y avisar al usuario. No iniciar Q4, T4 ni test.
+
+## Verificación local cerrada
+
+El commit ejecutable `c7d12cecff01ebafef94cc70aab1b3aa57910821` pasó 145 pruebas distintas: 69 científicas, 68 de host y ocho de infraestructura real Docker. `verify --suite quality` pasó desde un clon limpio (41 unitarias, 12 de integración y las mismas 68 de host). Se omitió una prueba adicional que exige el servicio externo de MLflow; Q3 no modifica tracking. Las dos advertencias de pytest corresponden a fixtures ZIP deliberadamente inválidos. La revisión independiente del cambio completo no encontró hallazgos accionables ni asuntos pendientes de juzgar.
+
+Se verificó importación, ajuste pequeño y save/load de LightGBM en Linux ARM64. El lock incluye resolución AMD64; no se afirma haber ejecutado esa arquitectura. Las pruebas también acreditan que cambiar compras del corte externo conserva tablas internas, iteraciones elegidas y SHA del modelo entrenado, y que los empates se ordenan por ID. Se corrigió la lectura de timestamps Docker con nanosegundos en Python 3.9; las 68 pruebas de host pasaron tanto en 3.9.6 como en 3.14.5.
+
+Las demos oficiales usaron una imagen construida desde clon limpio, sin montajes de código, con perfil base 5 GiB/3 CPU/2 hilos y originales Q1/Q2 en lectura. Ambas pasaron exportación, lectura, publicación y descarga privada verificada:
+
+| Pool | Run / Release | Duración job | RSS pico | Pico cgroup |
+| --- | --- | ---: | ---: | ---: |
+| H → RH | [quality-local-20261020T220311Z-08efb4e9](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T220311Z-08efb4e9) | 9.018661 s | 0.528835 GiB | 0.393005 GiB |
+| G → RG | [quality-local-20261020T220621Z-2aa81e51](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T220621Z-2aa81e51) | 9.018796 s | 0.528702 GiB | 0.392666 GiB |
+
+Sin swap ni OOM. En cada demo hubo 33 compradores externos y 24 artículos; el refit usó 128 grupos y 2,816 filas, con una iteración seleccionada. RH y RG alcanzaron MAP@12=0.98989899, NDCG@12=0.99288972 y Recall@200=0.98989899, conservando exactamente el pool original y su Recall. Son fixtures sintéticos pequeños: estas métricas no seleccionan ganador ni predicen el resultado H&M. Se validaron además todos los ZIP presentes: 29 en `incoming` y 23 en `handoff`, incluidos ambos nuevos. La evidencia guarda identidades, hashes y agregados con precisión redondeada; cada ZIP conserva precisión completa.
+
+La implementación se aisló en un worktree y las demos en un clon limpio con configuración propia. Como Colima no monta la ruta del worktree, las comprobaciones con montajes utilizaron una carpeta temporal dentro del proyecto ya compartido; las demos finales verificaron el commit sin montajes auxiliares. En esta red fue necesario complementar el bundle temporal de compilación con CA ya confiables de Homebrew local: TLS permaneció activo y no se copiaron certificados entre Macs.
+
+El lock principal se resolvió normalmente. El lock secundario de Airflow conserva sus versiones históricas y añade sólo el bloque LightGBM generado por uv, porque resolverlo universalmente intentaba Python >=3.15 fuera del Python 3.12 soportado por la imagen. La integración Airflow corresponde a su etapa posterior. Las demás decisiones, motivos y límites se registran en `decisions_and_limits` de la evidencia local.
+
+Siguiente paso: ejecutar la secuencia mac24 anterior con el commit de entrega, conservar sus diez reportes o el primer fallo y devolverlos para auditoría. Todavía no se ejecutaron Q3 H&M, Q4, T4 ni test.
 
 ## Referencias técnicas
 

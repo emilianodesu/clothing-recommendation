@@ -16,7 +16,7 @@ En mac24, con el commit recibido: demo H → pilot H → demo G → pilot G → 
 
 Actualiza `evidence/quality-q3-mac24.json` y la guía con los diez resultados o primer fallo: identidad, referencias, conteos de cuatro semanas, positivos ausentes/grupos descartados, métricas, iteraciones, costes, RSS/cgroup/swap/OOM, disco, presupuesto y SHA/URL de Releases. No publiques clientes/modelos/grafos. Q3 no tiene resume; faltantes privados bloquean, no se reconstruyen desde ZIP. No iniciar Q4/T4 ni test en esta entrega. La recepción de evidencia tampoco activa experimentos automáticamente.
 
-Q4 realizará la selección formal con tablas individuales y bootstrap en mac24, no desde medias de ZIP. Para desarrollo aquí, terminar verificación/entrega Q3 antes de Q4; los procedimientos históricos Q1/Q2 no se repiten por defecto. Esta sección prevalece sobre los siguientes.
+Q4 realizará la selección formal con tablas individuales y bootstrap en mac24, no desde medias de ZIP. La verificación/entrega local Q3 está cerrada en `evidence/local-quality-q3.json`: 145 pruebas distintas, revisión sin hallazgos y dos demos oficiales publicadas. Falta ejecutar/auditar Q3 H&M antes de Q4; los procedimientos históricos Q1/Q2 no se repiten por defecto. Esta sección prevalece sobre los siguientes.
 
 ## Si tu tarea es validar historial reciente en mac24
 

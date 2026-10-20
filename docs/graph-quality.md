@@ -1,6 +1,6 @@
 # Q2: grafo de artículos y control PageRank
 
-Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. Los cinco reportes mac24 ya se descargaron y [revisaron](../evidence/quality-q2-review.json): Q2 está cerrada operativamente. G mejora MAP/NDCG, pero incumple el límite de pérdida de Recall. Esta página conserva el procedimiento de reproducción; no repetirlo por defecto. Q3, Q4 y T4 siguen pendientes y test permanece reservado.
+Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. Los cinco reportes mac24 ya se descargaron y [revisaron](../evidence/quality-q2-review.json): Q2 está cerrada operativamente. G mejora MAP/NDCG, pero incumple el límite de pérdida de Recall. Esta página conserva el procedimiento de reproducción; no repetirlo por defecto. [Q3](ranker-quality.md) está implementada y verificada localmente, pendiente de ejecución mac24. Q4 y T4 siguen pendientes y test permanece reservado.
 
 ## Qué calcula
 
@@ -163,4 +163,4 @@ Los tres jobs full suman 218.548781 s, con máximo RSS 1.885216 GiB y cgroup 2.0
 
 La preservación de 500 originales y la suite quality posterior a demo son declaraciones de mac24: sus inventarios/log completo permanecen allí. Se validaron los ZIP y sus logs de worker aquí, sin recalcular archivos privados ni métricas individuales. La auditoría conserva esta distinción.
 
-**Decisión:** cerrar Q2, conservar H como referencia y desarrollar Q3 sin repetir Q1/Q2. RH puede mejorar el orden de H manteniendo su Recall. RG se conserva como ablación de recuperación/ordenamiento; al usar exactamente el pool G hereda su pérdida de Recall y no puede cumplir ese umbral sin cambiar el protocolo. No se cambia el pool, los parámetros ni la regla de selección. Q3 aún necesita implementación y verificación antes de enviar nuevas órdenes a mac24; test y T4 siguen pendientes.
+**Decisión:** cerrar Q2 y conservar H como referencia sin repetir Q1/Q2. RH puede mejorar el orden de H manteniendo su Recall. RG se conserva como ablación de recuperación/ordenamiento; al usar exactamente el pool G hereda su pérdida de Recall y no puede cumplir ese umbral sin cambiar el protocolo. No se cambia el pool, los parámetros ni la regla de selección. Posteriormente Q3 quedó implementada y verificada localmente; su [guía](ranker-quality.md) entrega la siguiente campaña mac24. Test y T4 siguen pendientes.
