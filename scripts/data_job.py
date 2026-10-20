@@ -131,8 +131,10 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
     if diagnostic_run:
         config_file = ROOT / 'configs/diagnostics' / ('recent-history.json' if diagnostic_protocol == 'recent-history' else 'epochs.json' if reference_run else 'validation.json')
     if quality_options:
-        if quality_options['stage'] not in ('baselines','graph') or quality_options['fold'] not in ('V1','V2','V3') or quality_options['size'] not in ('demo','pilot','full'):
-            raise ValueError('Only Q1/Q2 are implemented')
+        if quality_options['stage'] not in ('baselines','graph','ranker') or quality_options['fold'] not in ('V1','V2','V3') or quality_options['size'] not in ('demo','pilot','full'):
+            raise ValueError('Only Q1–Q3 are implemented')
+        if (quality_options['stage']=='ranker') != (quality_options.get('pool') in ('H','G')):
+            raise ValueError('Q3 requires a candidate pool')
         config_file = ROOT / 'configs/quality/quality-v1.json'
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
@@ -178,7 +180,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
     if diagnostic_reference:
         run.update(diagnostic_reference=diagnostic_reference, scope='T3 paired epoch comparison; no test evaluation or serving')
     if quality_options:
-        run.update(quality=quality_options, scope='Q1/Q2 fixed campaign; no test, training, quality acceptance or T4')
+        run.update(quality=quality_options, scope='Q1–Q3 fixed campaign; Q3 trains rankers; no test, quality acceptance or T4')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
@@ -204,9 +206,12 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             if run['start_free_bytes'] < 20 * 2**30:
                 raise ValueError('Quality requires 20 GiB free before starting')
             if quality_options.get('reference_run_id'):
-                from quality_job import reference_for,graph_reference_for
-                run['quality_reference'] = (graph_reference_for(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id'],quality_options['fold'],quality_options['size'])
-                    if quality_options['stage']=='graph' else reference_for(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id']))
+                from quality_job import reference_for,graph_reference_for,ranker_reference_for
+                if quality_options['stage']=='baselines':
+                    run['quality_reference']=reference_for(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id'])
+                else:
+                    resolver=ranker_reference_for if quality_options['stage']=='ranker' else graph_reference_for
+                    run['quality_reference']=resolver(dirs['ARTIFACTS_DIR'],quality_options['reference_run_id'],quality_options['fold'],quality_options['size'])
             from quality_budget import reserve
             run['quality_budget_seconds'] = reserve(dirs['ARTIFACTS_DIR'] / 'quality-budget', run_id, quality_options['size'])
             write_json(directory / 'environment.json',run)
@@ -312,8 +317,9 @@ def settle_quality(directory,run,state):
         seconds=record['allowance']
         if state.get('Status')=='created' or (state.get('Status')=='not-created' and run.get('launch_status') in ('failed','interrupted')):seconds=0
         elif state.get('StartedAt') and state.get('FinishedAt') and not state['StartedAt'].startswith('0001'):
-            start=datetime.fromisoformat(state['StartedAt'].replace('Z','+00:00'))
-            end=datetime.fromisoformat(state['FinishedAt'].replace('Z','+00:00'))
+            # Docker emits nanoseconds; Python 3.9 accepts only microseconds.
+            start=datetime.fromisoformat(re.sub(r'(\.\d{6})\d+',r'\1',state['StartedAt']).replace('Z','+00:00'))
+            end=datetime.fromisoformat(re.sub(r'(\.\d{6})\d+',r'\1',state['FinishedAt']).replace('Z','+00:00'))
             seconds=max(0,(end-start).total_seconds())
         result_path=directory / 'result.json'
         if result_path.exists():
@@ -364,7 +370,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, ('Q2' if run['quality']['stage']=='graph' else 'Q1') if run.get('quality') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
+        status = classify_result(state, result, {'baselines':'Q1','graph':'Q2','ranker':'Q3'}[run['quality']['stage']] if run.get('quality') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
             require_comparison=bool(run.get('diagnostic_reference')), require_history=run.get('diagnostic_protocol') == 'recent-history')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'

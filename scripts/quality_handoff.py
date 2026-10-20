@@ -1,4 +1,4 @@
-"""Standard-library validation of closed Q1/Q2 aggregate evidence, never raw buyer rows."""
+"""Standard-library validation of closed Q1–Q3 aggregate evidence, never raw buyer rows."""
 import math
 import re
 
@@ -8,6 +8,7 @@ CUTOFFS={'V1':('2020-08-26','2020-09-02'),'V2':('2020-09-02','2020-09-09'),'V3':
 METRICS={'map_at_12','ndcg_at_12','recall_at_200'}
 SEGMENTS={'recent28d','history29_90d','older_history','no_history'}
 ALLOWED={'summary.md','environment.json','commit.txt','preflight.log','job.log','build.log','result.json','config.resolved.json'}
+STAGES={'Q1':'baselines','Q2':'graph','Q3':'ranker'}
 
 
 def require(condition):
@@ -36,7 +37,7 @@ def no_private_rows(value):
 def validate_quality_result(result):
     try:
         no_private_rows(result)
-        require(result['stage'] in ('Q1','Q2') and result['protocol']=='quality-v1' and result['status']=='passed')
+        require(result['stage'] in STAGES and result['protocol']=='quality-v1' and result['status']=='passed')
         require(result['test_evaluated'] is False and result['quality_accepted'] is False and result['verification_exit_code']==0)
         require(result['size'] in ('demo','pilot','full'))
         fold=result['fold']; require(fold['fold_id'] in CUTOFFS and fold['role']=='evaluation' and fold['parent_fold'] is None)
@@ -46,7 +47,10 @@ def validate_quality_result(result):
         require(pop['sampled_out_users']==pop['validation_buyers']-users)
         require(result['size']=='pilot' or pop['sampled_out_users']==0)
         require(result['size']!='pilot' or users<=2000)
-        expected={'P','H','G'} if result['stage']=='Q2' else {'P','H'}
+        expected={'P','H','G'} if result['stage'] in ('Q2','Q3') else {'P','H'}
+        if result['stage']=='Q3':
+            require(result['ranker']['pool'] in ('H','G'))
+            expected.add('R'+result['ranker']['pool'])
         require(set(result['methods'])==expected)
         validate_methods(result['methods'],users,catalog)
         p,h=result['methods']['P'],result['methods']['H']
@@ -67,6 +71,7 @@ def validate_quality_result(result):
         if fold['fold_id']=='V3' and result['size']=='full':
             require(result['reference']['verified'] is True and re.fullmatch('[a-f0-9]{64}',result['reference']['archive_sha256']))
         if result['stage']=='Q2':validate_graph_result(result)
+        if result['stage']=='Q3':validate_ranker_result(result)
         require(number(result['job_duration_seconds'],0,7200) and count(result['job_resources']['peak_rss_bytes'],1))
         disk=result['disk']; require(set(disk)=={'start_free_bytes','min_free_bytes','end_free_bytes'})
         require(all(count(v,5*2**30) for v in disk.values()))
@@ -80,11 +85,15 @@ def validate_quality_execution(result,environment):
     validate_quality_result(result)
     try:
         require(result['source_commit']==environment['source_commit'])
-        require(environment['quality']['stage']==('graph' if result['stage']=='Q2' else 'baselines') and environment['quality']['size']==result['size'])
+        require(environment['quality']['stage']==STAGES[result['stage']] and environment['quality']['size']==result['size'])
         require(environment['quality']['fold']==result['fold']['fold_id'])
-        if result['stage']=='Q2':
+        if result['stage'] in ('Q2','Q3'):
             require(environment['quality']['reference_run_id']==result['reference']['run_id'])
             require(all(environment['quality_reference'][k]==result['reference'][k] for k in ('run_id','archive_sha256')))
+        if result['stage']=='Q3':
+            require(environment['quality']['pool']==result['ranker']['pool'])
+            require(all(environment['quality_reference']['baseline_reference'][k]==result['reference']['baseline'][k]
+                        for k in ('run_id','archive_sha256')))
         require(count(environment['start_free_bytes'],20*2**30))
         allowance=environment['quality_budget_seconds'];require(number(allowance,0,7200) and allowance>0)
         require(result['job_duration_seconds']<=allowance)
@@ -102,7 +111,7 @@ def validate_quality_envelope(report,result,environment,names):
     require(set(names)<={'manifest.json',*ALLOWED} and {'result.json','environment.json','config.resolved.json'}<=set(names))
     require(report['result']==result and report['source_commit']==environment['source_commit']==result['source_commit'])
     require(report['run_id']==environment['run_id'] and report['run_id'].startswith('quality-'))
-    require(environment['quality']['stage']==('graph' if result['stage']=='Q2' else 'baselines') and environment['quality']['size']==result['size'])
+    require(environment['quality']['stage']==STAGES[result['stage']] and environment['quality']['size']==result['size'])
     require(environment['quality']['fold']==result['fold']['fold_id'])
     require(report.get('oom_killed') is False and report.get('container_exit_code')==0)
     for key in ('resources','limits','effective_limits'):require(report[key]==environment[key])
@@ -212,3 +221,100 @@ def validate_graph_result(result):
             require(math.isclose(mean,personal['permuted_mean'][metric],abs_tol=1e-10,rel_tol=0))
             require(number(personal['delta'][metric],-1,1) and math.isclose(personal['normal'][metric]-mean,personal['delta'][metric],abs_tol=1e-10,rel_tol=0))
     else:require(personal['permuted_mean'] is None and personal['delta'] is None)
+
+
+RANKER_FEATURES=['pair_count28','pair_count90','pair_recency90','user_count28','user_count90','user_recency90',
+    'item_count7','item_count28','item_count90','item_trend','affinity_type90','affinity_group90','affinity_color90',
+    'graph_score','history_rank','neighbor_rank','popular_rank','in_history','in_neighbors','in_popular']
+RANKER_PARAMETERS=dict(objective='lambdarank',label_gain=[0,1],metric='None',lambdarank_truncation_level=15,
+    learning_rate=.05,num_leaves=31,min_data_in_leaf=100,max_bin=127,lambda_l2=1,feature_fraction=1,
+    bagging_fraction=1,bagging_freq=0,seed=42,num_threads=2,deterministic=True,force_col_wise=True,
+    device_type='cpu',data_random_seed=42,feature_fraction_seed=42,bagging_seed=42,drop_seed=42,
+    extra_seed=42,objective_seed=42,verbosity=-1)
+GROUP_COUNTS=('groups_total','groups_trainable','groups_without_positives','groups_without_negatives',
+    'candidate_rows','sampled_rows','relevant_items','positives_recovered','positives_not_recovered')
+
+
+def validate_ranker_result(result):
+    from datetime import date,timedelta
+    ranker=result['ranker'];pool=ranker['pool'];method='R'+pool
+    require(ranker['feature_version']==1 and ranker['feature_names']==RANKER_FEATURES)
+    require(ranker['parameters']==RANKER_PARAMETERS and ranker['lightgbm_version']=='4.7.0')
+    require(count(ranker['best_iteration'],1) and ranker['best_iteration']<=300)
+    require(ranker['candidate_set_verified'] is True and ranker['pool_replay_verified'] is True)
+    require(is_sha(ranker['training_table_sha256']) and is_sha(ranker['model_manifest_sha256']))
+    require(set(ranker['model_artifacts'])=={'model','inner_model','inner_training','inner_validation','refit'})
+    require(all(is_sha(v) for v in ranker['model_artifacts'].values()))
+    require(set(ranker['outer_graph_artifacts'])=={'csr','nodes','seeds'} and all(is_sha(v) for v in ranker['outer_graph_artifacts'].values()))
+    require(ranker['reference_pool_ranking_sha256']==result['artifacts'][pool]['ranking_sha256'])
+    reference=result['reference']
+    require(reference['stage']=='Q2' and reference['verified'] is True and reference['private_artifacts_verified'] is True)
+    for entry in (reference,reference['baseline']):
+        require(entry['run_id'].startswith('quality-') and is_sha(entry['archive_sha256']))
+    base=result['methods'][pool];reranked=result['methods'][method]
+    for value in result['methods'].values():
+        require(value['denominators']==base['denominators'])
+        require(all(value['segments'][s]['users']==base['segments'][s]['users'] for s in SEGMENTS))
+    def recall_equal(a,b):
+        require(math.isclose(a['recall_at_200'],b['recall_at_200'],abs_tol=1e-12,rel_tol=0))
+    recall_equal(base['metrics'],reranked['metrics'])
+    for name in SEGMENTS:
+        if base['segments'][name]['users']:recall_equal(base['segments'][name]['metrics'],reranked['segments'][name]['metrics'])
+    for name in ('repeat','discovery'):
+        require(base['targets'][name]['users']==reranked['targets'][name]['users'])
+        if base['targets'][name]['users']:recall_equal(base['targets'][name]['metrics'],reranked['targets'][name]['metrics'])
+    require(base['exposure']['200']['unique_sets']==reranked['exposure']['200']['unique_sets'])
+    weeks=ranker['weeks'];require(len(weeks)==4)
+    cutoff=date.fromisoformat(result['fold']['cutoff'])
+    sums={key:0 for key in GROUP_COUNTS}
+    for index,week in enumerate(weeks):
+        start=cutoff-timedelta(days=7*(4-index))
+        require(week['cutoff']==str(start) and week['label_end']==str(start+timedelta(days=7)))
+        require(date.fromisoformat(week['max_feature_date'])<start)
+        require(start<=date.fromisoformat(week['max_label_date'])<start+timedelta(days=7))
+        require(week['role']==('early_stopping' if index==3 else 'inner_training'))
+        require(count(week['buyers'],1) and count(week['buyers_before_sampling'],week['buyers']))
+        require(week['sampled_out_buyers']==week['buyers_before_sampling']-week['buyers'])
+        require(result['size']=='pilot' or week['sampled_out_buyers']==0)
+        require(result['size']!='pilot' or week['buyers']<=2000)
+        require(count(week['catalog_size'],1) and count(week['label_transactions_all_buyers'],week['buyers_before_sampling']))
+        require(count(week['history_transactions90']) and number(week['preparation_seconds']))
+        require(all(is_sha(week[k]) for k in ('snapshot_sha256','graph_sha256','ranking_sha256')))
+        for name in ('sample','groups'):
+            require(week[name+'_file']==f'week-{index}-{name}')
+        require(week.get('full_file')==f'week-{index}-full' if index==3 else 'full_file' not in week)
+        counts=week['counts'];require(set(counts)==set(GROUP_COUNTS) and all(count(v) for v in counts.values()))
+        require(counts['groups_total']==week['buyers'])
+        require(counts['groups_trainable']+counts['groups_without_positives']+counts['groups_without_negatives']==counts['groups_total'])
+        require(counts['candidate_rows']==week['buyers']*min(200,week['catalog_size']))
+        require(counts['relevant_items']>=week['buyers'] and counts['positives_recovered']+counts['positives_not_recovered']==counts['relevant_items'])
+        require(counts['groups_trainable']<=counts['positives_recovered']<=counts['candidate_rows'])
+        require(2*counts['groups_trainable']<=counts['sampled_rows']<=min(counts['candidate_rows'],counts['positives_recovered']+20*counts['groups_trainable']))
+        for key in sums:sums[key]+=counts[key]
+    totals=ranker['training_counts']
+    require(all(totals[key]==value for key,value in sums.items()))
+    require(number(totals['preparation_seconds']) and count(totals['private_table_bytes'],1))
+    require(totals['preparation_seconds']>=sum(w['preparation_seconds'] for w in weeks))
+    stats=ranker['statistics']
+    require(stats['outer_labels_used'] is False and stats['inner_training_weeks']==3 and stats['refit_training_weeks']==4)
+    require(stats['early_stopping_cutoff']==weeks[-1]['cutoff'])
+    require(stats['inner_training_groups']==sum(w['counts']['groups_trainable'] for w in weeks[:3]) and count(stats['inner_training_groups'],1))
+    require(stats['inner_training_rows']==sum(w['counts']['sampled_rows'] for w in weeks[:3]))
+    require(stats['inner_evaluation_groups']==weeks[-1]['buyers'] and stats['inner_evaluation_rows']==weeks[-1]['counts']['candidate_rows'])
+    require(stats['refit_groups']==sums['groups_trainable'] and stats['refit_rows']==sums['sampled_rows'])
+    require(stats['refit_requested_iterations']==ranker['best_iteration'])
+    require(count(stats['actual_trees'],1) and stats['actual_trees']<=ranker['best_iteration'])
+    history=stats['inner_ndcg_history']
+    require(len(history)==stats['evaluated_iterations'] and ranker['best_iteration']<=len(history)<=300)
+    require(all(number(v,0,1) for v in history) and number(stats['inner_best_ndcg'],0,1))
+    require(math.isclose(history[ranker['best_iteration']-1],stats['inner_best_ndcg'],rel_tol=0,abs_tol=1e-12))
+    require(math.isclose(max(history),stats['inner_best_ndcg'],rel_tol=0,abs_tol=1e-12))
+    costs=result['costs']
+    fields={'reference_verification_seconds','training_preparation_seconds','binary_construction_seconds',
+        'fit_seconds','refit_seconds','external_graph_build_seconds','external_retrieval_seconds',
+        'prediction_seconds','evaluation_seconds','candidate_cost_seconds'}
+    require(set(costs)==fields and all(number(v) for v in costs.values()))
+    require(costs['training_preparation_seconds']==totals['preparation_seconds'])
+    require(all(costs[k]==stats[k] for k in ('binary_construction_seconds','fit_seconds','refit_seconds')))
+    require(math.isclose(costs['candidate_cost_seconds'],sum(v for k,v in costs.items() if k not in
+        ('reference_verification_seconds','evaluation_seconds','candidate_cost_seconds')),rel_tol=0,abs_tol=1e-8))

@@ -60,3 +60,16 @@ class QualityBudgetTests(unittest.TestCase):
             self.assertEqual(main(args),1);start.assert_not_called()
             self.assertEqual(main(args+['--reference-run-id','quality-q1']),0)
             self.assertEqual(start.call_args.kwargs['quality_options']['stage'],'graph')
+
+    def test_ranker_requires_pool_and_Q2_reference_and_dispatches(self):
+        from quality_job import main
+        from unittest.mock import patch
+        args=['start','--stage','ranker','--fold','V1','--size','full','--expected-commit','a'*40]
+        with patch('quality_job.start') as start:
+            self.assertEqual(main(args),1)
+            self.assertEqual(main(args+['--pool','H']),1)
+            self.assertEqual(main(args+['--pool','H','--reference-run-id','quality-q2']),0)
+            self.assertEqual(start.call_args.kwargs['quality_options']['pool'],'H')
+            self.assertEqual(start.call_count,1)
+            self.assertEqual(main(['start','--stage','graph','--fold','V1','--size','full',
+                '--expected-commit','a'*40,'--pool','G','--reference-run-id','quality-q1']),1)

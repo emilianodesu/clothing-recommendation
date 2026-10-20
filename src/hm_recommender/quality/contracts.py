@@ -91,13 +91,13 @@ class FoldManifest(LocalArtifact):
 
 class RankingArtifact(LocalArtifact):
     fold: FoldSpec
-    method: Literal['P','H','G','PPR']
+    method: Literal['P','H','G','PPR','RH','RG']
     customers: int
 
 
 class FoldEvaluation(LocalArtifact):
     fold: FoldSpec
-    method: Literal['P','H','G','PPR']
+    method: Literal['P','H','G','PPR','RH','RG']
     population: dict
     metrics: dict[str,float]
     segments: dict

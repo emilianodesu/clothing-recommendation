@@ -1,4 +1,4 @@
-"""Q1/Q2: isolated snapshots, private rows and aggregate evidence."""
+"""Q1–Q3: isolated snapshots, private rows and aggregate evidence."""
 import argparse
 import hashlib
 import json
@@ -67,8 +67,8 @@ def run(config_path,run_dir,*,verify=True):
     try:
         config=load_config(config_path);environment=json.loads((run_dir/'environment.json').read_text())
         options=environment['quality'];size=options['size'];fold=FoldSpec.evaluation(options['fold'])
-        if options['stage'] not in ('baselines','graph') or size not in ('demo','pilot','full'):raise ValueError('Only Q1/Q2 are implemented')
-        result['stage']='Q2' if options['stage']=='graph' else 'Q1'
+        if options['stage'] not in ('baselines','graph','ranker') or size not in ('demo','pilot','full'):raise ValueError('Only Q1–Q3 are implemented')
+        result['stage']={'baselines':'Q1','graph':'Q2','ranker':'Q3'}[options['stage']]
         result.update(source_commit=environment['source_commit'],size=size,fold=fold.model_dump(mode='json'))
         atomic_json(run_dir/'config.resolved.json',config.model_dump())
         code=subprocess.run([sys.executable,'-m','pytest','tests/unit','tests/integration/test_quality_folds.py','-q','-p','no:cacheprovider'],check=False).returncode if verify else 0
@@ -85,7 +85,10 @@ def run(config_path,run_dir,*,verify=True):
             customers=sorted(sorted(customers,key=lambda c:(hashlib.sha256(b'42:'+c.encode()).digest(),c))[:config.pilot_users])
             labels=labels.filter(pl.col('customer_id').is_in(customers))
         if not customers:raise ValueError('Empty validation population')
-        if options['stage']=='graph':
+        if options['stage']=='ranker':
+            from hm_recommender.quality.ranker_stage import run_ranker_stage
+            result.update(run_ranker_stage(environment,dataset,fold,config,customers,labels,total,work))
+        elif options['stage']=='graph':
             from hm_recommender.quality.graph_stage import run_graph_stage
             result.update(run_graph_stage(environment,dataset,fold,config,customers,labels,total,work))
         else:

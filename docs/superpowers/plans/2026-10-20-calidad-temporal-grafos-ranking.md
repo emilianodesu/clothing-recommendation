@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1-A/Q1-B cerrados tras revisar los cinco reportes mac24; evidencia en `evidence/quality-q1-review.json`. Q2–Q4 pendientes**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1/Q2 cerradas tras revisar sus reportes mac24. Q3 implementada, en verificación local; campaña mac24 y Q4 pendientes**.
 
 ## Global Constraints
 
@@ -131,15 +131,16 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 
 **Interfaces:** `build_ranking_examples(dataset: DatasetManifest, fold: FoldSpec, pool: Literal['H','G'], config: QualityConfig, output_dir: Path) -> TrainingTable`; `fit_ranker(table: TrainingTable, config: QualityConfig, output_dir: Path) -> RankerManifest`; `rerank(model: RankerManifest, candidates: RankingArtifact, snapshot: FoldManifest, graph: GraphManifest, output_dir: Path) -> RankingArtifact`.
 
-- [ ] Instalar una versión LightGBM CPU compatible con Python/NumPy actuales en imagen Linux ARM64; fijar versión y dependencias en lock antes del piloto. Verificar resolución AMD64 por separado. Si necesita OpenMP, fijar/registrar dependencia del sistema; no cambiar locks históricos ni instalar en host. Verificación de importación/ajuste pequeño/save-load precede a datos reales.
-- [ ] Escribir RED de esquema exacto 20 columnas, cutoff semanal, posición ausente=201, recencia ausente=91, afinidad sin historia=0 y `test_future_label_never_enters_features`. Cada grupo tiene una semana y usuario; suma de tamaños de grupos igual a filas.
-- [ ] Implementar características y candidatos por cada inicio semanal; reutilizar Q1/Q2 bajo identidad de caché fuente/corte/protocolo, nunca el grafo del fold externo para semanas antiguas. Los cuatro grafos/snapshots internos pueden compartirse entre RH/RG con hashes verificados.
-- [ ] Escribir RED `test_missing_positive_not_injected`, `test_training_sampling_is_deterministic`, `test_zero_positive_groups_counted_not_evaluated_away`. Ajuste conserva todos los positivos recuperados y hasta 20 negativos; evaluación interna/externa conserva pools completos y todos los compradores. En piloto limitar por hash hasta 2,000 grupos por semana, dejando constancia; full no muestrea grupos.
-- [ ] Implementar tablas, sampling y contigüidad de grupos; registrar transacciones, semanas, compradores, grupos/filas antes/después de filtros, positivos fuera del pool y uso máximo de disco/RAM. Un binario LightGBM no sustituye esas conciliaciones.
-- [ ] Escribir RED `test_outer_fold_not_used_for_early_stopping`, `test_inner_ndcg_keeps_missing_relevant_denominator`, `test_refit_uses_four_weeks_and_selected_iterations`, `test_reranking_preserves_candidate_set_and_recall` y save/load con orden igual en fixture. Un relevante recuperado de cuatro no obtiene NDCG=1; un grupo sin aciertos vale cero y permanece en la media. Probar empates por ID y schema incompatible rechazado.
-- [ ] Implementar ajuste interno con tres semanas, early stopping en cuarta y refit con cuatro según parámetros del diseño; `metric='None'` y evaluador personalizado conservan la definición de NDCG del proyecto. Si no hay grupos entrenables, producir fallo explícito; la demo debe incluir suficientes grupos para ejercer el contrato, sin alterar hiperparámetros del protocolo H&M.
+- [x] Instalar una versión LightGBM CPU compatible con Python/NumPy actuales en imagen Linux ARM64; fijar versión y dependencias en lock antes del piloto. Verificar resolución AMD64 por separado. Si necesita OpenMP, fijar/registrar dependencia del sistema; no cambiar locks históricos ni instalar en host. Verificación de importación/ajuste pequeño/save-load precede a datos reales.
+- [x] Escribir RED de esquema exacto 20 columnas, cutoff semanal, posición ausente=201, recencia ausente=91, afinidad sin historia=0 y `test_future_label_never_enters_features`. Cada grupo tiene una semana y usuario; suma de tamaños de grupos igual a filas.
+- [x] Implementar características y candidatos por cada inicio semanal; reutilizar Q1/Q2 bajo identidad de caché fuente/corte/protocolo, nunca el grafo del fold externo para semanas antiguas. Los cuatro grafos/snapshots internos pueden compartirse entre RH/RG con hashes verificados.
+- [x] Escribir RED `test_missing_positive_not_injected`, `test_training_sampling_is_deterministic`, `test_zero_positive_groups_counted_not_evaluated_away`. Ajuste conserva todos los positivos recuperados y hasta 20 negativos; evaluación interna/externa conserva pools completos y todos los compradores. En piloto limitar por hash hasta 2,000 grupos por semana, dejando constancia; full no muestrea grupos.
+- [x] Implementar tablas, sampling y contigüidad de grupos; registrar transacciones, semanas, compradores, grupos/filas antes/después de filtros, positivos fuera del pool y uso máximo de disco/RAM. Un binario LightGBM no sustituye esas conciliaciones.
+- [x] Escribir RED `test_outer_fold_not_used_for_early_stopping`, `test_inner_ndcg_keeps_missing_relevant_denominator`, `test_refit_uses_four_weeks_and_selected_iterations`, `test_reranking_preserves_candidate_set_and_recall` y save/load con orden igual en fixture. Un relevante recuperado de cuatro no obtiene NDCG=1; un grupo sin aciertos vale cero y permanece en la media. Probar empates por ID y schema incompatible rechazado.
+- [x] Implementar ajuste interno con tres semanas, early stopping en cuarta y refit con cuatro según parámetros del diseño; `metric='None'` y evaluador personalizado conservan la definición de NDCG del proyecto. Si no hay grupos entrenables, producir fallo explícito; la demo debe incluir suficientes grupos para ejercer el contrato, sin alterar hiperparámetros del protocolo H&M.
 - [ ] Ejecutar nuevas pruebas, suite quality/host, bootstrap tras cambio de imagen y demo real sin montajes auxiliares; publicar commit. Prompt mac24 Q3: demo y piloto de H, luego demo y piloto de G; full RH V1 → V2 → V3, luego RG V1 → V2 → V3. Comprobar presupuesto antes de cada uno y conservar todos los reportes.
 - [ ] Recibir/validar reportes y registrar `evidence/quality-q3-mac24.json`. Comparar RH con H, RG con G y RG con RH para explicar ordenamiento y recuperación; selección formal sólo en Q4 contra H y con full de tres folds.
+
 
 ## Q4 · Selección, explicación y enlace con despliegue
 
@@ -162,7 +163,7 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 3. **Aquí:** descargar y auditar Q1; preparar Q2 y después Q3, cada una con su propio commit y prompt. Q4 se calcula donde estén los artefactos individuales y devuelve sólo agregados.
 4. **Después de selección:** completar T4–T8. Un modelo más complejo sólo llega al servicio si cumple la regla; los experimentos del curso se entregan aunque pierdan.
 
-Estado actual: Q1/Q2 implementadas, ejecutadas y revisadas; continuar por el paso 3 con desarrollo Q3. Todavía no hay comando Q3 para mac24. No repetir las secuencias históricas por recibir el plan; cada etapa requiere su entrega ejecutable y prompt propios.
+Estado actual: Q1/Q2 cerradas; Q3 implementada con su [guía](../../ranker-quality.md), en verificación local antes de entregar el commit mac24. No repetir las secuencias históricas por recibir el plan; cada etapa requiere su entrega ejecutable y prompt propios.
 
 ## Presupuesto de trabajo y dependencias
 
