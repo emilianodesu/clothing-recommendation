@@ -291,3 +291,15 @@ Para recibirlos, usa `SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-han
 ## T3: diagnóstico sobre el checkpoint ya entrenado
 
 Demo, pilotos y full ya pasaron en mac24. Continúa con [el procedimiento de diagnóstico](diagnostics.md), primero sobre el origen demo y después sobre el full. `diagnose-job` fija origen/commit/recursos y produce reportes privados separados; no repitas entrenamiento ni abras test. La guía incluye comandos, interpretación de métricas y entrega al agente de desarrollo.
+
+
+### Retorno del diagnóstico T3 de mac24
+
+Los diagnósticos demo y full pasaron en `b4248cc80337dc524ce1d505b4c96248278a3119` y reprodujeron exactamente las métricas originales. Ver [resultados, controles y Releases](diagnostics.md#resultado-físico-en-mac24) y [evidencia agregada](../evidence/mac24-t3-diagnostics-2026-10-19.json). Para recibirlos en la máquina principal:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download diagnose-mac24-20261020T012621Z-0f44f776
+SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download diagnose-mac24-20261020T012703Z-46890b00
+```
+
+La descarga valida los paquetes. La conclusión requiere revisión: full pierde frente a popularidad de 7 días y comparte muchas recomendaciones entre usuarios. `passed` acredita ejecución e integridad; `quality_accepted` sigue en false. No se inició T4 ni se repitieron entrenamientos. La publicación no activa automáticamente al agente principal.

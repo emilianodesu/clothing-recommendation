@@ -74,6 +74,48 @@ GitHub transporta evidencia; no activa al otro agente. El usuario avisa cuando l
 
 Se probaron 84 casos únicos: 50 host, 12 unitarios, 4 de entrenamiento, 2 de diagnóstico, 8 de datos y 8 de bootstrap. En la Mac de desarrollo de 16 GiB se ejecutaron dos diagnósticos desacoplados desde `bfa7b7a`: demo (4.185 s, 0.455 GiB pico de contenedor) y checkpoint H&M del piloto de 10,000 usuarios entrenados (13.539 s, 1.008 GiB; evaluación de 2,000 compradores y 102,967 artículos). Ambos reprodujeron las métricas originales, sin swap/OOM y con hashes del entrenamiento intactos. Los tiempos excluyen construir la imagen. Véase [evidencia local](../evidence/local-t3-diagnostics.json); no representa ejecución full en mac24.
 
-En ese piloto, popularidad reciente supera al modelo y hay mucha coincidencia entre recomendaciones de distintos compradores. Esto demuestra que el diagnóstico detecta diferencias útiles; todavía debe ejecutarse sobre el checkpoint full de mac24 para decidir cambios al modelo.
+En ese piloto, popularidad reciente supera al modelo y hay mucha coincidencia entre recomendaciones de distintos compradores. Esto demuestra que el diagnóstico detecta diferencias útiles; la ejecución posterior sobre el checkpoint full de mac24 se documenta abajo para revisar posibles cambios al modelo.
 
 Revisión independiente: sin defectos bloqueantes. Mejoras menores diferidas: el esquema acepta hasta 10,000 usuarios aunque el perfil entregado fija 5,000; los fallos de integridad muestran fase y tipo de error, pero la causa precisa dentro de `source` requiere inspección local. No se modificó el perfil para ampliar la muestra.
+
+
+## Resultado físico en mac24
+
+Ambos diagnósticos pasaron desde el commit limpio `b4248cc80337dc524ce1d505b4c96248278a3119`, reproduciendo exactamente todos los campos de evaluación de los reportes originales. Colima: 14 GiB/4 CPU; jobs: 10 GiB/3 CPU/2 hilos. Entradas montadas en lectura, contenedores sin red. No se entrenó, evaluó test ni inició T4. `quality_accepted` permanece en false.
+
+| Origen | Run ID / Release | Tiempo | Pico RSS / cgroup |
+| --- | --- | ---: | ---: |
+| Demo | [diagnose-mac24-20261020T012621Z-0f44f776](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012621Z-0f44f776) | 4.678 s | 0.331 / 0.454 GiB |
+| Full | [diagnose-mac24-20261020T012703Z-46890b00](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012703Z-46890b00) | 121.299 s | 1.926 / 2.569 GiB |
+
+Swap máximo y eventos OOM: cero en ambos. Los tiempos excluyen construir la imagen. Los run_id usan UTC del 20 de octubre; fecha local de ejecución: 19 de octubre de 2026, America/Mexico_City. Ambos ZIP fueron exportados, validados y publicados con descarga verificada. La [evidencia agregada](../evidence/mac24-t3-diagnostics-2026-10-19.json) conserva las huellas, recursos, controles y resultados completos de ambas corridas.
+
+Full: 72,019 compradores y 102,967 artículos del catálogo de validación.
+
+| Método | MAP@12 | NDCG@12 | Recall@200 |
+| --- | ---: | ---: | ---: |
+| Modelo | 0.005768773 | 0.011201051 | 0.138934855 |
+| Popularidad histórica | 0.003444009 | 0.006318059 | 0.064267564 |
+| Popularidad 7 días | 0.006604104 | 0.012604620 | 0.167579202 |
+| Popularidad 28 días | 0.005592524 | 0.011816721 | 0.144753568 |
+
+Popularidad de 7 días supera al modelo en las tres métricas. La referencia de 28 días supera NDCG y Recall; el modelo sólo tiene MAP ligeramente mayor. Superar popularidad histórica no basta para aceptar calidad.
+
+| Concentración full | Top12 | Top200 |
+| --- | ---: | ---: |
+| Artículos distintos | 53 | 536 |
+| Cobertura | 0.05147% | 0.52056% |
+| Artículos efectivos por entropía | 18.71 | 265.70 |
+| Listas ordenadas distintas | 32,874 | 66,625 |
+| Conjuntos distintos | 651 | 65,843 |
+| Exposición de los 10 artículos más expuestos | 73.87% | 5.00% |
+
+En la muestra determinista de 5,000 compradores, la coincidencia top12 media entre usuarios fue 74.82%, Jaccard 0.6236 y listas ordenadas idénticas 0.64%. Los controles se comparan con el modelo normal de esa misma muestra, no con las métricas full:
+
+| Control | Delta MAP@12 | Delta NDCG@12 | Delta Recall@200 | Coincidencia top12 con normal |
+| --- | ---: | ---: | ---: | ---: |
+| ID desconocido, historial conservado | -0.001715575 | -0.002850166 | -0.018028313 | 50.72% |
+| IDs permutados, historial conservado | +0.000142876 | +0.000113707 | -0.003076262 | 83.04% |
+| Historiales permutados, ID conservado | +0.000056738 | -0.000311192 | -0.002501999 | 78.93% |
+
+Eliminar el ID reduce las métricas; permutar IDs o historiales apenas las empeora en agregado. Estos controles y la concentración requieren revisión antes de aceptar personalización; no prueban causalidad. Próximo paso: revisar esta evidencia en la máquina principal y decidir experimentos con validación mediante una nueva instrucción.

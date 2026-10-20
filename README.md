@@ -24,7 +24,7 @@ Sigue [T3 en la segunda Mac](docs/second-mac.md#t3-entrenar-y-devolver-evidencia
 
 ## Diagnosticar el modelo existente
 
-El siguiente paso en mac24 es [diagnosticar concentración y personalización](docs/diagnostics.md) con `diagnose-job`: reproduce la evaluación del checkpoint full, compara popularidad de 7/28 días y mide cambios al modificar las entradas del usuario. Reutiliza pesos en lectura y devuelve agregados por GitHub. No entrena ni evalúa test; la aceptación de calidad sigue pendiente.
+El diagnóstico de demo y full en mac24 ya pasó; la [evidencia](evidence/mac24-t3-diagnostics-2026-10-19.json) muestra que popularidad de 7 días supera al modelo y confirma concentración alta. La calidad permanece pendiente de revisión. Para [diagnosticar concentración y personalización](docs/diagnostics.md) se usa `diagnose-job`: reproduce la evaluación del checkpoint full, compara popularidad de 7/28 días y mide cambios al modificar las entradas del usuario. Reutiliza pesos en lectura y devuelve agregados por GitHub. No entrena ni evalúa test; la aceptación de calidad sigue pendiente.
 
 ## Instalar la infraestructura del proyecto
 

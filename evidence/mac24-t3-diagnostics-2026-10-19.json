@@ -1,0 +1,615 @@
+{
+  "schema_version": 1,
+  "stage": "T3-diagnostics",
+  "machine_id": "mac24",
+  "local_date": "2026-10-19",
+  "timezone": "America/Mexico_City",
+  "status": "passed",
+  "quality_accepted": false,
+  "scope": "Read-only diagnosis of existing demo/full checkpoints; no training, test evaluation or T4.",
+  "colima": {
+    "profile": "hm-project",
+    "configured_memory_gib": 14,
+    "engine_memory_bytes": 14623768576,
+    "cpus": 4
+  },
+  "runs": [
+    {
+      "run_id": "diagnose-mac24-20261020T012621Z-0f44f776",
+      "source_run_id": "train-mac24-20261020T004703Z-a09df9b2",
+      "source_commit": "b4248cc80337dc524ce1d505b4c96248278a3119",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012621Z-0f44f776",
+      "archive_sha256": "5f2889d836626e2bc8e6bd9b0da81891d24420b7d9a8c549f15fe697bd31b86c",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "isolation": {
+        "network": "none",
+        "writable_mounts": [
+          "/artifacts/data-jobs/diagnose-mac24-20261020T012621Z-0f44f776"
+        ]
+      },
+      "job_duration_seconds": 4.677554972000507,
+      "peak_rss_bytes": 355037184,
+      "cgroup_peak_bytes": 487370752,
+      "swap_peak_bytes": 0,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "verification_exit_code": 0,
+      "replay_exact_equal_to_original": true,
+      "diagnostic": {
+        "baselines": {
+          "historical": {
+            "metrics": {
+              "map_at_12": 0.20251596047050593,
+              "ndcg_at_12": 0.3371445045045612,
+              "recall_at_200": 0.9898989898989898
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.3410388716890265,
+              "mean_overlap": 0.5025252525252525
+            }
+          },
+          "recent_28d": {
+            "metrics": {
+              "map_at_12": 0.20251596047050593,
+              "ndcg_at_12": 0.3371445045045612,
+              "recall_at_200": 0.9898989898989898
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.3410388716890265,
+              "mean_overlap": 0.5025252525252525
+            }
+          },
+          "recent_7d": {
+            "metrics": {
+              "map_at_12": 0.20251596047050593,
+              "ndcg_at_12": 0.3371445045045612,
+              "recall_at_200": 0.9898989898989898
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.3410388716890265,
+              "mean_overlap": 0.5025252525252525
+            }
+          }
+        },
+        "controls": {
+          "permuted_history": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.5454545454545454,
+              "mean_jaccard": 0.9627039627039627,
+              "mean_overlap": 0.9797979797979797
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": 0.0,
+              "ndcg_at_12": 0.0,
+              "recall_at_200": 0.0
+            },
+            "exposure_at_12": {
+              "coverage": 1.0,
+              "distinct_items": 24,
+              "effective_items": 23.742185176920515,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.05303030303030303,
+                "10": 0.4696969696969697,
+                "5": 0.2474747474747475,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 33,
+              "unique_sets": 33
+            },
+            "metrics": {
+              "map_at_12": 0.9747474747474747,
+              "ndcg_at_12": 0.9817057694109114,
+              "recall_at_200": 0.9898989898989898
+            },
+            "unchanged_input_rows": 5
+          },
+          "permuted_user_id": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.37403595560083036,
+              "mean_overlap": 0.5176767676767677
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": -0.8413255935983208,
+              "ndcg_at_12": -0.7338331493905768,
+              "recall_at_200": 0.0
+            },
+            "exposure_at_12": {
+              "coverage": 1.0,
+              "distinct_items": 24,
+              "effective_items": 23.78327587296624,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.05303030303030303,
+                "10": 0.4696969696969697,
+                "5": 0.2474747474747475,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 33,
+              "unique_sets": 33
+            },
+            "metrics": {
+              "map_at_12": 0.13342188114915388,
+              "ndcg_at_12": 0.24787262002033467,
+              "recall_at_200": 0.9898989898989898
+            },
+            "unchanged_input_rows": 0
+          },
+          "zero_user_id": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.030303030303030304,
+              "mean_jaccard": 0.497871065982521,
+              "mean_overlap": 0.6515151515151515
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": -0.6876579649306922,
+              "ndcg_at_12": -0.5371002188952798,
+              "recall_at_200": 0.0
+            },
+            "exposure_at_12": {
+              "coverage": 0.7916666666666666,
+              "distinct_items": 19,
+              "effective_items": 17.785863648558564,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333333333333,
+                "10": 0.648989898989899,
+                "5": 0.4166666666666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 4,
+              "unique_sets": 4
+            },
+            "metrics": {
+              "map_at_12": 0.28708950981678255,
+              "ndcg_at_12": 0.4446055505156315,
+              "recall_at_200": 0.9898989898989898
+            },
+            "unchanged_input_rows": 1
+          }
+        },
+        "normal": {
+          "exposure_at_12": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 23.823351790223935,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.05303030303030303,
+              "10": 0.4595959595959596,
+              "5": 0.24242424242424243,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 33
+          },
+          "exposure_at_200": {
+            "coverage": 1.0,
+            "distinct_items": 24,
+            "effective_items": 23.999999999999993,
+            "k": 24,
+            "top_exposure_share": {
+              "1": 0.041666666666666664,
+              "10": 0.4166666666666667,
+              "5": 0.20833333333333334,
+              "50": 1.0
+            },
+            "unique_ordered_lists": 33,
+            "unique_sets": 1
+          },
+          "metrics": {
+            "map_at_12": 0.9747474747474747,
+            "ndcg_at_12": 0.9817057694109114,
+            "recall_at_200": 0.9898989898989898
+          }
+        },
+        "population": {
+          "catalog_size": 24,
+          "known_users": 32,
+          "new_users": 1,
+          "users": 33
+        },
+        "quality_accepted": false,
+        "replay": {
+          "coverage": 1.0,
+          "evaluated_users": 33,
+          "exact_catalog_size": 24,
+          "excluded_population": "registered customers",
+          "excluded_users": 0,
+          "map_at_12": 0.9747474747474747,
+          "ndcg_at_12": 0.9817057694109114,
+          "new_item_recall_at_200": 0.0,
+          "out_of_catalog_relevant_items": 1,
+          "period_end": "2020-09-16",
+          "period_start": "2020-09-09",
+          "popularity": {
+            "map_at_12": 0.20251596047050593,
+            "ndcg_at_12": 0.3371445045045612,
+            "recall_at_200": 0.9898989898989898
+          },
+          "recall_at_200": 0.9898989898989898,
+          "sampled_out_users": 0,
+          "segments": {
+            "known_user": {
+              "map_at_12": 0.9895833333333333,
+              "ndcg_at_12": 0.9926675199058944,
+              "recall_at_200": 0.9895833333333333,
+              "users": 32
+            },
+            "new_user": {
+              "map_at_12": 0.5,
+              "ndcg_at_12": 0.6309297535714575,
+              "recall_at_200": 1.0,
+              "users": 1
+            },
+            "users_with_new_items": {
+              "map_at_12": 0.6666666666666666,
+              "ndcg_at_12": 0.7653606369886217,
+              "recall_at_200": 0.6666666666666666,
+              "users": 1
+            }
+          },
+          "test_evaluated": false,
+          "validation_buyers": 33
+        },
+        "replay_verified": true,
+        "sample": {
+          "inter_user_comparison_at_12": {
+            "identical_order_fraction": 0.0,
+            "mean_jaccard": 0.36292114865151737,
+            "mean_overlap": 0.5025252525252526
+          },
+          "known_users": 32,
+          "new_users": 1,
+          "normal_metrics": {
+            "map_at_12": 0.9747474747474747,
+            "ndcg_at_12": 0.9817057694109114,
+            "recall_at_200": 0.9898989898989898
+          },
+          "seed": 42,
+          "users": 33
+        },
+        "test_evaluated": false
+      }
+    },
+    {
+      "run_id": "diagnose-mac24-20261020T012703Z-46890b00",
+      "source_run_id": "train-mac24-20261020T004913Z-9d2fb726",
+      "source_commit": "b4248cc80337dc524ce1d505b4c96248278a3119",
+      "source_clean": true,
+      "status": "passed",
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012703Z-46890b00",
+      "archive_sha256": "93924cc76b5b9507916a6b9046f378e6011843fbf0a7dbd24af2669ff71d10f4",
+      "archive_validated": true,
+      "publication_download_verified": true,
+      "resources": {
+        "name": "mac24",
+        "sha256": "0201a7d0b8109877a0c468a5170e5d9945c6b39d0d433fe3f299c4fb9e85b424",
+        "config": {
+          "schema_version": 1,
+          "colima": {
+            "memory_gib": 14,
+            "cpus": 4
+          },
+          "job": {
+            "memory_gib": 10,
+            "cpus": 3,
+            "threads": 2
+          }
+        }
+      },
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "isolation": {
+        "network": "none",
+        "writable_mounts": [
+          "/artifacts/data-jobs/diagnose-mac24-20261020T012703Z-46890b00"
+        ]
+      },
+      "job_duration_seconds": 121.29920086199945,
+      "peak_rss_bytes": 2068246528,
+      "cgroup_peak_bytes": 2758340608,
+      "swap_peak_bytes": 0,
+      "memory_events": {
+        "high": 0,
+        "low": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_group_kill": 0,
+        "oom_kill": 0
+      },
+      "verification_exit_code": 0,
+      "replay_exact_equal_to_original": true,
+      "diagnostic": {
+        "baselines": {
+          "historical": {
+            "metrics": {
+              "map_at_12": 0.0034440087457057516,
+              "ndcg_at_12": 0.006318058900555215,
+              "recall_at_200": 0.064267563886081
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.022967525924776938,
+              "mean_overlap": 0.04299906968994292
+            }
+          },
+          "recent_28d": {
+            "metrics": {
+              "map_at_12": 0.005592524394370606,
+              "ndcg_at_12": 0.011816721393963864,
+              "recall_at_200": 0.14475356755258173
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.20619227620786418,
+              "mean_overlap": 0.3413832923719204
+            }
+          },
+          "recent_7d": {
+            "metrics": {
+              "map_at_12": 0.006604104344810876,
+              "ndcg_at_12": 0.012604619891802515,
+              "recall_at_200": 0.1675792021498753
+            },
+            "overlap_with_model_at_12": {
+              "identical_order_fraction": 0.0,
+              "mean_jaccard": 0.20162553780007192,
+              "mean_overlap": 0.33497178985175213
+            }
+          }
+        },
+        "controls": {
+          "permuted_history": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.0262,
+              "mean_jaccard": 0.6919313047978629,
+              "mean_overlap": 0.7893333333333333
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": 5.673794583643029e-05,
+              "ndcg_at_12": -0.00031119236712321904,
+              "recall_at_200": -0.002501999292977536
+            },
+            "exposure_at_12": {
+              "coverage": 0.0005050161702292968,
+              "distinct_items": 52,
+              "effective_items": 20.139451972842327,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.0814,
+                "10": 0.7248833333333333,
+                "5": 0.39975,
+                "50": 0.9999666666666667
+              },
+              "unique_ordered_lists": 4180,
+              "unique_sets": 284
+            },
+            "metrics": {
+              "map_at_12": 0.005946106885178313,
+              "ndcg_at_12": 0.010927237235843124,
+              "recall_at_200": 0.13626038440937924
+            },
+            "unchanged_input_rows": 32
+          },
+          "permuted_user_id": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.0066,
+              "mean_jaccard": 0.7341330916761257,
+              "mean_overlap": 0.8304166666666668
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": 0.00014287594456209238,
+              "ndcg_at_12": 0.00011370696598630298,
+              "recall_at_200": -0.0030762616654071706
+            },
+            "exposure_at_12": {
+              "coverage": 0.0004953043208018103,
+              "distinct_items": 51,
+              "effective_items": 20.22024465643406,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08145,
+                "10": 0.72435,
+                "5": 0.3992,
+                "50": 0.9999833333333333
+              },
+              "unique_ordered_lists": 4176,
+              "unique_sets": 280
+            },
+            "metrics": {
+              "map_at_12": 0.006032244883903975,
+              "ndcg_at_12": 0.011352136568952646,
+              "recall_at_200": 0.1356861220369496
+            },
+            "unchanged_input_rows": 32
+          },
+          "zero_user_id": {
+            "comparison_with_normal_at_12": {
+              "identical_order_fraction": 0.0834,
+              "mean_jaccard": 0.38435524311018987,
+              "mean_overlap": 0.5071666666666667
+            },
+            "delta_from_normal_sample": {
+              "map_at_12": -0.0017155754314428558,
+              "ndcg_at_12": -0.00285016615774554,
+              "recall_at_200": -0.018028313101893387
+            },
+            "exposure_at_12": {
+              "coverage": 0.0004564569230918644,
+              "distinct_items": 47,
+              "effective_items": 31.471621527687088,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.0705,
+                "10": 0.49945,
+                "5": 0.28808333333333336,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1428,
+              "unique_sets": 139
+            },
+            "metrics": {
+              "map_at_12": 0.004173793507899027,
+              "ndcg_at_12": 0.008388263445220803,
+              "recall_at_200": 0.12073407060046339
+            },
+            "unchanged_input_rows": 417
+          }
+        },
+        "normal": {
+          "exposure_at_12": {
+            "coverage": 0.0005147280196567832,
+            "distinct_items": 53,
+            "effective_items": 18.712431010710432,
+            "k": 12,
+            "top_exposure_share": {
+              "1": 0.08333333333333333,
+              "10": 0.7386569284957211,
+              "5": 0.41121903016333655,
+              "50": 0.9999965286938169
+            },
+            "unique_ordered_lists": 32874,
+            "unique_sets": 651
+          },
+          "exposure_at_200": {
+            "coverage": 0.005205551293132752,
+            "distinct_items": 536,
+            "effective_items": 265.69924862647525,
+            "k": 200,
+            "top_exposure_share": {
+              "1": 0.005,
+              "10": 0.05,
+              "5": 0.025,
+              "50": 0.249999791721629
+            },
+            "unique_ordered_lists": 66625,
+            "unique_sets": 65843
+          },
+          "metrics": {
+            "map_at_12": 0.005768772780180198,
+            "ndcg_at_12": 0.011201051085701753,
+            "recall_at_200": 0.1389348547991153
+          }
+        },
+        "population": {
+          "catalog_size": 102967,
+          "known_users": 66624,
+          "new_users": 5395,
+          "users": 72019
+        },
+        "quality_accepted": false,
+        "replay": {
+          "coverage": 0.0005147280196567832,
+          "evaluated_users": 72019,
+          "exact_catalog_size": 102967,
+          "excluded_population": "registered customers",
+          "excluded_users": 1299961,
+          "map_at_12": 0.005768772780180198,
+          "ndcg_at_12": 0.011201051085701753,
+          "new_item_recall_at_200": 0.0,
+          "out_of_catalog_relevant_items": 11385,
+          "period_end": "2020-09-16",
+          "period_start": "2020-09-09",
+          "popularity": {
+            "map_at_12": 0.0034440087457057516,
+            "ndcg_at_12": 0.006318058900555215,
+            "recall_at_200": 0.064267563886081
+          },
+          "recall_at_200": 0.1389348547991153,
+          "sampled_out_users": 0,
+          "segments": {
+            "known_user": {
+              "map_at_12": 0.005853223972399668,
+              "ndcg_at_12": 0.011331051652699913,
+              "recall_at_200": 0.1401797255513596,
+              "users": 66624
+            },
+            "new_user": {
+              "map_at_12": 0.004725867084085673,
+              "ndcg_at_12": 0.009595646493359701,
+              "recall_at_200": 0.12356168167631133,
+              "users": 5395
+            },
+            "users_with_new_items": {
+              "map_at_12": 0.0036932217754958065,
+              "ndcg_at_12": 0.009374596207316436,
+              "recall_at_200": 0.08439651279336584,
+              "users": 8418
+            }
+          },
+          "test_evaluated": false,
+          "validation_buyers": 72019
+        },
+        "replay_verified": true,
+        "sample": {
+          "inter_user_comparison_at_12": {
+            "identical_order_fraction": 0.0064,
+            "mean_jaccard": 0.6235939685701296,
+            "mean_overlap": 0.7482
+          },
+          "known_users": 4583,
+          "new_users": 417,
+          "normal_metrics": {
+            "map_at_12": 0.005889368939341883,
+            "ndcg_at_12": 0.011238429602966343,
+            "recall_at_200": 0.13876238370235677
+          },
+          "seed": 42,
+          "users": 5000
+        },
+        "test_evaluated": false
+      }
+    }
+  ],
+  "conclusions": [
+    "Full model beats historical popularity but loses to 7-day popularity on MAP@12, NDCG@12 and Recall@200.",
+    "28-day popularity beats full on NDCG@12 and Recall@200; model MAP@12 is slightly higher.",
+    "Full top12 covers 53 items; 10 most exposed items receive 73.8657% of exposures.",
+    "Across sampled users, mean top12 overlap is 74.82%; permuting IDs or histories barely degrades aggregate metrics.",
+    "Controls measure sensitivity, not causality or proof of sufficient personalization. Quality remains unaccepted."
+  ]
+}
