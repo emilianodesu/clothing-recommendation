@@ -7,11 +7,11 @@
   "selected_method": "H",
   "data_as_of": "2020-09-09",
   "local_checks": {
-    "host_tests": 78,
+    "host_tests": 79,
     "scientific_tests": 121,
     "serving_integration_tests_in_scientific_suite": 28,
     "docker_bootstrap_tests": 8,
-    "distinct_passed_tests": 207,
+    "distinct_passed_tests": 208,
     "external_tracking_skipped": 1,
     "known_warnings": 3,
     "scientific_execution": "Built Docker image without source mounts; 121 passed in 20.63s",
@@ -19,9 +19,10 @@
       "unit": 60,
       "integration": 28,
       "host": 78,
-      "status": "passed"
+      "status": "passed",
+      "source_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1"
     },
-    "bootstrap": "8 passed; no Compose/migration changes in subsequent CLI/session fixes",
+    "bootstrap": "8 passed after shutdown fix; official verify --suite bootstrap also passed 60 unit and 79 host",
     "closed_report_reader": "passed",
     "private_github_upload_and_download_verification": "passed",
     "invocation_correction": "Host-only bootstrap cannot be collected inside jobs; it ran separately from the host. Full image suite excludes that file."
@@ -226,5 +227,17 @@
     "Events/UI/scheduler/portable backup remain T5-T7; no test labels were evaluated.",
     "Closed reports travel through private GitHub, service packages remain local."
   ],
-  "next_step": "Execute T4-B exactly once on mac24 using the existing T4-A packages, publish closed report, then review before T5."
+  "next_step": "Execute T4-B exactly once on mac24 using the existing T4-A packages, publish closed report, then review before T5.",
+  "post_review_cleanup_fix": {
+    "commit": "d926c11628f84fec1f068325075f7f05574f896f",
+    "finding": "Actual project down left API running because its Compose profile was disabled.",
+    "fix": "Use all Compose profiles for down, without removing volumes.",
+    "test": "test_project_down_includes_all_profiles_and_preserves_volumes",
+    "red_then_green": true,
+    "host_tests_passed": 79,
+    "actual_docker_check": "Clean clone down removed API and its network; PostgreSQL volume remains.",
+    "api_source_changed": false,
+    "closed_http_report_unchanged": true,
+    "bootstrap_tests_passed": 8
+  }
 }

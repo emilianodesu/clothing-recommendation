@@ -20,7 +20,7 @@ Q1, Q2 y Q3 están cerradas operativamente: se descargaron y verificaron cinco, 
 
 ## Servir recomendaciones (T4-B)
 
-Seguir [docs/serving.md](docs/serving.md): reconstruir imágenes, verificar `--suite serving`, iniciar `up --profile serve` y preparar/activar un paquete local. El perfil usa sólo PostgreSQL y API. La [evidencia local](evidence/serving.json) registra 207 pruebas distintas aprobadas y un ensayo sintético de 205 consultas HTTP con reinicio/rollback; H&M aún requiere mac24. `serving-check` comprueba HTTP, reinicio y rollback, y genera un ZIP agregado para GitHub. La [arquitectura](docs/architecture.md) explica persistencia, filtros y límites. Mac24 debe ejecutar el [prompt T4-B](docs/mac24-t4b-prompt.md) una vez con sus paquetes existentes; test y carga sostenida siguen reservados para T8.
+Seguir [docs/serving.md](docs/serving.md): reconstruir imágenes, verificar `--suite serving`, iniciar `up --profile serve` y preparar/activar un paquete local. El perfil usa sólo PostgreSQL y API. La [evidencia local](evidence/serving.json) registra 208 pruebas distintas aprobadas y un ensayo sintético de 205 consultas HTTP con reinicio/rollback; H&M aún requiere mac24. `serving-check` comprueba HTTP, reinicio y rollback, y genera un ZIP agregado para GitHub. La [arquitectura](docs/architecture.md) explica persistencia, filtros y límites. Mac24 debe ejecutar el [prompt T4-B](docs/mac24-t4b-prompt.md) una vez con sus paquetes existentes; test y carga sostenida siguen reservados para T8.
 
 ## Empezar en la segunda Mac
 

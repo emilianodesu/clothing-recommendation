@@ -8,12 +8,15 @@ aceptación final ni a haber cumplido las metas de carga. Véase
 ## Evidencia local
 
 El clon limpio `881e0c2` pasó 121 pruebas científicas/servicio (incluidas 28 de
-integración T4-B), 78 de host y ocho de bootstrap Docker: 207 pruebas distintas.
+integración T4-B). Tras corregir también el apagado en `d926c11`, pasaron
+79 de host y ocho de bootstrap Docker: 208 pruebas distintas en total.
 La integración externa MLflow quedó omitida en la suite científica; no hubo
 cambios en tracking. `verify --suite serving` pasó desde las imágenes sin montar
 código del host. La revisión final detectó dos fallos, ambos corregidos con
 regresiones observadas fallar y pasar: opciones de CLI y pérdida de propietario
-PostgreSQL entre comprobación y escritura.
+PostgreSQL entre comprobación y escritura. Al limpiar el ensayo se corrigió
+además `down` para incluir todos los perfiles Compose; se comprobó que elimina
+API/red y conserva el volumen PostgreSQL.
 
 El ensayo `serving-dev-20261021T194554Z-65bdaa1d` pasó con dos paquetes sintéticos
 de 24 artículos y 32 compradores históricos: cinco comprobaciones de 41
