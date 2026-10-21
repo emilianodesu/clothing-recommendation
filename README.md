@@ -6,7 +6,7 @@ Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/e
 
 **Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. T3 incorpora el entrenamiento de dos torres PyTorch, checkpoints, evaluación exacta y MLflow local. T4-A añade paquetes H schema2 y paridad offline, reproducidos y revisados en mac24. T4-B implementa API, activación y rollback con PostgreSQL; su reproducción H&M en mac24 está pendiente. Streamlit y los DAG siguen pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
 
-**Decisión vigente (20 de octubre):** el usuario aprobó ampliar la validación antes de cerrar el motor. Q4 cerró la selección: historial28d+popularidad7d (H) es el motor elegido bajo los criterios predefinidos; test y aceptación final siguen pendientes. El [plan Q1–Q4](docs/superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) añade tres cortes temporales, recuperación por grafo y ordenamiento LightGBM, con presupuesto y criterios de selección fijados antes de medir. [Selección y explicación de resultados](docs/model-selection.md) distingue evidencia, hipótesis y límites. Q1 ya dispone de evaluador y `quality-job`; sigue la [guía de campaña](docs/quality-campaign.md). Los cinco reportes de mac24 ya se descargaron y [revisaron](evidence/quality-q1-review.json): Q1 está cerrada. T4-A también está cerrada; La reproducción de API en mac24 y el test final siguen pendientes.
+**Decisión vigente (20 de octubre):** el usuario aprobó ampliar la validación antes de cerrar el motor. Q4 cerró la selección: historial28d+popularidad7d (H) es el motor elegido bajo los criterios predefinidos; test y aceptación final siguen pendientes. El [plan Q1–Q4](docs/superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) añade tres cortes temporales, recuperación por grafo y ordenamiento LightGBM, con presupuesto y criterios de selección fijados antes de medir. [Selección y explicación de resultados](docs/model-selection.md) distingue evidencia, hipótesis y límites. Q1 ya dispone de evaluador y `quality-job`; sigue la [guía de campaña](docs/quality-campaign.md). Los cinco reportes de mac24 ya se descargaron y [revisaron](evidence/quality-q1-review.json): Q1 está cerrada. T4-A también está cerrada; la reproducción de API en mac24 y el test final siguen pendientes.
 
 ## Campaña de calidad temporal, grafos y ranking
 
@@ -20,7 +20,7 @@ Q1, Q2 y Q3 están cerradas operativamente: se descargaron y verificaron cinco, 
 
 ## Servir recomendaciones (T4-B)
 
-Seguir [docs/serving.md](docs/serving.md): reconstruir imágenes, verificar `--suite serving`, iniciar `up --profile serve` y preparar/activar un paquete local. El perfil usa sólo PostgreSQL y API. `serving-check` comprueba HTTP, reinicio y rollback, y genera un ZIP agregado para GitHub. La [arquitectura](docs/architecture.md) explica persistencia, filtros y límites. Mac24 debe ejecutar el [prompt T4-B](docs/mac24-t4b-prompt.md) una vez con sus paquetes existentes; test y carga sostenida siguen reservados para T8.
+Seguir [docs/serving.md](docs/serving.md): reconstruir imágenes, verificar `--suite serving`, iniciar `up --profile serve` y preparar/activar un paquete local. El perfil usa sólo PostgreSQL y API. La [evidencia local](evidence/serving.json) registra 207 pruebas distintas aprobadas y un ensayo sintético de 205 consultas HTTP con reinicio/rollback; H&M aún requiere mac24. `serving-check` comprueba HTTP, reinicio y rollback, y genera un ZIP agregado para GitHub. La [arquitectura](docs/architecture.md) explica persistencia, filtros y límites. Mac24 debe ejecutar el [prompt T4-B](docs/mac24-t4b-prompt.md) una vez con sus paquetes existentes; test y carga sostenida siguen reservados para T8.
 
 ## Empezar en la segunda Mac
 
@@ -44,7 +44,7 @@ El diagnóstico de demo y full en mac24 ya pasó; la [evidencia](evidence/mac24-
 
 ## Experimento de tres épocas
 
-El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro reportes aprobados en mac24, descargados y verificados en la máquina principal. [Resultados](evidence/mac24-three-epochs-2026-10-20.json): MAP/NDCG empeoraron frente a una época, aunque Recall y cobertura mejoraron; popularidad7d supera ambos modelos. La calidad del experimento no se aceptó. Test sigue reservado; el motor H posterior ya tiene paquete T4-A verificado, con API pendiente.
+El [procedimiento de tres épocas](docs/three-epochs.md) ya produjo cuatro reportes aprobados en mac24, descargados y verificados en la máquina principal. [Resultados](evidence/mac24-three-epochs-2026-10-20.json): MAP/NDCG empeoraron frente a una época, aunque Recall y cobertura mejoraron; popularidad7d supera ambos modelos. La calidad del experimento no se aceptó. Test sigue reservado; el motor H posterior ya tiene paquete T4-A verificado, con reproducción de API pendiente en mac24.
 
 ## Historial reciente: resultados revisados
 

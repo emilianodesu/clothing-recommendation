@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "status": "implemented_locally_mac24_pending",
+  "base_commit": "d62f48e30b1d06cb91c3c4cbe44c4bf80926ce3b",
+  "execution_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
+  "selected_method": "H",
+  "data_as_of": "2020-09-09",
+  "local_checks": {
+    "host_tests": 78,
+    "scientific_tests": 121,
+    "serving_integration_tests_in_scientific_suite": 28,
+    "docker_bootstrap_tests": 8,
+    "distinct_passed_tests": 207,
+    "external_tracking_skipped": 1,
+    "known_warnings": 3,
+    "scientific_execution": "Built Docker image without source mounts; 121 passed in 20.63s",
+    "serving_suite": {
+      "unit": 60,
+      "integration": 28,
+      "host": 78,
+      "status": "passed"
+    },
+    "bootstrap": "8 passed; no Compose/migration changes in subsequent CLI/session fixes",
+    "closed_report_reader": "passed",
+    "private_github_upload_and_download_verification": "passed",
+    "invocation_correction": "Host-only bootstrap cannot be collected inside jobs; it ran separately from the host. Full image suite excludes that file."
+  },
+  "demo": {
+    "run_id": "serving-dev-20261021T194554Z-65bdaa1d",
+    "status": "passed",
+    "source_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
+    "source_clean": true,
+    "archive_sha256": "c8ffbbbb2aace85832876a5b8f4ce3d412012e7df4a26f0d5c18cc4d0b945727",
+    "archive_bytes": 4102,
+    "package_id": "ea6882b8bdb1064ff0fbaa3c676895b393e6c21016431dba88a3b38ccfdf4ea4",
+    "report_published": true,
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-dev-20261021T194554Z-65bdaa1d",
+    "scope": "Two synthetic packages, 32 past buyers and 24 articles; not an H&M run. Local frozen-builder reconstruction matches the original mac24 synthetic manifest hash exactly.",
+    "result": {
+      "stage": "T4-B",
+      "protocol": "history-serving-v1",
+      "status": "passed",
+      "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+      "sources": {
+        "reference": {
+          "run_id": "release-dev-20261021T045736Z-ccdf867f",
+          "archive_sha256": "c39b90c9dfcff0d79da7bbb5c82572b9ca037bdb679d8cbaafcf4749a7edcdd1",
+          "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+          "manifest_sha256": "b01bc414c286fead1b30356e4c0228c86f846cf4d25b9e4d9d9573f415a090a1",
+          "dataset": "synthetic"
+        },
+        "candidate": {
+          "run_id": "release-mac24-20261021T190539Z-02a850f8",
+          "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+          "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+          "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+          "dataset": "synthetic"
+        }
+      },
+      "checks": {
+        "reference": {
+          "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+          "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+          "sampled_buyers": 33,
+          "checked_requests": 41,
+          "filtered_cases": 4,
+          "http_parity": true,
+          "response_sha256": "201b0b8e9a4ec8ab74300d62f837d6ceeba9182c2c232da9b395797fb34ecf38",
+          "catalog_size": 24,
+          "past_buyers": 32,
+          "request_seconds_mean": 0.0005477450031321496,
+          "request_seconds_max": 0.0012948100047651678,
+          "load_benchmark": false
+        },
+        "candidate": {
+          "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+          "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+          "sampled_buyers": 33,
+          "checked_requests": 41,
+          "filtered_cases": 4,
+          "http_parity": true,
+          "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+          "catalog_size": 24,
+          "past_buyers": 32,
+          "request_seconds_mean": 0.0005018965627929968,
+          "request_seconds_max": 0.0007432110141962767,
+          "load_benchmark": false
+        },
+        "restart": {
+          "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+          "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+          "sampled_buyers": 33,
+          "checked_requests": 41,
+          "filtered_cases": 4,
+          "http_parity": true,
+          "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+          "catalog_size": 24,
+          "past_buyers": 32,
+          "request_seconds_mean": 0.0005915486601624274,
+          "request_seconds_max": 0.0013047670072410256,
+          "load_benchmark": false
+        },
+        "rollback": {
+          "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+          "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+          "sampled_buyers": 33,
+          "checked_requests": 41,
+          "filtered_cases": 4,
+          "http_parity": true,
+          "response_sha256": "201b0b8e9a4ec8ab74300d62f837d6ceeba9182c2c232da9b395797fb34ecf38",
+          "catalog_size": 24,
+          "past_buyers": 32,
+          "request_seconds_mean": 0.0004900236352823856,
+          "request_seconds_max": 0.0008464580168947577,
+          "load_benchmark": false
+        },
+        "final": {
+          "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+          "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+          "sampled_buyers": 33,
+          "checked_requests": 41,
+          "filtered_cases": 4,
+          "http_parity": true,
+          "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+          "catalog_size": 24,
+          "past_buyers": 32,
+          "request_seconds_mean": 0.0006014519277392183,
+          "request_seconds_max": 0.0015964230115059763,
+          "load_benchmark": false
+        }
+      },
+      "resources": {
+        "before_restart": {
+          "image_id": "sha256:25fb3ff78a9481d996fffef36fe3178179db61c1a94d2d07f110756b7aa2bdc3",
+          "memory_bytes": 4294967296,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "running": true,
+          "cgroup_peak_bytes": 140636160,
+          "swap_peak_bytes": 0,
+          "threads": 2
+        },
+        "after_restart": {
+          "image_id": "sha256:25fb3ff78a9481d996fffef36fe3178179db61c1a94d2d07f110756b7aa2bdc3",
+          "memory_bytes": 4294967296,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "running": true,
+          "cgroup_peak_bytes": 116678656,
+          "swap_peak_bytes": 0,
+          "threads": 2
+        }
+      },
+      "final_release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+      "activated": true,
+      "test_evaluated": false,
+      "quality_accepted": false,
+      "training_performed": false,
+      "duration_seconds": 11.615497249999999
+    }
+  },
+  "review": {
+    "model": "gpt-6-astra",
+    "range": "d62f48e..c85a4fa",
+    "read_only": true,
+    "critical": 0,
+    "important": 2,
+    "minor": 0,
+    "fixed_in": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
+    "fix_passes": 1,
+    "findings": [
+      {
+        "finding": "Documented serving-check options rejected by outer argparse",
+        "test": "test_documented_project_command_dispatches_all_serving_options",
+        "red_then_green": true
+      },
+      {
+        "finding": "Dead lease owner could write pointer through a new connection after replacement recovery",
+        "test": "test_owner_loss_between_check_and_write_cannot_change_replacement_pointer",
+        "red_then_green": true
+      }
+    ],
+    "deferred_minors": []
+  },
+  "implementation_rulings": [
+    "Ruling: Execute only T4-B of the approved platform plan; T4-A is closed and T5-T8 remain future work — avoid repeating campaigns or evaluating test — cost if wrong: separate follow-up implementation.",
+    "Ruling: Q4 selection and updated plan override original neural-service spec — serve H with PostgreSQL, retain experimental dependencies — cost if wrong: service image remains larger until measured separation is justified.",
+    "Ruling: PostgreSQL persists version registry and active/previous pointer; one API process owns a PostgreSQL advisory lock, activation runs in that process via authenticated local admin endpoint — avoid stale workers and CLI-side memory divergence — cost if wrong: horizontal serving needs a new coordination contract.",
+    "Ruling: Freeze initial API limit at 4 GiB/2 CPU/2 threads, allow two immutable states during transition; measure full loading on mac24 before final capacity claims — T4-A construction peaked at 2.248 GiB — cost if wrong: valid resource failure blocks the remote sequence.",
+    "Ruling: Use a manual T4-B ledger within Task 4; the plan parser groups A/B into one task — cost if wrong: separate subsection status must be maintained.",
+    "Ruling: Use an isolated Docker staging directory under Documents because Colima does not mount native worktrees; images embed source and final verification runs without source mounts — cost if wrong: source provenance must be checked before handoff.",
+    "Ruling: Administrative calls use the locally generated application credential via container-local CLI; no token in arguments, reports or public examples — cost if wrong: a separately scoped admin credential may be needed if exposure expands beyond localhost.",
+    "Ruling: Full registry load and sampled HTTP parity run on mac24; T4-A already checked exact offline top200 for all V3 buyers. T4-B probes at most 257 known/unknown buyers plus filters, and does not evaluate labels — cost if wrong: this is not exhaustive HTTP parity or the T8 load benchmark.",
+    "Ruling: Keep serving-check foreground with closed evidence on normal failure/interruption, explicit clean SHA and two passed T4-A source packages. API remains on candidate after successful restart/rollback checks — cost if wrong: abrupt host loss needs inspection of incomplete state; no automatic retry.",
+    "Ruling: For local rehearsal only, reproduce mac24's synthetic package with archived d59e147 builder and original synthetic dataset; manifest hash matches the downloaded closed report exactly. No H&M job or quality campaign repeated — cost if wrong: the local rehearsal measures only synthetic serving.",
+    "Final: Ruling: Full H&M memory capacity and reproduction remain pending mac24 — synthetic success cannot establish full resident memory; cost if wrong: remote failure blocks T4-B closure.",
+    "Final: Ruling: Sustained throughput, p95 and final quality acceptance remain T8 — current probe is sequential and does not read labels; cost if wrong: no production capacity or final quality claim yet.",
+    "Final: Ruling: Events/UI/scheduling/portable backup remain T5–T7 — preserve approved sequencing and current private packages; cost if wrong: this delivery alone is not the complete platform.",
+    "Final: Ruling: Retain scientific dependencies in the locked image — runtime import test proves API does not load Torch/Qdrant/MLflow, image minimization is deferred; cost if wrong: larger image and rebuild/download cost.",
+    "Final: Ruling: Finish evidence/status docs after measured rehearsal — reviewer excluded draft metadata and it must reflect actual observations; cost if wrong: documentation errors can misdirect the next agent."
+  ],
+  "mac24": {
+    "status": "prepared_not_executed",
+    "prompt": "docs/mac24-t4b-prompt.md",
+    "guide": "docs/serving.md",
+    "reference_run_id": "release-mac24-20261021T190539Z-02a850f8",
+    "candidate_run_id": "release-mac24-20261021T190717Z-f0a2d073",
+    "colima_memory_gib": 14,
+    "api_memory_gib": 4,
+    "api_cpus": 2,
+    "api_threads": 2,
+    "probe_memory_gib": 3,
+    "probe_cpus": 1,
+    "probe_threads": 2,
+    "time_budget_seconds": 7200
+  },
+  "test_evaluated": false,
+  "quality_accepted": false,
+  "training_performed": false,
+  "limits": [
+    "H&M resident memory and sampled HTTP parity require mac24 evidence.",
+    "Sequential probe timings are not a sustained throughput or p95 benchmark; T8 remains pending.",
+    "Local synthetic rehearsal contains no private H&M customers or predictions.",
+    "One API process owns the PostgreSQL registry; no horizontal-worker contract.",
+    "Events/UI/scheduler/portable backup remain T5-T7; no test labels were evaluated.",
+    "Closed reports travel through private GitHub, service packages remain local."
+  ],
+  "next_step": "Execute T4-B exactly once on mac24 using the existing T4-A packages, publish closed report, then review before T5."
+}

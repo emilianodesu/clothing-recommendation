@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; T4-A también cerrada y siguiente desarrollo T4-B**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; T4-A también cerrada y T4-B implementada localmente, pendiente de reproducción H&M en mac24**.
 
 ## Global Constraints
 

@@ -5,6 +5,25 @@ ciclo de versiones. La reproducción H&M en mac24 está pendiente; no equivale a
 aceptación final ni a haber cumplido las metas de carga. Véase
 [arquitectura y contrato HTTP](architecture.md).
 
+## Evidencia local
+
+El clon limpio `881e0c2` pasó 121 pruebas científicas/servicio (incluidas 28 de
+integración T4-B), 78 de host y ocho de bootstrap Docker: 207 pruebas distintas.
+La integración externa MLflow quedó omitida en la suite científica; no hubo
+cambios en tracking. `verify --suite serving` pasó desde las imágenes sin montar
+código del host. La revisión final detectó dos fallos, ambos corregidos con
+regresiones observadas fallar y pasar: opciones de CLI y pérdida de propietario
+PostgreSQL entre comprobación y escritura.
+
+El ensayo `serving-dev-20261021T194554Z-65bdaa1d` pasó con dos paquetes sintéticos
+de 24 artículos y 32 compradores históricos: cinco comprobaciones de 41
+solicitudes cada una, incluyendo filtros y un comprador desconocido. Duró
+11.615 s, con pico API de 140,636,160 bytes y sin swap/OOM. Conservó las huellas
+de respuestas tras reinicio y rollback. El [reporte privado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-dev-20261021T194554Z-65bdaa1d)
+se publicó y verificó por descarga; [evidence/serving.json](../evidence/serving.json)
+conserva identidades, recursos, revisión y decisiones. Estos resultados no
+acreditan capacidad con H&M ni latencia bajo carga.
+
 ## Arranque local
 
 Usar un clon limpio con la revisión recibida y configuración local preparada por

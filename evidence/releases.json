@@ -195,9 +195,9 @@
   "limits": [
     "H&M package construction/parity is measured offline; serving latency, resident API memory and concurrency remain unmeasured.",
     "H&M reproduction requires the original frozen Q1 private artifacts; reports alone cannot reconstruct them.",
-    "T4-B API/activation/rollback is not implemented; final test and acceptance remain reserved for T8.",
+    "T4-B API/activation/rollback is implemented locally; H&M reproduction remains pending mac24. Final test and acceptance remain reserved for T8.",
     "No private service package, profiles, transactions, predictions or models are included in the GitHub reports.",
     "The primary Mac audited report integrity and source/hash agreement; full private package, individual predictions and preservation inventory stayed on mac24."
   ],
-  "next_step": "Implement and locally verify T4-B API, activation and rollback before a new mac24 handoff."
+  "next_step": "Execute T4-B once on mac24 and review its closed report; see evidence/serving.json and docs/mac24-t4b-prompt.md."
 }
