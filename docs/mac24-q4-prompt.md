@@ -1,6 +1,6 @@
 # Prompt histórico para mac24: Q4
 
-**Completado y auditado. No volver a ejecutarlo por defecto.** Véase `evidence/quality-decision-mac24.json`. El siguiente desarrollo es T4-A, aún sin comando/prompt operativo propio.
+**Completado y auditado. No volver a ejecutarlo por defecto.** Véase `evidence/quality-decision-mac24.json`. La siguiente ejecución es T4-A; usar `docs/mac24-t4a-prompt.md`.
 
 Actualizar `main` por fast-forward preservando cambios locales, fijar el SHA completo recibido y comprobar clon limpio. Si el árbol tiene cambios, conservarlos y resolver la ubicación de trabajo antes de ejecutar; no usar reset/clean. Leer README, AGENTS y `docs/quality-summary.md`.
 

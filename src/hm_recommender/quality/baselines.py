@@ -1,5 +1,4 @@
 """Deterministic P/H retrieval with bounded ranking buffers; no Torch dependency."""
-from itertools import chain
 from pathlib import Path
 
 import polars as pl
@@ -7,15 +6,11 @@ import pyarrow.parquet as pq
 from hm_recommender.data.io import locked,sha256
 from hm_recommender.quality.contracts import RankingArtifact,QualityFile,digest
 from hm_recommender.quality.temporal import existing,frame,publish
+from hm_recommender.ranking.history import unique_prefix
 
 
 def compose_history(history,popularity,k=200):
-    result=[]; seen=set()
-    for article in chain(history,popularity):
-        if article not in seen:
-            seen.add(article); result.append(article)
-            if len(result)==k: break
-    return result
+    return unique_prefix((history,popularity),limit=k)
 
 
 def rank_baseline(snapshot,customers,method,output_dir):

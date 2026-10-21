@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "stage": "T4-A",
+  "status": "local_verification_in_progress",
+  "base_commit": "df578a3e90b174e03782f374fb6308d05d80edd3",
+  "selected_method": "H",
+  "data_as_of": "2020-09-09",
+  "local_checks": {
+    "host_tests": 74,
+    "scientific_tests": 93,
+    "external_tracking_skipped": 1,
+    "scientific_execution": "Built Docker image, no code mounts",
+    "bootstrap": "pending",
+    "detached_demo": "pending"
+  },
+  "mac24": {
+    "status": "pending_execution_and_review",
+    "prompt": "docs/mac24-t4a-prompt.md"
+  },
+  "activated": false,
+  "test_evaluated": false,
+  "quality_accepted": false,
+  "limits": [
+    "No H&M package capacity or service latency measured by this local evidence.",
+    "T4-B API/activation is not implemented; T4-A closure requires review of mac24 evidence."
+  ]
+}

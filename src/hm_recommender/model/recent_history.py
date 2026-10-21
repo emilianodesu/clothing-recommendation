@@ -1,6 +1,5 @@
 """Fixed recent-purchase retrieval protocol; no fitting or test-label access."""
 from datetime import timedelta
-from itertools import chain
 from typing import Literal
 
 import numpy as np
@@ -13,6 +12,7 @@ from hm_recommender.model.comparison import ComparisonConfig, METRICS, derangeme
 from hm_recommender.model.diagnostics import assert_replay, exposure, paired_rankings, recent_popular
 from hm_recommender.model.evaluate import evaluate_model, topk
 from hm_recommender.model.inputs import ids, lookup, numeric, select_users
+from hm_recommender.ranking.history import unique_prefix
 
 
 class HistoryConfig(ComparisonConfig):
@@ -34,13 +34,8 @@ def recent_histories(transactions, catalog, customers, days=28):
 def compose_recent(history, popular, *, model=None, k=200):
     # Both variants have an explicit popularity fallback when no recent history exists.
     streams = (history, model, popular) if len(history) and model is not None else (history, popular)
-    selected, seen = [], set()
-    for value in chain.from_iterable(streams):
-        item = int(value)
-        if item not in seen:
-            seen.add(item); selected.append(item)
-            if len(selected) == k:
-                return np.asarray(selected, dtype=np.int64)
+    selected=unique_prefix((map(int,stream) for stream in streams),limit=k)
+    if len(selected)==k:return np.asarray(selected,dtype=np.int64)
     raise ValueError('Insufficient unique candidates for recent-history ranking')
 
 

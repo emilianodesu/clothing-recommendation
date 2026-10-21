@@ -66,6 +66,15 @@ def main():
     features.add_argument("--data-as-of", type=__import__('datetime').date.fromisoformat, required=True)
     features.add_argument("--output", type=Path, required=True)
     features.add_argument("--vocabulary", type=Path)
+    release = commands.add_parser("release", help="Prepare or verify a local H package; no activation")
+    release_commands = release.add_subparsers(dest="release_action", required=True)
+    release_build = release_commands.add_parser("build")
+    release_build.add_argument("--dataset", type=Path, required=True)
+    release_build.add_argument("--data-as-of", type=__import__('datetime').date.fromisoformat, required=True)
+    release_build.add_argument("--output", type=Path, required=True)
+    release_build.add_argument("--evidence-archive", type=Path)
+    release_verify = release_commands.add_parser("verify")
+    release_verify.add_argument("directory", type=Path)
     args = parser.parse_args()
     try:
         if args.command == "check":
@@ -83,6 +92,14 @@ def main():
             else:
                 from hm_recommender.data.pipeline import run_pipeline
                 output = run_pipeline(args.config, args.run_dir)
+        elif args.command == "release":
+            from hm_recommender.releases.package import build_history_release, verify_history_release
+            if args.release_action == "verify":
+                output = verify_history_release(args.directory).model_dump(mode="json")
+            else:
+                from hm_recommender.data.ingest import load_dataset
+                output = build_history_release(load_dataset(args.dataset), args.data_as_of, args.output,
+                    evidence_archive=args.evidence_archive).model_dump(mode="json")
         elif args.command == "features":
             from hm_recommender.data.ingest import load_dataset
             from hm_recommender.features.build import build_features

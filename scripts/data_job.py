@@ -23,7 +23,7 @@ TRAINING_PROFILES = ('demo', 'demo-3epochs', 'hm-small', 'hm-medium', 'hm-full',
 
 
 def validate_run_id(value):
-    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith(('data-', 'train-', 'diagnose-', 'quality-')):
+    if not isinstance(value, str) or not NAME.fullmatch(value) or not value.startswith(('data-', 'train-', 'diagnose-', 'quality-', 'release-')):
         raise ValueError('Run ID de datos inválido')
     return value
 
@@ -109,11 +109,15 @@ def effective_limits(info):
             'mkl_threads': int(environment.get('MKL_NUM_THREADS', '0'))}
 
 
-def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None, reference_run=None, diagnostic_protocol='standard', quality_options=None):
+def start(machine_id, profile, dataset, expected_commit=None, resource_profile='base', expected_resources=None, *, training_config=None, resume_run=None, diagnostic_run=None, reference_run=None, diagnostic_protocol='standard', quality_options=None, release_options=None):
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', machine_id):
         raise ValueError('Usar un alias como mac24')
     if quality_options and (training_config or resume_run or diagnostic_run or reference_run):
         raise ValueError('Quality is a separate job')
+    if release_options is not None and (quality_options or training_config or resume_run or diagnostic_run or reference_run):
+        raise ValueError('Release preparation is a separate job')
+    if release_options is not None and release_options != {'data_as_of':'2020-09-09'}:
+        raise ValueError('T4-A requires the fixed validation cutoff')
     resources = load_resources(resource_profile)
     if expected_resources is not None and resources != expected_resources:
         raise ValueError('El perfil de recursos cambió; resume requiere la misma configuración y huella')
@@ -139,6 +143,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         if (quality_options['stage']=='ranker') != (quality_options.get('pool') in ('H','G')):
             raise ValueError('Q3 requires a candidate pool')
         config_file = ROOT / 'configs/quality/quality-v1.json'
+    if release_options:
+        config_file = ROOT / 'configs/releases/history-v1.json'
     if resume_run and (resume_run['config_sha256'] != fingerprint(config_file) or resume_run['uv_lock_sha256'] != fingerprint(ROOT / 'uv.lock')):
         raise ValueError('Configuración o lock cambiaron; iniciar un experimento nuevo')
     limits = requested_limits(resources)
@@ -160,7 +166,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             diagnostic_reference = source_for(dirs['ARTIFACTS_DIR'], reference_run, fingerprint(ROOT / 'uv.lock'))
             validate_comparison_sources(diagnostic_source, diagnostic_reference)
     config = 'hm' if dataset == 'hm' else 'demo'
-    run_id = ('quality-' if quality_options else 'diagnose-' if diagnostic_run else 'train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+    run_id = ('release-' if release_options else 'quality-' if quality_options else 'diagnose-' if diagnostic_run else 'train-' if training_config else 'data-') + machine_id + '-' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     directory = dirs['ARTIFACTS_DIR'] / 'data-jobs' / run_id
     directory.mkdir(parents=True, mode=0o700)
     run = {'run_id':run_id, 'machine_id':machine_id, 'context':env['DOCKER_CONTEXT'], 'profile':profile,
@@ -184,6 +190,8 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         run.update(diagnostic_reference=diagnostic_reference, scope='T3 paired epoch comparison; no test evaluation or serving')
     if quality_options:
         run.update(quality=quality_options, scope='Q1–Q4 fixed campaign; Q4 reads closed evidence; no test, final quality acceptance or T4')
+    if release_options:
+        run.update(release=release_options,scope='T4-A immutable H package and validation parity; no training/test/activation')
     launch_lock = (directory / '.launch.lock').open('a')
     fcntl.flock(launch_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     write_json(directory / 'environment.json', run)
@@ -222,6 +230,15 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             from quality_budget import reserve
             run['quality_budget_seconds'] = reserve(dirs['ARTIFACTS_DIR'] / 'quality-budget', run_id, quality_options['size'])
             write_json(directory / 'environment.json',run)
+        if release_options:
+            release_config=json.loads(config_file.read_text())
+            run['start_free_bytes']=shutil.disk_usage(directory).free
+            if run['start_free_bytes']<release_config['start_free_bytes']:
+                raise ValueError('Release preparation requires 20 GiB free')
+            if dataset=='hm':
+                from release_job import references_for
+                run['release_references']=references_for(dirs['ARTIFACTS_DIR'],release_config)
+            write_json(directory / 'environment.json',run)
         # Build logs persist even when the image cannot be built.
         original = os.environ.copy()
         try:
@@ -250,9 +267,12 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
         if quality_options:
             worker = ['python', '-m', 'hm_recommender.quality.supervisor', '--config', '/opt/hmrec/configs/quality/quality-v1.json',
                       '--run-dir', '/artifacts/data-jobs/' + run_id]
-        mounts = ['--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data' + (',readonly' if diagnostic_run or quality_options else ''),
-                  '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts' + (',readonly' if diagnostic_run or quality_options else '')]
-        if diagnostic_run or quality_options:
+        if release_options:
+            worker=['python','-m','hm_recommender.releases.worker','--supervise',
+                '--config','/opt/hmrec/configs/releases/history-v1.json','--run-dir','/artifacts/data-jobs/'+run_id]
+        mounts = ['--mount', 'type=bind,source=' + str(dirs['DATA_DIR']) + ',target=/data' + (',readonly' if diagnostic_run or quality_options or release_options else ''),
+                  '--mount', 'type=bind,source=' + str(dirs['ARTIFACTS_DIR']) + ',target=/artifacts' + (',readonly' if diagnostic_run or quality_options or release_options else '')]
+        if diagnostic_run or quality_options or release_options:
             mounts += ['--mount', 'type=bind,source=' + str(directory) + ',target=/artifacts/data-jobs/' + run_id]
         network = values['COMPOSE_PROJECT_NAME'] + '_backend' if training_config and not training_config.startswith('demo') else 'none'
         container = capture(env, 'docker', 'create', '--name', run_id.lower(), '--network', network,
@@ -274,7 +294,7 @@ def start(machine_id, profile, dataset, expected_commit=None, resource_profile='
             image['Id'], *worker)
         run['container_id'] = container
         info = json.loads(capture(env, 'docker', 'inspect', container))[0]
-        if diagnostic_run or quality_options:
+        if diagnostic_run or quality_options or release_options:
             access = {m['Destination']: m['RW'] for m in info['Mounts']}
             if access != {'/data': False, '/artifacts': False, '/artifacts/data-jobs/' + run_id: True} or info['HostConfig']['NetworkMode'] != 'none':
                 raise ValueError('El aislamiento efectivo del diagnóstico no coincide')
@@ -378,7 +398,7 @@ def inspect_run(run_id):
         # Read the worker's final file only after observing container termination.
         result_path = directory / 'result.json'
         result = json.loads(result_path.read_text()) if result_path.exists() else None
-        status = classify_result(state, result, {'baselines':'Q1','graph':'Q2','ranker':'Q3','summary':'Q4'}[run['quality']['stage']] if run.get('quality') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
+        status = classify_result(state, result, {'baselines':'Q1','graph':'Q2','ranker':'Q3','summary':'Q4'}[run['quality']['stage']] if run.get('quality') else 'T4-A' if run.get('release') else 'T3-diagnostics' if run.get('diagnostic_source') else 'T3' if run.get('training_config') else 'T2',
             require_comparison=bool(run.get('diagnostic_reference')), require_history=run.get('diagnostic_protocol') == 'recent-history')
         if state.get('Status') == 'created' and run.get('launch_status') == 'failed':
             status = 'failed'
@@ -386,6 +406,10 @@ def inspect_run(run_id):
     if run.get('quality') and status == 'passed':
         from quality_handoff import validate_quality_execution
         try:validate_quality_execution(result,run)
+        except ValueError:status='failed'
+    if run.get('release') and status=='passed':
+        from release_handoff import validate_release_execution
+        try:validate_release_execution(result,run)
         except ValueError:status='failed'
     return directory, run, env, state, result, status
 
@@ -427,7 +451,7 @@ def export(run_id):
         steps.append({'name':'tracking', 'log':'tracking.log', 'exit_code':tracking_code,
                       'status':'passed' if tracking_code == 0 else ('interrupted' if tracking_code == 130 else 'failed')})
     steps.append({'name':'data','log':'job.log','status':status,'exit_code':code})
-    report = {'schema_version':1, 'kind':'quality-handoff' if run.get('quality') else 'diagnostic-handoff' if run.get('diagnostic_source') else 'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
+    report = {'schema_version':1, 'kind':'release-handoff' if run.get('release') else 'quality-handoff' if run.get('quality') else 'diagnostic-handoff' if run.get('diagnostic_source') else 'training-handoff' if run.get('training_config') else 'data-handoff', 'run_id':run_id, 'machine_id':run['machine_id'],
         'context':run['context'], 'source_commit':run['source_commit'], 'source_clean':run['source_clean'],
         'started_at':run['started_at'], 'finished_at':now(), 'status':status, 'warnings':[],
         'steps':steps, 'experiment_id':run.get('experiment_id'), 'attempt':run.get('attempt'),

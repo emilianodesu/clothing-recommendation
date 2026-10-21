@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "protocol": "history-release-v1",
+  "data_as_of": "2020-09-09",
+  "max_seconds": 7200,
+  "start_free_bytes": 21474836480,
+  "min_free_bytes": 5368709120,
+  "selection": {
+    "protocol": "quality-v1",
+    "run_id": "quality-mac24-20261021T042757Z-915df40a",
+    "archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca"
+  },
+  "baseline": {
+    "run_id": "quality-mac24-20261020T201805Z-63eb4569",
+    "archive_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76"
+  },
+  "diagnostic": {
+    "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72",
+    "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f"
+  },
+  "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+  "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+  "validation_buyers": 72019,
+  "catalog_size": 102967
+}
