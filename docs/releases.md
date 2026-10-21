@@ -158,3 +158,18 @@ Dentro de jobs existen `hmrec release build --dataset RUTA --data-as-of FECHA
 Estos comandos de desarrollo no crean evidencia de ejecución oficial ni evalúan
 calidad. La biblioteca permite otros cortes explícitos para futuros usos; el
 job T4-A mantiene la restricción V3.
+
+## Verificación local de esta entrega
+
+175 pruebas distintas aprobadas: 93 científicas, 74 host y ocho de infraestructura
+Docker. Una prueba externa MLflow se omitió en la suite científica general; no es
+una prueba de servicio de H. La suite releases también pasó desde un clon limpio
+con configuración propia. La demo desacoplada `release-dev-20261021T045736Z-ccdf867f`
+completó paridad exacta de 33 compradores, con 32 compradores históricos y 24
+artículos disponibles; duró 5.019 s, RSS máximo 0.338 GiB y pico cgroup 0.292 GiB,
+sin swap/OOM. Su paquete local ocupa 9,324 bytes. Estas cifras son sintéticas.
+
+La revisión independiente no encontró bloqueos técnicos. Se corrigió un aviso
+histórico contradictorio de la guía; queda diferido añadir códigos de fase/error
+controlados. Hoy un fallo interno se reporta por clase de excepción para evitar
+filtrar filas privadas y puede requerir inspección adicional en mac24.

@@ -1,6 +1,6 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** Q1 ya se ejecutó y [revisó](../evidence/quality-q1-review.json). Esperar la implementación, commit y prompt Q2. Los procedimientos T1–Q1 se conservan como antecedentes; no repetirlos por recibir esta actualización.
+**Paso vigente:** ejecutar [T4-A: paquete H y paridad](releases.md) con el [prompt mac24](mac24-t4a-prompt.md) y el commit recibido. Q1–Q4 están cerradas; conservar sus resultados.
 
 Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3 y Q1–Q4 están cerradas y revisadas; H fue seleccionado. La siguiente ejecución es [T4-A: paquete y paridad](releases.md), con [prompt propio](mac24-t4a-prompt.md).** Usar el commit recibido y no repetir instalación, descarga, entrenamientos ni campañas anteriores. La API/activación T4-B espera la revisión del paquete H&M.
 

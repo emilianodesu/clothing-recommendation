@@ -218,7 +218,7 @@ El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no s
 
 ## Task 4 · T4 — Motor seleccionado, versión portable y API
 
-**Dependencia satisfecha:** [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) cerradas y H seleccionado, con congelación en `evidence/quality-decision-mac24.json`. El detalle siguiente queda confirmado como siguiente implementación; las casillas siguen pendientes hasta ejecutarse.
+**Dependencia satisfecha:** [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) cerradas y H seleccionado, con congelación en `evidence/quality-decision-mac24.json`. El detalle siguiente queda confirmado como siguiente implementación; las casillas distinguen implementación local de reproducción mac24.
 
 Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. T4-A está implementada; seguir `docs/releases.md`. T4-B conserva interfaces futuras.
 

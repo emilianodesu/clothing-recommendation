@@ -1,27 +1,190 @@
 {
   "schema_version": 1,
   "stage": "T4-A",
-  "status": "local_verification_in_progress",
+  "status": "prepared_for_mac24",
   "base_commit": "df578a3e90b174e03782f374fb6308d05d80edd3",
+  "execution_commit": "061a64c3073c03130ab695bf0bfa22315eb4e4e4",
   "selected_method": "H",
   "data_as_of": "2020-09-09",
   "local_checks": {
     "host_tests": 74,
     "scientific_tests": 93,
+    "docker_bootstrap_tests": 8,
+    "distinct_passed_tests": 175,
     "external_tracking_skipped": 1,
-    "scientific_execution": "Built Docker image, no code mounts",
-    "bootstrap": "pending",
-    "detached_demo": "pending"
+    "known_warnings": 2,
+    "scientific_execution": "Built Docker image without code mounts; latest complete suite 93 passed in 15.60s",
+    "releases_suite": {
+      "unit": 60,
+      "integration": 4,
+      "host": 74,
+      "status": "passed"
+    },
+    "bootstrap": "passed",
+    "real_frozen_q4_archive_reader": "passed; H selected",
+    "closed_report_status_export_reader": "passed",
+    "initial_test_failure": "Compose tmpfs disk capacity in integration fixture; fixed observation stub only; production watchdog thresholds unchanged"
   },
+  "demo": {
+    "run_id": "release-dev-20261021T045736Z-ccdf867f",
+    "status": "passed",
+    "source_commit": "061a64c3073c03130ab695bf0bfa22315eb4e4e4",
+    "archive_sha256": "c39b90c9dfcff0d79da7bbb5c82572b9ca037bdb679d8cbaafcf4749a7edcdd1",
+    "archive_bytes": 8979,
+    "package_id": "878f2f5b344acb12e716429245bc9f3c4b5bdf6a266a9ae9e2c64e04414d79e8",
+    "image_id": "sha256:0ac683d9c97b954762b00fe588abdfa0202eee2e66cf70f783ffd5e539842c13",
+    "report_published": false,
+    "package": {
+      "bytes": 9324,
+      "catalog_size": 24,
+      "files": [
+        {
+          "name": "catalog.parquet",
+          "rows": 24,
+          "sha256": "0926210a806d8bef0f1fd55a6e4d4fb594081b860757acb9ccc3b4b272c2f2ff",
+          "size_bytes": 2157
+        },
+        {
+          "name": "customers.parquet",
+          "rows": 32,
+          "sha256": "acbb6f33e8e3952eb0d513fc1a3eba78692272b84bc62f97ca166d5046f8b9b4",
+          "size_bytes": 660
+        },
+        {
+          "name": "histories.parquet",
+          "rows": 64,
+          "sha256": "47a1a519ef88506709ec53b88609a07f5056f7edd726cce57318696d32c8d6d6",
+          "size_bytes": 1868
+        },
+        {
+          "name": "popularity.parquet",
+          "rows": 24,
+          "sha256": "5cf57c5616652cafe9644b4b02cf8c7171f7de5ae112d373e31de672c0b16a0f",
+          "size_bytes": 1349
+        },
+        {
+          "name": "rules.json",
+          "rows": null,
+          "sha256": "d8a78ffa0713e14bd437550f62368f4f4d5c32db1a0d18ee02385029af909a0f",
+          "size_bytes": 380
+        },
+        {
+          "name": "validation-reference.json",
+          "rows": null,
+          "sha256": "ef356805e12a6b338a99c28c6aa9764c6c740a796d3f26691f9f6f2f81a3f23a",
+          "size_bytes": 621
+        }
+      ],
+      "history_rows": 64,
+      "manifest_sha256": "b01bc414c286fead1b30356e4c0228c86f846cf4d25b9e4d9d9573f415a090a1",
+      "past_buyers": 32,
+      "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+      "schema_version": 2,
+      "selection_archive_verified": false
+    },
+    "parity": {
+      "absolute_tolerance": 1e-10,
+      "buyers": 33,
+      "catalog_size": 24,
+      "exact_top200": true,
+      "legacy_ranking_verified": true,
+      "metrics": {
+        "map_at_12": 0.9656565656565655,
+        "ndcg_at_12": 0.9743094983097929,
+        "recall_at_200": 0.9898989898989898
+      },
+      "metrics_equal": true,
+      "metrics_sha256": "915d41a236639f6fb314165d739546547c38bb6855787fbbb29afd3b71b9e7c7",
+      "out_of_catalog_relevant_items": 1,
+      "ranking_sha256": "c33d3f58451b55bfda262551d72708a755c0c13e709b9ddab4b742649d075752",
+      "reference_ranking_sha256": "c33d3f58451b55bfda262551d72708a755c0c13e709b9ddab4b742649d075752",
+      "relative_tolerance": 0,
+      "unknown_buyers": 1
+    },
+    "job_duration_seconds": 5.018878103990573,
+    "peak_rss_bytes": 362704896,
+    "cgroup_peak_bytes": 313450496,
+    "swap_peak_bytes": 0,
+    "oom_events": 0,
+    "oom_killed": false,
+    "disk": {
+      "end_free_bytes": 174747955200,
+      "min_free_bytes": 174747955200,
+      "start_free_bytes": 174765268992
+    },
+    "resources": {
+      "name": "base",
+      "sha256": "940367515dfdd14ddc82d8c3ee704a6e6a464848020ad4af03f87ea913e748f7",
+      "config": {
+        "schema_version": 1,
+        "colima": {
+          "memory_gib": 8,
+          "cpus": 4
+        },
+        "job": {
+          "memory_gib": 5,
+          "cpus": 3,
+          "threads": 2
+        }
+      }
+    },
+    "effective_limits": {
+      "memory_bytes": 5368709120,
+      "nano_cpus": 3000000000,
+      "memory_swap_bytes": 10737418240,
+      "polars_threads": 2,
+      "omp_threads": 2,
+      "mkl_threads": 2
+    },
+    "quality_ledger_created": false
+  },
+  "review": {
+    "model": "gpt-6-astra",
+    "range": "df578a3..061a64c",
+    "read_only": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 2,
+    "executor_regrade": "Corrected stale current-step banner before handoff to prevent an operator waiting for completed Q2.",
+    "deferred": [
+      "Controlled failure phase/error codes; current safe exception class can require remote local inspection."
+    ]
+  },
+  "implementation_rulings": [
+    "Ruling: Scope task 4 to T4-A and keep manual subsection ledger — parser task numbers do not represent A/B; cost if wrong: separate tracking of T4-B still required.",
+    "Ruling: Add customers.parquet with all past customer IDs, including those with no 28-day history — avoid implying validation-only population; cost: one additional small private table to validate and load.",
+    "Ruling: Build API obtains source commit from HMREC_SOURCE_COMMIT and requires a full SHA — containers have no .git; cost: callers must provide provenance explicitly.",
+    "Ruling: Job accepts only 2020-09-09 until T8 while builder accepts explicit historical cutoffs — prevents accidental test evaluation in parity worker; cost: later stage must explicitly extend job protocol.",
+    "Ruling: Synthetic package records Q4 selection as provenance only, without claiming H&M measurements apply to synthetic data; full requires frozen Q4/Q1/diagnostic ZIPs and private Q1 files — cost: full blocks if originals are unavailable.",
+    "Ruling: Original table helpers in quality.temporal remain shared; only dedup core moved to ranking — avoids changing frozen aggregation/sort behavior; cost: builder retains a dependency on the quality data module (no Torch import).",
+    "Final: Ruling: Regrade stale current-step banner to Important for handoff — an operator could stop waiting for Q2 despite T4-A being ready; correct the human guide before delivery. Cost if wrong: trivial documentation-only change; no runtime test appropriate for prose per testing guidance. Reviewer demonstrated contradictory instructions; corrected to T4-A.",
+    "Final: Ruling: Full H&M capacity and source preservation remain pending mac24 evidence — cannot infer them from the demo; cost: T4-A closure waits for remote execution/review.",
+    "Final: Ruling: API/activation/concurrency/rollback/latency remain T4-B/T8 — do not expand this handoff; cost: no live service yet.",
+    "Final: Ruling: incoming-event deduplication and late arrivals remain T5 — preserve frozen historical transaction counting in T4-A; cost: operational events unavailable now.",
+    "Final: Ruling: no resume for partial T4-A; preserve attempts and start a new authorized run — no resumable contract was designed; cost: a failed build may repeat preparation IO.",
+    "Final: Ruling: full-package export/import/restore remain T7 — current channel only supports aggregate reports; cost: each Mac rebuilds locally.",
+    "Final: Ruling: test-set evaluation/final acceptance remain T8 — prevent tuning or claiming success on reserved test; cost: final quality remains pending.",
+    "Final: Ruling: finalize intermediate evidence/releases.json with observed checks/demo/review before delivery — earlier status was intentionally pending; cost: metadata update only."
+  ],
   "mac24": {
     "status": "pending_execution_and_review",
-    "prompt": "docs/mac24-t4a-prompt.md"
+    "prompt": "docs/mac24-t4a-prompt.md",
+    "sequence": [
+      "synthetic",
+      "hm"
+    ],
+    "colima_memory_gib": 14,
+    "job_memory_gib": 10,
+    "job_cpus": 3,
+    "threads": 2
   },
   "activated": false,
   "test_evaluated": false,
   "quality_accepted": false,
   "limits": [
-    "No H&M package capacity or service latency measured by this local evidence.",
-    "T4-B API/activation is not implemented; T4-A closure requires review of mac24 evidence."
+    "The demo does not measure H&M package capacity or serving latency.",
+    "H&M full requires the original frozen Q1 private artifacts; reports alone cannot reconstruct them.",
+    "T4-B API/activation is not implemented; T4-A closure requires review of mac24 evidence.",
+    "No private service package, profiles, transactions, predictions or models are included in the GitHub report."
   ]
 }
