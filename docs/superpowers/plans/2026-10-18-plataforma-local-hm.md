@@ -12,7 +12,7 @@
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Estado vigente del 20 de octubre:** T1–T3 y Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-mac24.json) selecciona H porque G/RH/RG incumplen al menos un control pese a mejorar MAP con intervalos positivos. El siguiente desarrollo es T4-A: paquete portable H y paridad offline. Los contratos y T4–T7 de abajo aplican ahora a H; T4-A implementa el paquete portable y espera reproducción H&M en mac24; todavía no existen API ni latencia medida. Test y aceptación final siguen reservados para T8. No repetir entrenamientos ni campañas ya cerradas.
+**Estado vigente del 21 de octubre:** T1–T3, Q1–Q4 y T4-A están cerradas. La [auditoría Q4](../../../evidence/quality-decision-mac24.json) selecciona H porque G/RH/RG incumplen al menos un control pese a mejorar MAP con intervalos positivos. La [auditoría T4-A](../../../evidence/releases-review-mac24.json) confirma demo y H&M, incluyendo paridad con Q1-V3. El siguiente desarrollo es T4-B: API, activación y rollback. Los contratos y T4–T7 de abajo aplican a H; todavía no existen API ni latencia medida. Test y aceptación final siguen reservados para T8. No repetir entrenamientos ni campañas ya cerradas.
 
 **Antecedente del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
@@ -28,8 +28,8 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados | T2 probada también en mac24 | Parquet completo, cortes y ejemplos semanales conciliados; evidencia mac24-t2-2026-10-19.json |
-| Motor y servicios | T3 y Q1–Q4 medidos; H seleccionado; T4 pendiente | Dos torres/MLflow, grafos y ranking conservados como experimentos; API, paquete de servicio, interfaz y DAG pendientes |
-| Otra computadora | T1, T2 y T3 probadas en mac24 | Reportes publicados y verificados; transferencia de pesos y servicio pendientes |
+| Motor y servicios | H seleccionado; paquete T4-A verificado | Dos torres/MLflow, grafos y ranking conservados como experimentos; API, interfaz y DAG pendientes |
+| Otra computadora | T1–T3, Q1–Q4 y T4-A probadas en mac24 | Reportes publicados y revisados; transporte del paquete completo y servicio pendientes |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
 
@@ -210,17 +210,17 @@ El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depe
 - [x] Revisar candidatos sólo con validación y seleccionar historial+popularidad; conservar controles y explicación en `docs/model-selection.md`.
 - [ ] Al cierre, congelar reglas, reconstruir estado antes del corte de test usando train+validación y evaluar una única vez sobre prueba. Para experimentos aprendidos, reentrenar sólo si forma parte del protocolo final predefinido. No ajustar contra test. Guardar cierre de E3.
 
-**Estado operativo T3:** demo, pilotos y época completa en mac24 aprobados; ver [evidencia física](../../../evidence/mac24-t3-2026-10-19.json) y [evaluación](../../evaluation.md#evidencia-física-de-mac24). Full consumió 22,674,665 filas en 247.391 s de entrenamiento (309.936 s de job), sin swap ni OOM. La medición de capacidad está demostrada; la concentración inicial (cobertura 0.05147%) motivó los diagnósticos que llevaron a la selección actual. La aceptación final sobre test sigue pendiente. Test permanece reservado y T4 no se inició. Los intentos reutilizan `train-job` y reportes privados con experiment_id estable.
+**Estado operativo T3:** demo, pilotos y época completa en mac24 aprobados; ver [evidencia física](../../../evidence/mac24-t3-2026-10-19.json) y [evaluación](../../evaluation.md#evidencia-física-de-mac24). Full consumió 22,674,665 filas en 247.391 s de entrenamiento (309.936 s de job), sin swap ni OOM. La medición de capacidad está demostrada; la concentración inicial (cobertura 0.05147%) motivó los diagnósticos que llevaron a la selección actual. La aceptación final sobre test sigue pendiente. Test permanece reservado; el paquete T4-A posterior ya fue revisado y T4-B sigue pendiente. Los intentos reutilizan `train-job` y reportes privados con experiment_id estable.
 
 El [diagnóstico reproducible](../../diagnostics.md) y sus campañas posteriores ya se ejecutaron sobre los checkpoints cerrados. Sus métricas, concentración y controles explican la selección actual, sin usar test.
 
-El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no superó popularidad7d. La campaña de [historial reciente](../../recent-history.md) selecciona historial+popularidad; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. El usuario confirmó priorizar calidad sobre framework y conservar los experimentos académicos. [Decisión vigente](../../model-selection.md): congelar ese motor para T4, adaptado abajo. Test, aceptación final e implementación T4 permanecen pendientes; no se inicia otra campaña automáticamente.
+El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no superó popularidad7d. La campaña de [historial reciente](../../recent-history.md) selecciona historial+popularidad; añadir el modelo no demuestra mejora de MAP y reduce NDCG/Recall. El usuario confirmó priorizar calidad sobre framework y conservar los experimentos académicos. [Decisión vigente](../../model-selection.md): congelar ese motor para T4, adaptado abajo. Test, aceptación final y servicio T4-B permanecen pendientes; no se inicia otra campaña automáticamente.
 
 ## Task 4 · T4 — Motor seleccionado, versión portable y API
 
 **Dependencia satisfecha:** [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) cerradas y H seleccionado, con congelación en `evidence/quality-decision-mac24.json`. El detalle siguiente queda confirmado como siguiente implementación; las casillas distinguen implementación local de reproducción mac24.
 
-Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. T4-A está implementada; seguir `docs/releases.md`. T4-B conserva interfaces futuras.
+Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. T4-A está implementada, reproducida y revisada; seguir `docs/releases.md`. T4-B conserva interfaces futuras.
 
 ### T4-A · Paquete y paridad offline
 
@@ -232,10 +232,10 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 - [x] Escribir RED `test_unfiltered_parity_with_frozen_diagnostic`: corte 2020-09-09 y ventanas 28/7; fixture con relevantes fuera de catálogo y usuario desconocido. Exigir igualdad de top200 y métricas `atol=1e-10, rtol=0` contra H de Q1-V3 (`quality-mac24-20261020T201805Z-63eb4569`) y su diagnóstico histórico fijado, sin cambiar sus reportes ni reglas. Generalizar helpers existentes en `ranking/history.py`, implementar contratos y constructor por lotes; pasar las pruebas y las regresiones de diagnóstico.
 - [x] Escribir RED `test_incomplete_or_corrupt_release_not_publishable`, `test_schema1_not_read_as_schema2` y `test_release_paths_are_relative`: salida temporal más publicación atómica local, sin sobreescribir una versión diferente. Verificar inventario exacto, tamaños, hashes, corte, IDs únicos, orden, conteos y referencias. Si el corte es distinto, registrar la evaluación original como referencia, nunca como métrica del nuevo paquete.
 - [x] Añadir `release-job start/status/export` con commit limpio, dataset `synthetic` o `hm`, corte explícito, recursos `base`/`mac24`, un job pesado y reporte final también ante fallo. El protocolo de reglas es `recent-history-v1`; enlazar por separado la selección Q4 `quality-v1` y su evidencia congelada. Reutilizar controles de recursos existentes; no convertir un `train-job` en constructor ni modificar el contrato de sus reportes históricos. Probar lector/ZIP malformado y ausencia de clientes/pesos en el inventario de intercambio.
-- [ ] Implementar `verify --suite releases` para ejecutar pruebas unitarias, integración de paquetes/paridad y host. Ejecutar desde imagen Docker sin montajes auxiliares; repetir bootstrap si cambia infraestructura. Luego corrida demo local y construcción/paridad H&M en mac24 con recursos actuales. En full, conciliar los 72,019 compradores/102,967 artículos de la validación con el ZIP revisado, pero construir el paquete para todos los compradores anteriores al corte. Reportar memoria, disco, duración y límites; no acreditar capacidad del paquete a partir del diagnóstico anterior.
-- [ ] Exportar/validar/publicar reportes cerrados por GitHub privado, conservando fallos; datos de servicio quedan locales en cada Mac. Registrar `evidence/releases.json`, guía y commit probado antes de preparar el prompt mac24. Una vez recibida la ejecución, cerrar T4-A sin iniciar test ni cambiar el candidato.
+- [x] Implementar `verify --suite releases` para ejecutar pruebas unitarias, integración de paquetes/paridad y host. Ejecutar desde imagen Docker sin montajes auxiliares; repetir bootstrap si cambia infraestructura. Luego corrida demo local y construcción/paridad H&M en mac24 con recursos actuales. En full, conciliar los 72,019 compradores/102,967 artículos de la validación con el ZIP revisado, pero construir el paquete para todos los compradores anteriores al corte. Reportar memoria, disco, duración y límites; no acreditar capacidad del paquete a partir del diagnóstico anterior.
+- [x] Exportar/validar/publicar reportes cerrados por GitHub privado, conservando fallos; datos de servicio quedan locales en cada Mac. Registrar `evidence/releases.json`, guía y commit probado antes de preparar el prompt mac24. Una vez recibida la ejecución, cerrar T4-A sin iniciar test ni cambiar el candidato.
 
-**Estado de entrega:** código y comprobaciones locales preparados; la reproducción full y revisión mac24 siguen pendientes. Véase `evidence/releases.json` y `docs/mac24-t4a-prompt.md`. T4-A no se cierra sólo con la demo local.
+**Estado de entrega: T4-A cerrada** tras [auditar ambos reportes mac24](../../../evidence/releases-review-mac24.json) y sus fuentes Q4/Q1/diagnóstico. Full: paquete de 59,229,801 bytes, 1,351,314 compradores históricos, 949,748 pares, 102,967 artículos, paridad para 72,019 compradores V3, 29.048 s y pico cgroup 2.248 GiB, sin swap/OOM. El paquete y las tablas permanecen en mac24; aquí se verificaron reportes y huellas, sin recalcular predicciones privadas. La suite independiente y preservación de 3,049 originales son declaraciones remotas. `docs/mac24-t4a-prompt.md` es histórico. API y latencia no están acreditadas.
 
 ### T4-B · API, activación y rollback
 
@@ -323,9 +323,9 @@ La ampliación de grafos se ejecutó en Q2 antes de T4, siguiendo el protocolo y
 | Pendiente | Cuándo / cómo se resuelve | ¿Impide empezar? |
 | --- | --- | --- |
 | Versiones exactas y compatibilidad de imágenes | T1 reproducida en ambas Macs ARM64: locks, digests y ejecución; AMD64 físico no probado | No; conservar evidencia y probar AMD64 si se requiere ese soporte |
-| Memoria y duración de construcción/servicio | T2–T3 y Q1–Q4 medidos; T4-A debe medir el paquete para todos los compradores | No; sí condiciona presupuesto y concurrencia del servicio |
+| Memoria y duración de construcción/servicio | T4-A midió paquete full de 56.49 MiB, 29.048 s y pico cgroup 2.248 GiB; RAM y latencia de API pendientes | No; sí condiciona presupuesto y concurrencia del servicio |
 | Acceso a H&M desde otro equipo | Token propio y términos de Kaggle, o ZIP local obtenido con acceso autorizado | Sólo para reproducir datos reales; la demo no lo necesita |
-| Prueba en el segundo equipo | Mac24 ya reprodujo T1–T3 y Q1–Q4; quedan pruebas de versión/restore en T7 | No; lo medido no acredita todavía portabilidad del futuro paquete de servicio |
+| Prueba en el segundo equipo | Mac24 ya reprodujo T1–T3, Q1–Q4 y T4-A; quedan servicio y pruebas de restore en T7 | No; lo medido no acredita todavía portabilidad del futuro paquete de servicio |
 | Remoto Git privado | Privado y escritura comprobada en ambas Macs; intercambio Git/Releases operativo | No; preservar autenticaciones propias de cada equipo |
 | Calidad y latencia alcanzables | Q4 cerró selección en validación; T8 medirá test, carga y latencia | No; son criterios de validación, no capacidades ya demostradas |
 

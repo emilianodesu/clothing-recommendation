@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "stage": "T4-A",
-  "status": "prepared_for_mac24",
+  "status": "closed_after_mac24_review",
   "base_commit": "df578a3e90b174e03782f374fb6308d05d80edd3",
   "execution_commit": "061a64c3073c03130ab695bf0bfa22315eb4e4e4",
   "selected_method": "H",
@@ -169,7 +169,7 @@
     "Final: Ruling: finalize intermediate evidence/releases.json with observed checks/demo/review before delivery — earlier status was intentionally pending; cost: metadata update only."
   ],
   "mac24": {
-    "status": "passed_pending_review",
+    "status": "passed_reviewed",
     "prompt": "docs/mac24-t4a-prompt.md",
     "sequence": [
       "synthetic",
@@ -184,15 +184,20 @@
     "run_ids": [
       "release-mac24-20261021T190539Z-02a850f8",
       "release-mac24-20261021T190717Z-f0a2d073"
-    ]
+    ],
+    "review": "evidence/releases-review-mac24.json",
+    "reviewed_on": "2026-10-21",
+    "prompt_status": "historical_do_not_repeat"
   },
   "activated": false,
   "test_evaluated": false,
   "quality_accepted": false,
   "limits": [
-    "The demo does not measure H&M package capacity or serving latency.",
-    "H&M full requires the original frozen Q1 private artifacts; reports alone cannot reconstruct them.",
-    "T4-B API/activation is not implemented; T4-A closure requires review of mac24 evidence.",
-    "No private service package, profiles, transactions, predictions or models are included in the GitHub report."
-  ]
+    "H&M package construction/parity is measured offline; serving latency, resident API memory and concurrency remain unmeasured.",
+    "H&M reproduction requires the original frozen Q1 private artifacts; reports alone cannot reconstruct them.",
+    "T4-B API/activation/rollback is not implemented; final test and acceptance remain reserved for T8.",
+    "No private service package, profiles, transactions, predictions or models are included in the GitHub reports.",
+    "The primary Mac audited report integrity and source/hash agreement; full private package, individual predictions and preservation inventory stayed on mac24."
+  ],
+  "next_step": "Implement and locally verify T4-B API, activation and rollback before a new mac24 handoff."
 }

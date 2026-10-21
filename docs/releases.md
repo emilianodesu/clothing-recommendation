@@ -3,8 +3,11 @@
 H quedó seleccionado al cerrar Q4. Esta entrega construye su estado local y comprueba
 paridad offline al **2020-09-09**, sin entrenamiento. API, activación y rollback
 pertenecen a T4-B; test y aceptación final siguen reservados para T8.
-La implementación y las pruebas locales no sustituyen la medición H&M en mac24.
-El estado de la entrega se registra en [evidence/releases.json](../evidence/releases.json).
+**T4-A cerrada tras revisar demo y H&M en mac24 el 2026-10-21.** La
+[auditoría](../evidence/releases-review-mac24.json) verifica reportes, referencias
+y paridad; el estado se registra en [evidence/releases.json](../evidence/releases.json).
+Los comandos siguientes se conservan para reproducción, no para repetir la etapa
+ya aprobada. El siguiente desarrollo es T4-B.
 
 ## Paquete local
 
@@ -177,8 +180,8 @@ filtrar filas privadas y puede requerir inspección adicional en mac24.
 ## Resultados mac24 (2026-10-21)
 
 Ejecución T4-A completada en `d59e14775f1e6a51ea5725d4ba9d0d9a61310236`.
-Imagen jobs reconstruida y suite releases aprobada: 60 unitarias, cuatro de
-integración y 74 host; un aviso de invariantes sparse de PyTorch.
+Mac24 declara imagen jobs reconstruida y suite releases aprobada: 60 unitarias,
+cuatro de integración y 74 host; un aviso de invariantes sparse de PyTorch.
 La [evidencia agregada](../evidence/mac24-release-t4a.json) conserva métricas,
 identidad/hashes, recursos efectivos y URLs verificadas de ambos reportes.
 
@@ -194,8 +197,20 @@ Recall@200 0.1907855419943058. Pico RSS 2,028,105,728 bytes y cgroup
 2,413,895,680 bytes, sin swap ni OOM. Estos tiempos son offline, no latencia
 de servicio. Límites efectivos: 10 GiB/3 CPU/2 hilos sobre Colima 14 GiB/4 CPU.
 
-Se comprobaron localmente 3,049 archivos originales antes/después sin cambios,
-incluido el ledger. Paquetes y tablas permanecen privados en mac24; sólo se
-publicaron reportes agregados. Éxito operativo pendiente de revisión:
+La [revisión desde la Mac principal](../evidence/releases-review-mac24.json)
+validó ambos ZIP y los tres reportes fuente congelados, identidad del código y
+configuración, límites, aislamiento, conteos y huellas de ranking/métricas contra
+Q1-V3. Las métricas también coinciden con el diagnóstico histórico. Los seis
+archivos de contenido de la demo tienen las mismas huellas que la demo local.
+Cada ZIP incluye el preflight de 16 pruebas aprobadas con un aviso conocido de
+pytest (`cache_dir`); esos logs no son la suite independiente completa.
+
+Mac24 declara 3,049 archivos originales sin cambios, incluido el ledger. La suite
+independiente y esa preservación no se comprobaron físicamente aquí: no se
+transfirieron su inventario, paquete H&M ni tablas privadas. La paridad completa
+fue calculada por el worker en mac24; aquí se contrastaron sus agregados y huellas
+con los reportes anteriores. **T4-A queda cerrada operativamente** y se conservan:
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
-No se inició T4-B; publicar evidencia no activa al agente de la otra Mac.
+Sigue implementar T4-B con API, activación y rollback, probarlo aquí y preparar
+su entrega mac24. La duración offline y el tamaño del paquete no acreditan RAM
+residente ni latencia de la futura API. Publicar evidencia no activa al otro agente.

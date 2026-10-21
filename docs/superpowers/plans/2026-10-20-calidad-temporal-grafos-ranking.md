@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; siguiente desarrollo T4-A**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; T4-A también cerrada y siguiente desarrollo T4-B**.
 
 ## Global Constraints
 
@@ -162,10 +162,12 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 
 Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-mac24.json) verifica el resumen full, doce fuentes y quince evaluaciones. H queda congelado; los candidatos G/RH/RG mejoran MAP con intervalos positivos pero incumplen Recall o segmentos. La selección no es aceptación final ni una declaración de óptimo global.
 
-1. **Aquí:** implementar T4-A del [plan de plataforma](2026-10-18-plataforma-local-hm.md): paquete H schema2, verificación y paridad offline. No hay comando ejecutable de esa etapa todavía.
-2. Verificar imagen, host y demo local; publicar commit y guía T4-A antes de entregar su prompt propio a mac24.
-3. **En mac24, después de esa entrega:** construir el paquete con sus datos y devolver sólo reportes cerrados. Conservar todos los resultados Q1–Q4; no volver a entrenar ni repetir la campaña.
-4. **Después de paridad aprobada:** T4-B API/activación; luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
+T4-A también está [cerrada tras revisión](../../../evidence/releases-review-mac24.json): paquete H schema2 y paridad offline reproducidos en mac24. Su prompt es histórico.
+
+1. **Aquí:** implementar T4-B del [plan de plataforma](2026-10-18-plataforma-local-hm.md): API, activación y rollback sobre el paquete aprobado.
+2. Verificar HTTP, filtros, paridad, concurrencia, reinicio y rollback; publicar código probado y una guía nueva antes de entregar un prompt T4-B a mac24.
+3. **En mac24, después de esa entrega:** reproducir servicio con su paquete local y devolver sólo reportes cerrados. Conservar todos los resultados Q1–Q4/T4-A; no volver a entrenar ni repetir campañas.
+4. Luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
 
 ## Presupuesto de trabajo y dependencias
 

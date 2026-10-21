@@ -1,8 +1,8 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** ejecutar [T4-A: paquete H y paridad](releases.md) con el [prompt mac24](mac24-t4a-prompt.md) y el commit recibido. Q1–Q4 están cerradas; conservar sus resultados.
+**Paso vigente:** desarrollar y verificar T4-B en la Mac principal antes de preparar una nueva ejecución mac24. [T4-A: paquete H y paridad](releases.md) ya está [cerrada tras revisión](../evidence/releases-review-mac24.json); su prompt es histórico. Conservar paquetes y resultados Q1–Q4.
 
-Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3 y Q1–Q4 están cerradas y revisadas; H fue seleccionado. La siguiente ejecución es [T4-A: paquete y paridad](releases.md), con [prompt propio](mac24-t4a-prompt.md).** Usar el commit recibido y no repetir instalación, descarga, entrenamientos ni campañas anteriores. La API/activación T4-B espera la revisión del paquete H&M.
+Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3, Q1–Q4 y T4-A están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación y rollback de T4-B están pendientes de implementación; aún no hay un nuevo comando para ejecutar en mac24.
 
 ## 1. Obtener el código
 

@@ -1,5 +1,10 @@
 # Prompt para mac24: T4-A
 
+**Histórico: T4-A terminó y fue revisada el 2026-10-21. No volver a ejecutar este
+prompt salvo solicitud explícita de reproducción.** Véase
+[la auditoría](../evidence/releases-review-mac24.json). El siguiente desarrollo
+es T4-B; su implementación y nuevo prompt todavía están pendientes.
+
 Actualizar main por fast-forward preservando cambios locales y fijar el SHA
 completo recibido. Leer README, AGENTS y docs/releases.md. Mantener el clon limpio
 y ese commit durante las corridas. Esta tarea es T4-A: construir el paquete local
