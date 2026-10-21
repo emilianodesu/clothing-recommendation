@@ -12,7 +12,7 @@ from bootstrap import PASSWORD_KEYS, prepare_configuration, project_name, read_c
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def compose(root, values, *args, capture=False, log_path=None):
+def compose(root, values, *args, capture=False, log_path=None, timeout=None):
     environment = dict(os.environ)
     environment.pop("COMPOSE_FILE", None)
     environment.pop("COMPOSE_PROFILES", None)
@@ -27,7 +27,7 @@ def compose(root, values, *args, capture=False, log_path=None):
             raise subprocess.CalledProcessError(code, command)
         return ""
     result = subprocess.run(command, cwd=root, env=environment,
-        text=True, capture_output=capture, check=True)
+        text=True, capture_output=capture, check=True, timeout=timeout)
     return result.stdout if capture else ""
 
 
@@ -64,7 +64,17 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving"), required=True)
+    up = sub.add_parser('up', help='Arrancar el perfil de servicio local')
+    up.add_argument('--profile', choices=('serve',), required=True)
+    up.add_argument('--skip-build', action='store_true')
+    prepared = sub.add_parser('prepare-release', help='Verificar y copiar un paquete local, sin activarlo')
+    prepared.add_argument('--directory', required=True, help='Ruta relativa dentro de ARTIFACTS_DIR')
+    active = sub.add_parser('activate-release', help='Activar una versión ya preparada')
+    active.add_argument('--release-id', required=True)
+    sub.add_parser('rollback-release', help='Volver a la versión anterior')
+    serving_check = sub.add_parser('serving-check', help='T4-B: HTTP, reinicio, rollback y reporte cerrado')
+    serving_check.add_argument('check_args', nargs=argparse.REMAINDER)
     download = sub.add_parser("download-data", help="Descargar H&M desde Kaggle con credencial propia del host")
     download.add_argument("--check-access", action="store_true")
     validate = sub.add_parser("validate-data", help="Verificar el ZIP completo o sólo estructura/tamaño")
@@ -85,6 +95,9 @@ def main():
     tracking.add_argument("--port", type=int)
     args = parser.parse_args()
     try:
+        if args.action == 'serving-check':
+            from serving_check import main as check_serving
+            return check_serving(args.check_args)
         if args.action == "release-job":
             from release_job import main as release_main
             return release_main(args.job_args)
@@ -104,7 +117,21 @@ def main():
             run_bootstrap(ROOT, skip_build=args.skip_build)
             return 0
         values = read_configuration(ROOT / ".env")
-        if args.action == "tracking-up":
+        if args.action == 'up':
+            artifacts = Path(values['ARTIFACTS_DIR'])
+            if not artifacts.is_absolute(): artifacts = ROOT/artifacts
+            (artifacts/'serving').mkdir(exist_ok=True)
+            if not args.skip_build: compose(ROOT, values, 'build', 'app-check', 'jobs')
+            compose(ROOT, values, 'up', '-d', '--wait', '--wait-timeout', '120', 'postgres')
+            compose(ROOT, values, 'exec', '-T', 'postgres', 'bash', '/docker-entrypoint-initdb.d/10-databases.sh')
+            compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', 'jobs', 'hmrec', 'db', 'migrate')
+            compose(ROOT, values, '--profile', 'serve', 'up', '-d', '--wait', '--wait-timeout', '300', 'api')
+            print('API iniciada: http://127.0.0.1:'+values['API_PORT']+'; readiness requiere una versión activa.')
+        elif args.action in ('prepare-release','activate-release','rollback-release'):
+            extra = ['prepare','--directory',args.directory] if args.action=='prepare-release' else (
+                ['activate','--release-id',args.release_id] if args.action=='activate-release' else ['rollback'])
+            compose(ROOT, values, 'exec', '-T', 'api', 'hmrec', 'serving', *extra)
+        elif args.action == "tracking-up":
             if args.port is not None:
                 if not 1024 <= args.port <= 65535:
                     raise ValueError("Puerto fuera de rango")
@@ -148,6 +175,11 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_release_parity.py", "tests/integration/test_quality_folds.py",
                         "tests/integration/test_recent_history.py", "-q")
+            if args.suite == 'serving':
+                compose(ROOT, values, 'up', '-d', '--wait', 'postgres')
+                compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', '-e', 'HMREC_SERVING_TESTS=1', 'jobs',
+                    'python', '-m', 'pytest', 'tests/integration/test_recommendations.py',
+                    'tests/integration/test_release_activation.py', 'tests/integration/test_serving_http.py', '-q')
             if args.suite == "quality":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "tests/integration/test_quality_campaign.py", "-q")
@@ -161,7 +193,7 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "-e", "HMREC_TRACKING_TESTS=1",
                         "-e", "MLFLOW_TRACKING_URI=http://mlflow:5000", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_tracking.py", "-q")
-            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases"):
+            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving"):
                 subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
                                cwd=ROOT, check=True)
             if args.suite == "bootstrap":

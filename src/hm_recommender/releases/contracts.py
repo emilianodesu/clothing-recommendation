@@ -37,3 +37,13 @@ class HistoryReleaseManifest(Contract):
     selection_archive_verified: bool
     files: dict[str,ReleaseFile]
     software_versions: dict[str,str]
+
+
+class HistoryPublicationResult(Contract):
+    release_id: str=Field(pattern=r'^h-[a-f0-9]{64}$')
+    catalog_size: Count
+    past_buyers: Count
+    history_rows: Count
+    ranking_verified: Literal[True]=True
+    status: Literal['prepared']='prepared'
+    activated: Literal[False]=False

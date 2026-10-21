@@ -43,6 +43,7 @@ services:
     networks: [backend]
 
   qdrant:
+    profiles: [experimental]
     image: qdrant/qdrant:v1.19.1@sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10
     environment:
       QDRANT__TELEMETRY_DISABLED: "true"
@@ -104,6 +105,72 @@ services:
       MKL_NUM_THREADS: "2"
     read_only: true
     tmpfs: [/tmp]
+    networks: [backend]
+
+  api:
+    image: hmrec-app:0.1.0
+    profiles: [serve]
+    user: ${HMREC_UID:?Run bootstrap first}:${HMREC_GID:?Run bootstrap first}
+    command: [hmrec, serving, run]
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      POSTGRES_HOST: postgres
+      HM_APP_PASSWORD: ${HM_APP_PASSWORD:?Run bootstrap first}
+      HMREC_SERVING_DIR: /serving
+      HMREC_INPUT_ROOT: /artifacts
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      POLARS_MAX_THREADS: "2"
+    volumes:
+      - type: bind
+        source: ${ARTIFACTS_DIR:-./artifacts}
+        target: /artifacts
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${ARTIFACTS_DIR:-./artifacts}/serving
+        target: /serving
+        bind:
+          create_host_path: false
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+      start_period: 60s
+    mem_limit: 4g
+    cpus: 2
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    networks: [backend]
+
+  serving-probe:
+    image: hmrec-jobs:0.1.0
+    profiles: [tools]
+    user: ${HMREC_UID:?Run bootstrap first}:${HMREC_GID:?Run bootstrap first}
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      POLARS_MAX_THREADS: "2"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+    volumes:
+      - type: bind
+        source: ${ARTIFACTS_DIR:-./artifacts}
+        target: /artifacts
+        read_only: true
+        bind:
+          create_host_path: false
+    read_only: true
+    tmpfs: [/tmp]
+    mem_limit: 3g
+    cpus: 1
     networks: [backend]
 
   jobs:

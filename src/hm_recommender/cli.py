@@ -75,9 +75,26 @@ def main():
     release_build.add_argument("--evidence-archive", type=Path)
     release_verify = release_commands.add_parser("verify")
     release_verify.add_argument("directory", type=Path)
+    serving = commands.add_parser('serving')
+    serving_commands = serving.add_subparsers(dest='serving_action', required=True)
+    serving_commands.add_parser('run')
+    serving_prepare = serving_commands.add_parser('prepare')
+    serving_prepare.add_argument('--directory', required=True)
+    serving_activate = serving_commands.add_parser('activate')
+    serving_activate.add_argument('--release-id', required=True)
+    serving_commands.add_parser('rollback')
     args = parser.parse_args()
     try:
-        if args.command == "check":
+        if args.command == 'serving':
+            if args.serving_action == 'run':
+                import uvicorn
+                uvicorn.run('hm_recommender.api.app:create_app',factory=True,host='0.0.0.0',port=8000,
+                    workers=1,access_log=False,log_level='warning')
+                return 0
+            from hm_recommender.api.admin import command
+            output = command(args.serving_action,directory=getattr(args,'directory',None),
+                release_id=getattr(args,'release_id',None))
+        elif args.command == "check":
             output = check(args.imports_only)
         elif args.command == "db":
             from hm_recommender.database import migrate
