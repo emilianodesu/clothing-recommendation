@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "stage": "T4-A",
+  "machine_id": "mac24",
+  "status": "passed_pending_review",
+  "source_commit": "d59e14775f1e6a51ea5725d4ba9d0d9a61310236",
+  "data_as_of": "2020-09-09",
+  "selected_method": "H",
+  "colima": {
+    "profile": "hm-project",
+    "memory_gib": 14,
+    "cpus": 4
+  },
+  "requested_resources": {
+    "profile": "mac24",
+    "memory_gib": 10,
+    "cpus": 3,
+    "threads": 2
+  },
+  "verification": {
+    "suite": "releases",
+    "status": "passed",
+    "unit_passed": 60,
+    "integration_passed": 4,
+    "host_passed": 74,
+    "failed": 0,
+    "warnings": 1,
+    "warning": "PyTorch sparse invariant checks warning in integration suite"
+  },
+  "preservation": {
+    "scope": "processed data, features, checkpoints, Q1-Q4 work, existing handoff ZIPs and quality ledger",
+    "checked_files": 3049,
+    "all_unchanged": true,
+    "ledger_unchanged": true,
+    "private_inventory_sha256": "05451d58504ac0710b76949d3a3715b3babcff0e5cc4ce747a42fe9d9a2c155d",
+    "verified_locally_on": "mac24"
+  },
+  "runs": [
+    {
+      "run_id": "release-mac24-20261021T190539Z-02a850f8",
+      "status": "passed",
+      "exit_code": 0,
+      "oom_killed": false,
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "result": {
+        "activated": false,
+        "data_as_of": "2020-09-09",
+        "dataset": "synthetic",
+        "disk": {
+          "end_free_bytes": 194397007872,
+          "min_free_bytes": 194397007872,
+          "start_free_bytes": 194397659136
+        },
+        "inputs": {
+          "dataset_manifest_sha256": "8f452162ddf43d0e15e5d75d6a2b87a8b72aaf981c7c25d8dc6dba9ca83a9ec9",
+          "source_sha256": "bf9a6176acb626253a422fce3e96bb3ce8331d7be6cd60b768f4956d284c12ee"
+        },
+        "job_duration_seconds": 5.012323363000178,
+        "job_resources": {
+          "memory.current": 54292480,
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0
+          },
+          "memory.peak": 313544704,
+          "memory.stat": {
+            "active_anon": 49856512,
+            "active_file": 8192,
+            "anon": 49229824,
+            "anon_thp": 0,
+            "file": 827392,
+            "file_dirty": 0,
+            "file_mapped": 0,
+            "file_thp": 0,
+            "file_writeback": 0,
+            "inactive_anon": 0,
+            "inactive_file": 192512,
+            "kernel": 3637248,
+            "kernel_stack": 81920,
+            "pagetables": 507904,
+            "percpu": 2232,
+            "pgactivate": 0,
+            "pgdeactivate": 0,
+            "pgfault": 128701,
+            "pglazyfree": 0,
+            "pglazyfreed": 0,
+            "pgmajfault": 93,
+            "pgrefill": 0,
+            "pgscan": 0,
+            "pgscan_direct": 0,
+            "pgscan_khugepaged": 0,
+            "pgscan_kswapd": 0,
+            "pgsteal": 0,
+            "pgsteal_direct": 0,
+            "pgsteal_khugepaged": 0,
+            "pgsteal_kswapd": 0,
+            "sec_pagetables": 0,
+            "shmem": 626688,
+            "shmem_thp": 0,
+            "slab": 3005872,
+            "slab_reclaimable": 2500736,
+            "slab_unreclaimable": 505136,
+            "sock": 0,
+            "swapcached": 0,
+            "thp_collapse_alloc": 0,
+            "thp_fault_alloc": 6,
+            "thp_swpout": 0,
+            "thp_swpout_fallback": 0,
+            "unevictable": 0,
+            "vmalloc": 8192,
+            "workingset_activate_anon": 0,
+            "workingset_activate_file": 0,
+            "workingset_nodereclaim": 0,
+            "workingset_refault_anon": 0,
+            "workingset_refault_file": 0,
+            "workingset_restore_anon": 0,
+            "workingset_restore_file": 0,
+            "zswap": 0,
+            "zswapped": 0,
+            "zswpin": 0,
+            "zswpout": 0,
+            "zswpwb": 0
+          },
+          "memory.swap.current": 0,
+          "memory.swap.peak": 0,
+          "peak_rss_bytes": 363311104
+        },
+        "package": {
+          "bytes": 9324,
+          "catalog_size": 24,
+          "files": [
+            {
+              "name": "catalog.parquet",
+              "rows": 24,
+              "sha256": "0926210a806d8bef0f1fd55a6e4d4fb594081b860757acb9ccc3b4b272c2f2ff",
+              "size_bytes": 2157
+            },
+            {
+              "name": "customers.parquet",
+              "rows": 32,
+              "sha256": "acbb6f33e8e3952eb0d513fc1a3eba78692272b84bc62f97ca166d5046f8b9b4",
+              "size_bytes": 660
+            },
+            {
+              "name": "histories.parquet",
+              "rows": 64,
+              "sha256": "47a1a519ef88506709ec53b88609a07f5056f7edd726cce57318696d32c8d6d6",
+              "size_bytes": 1868
+            },
+            {
+              "name": "popularity.parquet",
+              "rows": 24,
+              "sha256": "5cf57c5616652cafe9644b4b02cf8c7171f7de5ae112d373e31de672c0b16a0f",
+              "size_bytes": 1349
+            },
+            {
+              "name": "rules.json",
+              "rows": null,
+              "sha256": "d8a78ffa0713e14bd437550f62368f4f4d5c32db1a0d18ee02385029af909a0f",
+              "size_bytes": 380
+            },
+            {
+              "name": "validation-reference.json",
+              "rows": null,
+              "sha256": "ef356805e12a6b338a99c28c6aa9764c6c740a796d3f26691f9f6f2f81a3f23a",
+              "size_bytes": 621
+            }
+          ],
+          "history_rows": 64,
+          "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+          "past_buyers": 32,
+          "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+          "schema_version": 2,
+          "selection_archive_verified": false
+        },
+        "parity": {
+          "absolute_tolerance": 1e-10,
+          "buyers": 33,
+          "catalog_size": 24,
+          "exact_top200": true,
+          "legacy_ranking_verified": true,
+          "metrics": {
+            "map_at_12": 0.9656565656565655,
+            "ndcg_at_12": 0.9743094983097929,
+            "recall_at_200": 0.9898989898989898
+          },
+          "metrics_equal": true,
+          "metrics_sha256": "915d41a236639f6fb314165d739546547c38bb6855787fbbb29afd3b71b9e7c7",
+          "out_of_catalog_relevant_items": 1,
+          "ranking_sha256": "c33d3f58451b55bfda262551d72708a755c0c13e709b9ddab4b742649d075752",
+          "reference_ranking_sha256": "c33d3f58451b55bfda262551d72708a755c0c13e709b9ddab4b742649d075752",
+          "relative_tolerance": 0,
+          "unknown_buyers": 1
+        },
+        "protocol": "history-release-v1",
+        "quality_accepted": false,
+        "references": {
+          "baseline": {
+            "archive_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76",
+            "run_id": "quality-mac24-20261020T201805Z-63eb4569"
+          },
+          "diagnostic": {
+            "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
+            "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72"
+          },
+          "selection": {
+            "archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+            "protocol": "quality-v1",
+            "run_id": "quality-mac24-20261021T042757Z-915df40a"
+          }
+        },
+        "source_commit": "d59e14775f1e6a51ea5725d4ba9d0d9a61310236",
+        "stage": "T4-A",
+        "status": "passed",
+        "test_evaluated": false,
+        "training_performed": false,
+        "verification_exit_code": 0
+      },
+      "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+      "archive_bytes": 8996,
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-release-mac24-20261021T190539Z-02a850f8",
+      "archive_validated": true,
+      "publication_download_verified": true
+    },
+    {
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "status": "passed",
+      "exit_code": 0,
+      "oom_killed": false,
+      "effective_limits": {
+        "memory_bytes": 10737418240,
+        "nano_cpus": 3000000000,
+        "memory_swap_bytes": 21474836480,
+        "polars_threads": 2,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "result": {
+        "activated": false,
+        "data_as_of": "2020-09-09",
+        "dataset": "hm",
+        "disk": {
+          "end_free_bytes": 194341195776,
+          "min_free_bytes": 194341195776,
+          "start_free_bytes": 194411642880
+        },
+        "inputs": {
+          "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+          "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c"
+        },
+        "job_duration_seconds": 29.04755446299896,
+        "job_resources": {
+          "memory.current": 236212224,
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0
+          },
+          "memory.peak": 2413895680,
+          "memory.stat": {
+            "active_anon": 49909760,
+            "active_file": 82108416,
+            "anon": 49283072,
+            "anon_thp": 0,
+            "file": 181813248,
+            "file_dirty": 0,
+            "file_mapped": 0,
+            "file_thp": 0,
+            "file_writeback": 0,
+            "inactive_anon": 0,
+            "inactive_file": 99069952,
+            "kernel": 4509696,
+            "kernel_stack": 81920,
+            "pagetables": 512000,
+            "percpu": 2232,
+            "pgactivate": 0,
+            "pgdeactivate": 0,
+            "pgfault": 1717771,
+            "pglazyfree": 0,
+            "pglazyfreed": 0,
+            "pgmajfault": 9255,
+            "pgrefill": 0,
+            "pgscan": 0,
+            "pgscan_direct": 0,
+            "pgscan_khugepaged": 0,
+            "pgscan_kswapd": 0,
+            "pgsteal": 0,
+            "pgsteal_direct": 0,
+            "pgsteal_khugepaged": 0,
+            "pgsteal_kswapd": 0,
+            "sec_pagetables": 0,
+            "shmem": 626688,
+            "shmem_thp": 0,
+            "slab": 3880400,
+            "slab_reclaimable": 3385176,
+            "slab_unreclaimable": 495224,
+            "sock": 0,
+            "swapcached": 0,
+            "thp_collapse_alloc": 3,
+            "thp_fault_alloc": 86,
+            "thp_swpout": 0,
+            "thp_swpout_fallback": 0,
+            "unevictable": 0,
+            "vmalloc": 8192,
+            "workingset_activate_anon": 0,
+            "workingset_activate_file": 0,
+            "workingset_nodereclaim": 0,
+            "workingset_refault_anon": 0,
+            "workingset_refault_file": 0,
+            "workingset_restore_anon": 0,
+            "workingset_restore_file": 0,
+            "zswap": 0,
+            "zswapped": 0,
+            "zswpin": 0,
+            "zswpout": 0,
+            "zswpwb": 0
+          },
+          "memory.swap.current": 0,
+          "memory.swap.peak": 0,
+          "peak_rss_bytes": 2028105728
+        },
+        "package": {
+          "bytes": 59229801,
+          "catalog_size": 102967,
+          "files": [
+            {
+              "name": "catalog.parquet",
+              "rows": 102967,
+              "sha256": "eeba3e01891fd8ce12faa3f1f6c2d0c635b94e6510fa2e8ad7907bd45a801d48",
+              "size_bytes": 527430
+            },
+            {
+              "name": "customers.parquet",
+              "rows": 1351314,
+              "sha256": "cc3475d4602439c20326438fdc26ea6af722567c4b6eb4a92fa6350d00377a10",
+              "size_bytes": 46009480
+            },
+            {
+              "name": "histories.parquet",
+              "rows": 949748,
+              "sha256": "b30cd4617cdc0f6f8e0d8c42f4a2287b4807508d82bfe846bf1433a5b0eb81ad",
+              "size_bytes": 12137477
+            },
+            {
+              "name": "popularity.parquet",
+              "rows": 102967,
+              "sha256": "b803fe15fa6cbaddab9991ccb33bfa53f328378a823f8cdb0ffbe5c9699b6dd4",
+              "size_bytes": 552095
+            },
+            {
+              "name": "rules.json",
+              "rows": null,
+              "sha256": "d8a78ffa0713e14bd437550f62368f4f4d5c32db1a0d18ee02385029af909a0f",
+              "size_bytes": 380
+            },
+            {
+              "name": "validation-reference.json",
+              "rows": null,
+              "sha256": "ef356805e12a6b338a99c28c6aa9764c6c740a796d3f26691f9f6f2f81a3f23a",
+              "size_bytes": 621
+            }
+          ],
+          "history_rows": 949748,
+          "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+          "past_buyers": 1351314,
+          "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+          "schema_version": 2,
+          "selection_archive_verified": true
+        },
+        "parity": {
+          "absolute_tolerance": 1e-10,
+          "buyers": 72019,
+          "catalog_size": 102967,
+          "exact_top200": true,
+          "legacy_ranking_verified": true,
+          "metrics": {
+            "map_at_12": 0.02458901804435885,
+            "ndcg_at_12": 0.03549285064696758,
+            "recall_at_200": 0.1907855419943058
+          },
+          "metrics_equal": true,
+          "metrics_sha256": "f57452f10f3fe3b4f75ce53bbcbc746a7a18cabfc6636338c32e3604d25bc413",
+          "out_of_catalog_relevant_items": 11385,
+          "ranking_sha256": "5fcc4369c742841798fbc71dcc41fdce44f1d1a9118e6521d057ecfddc3657e6",
+          "reference_ranking_sha256": "5fcc4369c742841798fbc71dcc41fdce44f1d1a9118e6521d057ecfddc3657e6",
+          "relative_tolerance": 0,
+          "unknown_buyers": 5395
+        },
+        "protocol": "history-release-v1",
+        "quality_accepted": false,
+        "references": {
+          "baseline": {
+            "archive_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76",
+            "run_id": "quality-mac24-20261020T201805Z-63eb4569"
+          },
+          "diagnostic": {
+            "archive_sha256": "730c5ff558a7cfdb285d05b009058aaa3291bf6f01e59145c5a4b443b51f048f",
+            "run_id": "diagnose-mac24-20261020T184112Z-4b76ee72"
+          },
+          "selection": {
+            "archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+            "protocol": "quality-v1",
+            "run_id": "quality-mac24-20261021T042757Z-915df40a"
+          }
+        },
+        "source_commit": "d59e14775f1e6a51ea5725d4ba9d0d9a61310236",
+        "stage": "T4-A",
+        "status": "passed",
+        "test_evaluated": false,
+        "training_performed": false,
+        "verification_exit_code": 0
+      },
+      "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+      "archive_bytes": 9383,
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-release-mac24-20261021T190717Z-f0a2d073",
+      "archive_validated": true,
+      "publication_download_verified": true
+    }
+  ],
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "activated": false,
+  "training_performed": false
+}

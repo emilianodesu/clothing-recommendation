@@ -169,7 +169,7 @@
     "Final: Ruling: finalize intermediate evidence/releases.json with observed checks/demo/review before delivery — earlier status was intentionally pending; cost: metadata update only."
   ],
   "mac24": {
-    "status": "pending_execution_and_review",
+    "status": "passed_pending_review",
     "prompt": "docs/mac24-t4a-prompt.md",
     "sequence": [
       "synthetic",
@@ -178,7 +178,13 @@
     "colima_memory_gib": 14,
     "job_memory_gib": 10,
     "job_cpus": 3,
-    "threads": 2
+    "threads": 2,
+    "evidence": "evidence/mac24-release-t4a.json",
+    "execution_commit": "d59e14775f1e6a51ea5725d4ba9d0d9a61310236",
+    "run_ids": [
+      "release-mac24-20261021T190539Z-02a850f8",
+      "release-mac24-20261021T190717Z-f0a2d073"
+    ]
   },
   "activated": false,
   "test_evaluated": false,

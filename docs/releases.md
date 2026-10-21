@@ -173,3 +173,29 @@ La revisión independiente no encontró bloqueos técnicos. Se corrigió un avis
 histórico contradictorio de la guía; queda diferido añadir códigos de fase/error
 controlados. Hoy un fallo interno se reporta por clase de excepción para evitar
 filtrar filas privadas y puede requerir inspección adicional en mac24.
+
+## Resultados mac24 (2026-10-21)
+
+Ejecución T4-A completada en `d59e14775f1e6a51ea5725d4ba9d0d9a61310236`.
+Imagen jobs reconstruida y suite releases aprobada: 60 unitarias, cuatro de
+integración y 74 host; un aviso de invariantes sparse de PyTorch.
+La [evidencia agregada](../evidence/mac24-release-t4a.json) conserva métricas,
+identidad/hashes, recursos efectivos y URLs verificadas de ambos reportes.
+
+- Synthetic: `release-mac24-20261021T190539Z-02a850f8`, passed, 5.012 s,
+  paquete de 9,324 bytes, 32 compradores históricos y 33 de validación.
+- H&M: `release-mac24-20261021T190717Z-f0a2d073`, passed, 29.048 s,
+  paquete de 59,229,801 bytes, 1,351,314 compradores históricos, 949,748
+  pares de historial, 102,967 artículos y 72,019 compradores V3.
+
+Ambos verificaron top200 exacto y métricas iguales (atol 1e-10, rtol 0).
+H&M reprodujo MAP@12 0.02458901804435885, NDCG@12 0.03549285064696758 y
+Recall@200 0.1907855419943058. Pico RSS 2,028,105,728 bytes y cgroup
+2,413,895,680 bytes, sin swap ni OOM. Estos tiempos son offline, no latencia
+de servicio. Límites efectivos: 10 GiB/3 CPU/2 hilos sobre Colima 14 GiB/4 CPU.
+
+Se comprobaron localmente 3,049 archivos originales antes/después sin cambios,
+incluido el ledger. Paquetes y tablas permanecen privados en mac24; sólo se
+publicaron reportes agregados. Éxito operativo pendiente de revisión:
+`quality_accepted=false`, `test_evaluated=false`, `activated=false`.
+No se inició T4-B; publicar evidencia no activa al agente de la otra Mac.
