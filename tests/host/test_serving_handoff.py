@@ -35,6 +35,15 @@ def fixture():
 
 
 class ServingHandoffTests(unittest.TestCase):
+    def test_project_down_includes_all_profiles_and_preserves_volumes(self):
+        import project
+        values = {'COMPOSE_PROJECT_NAME': 'isolated-test'}
+        with patch.object(sys, 'argv', ['scripts/project.py', 'down']), \
+                patch.object(project, 'read_configuration', return_value=values), \
+                patch.object(project, 'compose') as compose:
+            self.assertEqual(project.main(), 0)
+        compose.assert_called_once_with(project.ROOT, values, '--profile', '*', 'down')
+
     def test_documented_project_command_dispatches_all_serving_options(self):
         import project
         import serving_check

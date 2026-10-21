@@ -169,7 +169,7 @@ def main():
         elif args.action == "check":
             compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "hmrec", "check")
         elif args.action == "down":
-            compose(ROOT, values, "down")
+            compose(ROOT, values, "--profile", "*", "down")
         elif args.action == "status":
             compose(ROOT, values, "ps")
         elif args.action == "verify":
