@@ -130,3 +130,31 @@ hacerla pasar. El contrato de backup/restore portátil se implementará en T7.
 El servicio no necesita datos crudos ni Qdrant/MLflow en ejecución; inicialmente
 cada Mac conserva sus propios paquetes. Los reportes por GitHub no contienen
 los paquetes de servicio, transacciones, perfiles, predicciones ni credenciales.
+
+## Resultado mac24 (2026-10-21)
+
+Ensayo único `serving-mac24-20261021T200054Z-cce4d43e` en
+`d1898dd3e471f208c814888250915b42150e842d`: **passed**, reporte validado y
+[publicado con verificación por descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261021T200054Z-cce4d43e).
+La [evidencia mac24](../evidence/mac24-serving-t4b.json) registra las fuentes
+T4-A originales, versiones, hashes, muestras y recursos.
+
+Las imágenes app-check/jobs se reconstruyeron; suite serving: 60 unitarias,
+28 de integración y 79 host aprobadas (167; un aviso). El ensayo hizo 877
+solicitudes: demo/rollback 41 cada una, H&M/reinicio/final 265 cada una.
+H&M muestreó 257 compradores; todos los campos deterministas coincidieron,
+incluidos filtros. Las huellas se conservaron tras reinicio y rollback.
+Duración: 24.693 s. Pico API observado: 1,000,263,680 bytes, sin swap/OOM,
+con límites efectivos 4 GiB/2 CPU/2 hilos. No es una medición de carga T8.
+
+H&M quedó activo y readiness dentro del contenedor confirmó su identidad.
+**Limitación posterior al cierre:** el host no pudo conectar a
+`http://127.0.0.1:8000/health/ready`. Docker registra el binding solicitado
+127.0.0.1:8000, pero `NetworkSettings.Ports` devuelve `8000/tcp: null`.
+El ensayo usa HTTP interno y su resultado no prueba accesibilidad desde el host.
+La causa raíz queda pendiente de diagnóstico de publicación Docker/Colima;
+no se cambió configuración ni se reinició/reintentó para ocultar el resultado.
+
+Los 3,065 archivos inventariados, incluidos paquetes originales y ledger,
+permanecen iguales. Calidad final y test siguen pendientes; no se inició T5.
+La evidencia necesita revisión, incluida la limitación de acceso del host.

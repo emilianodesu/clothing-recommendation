@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "machine_id": "mac24",
+  "source_commit": "d1898dd3e471f208c814888250915b42150e842d",
+  "run_id": "serving-mac24-20261021T200054Z-cce4d43e",
+  "status": "passed",
+  "review_status": "pending_with_host_access_limitation",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261021T200054Z-cce4d43e",
+  "archive_sha256": "2354a772deb31b76fe019187e9f956bef8f999b689287d8e5bfa34f1e22d7bf4",
+  "archive_bytes": 4154,
+  "archive_validated": true,
+  "publication_download_verified": true,
+  "environment": {
+    "run_id": "serving-mac24-20261021T200054Z-cce4d43e",
+    "source_commit": "d1898dd3e471f208c814888250915b42150e842d",
+    "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282"
+  },
+  "result": {
+    "stage": "T4-B",
+    "protocol": "history-serving-v1",
+    "status": "passed",
+    "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+    "sources": {
+      "reference": {
+        "run_id": "release-mac24-20261021T190539Z-02a850f8",
+        "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+        "dataset": "synthetic"
+      },
+      "candidate": {
+        "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+        "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+        "dataset": "hm"
+      }
+    },
+    "checks": {
+      "reference": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+        "sampled_buyers": 33,
+        "checked_requests": 41,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+        "catalog_size": 24,
+        "past_buyers": 32,
+        "request_seconds_mean": 0.0005473002443400995,
+        "request_seconds_max": 0.0009682099989731796,
+        "load_benchmark": false
+      },
+      "candidate": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.0005627017887611215,
+        "request_seconds_max": 0.003809474997979123,
+        "load_benchmark": false
+      },
+      "restart": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.000555354943345213,
+        "request_seconds_max": 0.003911194999091094,
+        "load_benchmark": false
+      },
+      "rollback": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+        "sampled_buyers": 33,
+        "checked_requests": 41,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+        "catalog_size": 24,
+        "past_buyers": 32,
+        "request_seconds_mean": 0.0005203286828629378,
+        "request_seconds_max": 0.0007653570028196555,
+        "load_benchmark": false
+      },
+      "final": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "97234a567f4c842457a89c89a7317d547ec55855b83b003c823c9617c37e6960",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.0005587414076594627,
+        "request_seconds_max": 0.003981106998253381,
+        "load_benchmark": false
+      }
+    },
+    "resources": {
+      "before_restart": {
+        "image_id": "sha256:7c7153bd61cf5cd72df88ced2958766c247dfb1476465cf7848d68d61f537452",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "running": true,
+        "cgroup_peak_bytes": 918294528,
+        "swap_peak_bytes": 0,
+        "threads": 2
+      },
+      "after_restart": {
+        "image_id": "sha256:7c7153bd61cf5cd72df88ced2958766c247dfb1476465cf7848d68d61f537452",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "running": true,
+        "cgroup_peak_bytes": 1000263680,
+        "swap_peak_bytes": 0,
+        "threads": 2
+      }
+    },
+    "final_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "activated": true,
+    "test_evaluated": false,
+    "quality_accepted": false,
+    "training_performed": false,
+    "duration_seconds": 24.69272458300111
+  },
+  "local_verification": {
+    "suite": "serving",
+    "unit_passed": 60,
+    "integration_passed": 28,
+    "host_passed": 79,
+    "total_passed": 167,
+    "failed": 0,
+    "warnings": 1,
+    "build": "app-check and jobs rebuilt",
+    "preservation": {
+      "files_checked": 3065,
+      "all_unchanged": true,
+      "ledger_unchanged": true,
+      "scope": "T4-A packages and reports; processed data, features, checkpoints, Q1-Q4 work and existing handoff ZIPs, quality ledger",
+      "private_inventory_sha256": "5fffe944253d7dabdef824da1db0f9a48c8dbdc5afb0e865388802768e9a90da"
+    },
+    "colima": {
+      "profile": "hm-project",
+      "memory_gib": 14,
+      "cpus": 4
+    },
+    "post_close_readiness": {
+      "inside_container": "ready",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "host_http_url": "http://127.0.0.1:8000/health/ready",
+      "host_http_access": "failed_connection",
+      "configured_port_binding": "127.0.0.1:8000 -> 8000/tcp",
+      "docker_network_settings_ports": {
+        "8000/tcp": null
+      },
+      "limitation": "The passed rehearsal uses internal container HTTP. Host localhost access failed after closure; root cause not established. No restart, configuration change or retry performed.",
+      "next_action": "Review Docker/Colima port publication in a separately authorized diagnosis before claiming host access."
+    }
+  },
+  "quality_accepted": false,
+  "test_evaluated": false
+}
