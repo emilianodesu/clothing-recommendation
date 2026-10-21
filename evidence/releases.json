@@ -23,7 +23,8 @@
     "bootstrap": "passed",
     "real_frozen_q4_archive_reader": "passed; H selected",
     "closed_report_status_export_reader": "passed",
-    "initial_test_failure": "Compose tmpfs disk capacity in integration fixture; fixed observation stub only; production watchdog thresholds unchanged"
+    "initial_test_failure": "Compose tmpfs disk capacity in integration fixture; fixed observation stub only; production watchdog thresholds unchanged",
+    "private_github_upload_and_download_verification": "passed"
   },
   "demo": {
     "run_id": "release-dev-20261021T045736Z-ccdf867f",
@@ -33,7 +34,7 @@
     "archive_bytes": 8979,
     "package_id": "878f2f5b344acb12e716429245bc9f3c4b5bdf6a266a9ae9e2c64e04414d79e8",
     "image_id": "sha256:0ac683d9c97b954762b00fe588abdfa0202eee2e66cf70f783ffd5e539842c13",
-    "report_published": false,
+    "report_published": true,
     "package": {
       "bytes": 9324,
       "catalog_size": 24,
@@ -136,7 +137,8 @@
       "omp_threads": 2,
       "mkl_threads": 2
     },
-    "quality_ledger_created": false
+    "quality_ledger_created": false,
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-release-dev-20261021T045736Z-ccdf867f"
   },
   "review": {
     "model": "gpt-6-astra",
