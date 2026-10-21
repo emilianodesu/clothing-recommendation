@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'scripts'))
 from handoff import package_report,read_report,write_json
@@ -34,6 +35,19 @@ def fixture():
 
 
 class ServingHandoffTests(unittest.TestCase):
+    def test_documented_project_command_dispatches_all_serving_options(self):
+        import project
+        import serving_check
+        sha = 'a' * 40
+        argv = ['scripts/project.py', 'serving-check', '--machine-id', 'mac24',
+            '--expected-commit', sha, '--reference-run-id', 'release-test-reference',
+            '--candidate-run-id', 'release-test-candidate']
+        # The runner is the external Docker/filesystem boundary, after both real parsers.
+        with patch.object(sys, 'argv', argv), patch.object(serving_check, 'run', return_value=0) as run:
+            self.assertEqual(project.main(), 0)
+        run.assert_called_once_with(serving_check.ROOT, 'mac24', sha,
+            'release-test-reference', 'release-test-candidate')
+
     def package(self,root,report,env):
         run=root/report['run_id'];run.mkdir()
         write_json(run/'environment.json',env);write_json(run/'result.json',report['result'])

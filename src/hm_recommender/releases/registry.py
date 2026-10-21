@@ -59,8 +59,11 @@ class PostgresStore:
             return conn.execute('SELECT active_id,previous_id FROM serving_pointer WHERE singleton').fetchone()
 
     def activate(self, release_id):
-        with self.connection() as conn:
-            conn.execute('UPDATE serving_pointer SET previous_id=active_id,active_id=%s,updated_at=now() WHERE singleton AND active_id IS DISTINCT FROM %s',
+        # Fence the write with the same session that owns the advisory lock.
+        # A dead owner must never open a new connection and overwrite its successor.
+        self.check()
+        with self.lease.transaction():
+            self.lease.execute('UPDATE serving_pointer SET previous_id=active_id,active_id=%s,updated_at=now() WHERE singleton AND active_id IS DISTINCT FROM %s',
                          (release_id,release_id))
 
 

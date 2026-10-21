@@ -100,6 +100,31 @@ def test_lost_owner_session_stops_serving(serving):
     assert client.post('/recommend',json={'customer_id':'buyer'}).status_code==503
 
 
+def test_owner_loss_between_check_and_write_cannot_change_replacement_pointer(serving,monkeypatch):
+    import psycopg
+    from hm_recommender.releases.registry import ReleaseRegistry
+    client,registry,a,b,connection,_=serving
+    activate(serving);registry.prepare_release(b._root)
+    original=registry.store.activate
+    replacement=ReleaseRegistry(registry.root,connection)
+
+    def lose_lease_then_write(release_id):
+        pid=registry.store.lease.info.backend_pid
+        with connection() as conn:
+            assert conn.execute('SELECT pg_terminate_backend(%s)',(pid,)).fetchone()[0]
+        replacement.open()
+        assert replacement.snapshot().release_id==a.release_id
+        original(release_id)
+
+    monkeypatch.setattr(registry.store,'activate',lose_lease_then_write)
+    try:
+        with pytest.raises(psycopg.OperationalError):registry.activate_release(b.release_id)
+        assert client.get('/health/ready').status_code==503
+        assert replacement.store.pointer()[0]==a.release_id
+        assert replacement.snapshot().release_id==a.release_id
+    finally:replacement.close()
+
+
 def test_corrupt_committed_release_blocks_restart(serving):
     from hm_recommender.releases.registry import ReleaseRegistry
     _,registry,a,_,connection,_=serving;activate(serving);registry.close()

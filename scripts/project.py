@@ -74,7 +74,10 @@ def main():
     active.add_argument('--release-id', required=True)
     sub.add_parser('rollback-release', help='Volver a la versión anterior')
     serving_check = sub.add_parser('serving-check', help='T4-B: HTTP, reinicio, rollback y reporte cerrado')
-    serving_check.add_argument('check_args', nargs=argparse.REMAINDER)
+    serving_check.add_argument('--machine-id', required=True)
+    serving_check.add_argument('--expected-commit', required=True)
+    serving_check.add_argument('--reference-run-id', required=True)
+    serving_check.add_argument('--candidate-run-id', required=True)
     download = sub.add_parser("download-data", help="Descargar H&M desde Kaggle con credencial propia del host")
     download.add_argument("--check-access", action="store_true")
     validate = sub.add_parser("validate-data", help="Verificar el ZIP completo o sólo estructura/tamaño")
@@ -97,7 +100,10 @@ def main():
     try:
         if args.action == 'serving-check':
             from serving_check import main as check_serving
-            return check_serving(args.check_args)
+            return check_serving(['--machine-id', args.machine_id,
+                '--expected-commit', args.expected_commit,
+                '--reference-run-id', args.reference_run_id,
+                '--candidate-run-id', args.candidate_run_id])
         if args.action == "release-job":
             from release_job import main as release_main
             return release_main(args.job_args)

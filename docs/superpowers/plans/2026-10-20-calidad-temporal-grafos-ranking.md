@@ -164,8 +164,8 @@ Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-m
 
 T4-A también está [cerrada tras revisión](../../../evidence/releases-review-mac24.json): paquete H schema2 y paridad offline reproducidos en mac24. Su prompt es histórico.
 
-1. **Aquí:** implementar T4-B del [plan de plataforma](2026-10-18-plataforma-local-hm.md): API, activación y rollback sobre el paquete aprobado.
-2. Verificar HTTP, filtros, paridad, concurrencia, reinicio y rollback; publicar código probado y una guía nueva antes de entregar un prompt T4-B a mac24.
+1. T4-B implementa API, activación y rollback sobre el paquete aprobado; la reproducción H&M sigue pendiente.
+2. **Mac24:** ejecutar una vez [la guía T4-B](../../serving.md) y [su prompt](../../mac24-t4b-prompt.md), publicar el reporte cerrado y esperar revisión. No repetir campañas ni activar T5/test.
 3. **En mac24, después de esa entrega:** reproducir servicio con su paquete local y devolver sólo reportes cerrados. Conservar todos los resultados Q1–Q4/T4-A; no volver a entrenar ni repetir campañas.
 4. Luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
 

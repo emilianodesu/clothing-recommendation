@@ -1,8 +1,8 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** desarrollar y verificar T4-B en la Mac principal antes de preparar una nueva ejecución mac24. [T4-A: paquete H y paridad](releases.md) ya está [cerrada tras revisión](../evidence/releases-review-mac24.json); su prompt es histórico. Conservar paquetes y resultados Q1–Q4.
+**Paso vigente:** ejecutar [T4-B](serving.md) con el [prompt mac24](mac24-t4b-prompt.md) y el commit recibido. [T4-A: paquete H y paridad](releases.md) ya está [cerrada tras revisión](../evidence/releases-review-mac24.json); su prompt es histórico. Conservar paquetes y resultados Q1–Q4.
 
-Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3, Q1–Q4 y T4-A están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación y rollback de T4-B están pendientes de implementación; aún no hay un nuevo comando para ejecutar en mac24.
+Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3, Q1–Q4 y T4-A están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación y rollback de T4-B están implementados y probados localmente; `serving-check` verifica el ciclo de versiones con los paquetes existentes y devuelve reportes cerrados.
 
 ## 1. Obtener el código
 

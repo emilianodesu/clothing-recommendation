@@ -211,6 +211,6 @@ transfirieron su inventario, paquete H&M ni tablas privadas. La paridad completa
 fue calculada por el worker en mac24; aquí se contrastaron sus agregados y huellas
 con los reportes anteriores. **T4-A queda cerrada operativamente** y se conservan:
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
-Sigue implementar T4-B con API, activación y rollback, probarlo aquí y preparar
-su entrega mac24. La duración offline y el tamaño del paquete no acreditan RAM
+Sigue [reproducir T4-B en mac24](serving.md), con API, activación y rollback
+implementados y probados localmente. La duración offline y el tamaño del paquete no acreditan RAM
 residente ni latencia de la futura API. Publicar evidencia no activa al otro agente.

@@ -39,6 +39,8 @@ Sólo un proceso puede poseer el registro: un advisory lock PostgreSQL de sesió
 impide dos propietarios sobre la misma base/esquema. Cada solicitud comprueba
 que esa conexión sigue viva antes de obtener el snapshot. Perderla detiene las
 recomendaciones; no hay reconexión silenciosa que omita adquirir el lock.
+La transacción que cambia el puntero usa esa misma sesión: un propietario que
+la perdió no puede escribir desde otra conexión después de que entre su sucesor.
 Uvicorn usa un worker. Escalar a varios procesos requiere otro contrato de
 coordinación; no basta cambiar `workers`.
 
