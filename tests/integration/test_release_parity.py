@@ -41,12 +41,17 @@ def test_unfiltered_parity_with_frozen_diagnostic(tmp_path,monkeypatch):
         verify_parity(later,ds,snap,labels,reference,expected,tmp_path/'wrong-cutoff')
 
 
-def test_release_worker_returns_aggregate_only_and_preserves_failed_attempt(tmp_path):
+def test_release_worker_returns_aggregate_only_and_preserves_failed_attempt(tmp_path,monkeypatch):
     from hm_recommender.releases.worker import run
     from hm_recommender.releases.package import configuration
     sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
     sys.path.insert(0,'/opt/hmrec/scripts')
     from release_handoff import validate_release_result
+    # Compose /tmp is a small tmpfs. This fixture tests the worker contract;
+    # the detached job measures actual artifact storage with the real watchdog.
+    from collections import namedtuple
+    disk=namedtuple('disk_usage','total used free')(100*2**30,20*2**30,80*2**30)
+    monkeypatch.setattr('hm_recommender.releases.worker.shutil.disk_usage',lambda _:disk)
     config=tmp_path/'config.json';atomic_json(config,configuration())
     root=tmp_path/'run';root.mkdir()
     atomic_json(root/'environment.json',{'source_commit':'a'*40,'dataset':'synthetic',
