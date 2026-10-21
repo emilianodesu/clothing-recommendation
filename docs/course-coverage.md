@@ -1,6 +1,6 @@
 # Cobertura del temario y límites de la entrega
 
-La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está implementada y su ejecución formal en mac24 está pendiente; API, publicación de artefactos, recuperación y prueba de carga corresponden a T4–T8.
+La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está cerrada y H seleccionado tras la [auditoría](../evidence/quality-decision-mac24.json); API, publicación de artefactos, recuperación y prueba de carga corresponden a T4–T8.
 
 | Subtema | Implementación y evidencia | Alcance real |
 | --- | --- | --- |

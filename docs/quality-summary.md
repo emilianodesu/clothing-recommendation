@@ -1,6 +1,6 @@
 # Q4: selección reproducible del motor
 
-Q1–Q3 están cerradas y auditadas. Q4 está implementada; su ejecución completa y la revisión del resultado de mac24 quedan pendientes. El comando de resumen consume las evaluaciones existentes y aplica `quality-v1`, sin entrenar, regenerar rankings, abrir test ni desplegar T4.
+**Q1–Q4 cerradas:** el resumen full de mac24 y sus doce fuentes se descargaron y auditaron. H queda seleccionado para preparar el servicio. La reproducción siguiente es histórica; no repetir Q4 salvo solicitud explícita. El comando de resumen consume las evaluaciones existentes y aplica `quality-v1`, sin entrenar, regenerar rankings, abrir test ni desplegar T4.
 
 ## Entradas y verificaciones
 
@@ -53,10 +53,28 @@ El ZIP contiene únicamente configuración, entorno, logs y resultado agregado. 
 
 Después del estado final, mac24 puede agregar `evidence/mac24-quality-q4.json` con identidad, resultado agregado, recursos, presupuesto y URL de Release, sin compradores, rutas sensibles ni réplicas. Commit/push de evidencia sólo después de exportar/publicar; nunca cambiar código durante el job. La Mac principal descargará el ZIP, verificará su contrato y reconciliará las fuentes, deltas, costes y decisión. No podrá recalcular los intervalos sin las tablas que permanecen en mac24.
 
-Tras esa revisión se escribe `evidence/quality-decision-mac24.json`, se congela el procedimiento y se actualizan T4-A/T4-B y T5. Si gana H se reutiliza el diseño preparado; si gana otro se adapta su contrato de artefactos. T8 evaluará una sola vez el procedimiento congelado y P/H en test, sin cambiar el ganador por ese resultado. La API aún deberá demostrar 20 solicitudes/s, p95 < 200 ms y errores < 1%; el tiempo offline de Q4 no acredita esas metas.
+La revisión ya produjo `evidence/quality-decision-mac24.json`, congeló H y confirmó los contratos de T4-A/T4-B y T5. Se reutiliza el diseño de historial y popularidad preparado. T8 evaluará una sola vez el procedimiento congelado y P/H en test, sin cambiar el ganador por ese resultado. La API aún deberá demostrar 20 solicitudes/s, p95 < 200 ms y errores < 1%; el tiempo offline de Q4 no acredita esas metas.
 
-## Resultado esperado y límites
+## Resultado revisado y límites
 
-Los reportes actuales muestran mejoras de MAP medio G +6.47%, RH +4.03% y RG +14.48% frente a H. G/RG incumplen el límite de Recall; RH/RG incumplen segmentos. H sigue provisional hasta el resumen formal. El bootstrap completa la incertidumbre y la trazabilidad, sin borrar esos incumplimientos. Un framework más complejo no explica por sí solo la calidad: importan el pool, las señales, la ventana temporal y el criterio de evaluación. La [cobertura del curso](course-coverage.md) distingue experimentos realizados de temas pendientes.
+Los reportes actuales muestran mejoras de MAP medio G +6.47%, RH +4.03% y RG +14.48% frente a H. G/RG incumplen el límite de Recall; RH/RG incumplen segmentos. La decisión formal selecciona H bajo la regla predeclarada. El bootstrap completa la incertidumbre y la trazabilidad, sin borrar esos incumplimientos. Un framework más complejo no explica por sí solo la calidad: importan el pool, las señales, la ventana temporal y el criterio de evaluación. La [cobertura del curso](course-coverage.md) distingue experimentos realizados de temas pendientes.
 
 La [evidencia local Q4](../evidence/local-quality-q4.json) registra 155 pruebas distintas aprobadas (77 científicas, 70 host, 8 de infraestructura Docker), una prueba externa de MLflow omitida, revisión independiente y demo desacoplada de 33 compradores. Se conservaron los reportes del primer fallo de preparación y del nuevo intento aprobado. La prueba de escala sintética de 152,019 compradores no representa calidad H&M ni tiempo de IO del resumen completo.
+
+## Cierre de mac24 y congelación
+
+La [auditoría principal](../evidence/quality-decision-mac24.json) valida el ZIP `quality-mac24-20261021T042757Z-915df40a`, ejecutado desde `de04e5c`, y reconcilia sus doce fuentes Q1/Q2/RH/RG, quince evaluaciones, medias, deltas, costes y motivos. La evidencia recibida coincide exactamente con el resultado cerrado. La comparación abarca 190,944 compradores únicos y 228,094 observaciones comprador–semana; V1/V2/V3 contienen 80,253/75,822/72,019 compradores. Las 2,000 réplicas no descartaron ningún sorteo por fold vacío.
+
+| Candidato frente a H | MAP medio | Cambio relativo | IC98.3333% del delta MAP absoluto | Motivo de exclusión |
+| --- | ---: | ---: | --- | --- |
+| G | 0.02366238 | +6.47% | [0.00126171, 0.00162986] | Recall −4.39%, límite −1% |
+| RH | 0.02311949 | +4.03% | [0.00062544, 0.00114128] | MAP por segmento hasta −27.66%, límite −5% |
+| RG | 0.02544361 | +14.48% | [0.00294479, 0.00348630] | Recall y segmentos |
+
+H tiene MAP medio 0.02222467, NDCG 0.03300888 y Recall 0.19526924. RG obtiene el mayor MAP; H se elige porque ningún candidato satisface todos los controles fijados antes de medir. Los tres intervalos positivos confirman la mejora promedio de MAP bajo este análisis, sin anular las regresiones ni demostrar un óptimo global.
+
+El job duró 5.026059 s; se cobraron 5.186838 s al presupuesto summary de 1,800 s. Pico RSS 0.513779 GiB y cgroup 0.498383 GiB, sin swap ni OOM, con límites efectivos 10 GiB/3 CPU/2 hilos. El tiempo offline no mide latencia de servicio. Las 46 pruebas unitarias, 15 integraciones y 70 pruebas host previas, y la preservación de 2,143 archivos, son declaraciones de mac24; sus inventarios privados no se transfirieron. Aquí se verificaron los reportes y se recalcularon agregados/criterios, no las réplicas a partir de tablas privadas.
+
+Se congela H, ventanas 28/7, orden por fecha/frecuencia/ID del historial y frecuencia/ID de popularidad, deduplicación conservando la primera aparición y hasta 200 candidatos. `quality-v1` y su configuración permanecen inalterados; `recent-history-v1` identifica las reglas históricas compatibles. No requiere entrenamiento ni refit de pesos, sólo preparar estado estrictamente anterior al corte. Las huellas de dataset, configuración, código, campaña y evidencia están en la auditoría.
+
+T4-A construirá el paquete con catálogo, historial, popularidad, reglas, manifiesto y referencias de validación/selección. T4-B añadirá API, activación y rollback; T5 actualizará ventanas desde transacciones o conteos diarios. T8 reconstruirá estado al 2020-09-16 y evaluará una única vez H y P (H coincide con elegido/referencia, sin duplicar método), sin ajustar a partir de test. T4 no se inició y `quality_accepted=false` permanece hasta la aceptación final.

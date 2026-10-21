@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q3 cerradas tras revisar sus reportes mac24. Q4 implementada, pendiente de ejecución y revisión mac24**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; siguiente desarrollo T4-A**.
 
 ## Global Constraints
 
@@ -153,24 +153,24 @@ Tipos usan IDs como cadenas con ceros preservados. Artefactos se escriben en dir
 - [x] Escribir RED de bootstrap que conserva juntos registros del mismo comprador en distintos folds, pesos normalizados por fold, media de semanas sin ponderar por tamaño, y tres contrastes con nivel `1-0.05/3`. Comparar un fixture con cálculo independiente y semillas fijas.
 - [x] Escribir RED `test_incomplete_candidate_never_promoted`, `test_threshold_boundaries_and_zero_reference`, `test_segment_regression_blocks_promotion`, `test_tie_break_uses_cost_not_test`, `test_no_candidate_keeps_H`. Probar cada umbral del diseño (2%, 1%, 5%, 1,000 usuarios, diferencia 0.0001) y no leer test.
 - [x] Implementar comparación/decisión y reportes completos, separando ejecución, elegibilidad y aceptación final. Preservar métricas locales por comprador/fold/método en Q1–Q3 y comprobar sus huellas; Q4 dispone de 30 minutos incluidos en 24 h acumuladas. Si una etapa no pudo ejecutarse, cerrar investigación con limitación explícita, sin llamarla comparación completa. Una corrección de bug invalida resultados afectados y requiere repetirlos con identidad nueva, sin borrar evidencia.
-- [ ] Publicar código probado y ejecutar resumen mac24 sobre artefactos cerrados; exportar/validar/publicar `quality-handoff` de etapa `summary`, con huellas de todos los reportes fuente. Recibir `evidence/quality-decision-mac24.json`; revisar coherencia de deltas, intervalos, poblaciones, costes y motivos de selección.
+- [x] Publicar código probado y ejecutar resumen mac24 sobre artefactos cerrados; exportar/validar/publicar `quality-handoff` de etapa `summary`, con huellas de todos los reportes fuente. Recibir `evidence/quality-decision-mac24.json`; revisar coherencia de deltas, intervalos, poblaciones, costes y motivos de selección.
 - [x] Redactar explicación con ablaciones, segmentos, incertidumbre y casos negativos; crear mapa de cobertura implementada frente a pendiente. No atribuir resultado al framework, no llamar causal a una permutación ni red social a coocurrencia comercial.
-- [ ] Congelar ganador, configuración y procedimiento de preparación/refit. Actualizar contratos de T4-A/T4-B y actualización T5 según artefactos necesarios; conservar publicación/rollback/portabilidad. Si gana H, reutilizar el diseño ya preparado. Finalizar Q4 y preparar el siguiente desarrollo T4-A.
+- [x] Congelar ganador, configuración y procedimiento de preparación/refit. Actualizar contratos de T4-A/T4-B y actualización T5 según artefactos necesarios; conservar publicación/rollback/portabilidad. Si gana H, reutilizar el diseño ya preparado. Finalizar Q4 y preparar el siguiente desarrollo T4-A.
 - [x] Planificar en T8 el test único del procedimiento congelado y P/H; no ejecutarlo como parte del resumen ni cambiar el ganador a partir de test. Mantener objetivos de servicio: 20 solicitudes/s, p95 < 200 ms, errores < 1%, medidos después de implementar API.
 
 ## Cómo continuar desde este plan
 
-1. **Aquí:** implementar Q1-A y Q1-B, validar imagen/host/demo, publicar un commit ejecutable y su guía. El primer prompt remoto evaluará P/H; no hará grafos ni entrenará.
-2. **En mac24, cuando llegue ese commit:** seguir la secuencia Q1-B; exportar y publicar cada reporte antes de continuar. Mantener equipo sin suspensión y recursos actuales. GitHub no despierta al otro agente: el usuario avisa al terminar.
-3. **Aquí:** descargar y auditar Q1; preparar Q2 y después Q3, cada una con su propio commit y prompt. Q4 se calcula donde estén los artefactos individuales y devuelve sólo agregados.
-4. **Después de selección:** completar T4–T8. Un modelo más complejo sólo llega al servicio si cumple la regla; los experimentos del curso se entregan aunque pierdan.
+Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-mac24.json) verifica el resumen full, doce fuentes y quince evaluaciones. H queda congelado; los candidatos G/RH/RG mejoran MAP con intervalos positivos pero incumplen Recall o segmentos. La selección no es aceptación final ni una declaración de óptimo global.
 
-Estado actual: Q1–Q3 cerradas operativamente tras auditar los veinte reportes mac24; [resultados Q3](../../ranker-quality.md). La [evidencia local](../../../evidence/local-quality-q3.json) registra 145 pruebas distintas y dos demos. Q4 está implementada; seguir [guía de resumen](../../quality-summary.md) y [prompt mac24](../../mac24-q4-prompt.md) con el commit recibido. La ejecución y revisión formal permanecen pendientes. Conservar tablas individuales y presupuesto en mac24. No repetir secuencias históricas por recibir el plan; cada etapa requiere su entrega ejecutable y prompt propios.
+1. **Aquí:** implementar T4-A del [plan de plataforma](2026-10-18-plataforma-local-hm.md): paquete H schema2, verificación y paridad offline. No hay comando ejecutable de esa etapa todavía.
+2. Verificar imagen, host y demo local; publicar commit y guía T4-A antes de entregar su prompt propio a mac24.
+3. **En mac24, después de esa entrega:** construir el paquete con sus datos y devolver sólo reportes cerrados. Conservar todos los resultados Q1–Q4; no volver a entrenar ni repetir la campaña.
+4. **Después de paridad aprobada:** T4-B API/activación; luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
 
 ## Presupuesto de trabajo y dependencias
 
 Estimación de ingeniería, no compromiso de calendario: Q1 1–2 jornadas; Q2 2–3; Q3 2–3; Q4 1. Total 6–9 jornadas de desarrollo/revisión, más ejecución medida y disponibilidad para intercambiar reportes. T4–T8 conservan su trabajo pendiente y se reestiman al cerrar Q4; no prometer mantener el calendario original sin absorber esta ampliación.
 
-No hacen falta nuevas cuentas, servicios de pago o dataset. Q2 verificó el grafo H&M y Q3 completó LightGBM CPU en los tres cortes sobre Linux ARM64; máximo cgroup 3.667202 GiB en Q3. El lock resuelve también AMD64, cuya ejecución física no se probó aquí. Mac24 declara preservados los artefactos locales; Q4 debe verificar sus hashes y medir su resumen dentro de los 30 minutos reservados. No hace falta contratar infraestructura.
+No hacen falta nuevas cuentas, servicios de pago o dataset. Q2 verificó el grafo H&M y Q3 completó LightGBM CPU en los tres cortes sobre Linux ARM64; máximo cgroup 3.667202 GiB en Q3. El lock resuelve también AMD64, cuya ejecución física no se probó aquí. Q4 verificó las métricas privadas en mac24 y completó el resumen en 5.026059 s, con 5.186838 s cobrados a la reserva de 30 minutos. La Mac principal auditó el ZIP y sus fuentes; no recibió las tablas por comprador. No hace falta contratar infraestructura.
 
 Auto-revisión prevista: cubrir cada requisito del diseño con una tarea/prueba, conservar tipos entre tareas, revisar referencias de fechas y estado de comandos, y verificar que límites/selección no puedan cambiarse después de medir sin nuevo protocolo. Los números de pruebas y resultados se escribirán únicamente después de ejecutar.

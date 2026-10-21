@@ -1,0 +1,420 @@
+{
+  "schema_version": 1,
+  "review_date_local": "2026-10-20",
+  "timezone": "America/Mexico_City",
+  "status": "passed",
+  "scope": "Main Mac audit of Q4 report, twelve source reports and frozen selection; no raw remote predictions or bootstrap draws transferred",
+  "run_id": "quality-mac24-20261021T042757Z-915df40a",
+  "execution_commit": "de04e5cc4655090ca40835f00625b1118afdd0c9",
+  "received_evidence_commit": "c3195db",
+  "archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+  "archive_bytes": 28923,
+  "package_id": "03cfb302431d745b64af5c2855a30678caab73cbd0bb634387c2352a3a659359",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-mac24-20261021T042757Z-915df40a",
+  "verified": {
+    "closed_zip_inventory_hashes_contract": true,
+    "received_json_equals_closed_result": true,
+    "protocol_and_campaign_exact": true,
+    "sources_count": 12,
+    "evaluations_count": 15,
+    "all_source_reports_revalidated": true,
+    "source_metrics_hashes_and_ancestry_reconciled": true,
+    "means_deltas_costs_recomputed_from_source_aggregates": true,
+    "eligibility_independently_recomputed": true,
+    "resource_isolation_and_budget_reconciled": true,
+    "all_20_prior_campaign_reports_passed": true,
+    "bootstrap_recomputed_on_main": false,
+    "raw_private_tables_inspected_on_main": false
+  },
+  "selected_method": "H",
+  "selection_finalized": true,
+  "comparison_complete": true,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "baseline_mean_metrics": {
+    "map_at_12": 0.022224669607739445,
+    "ndcg_at_12": 0.033008880660881736,
+    "recall_at_200": 0.19526923868832757
+  },
+  "popularity_mean_metrics": {
+    "map_at_12": 0.0067215616089272,
+    "ndcg_at_12": 0.013325960583730584,
+    "recall_at_200": 0.17469611155224388
+  },
+  "comparisons": {
+    "G": {
+      "mean_metrics": {
+        "map_at_12": 0.023662383726392202,
+        "ndcg_at_12": 0.03533201345725872,
+        "recall_at_200": 0.18669113220086608
+      },
+      "relative_change_percent": {
+        "map_at_12": 6.469001,
+        "ndcg_at_12": 7.037902,
+        "recall_at_200": -4.392964
+      },
+      "delta_intervals": {
+        "map_at_12": {
+          "delta": 0.0014377141186527546,
+          "exploratory_interval": [
+            0.0012952842292530194,
+            0.0015899060136556585
+          ],
+          "family_interval": [
+            0.0012617073317282832,
+            0.0016298645194469312
+          ]
+        },
+        "ndcg_at_12": {
+          "delta": 0.0023231327963769846,
+          "exploratory_interval": [
+            0.0021078185388169256,
+            0.0025478971274056194
+          ]
+        },
+        "recall_at_200": {
+          "delta": -0.008578106487461499,
+          "exploratory_interval": [
+            -0.009426852610670916,
+            -0.007746055013724213
+          ]
+        }
+      },
+      "positive_folds": 3,
+      "eligible": false,
+      "reasons": [
+        "recall_at_200_regression"
+      ],
+      "failing_segments": [],
+      "candidate_cost_seconds": 78.688904,
+      "peak_source_job_gib": 2.054413
+    },
+    "RH": {
+      "mean_metrics": {
+        "map_at_12": 0.023119491031225292,
+        "ndcg_at_12": 0.034772017855812576,
+        "recall_at_200": 0.19526923868832757
+      },
+      "relative_change_percent": {
+        "map_at_12": 4.026253,
+        "ndcg_at_12": 5.341403,
+        "recall_at_200": 0.0
+      },
+      "delta_intervals": {
+        "map_at_12": {
+          "delta": 0.0008948214234858486,
+          "exploratory_interval": [
+            0.0006819012437379565,
+            0.0011006044933707952
+          ],
+          "family_interval": [
+            0.0006254413012731239,
+            0.0011412785561434695
+          ]
+        },
+        "ndcg_at_12": {
+          "delta": 0.0017631371949308413,
+          "exploratory_interval": [
+            0.001504621620920682,
+            0.0020184341777737366
+          ]
+        },
+        "recall_at_200": {
+          "delta": 0.0,
+          "exploratory_interval": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "positive_folds": 3,
+      "eligible": false,
+      "reasons": [
+        "segment_regression"
+      ],
+      "failing_segments": [
+        {
+          "fold": "V1",
+          "segment": "no_history",
+          "users": 5940,
+          "relative_map_change_percent": -27.657768
+        },
+        {
+          "fold": "V1",
+          "segment": "older_history",
+          "users": 14733,
+          "relative_map_change_percent": -16.18902
+        },
+        {
+          "fold": "V3",
+          "segment": "no_history",
+          "users": 5395,
+          "relative_map_change_percent": -11.621204
+        },
+        {
+          "fold": "V3",
+          "segment": "older_history",
+          "users": 13240,
+          "relative_map_change_percent": -9.933933
+        }
+      ],
+      "candidate_cost_seconds": 1043.216579,
+      "peak_source_job_gib": 3.450287
+    },
+    "RG": {
+      "mean_metrics": {
+        "map_at_12": 0.02544360813940372,
+        "ndcg_at_12": 0.03851158055956312,
+        "recall_at_200": 0.18669113220086608
+      },
+      "relative_change_percent": {
+        "map_at_12": 14.483628,
+        "ndcg_at_12": 16.670362,
+        "recall_at_200": -4.392964
+      },
+      "delta_intervals": {
+        "map_at_12": {
+          "delta": 0.003218938531664275,
+          "exploratory_interval": [
+            0.002997214094452885,
+            0.003440483665753017
+          ],
+          "family_interval": [
+            0.002944793106293453,
+            0.0034862951129899992
+          ]
+        },
+        "ndcg_at_12": {
+          "delta": 0.005502699898681382,
+          "exploratory_interval": [
+            0.005209761767803437,
+            0.005792897216118585
+          ]
+        },
+        "recall_at_200": {
+          "delta": -0.008578106487461499,
+          "exploratory_interval": [
+            -0.009426852610670916,
+            -0.007746055013724213
+          ]
+        }
+      },
+      "positive_folds": 3,
+      "eligible": false,
+      "reasons": [
+        "recall_at_200_regression",
+        "segment_regression"
+      ],
+      "failing_segments": [
+        {
+          "fold": "V1",
+          "segment": "no_history",
+          "users": 5940,
+          "relative_map_change_percent": -22.242608
+        },
+        {
+          "fold": "V1",
+          "segment": "older_history",
+          "users": 14733,
+          "relative_map_change_percent": -19.238962
+        },
+        {
+          "fold": "V3",
+          "segment": "no_history",
+          "users": 5395,
+          "relative_map_change_percent": -6.478798
+        }
+      ],
+      "candidate_cost_seconds": 1542.588574,
+      "peak_source_job_gib": 3.667202
+    }
+  },
+  "bootstrap": {
+    "cluster": "customer",
+    "discarded_empty_fold_draws": 0,
+    "exploratory_confidence": 0.95,
+    "family_confidence": 0.9833333333333333,
+    "family_contrasts": 3,
+    "fold_buyers": {
+      "V1": 80253,
+      "V2": 75822,
+      "V3": 72019
+    },
+    "fold_weighting": "equal",
+    "observations": 228094,
+    "resamples": 2000,
+    "seed": 42,
+    "unique_buyers": 190944
+  },
+  "sources": [
+    {
+      "archive_sha256": "a948ebcf770fd2fc063f0e1f8cf96969c8da8febe4fd7794643e7aecbb48a729",
+      "fold": "V1",
+      "role": "Q1",
+      "run_id": "quality-mac24-20261020T201629Z-9e5fc20a",
+      "package_id": "a465cd4fe4fc78574bebc7bf5358ee29a76133350bb167d6616e7d64c0238913"
+    },
+    {
+      "archive_sha256": "fa29acd76a6b155386f05f7f9390746dd2971ee5b18f97e1c8eefdedbb276956",
+      "fold": "V1",
+      "role": "Q2",
+      "run_id": "quality-mac24-20261020T211909Z-cf26a40a",
+      "package_id": "1953b75e239a7b1aeb784fb4990f15f138d4e38bbd43acd030f059c7c5a13296"
+    },
+    {
+      "archive_sha256": "bab998a0c4f7bf9b6002b4581522d0c8a0a8669268091c4164832f80e4aa0f69",
+      "fold": "V1",
+      "role": "RG",
+      "run_id": "quality-mac24-20261020T224119Z-94bf95ca",
+      "package_id": "dda463d203afd2f1bb89fc7f021f2be3769d95ef1ce59594360ce1ec4e905635"
+    },
+    {
+      "archive_sha256": "061984a7b4747f694d17e29135a4d9a4904dca206461b2a4d560077af1fcca06",
+      "fold": "V1",
+      "role": "RH",
+      "run_id": "quality-mac24-20261020T222229Z-5226fbce",
+      "package_id": "abd5b952cfb7b67b40212852f4a1aebc051605a709aa37540b03bf34d9a2cc90"
+    },
+    {
+      "archive_sha256": "3c5f89bfea9edf50664e40e733d267e6c4613cdec835163375375913d7177fa4",
+      "fold": "V2",
+      "role": "Q1",
+      "run_id": "quality-mac24-20261020T201718Z-80c2b832",
+      "package_id": "33d8f77268fdecebf0ae97ef121a70737b6087c02a01a5522b6ea7d6d105210a"
+    },
+    {
+      "archive_sha256": "ab4536291cf35f683301a1c7166465a4b97d0274064c53ed0647cda794746ce3",
+      "fold": "V2",
+      "role": "Q2",
+      "run_id": "quality-mac24-20261020T212038Z-fd730ff0",
+      "package_id": "67913bcee80576877fdb195fe639dface0e2649e661a9a7d25475143178aec86"
+    },
+    {
+      "archive_sha256": "7c0840bc75e51432ed1b68a187c4ec1f1594979bf061237d629efd6421623cbd",
+      "fold": "V2",
+      "role": "RG",
+      "run_id": "quality-mac24-20261020T225147Z-7620af5d",
+      "package_id": "2168c6fb09abb488653faa76ca4b5d8ba103a863e80dd8839f357c4410e0b962"
+    },
+    {
+      "archive_sha256": "1e2043c81b6b24e35e61007c734bd9242889190fcaf933c361c7ebcc39cfdec9",
+      "fold": "V2",
+      "role": "RH",
+      "run_id": "quality-mac24-20261020T222857Z-732b9e7a",
+      "package_id": "12c43e6a1d32c88eec2ff6427078d6f53da276cd01af6c10d6c278355ec39312"
+    },
+    {
+      "archive_sha256": "52dd03fefbb195c8b2bebb45e143fef7bfabed5c161cd71af90f5ff656a79a76",
+      "fold": "V3",
+      "role": "Q1",
+      "run_id": "quality-mac24-20261020T201805Z-63eb4569",
+      "package_id": "8d7f9a8300318f3d1b1b83f52e2cd13bc3889cadc591c4db3a4699ca8dbf5253"
+    },
+    {
+      "archive_sha256": "1d1e480480dd585bbd418b12da78e3df68c2a368d42087e2f2670f0b3ece6fa6",
+      "fold": "V3",
+      "role": "Q2",
+      "run_id": "quality-mac24-20261020T212206Z-00c9a0ec",
+      "package_id": "f53fb71c8d0d52bcfe542dd74ed5686174f9c180de65c6dea026af8d49545146"
+    },
+    {
+      "archive_sha256": "2a3bc7eecf24927ce42e68a1de68d495966f06f8bebc5aed2fc24b0baeec5201",
+      "fold": "V3",
+      "role": "RG",
+      "run_id": "quality-mac24-20261020T225935Z-24b0b976",
+      "package_id": "4986137d27183eb56f44cf1b8a8d54b593f6cc42a77d7c4779620add30b2e0ad"
+    },
+    {
+      "archive_sha256": "9a58f126bddb7bb99856dc1dba0c18cd2d5af20248b2c327a14deb777373608e",
+      "fold": "V3",
+      "role": "RH",
+      "run_id": "quality-mac24-20261020T223509Z-8f0895b5",
+      "package_id": "d9e864fb02cbc3f23d742a3329ba0bf4ea8aca8254c8a963deef67e55d40b4a8"
+    }
+  ],
+  "resources": {
+    "duration_seconds": 5.026059,
+    "charged_summary_seconds": 5.186838,
+    "rss_gib": 0.513779,
+    "cgroup_peak_gib": 0.498383,
+    "swap_peak_bytes": 0,
+    "oom_kills": 0,
+    "oom_killed": false,
+    "memory_limit_gib": 10,
+    "cpus": 3,
+    "threads": 2,
+    "min_disk_free_gib": 183.505955
+  },
+  "budget_accumulated_seconds": {
+    "demo": 33.523709,
+    "pilot": 173.37263,
+    "full": 3001.522436,
+    "summary": 5.186838
+  },
+  "summary_remaining_seconds": 1794.813162,
+  "freeze": {
+    "method": "H",
+    "strategy": "recent_then_popular",
+    "protocol": "quality-v1",
+    "protocol_sha256": "05caf396db1e427b982d3809960109f6f219ce435b69c40b4925323acfec76e7",
+    "campaign_declaration_sha256": "89b8a500aa67e32e28f983a5560d4e9d929bb435b386c1ff48bdd6dde785ef42",
+    "dataset_source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+    "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+    "implementation_commit": "de04e5cc4655090ca40835f00625b1118afdd0c9",
+    "history_days": 28,
+    "popularity_days": 7,
+    "state_rule": "Only events strictly before data_as_of; full catalog and all past customers",
+    "history_order": "last_purchase DESC, frequency DESC, article_id ASC",
+    "popularity_order": "frequency DESC, article_id ASC",
+    "duplicates": "First occurrence retained; history then popularity, no previously-purchased exclusion",
+    "candidate_limit": 200,
+    "ranking_metrics_k": 12,
+    "refit_rule": "past_only_state",
+    "training_required": false,
+    "procedure": {
+      "config_sha256": "05caf396db1e427b982d3809960109f6f219ce435b69c40b4925323acfec76e7",
+      "cutoff_parameterized": true,
+      "method": "H",
+      "protocol": "quality-v1",
+      "refit_rule": "past_only_state",
+      "test_policy": "T8_once_selected_and_P_H_no_retuning",
+      "training_weeks": 0
+    },
+    "test_cutoff": "2020-09-16",
+    "test_end_exclusive": "2020-09-23",
+    "test_stage": "T8",
+    "test_methods_unique": [
+      "H",
+      "P"
+    ],
+    "test_once_no_retuning": true
+  },
+  "remote_attestations_not_independently_reproduced": {
+    "preparation": {
+      "jobs_build": "passed",
+      "quality_suite": "passed",
+      "unit_tests": 46,
+      "integration_tests": 15,
+      "host_tests": 70
+    },
+    "originals": {
+      "source_files_hashed_before_after": 2143,
+      "all_hashes_match": true,
+      "includes_20_source_zips": true,
+      "inventory_private": true
+    },
+    "attempts": 1
+  },
+  "next_step": {
+    "stage": "T4-A",
+    "status": "planned_not_started",
+    "scope": "Portable H package, manifest/hash validation and exact ranking parity; API/activation in T4-B"
+  },
+  "limits": [
+    "Q4 selects under the predeclared multi-metric rule; RG has highest mean MAP, H is not an absolute optimum.",
+    "Intervals were computed in mac24; main validated structure, deltas and identities, not the private bootstrap draws.",
+    "Original-file preservation inventory is private remote attestation, not independently inspected here.",
+    "Validation includes previously-used V3 and temporal backtests; test remains reserved and no online impact or serving latency is established.",
+    "Source job memory includes controls; P/H have no separately measured candidate cost."
+  ]
+}

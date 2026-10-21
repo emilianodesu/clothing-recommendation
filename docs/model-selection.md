@@ -6,9 +6,9 @@ El 20 de octubre de 2026 el usuario confirmó que importa obtener el mejor resul
 
 Esto reemplaza el requisito anterior de que el ranking principal fuera necesariamente el modelo PyTorch. Se mantienen ejecución local, presupuesto propio, Docker, portabilidad, datos verificables y comunicación entre Macs por GitHub. No se requiere cambiar de framework para adoptar el candidato actual.
 
-**Actualización posterior del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking antes de cerrar el motor. `recent_then_popular`, protocolo `recent-history-v1`, queda como **referencia provisional H**, no selección definitiva de servicio. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
+**Cierre de la ampliación del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking. Tras Q4, `recent_then_popular`, reglas `recent-history-v1`, queda **seleccionado como H bajo `quality-v1`**, pendiente de implementación del servicio y aceptación final. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1, Q2 y Q3 están cerradas operativamente tras descargar y revisar cinco, cinco y diez reportes mac24 respectivamente: [Q1](../evidence/quality-q1-review.json), [Q2](../evidence/quality-q2-review.json) y [Q3](../evidence/quality-q3-review.json). [Q4 está implementada](quality-summary.md), pendiente de ejecución y revisión mac24; ningún candidato nuevo cumple todos los controles deterministas, aunque mejore MAP promedio.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1, Q2 y Q3 están cerradas operativamente tras descargar y revisar cinco, cinco y diez reportes mac24 respectivamente: [Q1](../evidence/quality-q1-review.json), [Q2](../evidence/quality-q2-review.json) y [Q3](../evidence/quality-q3-review.json). [Q4 está cerrada y auditada](quality-summary.md); ningún candidato nuevo cumple todos los controles deterministas, aunque mejore MAP promedio.
 
 ## Evidencia que decide la selección
 
@@ -19,7 +19,7 @@ La [revisión independiente de los ZIP recibidos](../evidence/mac24-recent-histo
 | Popularidad de 7 días | 0.00660410 | 0.01260462 | 0.16757920 | Referencia y respaldo |
 | PyTorch, una época | 0.00576877 | 0.01120105 | 0.13893485 | Experimento académico |
 | Historial + PyTorch | 0.02452712 | 0.03533274 | 0.17976476 | Experimento de aporte incremental |
-| Historial + popularidad | 0.02458902 | 0.03549285 | 0.19078554 | Referencia provisional H |
+| Historial + popularidad | 0.02458902 | 0.03549285 | 0.19078554 | Motor seleccionado H |
 
 Historial+popularidad mejora MAP frente a popularidad en +0.01798491, IC95% [0.01716408, 0.01882157]: +272.33% relativo. Los intervalos de NDCG y Recall también son positivos. No es una mejora de conversión comercial: no hay experimento online.
 
@@ -33,7 +33,7 @@ La ventaja global proviene de la recompra. En la evaluación de artículos no co
 
 ## Resultado Q2: mejor orden inicial, menor recuperación
 
-Los tres folds completos de G mejoran MAP y NDCG frente a H. La media simple entre semanas pasa de 0.02222467 a 0.02366238 en MAP (+6.47%) y de 0.03300888 a 0.03533201 en NDCG (+7.04%). Recall@200 baja de 0.19526924 a 0.18669113 (−4.39%), incumpliendo el máximo de pérdida relativa del 1% fijado antes de ejecutar. G no puede sustituir H bajo la regla vigente; la selección formal y sus intervalos siguen siendo Q4.
+Los tres folds completos de G mejoran MAP y NDCG frente a H. La media simple entre semanas pasa de 0.02222467 a 0.02366238 en MAP (+6.47%) y de 0.03300888 a 0.03533201 en NDCG (+7.04%). Recall@200 baja de 0.19526924 a 0.18669113 (−4.39%), incumpliendo el máximo de pérdida relativa del 1% fijado antes de ejecutar. G no puede sustituir H bajo la regla vigente; Q4 confirmó esa exclusión con un intervalo positivo de mejora MAP.
 
 La caída de Recall se concentra en historia de 29–90 días: −19.13%/−19.70%/−22.57% en V1/V2/V3. En ese segmento mejora MAP; en historia reciente28 mejoran ambas métricas. Sin historia90, G conserva H. La cobertura top12 casi se duplica, pero esa mayor variedad no implica mayor recuperación de compras relevantes. La [guía Q2](graph-quality.md) detalla métricas, costes y límites de la auditoría.
 
@@ -49,7 +49,15 @@ El control por segmentos impide promover RH: en V1 pierde MAP −27.66% para com
 
 Aprender el orden aporta señal, pero también cambia el respaldo que H conserva para usuarios sin historia90. Es un mecanismo compatible con las regresiones observadas, no un diagnóstico causal de sobreajuste ni una comparación universal entre frameworks. La [guía Q3](ranker-quality.md) incluye las ablaciones, recompra/descubrimiento, cobertura y costes. Las seis corridas full sumaron 44.58 minutos, con cgroup máximo 3.667202 GiB y sin swap/OOM.
 
-H sigue provisional. G falla Recall; RH falla segmentos; RG falla ambos. Q4 debe completar los intervalos pareados por comprador y la decisión formal sin cambiar esos criterios. Un intervalo global positivo no vuelve elegible un candidato que ya incumple un límite determinista. No se propone otro entrenamiento, fallback o búsqueda de parámetros a partir de estos resultados.
+H queda seleccionado. G falla Recall; RH falla segmentos; RG falla ambos. Q4 completó los intervalos pareados por comprador y la decisión formal sin cambiar esos criterios. Un intervalo global positivo no vuelve elegible un candidato que ya incumple un límite determinista. No se propone otro entrenamiento, fallback o búsqueda de parámetros a partir de estos resultados.
+
+## Cierre Q4: mejora promedio significativa y selección bajo restricciones
+
+La [auditoría Q4](../evidence/quality-decision-mac24.json) reconcilia el reporte full con los doce ZIP fuente y quince evaluaciones. Con 190,944 compradores únicos, tres semanas y 2,000 réplicas agrupadas por comprador, los IC98.3333% del delta MAP son G [0.00126171, 0.00162986], RH [0.00062544, 0.00114128] y RG [0.00294479, 0.00348630]. Todos son positivos, al igual que sus mejoras puntuales en las tres semanas. La incertidumbre global no explica ni elimina los incumplimientos de Recall/segmentos.
+
+La regla previamente fijada conserva H cuando ningún candidato es elegible. RG logra el mayor MAP medio; seleccionar H no significa negar esa ventaja ni afirmar que sea el mejor algoritmo posible. Se prioriza el conjunto de requisitos acordados, con compras anteriores permitidas y el respaldo de popularidad intacto. H mantiene también su limitación de descubrimiento descrita arriba. La selección exploratoria está cerrada; test y aceptación final no se ejecutaron.
+
+Los intervalos se calcularon en mac24. Aquí se verificaron contrato, fuentes, huellas y coherencia de deltas/criterios, sin recibir métricas individuales ni recalcular réplicas. La [guía Q4](quality-summary.md) registra recursos y la congelación del procedimiento.
 
 ## Qué podemos explicar y con qué certeza
 
@@ -92,7 +100,7 @@ La comparación, sus fallos y sus límites son parte del resultado académico. N
 
 ## Consecuencias para el despliegue
 
-El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) conserva T4–T8. Su diseño de historial y popularidad se aplica si H permanece ganador; Q4 debe adaptar los artefactos y la actualización al método seleccionado antes de implementar. El objetivo industrial permanece: pipeline reproducible, publicación atómica, API, eventos, observabilidad, rollback y reproducción en otra Mac. La siguiente lista describe el diseño disponible para H, no requisitos invariables de los candidatos de grafo/ranking:
+El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) conserva T4–T8. Q4 confirma el diseño de historial y popularidad para H, con preparación de estado sin entrenamiento. El objetivo industrial permanece: pipeline reproducible, publicación atómica, API, eventos, observabilidad, rollback y reproducción en otra Mac. La siguiente lista describe el diseño disponible para H, no requisitos invariables de los candidatos de grafo/ranking:
 
 - **Paquete portable:** catálogo, historiales anteriores al corte, popularidad ordenada, reglas, manifiesto y evidencia. Sin pesos ni vectores obligatorios.
 - **Servicio:** FastAPI carga una versión verificada y responde con su identidad, estrategia, orden y motivo de recomendación. PostgreSQL conserva versiones y, en T5, eventos.
@@ -100,4 +108,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-Q1–Q3 están cerradas operativamente. El siguiente entregable es **Q4: intervalos, decisión formal y explicación**, con bootstrap en mac24 sobre las tablas por comprador ya preservadas. Su comando `quality-job summarize` y [guía operativa](quality-summary.md) ya están disponibles; la [cobertura académica](course-coverage.md) distingue lo implementado de lo pendiente. Conservar todos los artefactos privados Q1–Q3 y el presupuesto; no repetir sus corridas. T4-A (paquete/paridad) y T4-B (API/activación) siguen a esa selección, antes de T5–T8. Los resultados anteriores se conservan como antecedentes; no confundir su selección inicial con el cierre de la nueva campaña.
+Q1–Q4 están cerradas. Sigue **T4-A: paquete portable H y paridad offline**, aún sin implementación. Después vendrán T4-B (API/activación) y T5–T8. Conservar artefactos, experimentos y presupuesto; no repetir campañas. La [cobertura académica](course-coverage.md) distingue lo implementado de lo pendiente. El servicio tendrá que medirse; Q4 no acredita latencia, despliegue o aceptación final.

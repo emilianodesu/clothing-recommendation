@@ -4,7 +4,7 @@
 
 **Goal:** Entregar el mejor recomendador personalizado entre los candidatos evaluados con H&M, operado localmente y reproducible desde una instalación limpia, con evidencia de calidad, latencia y recuperación; conservar los experimentos del curso y explicar la selección.
 
-**Architecture:** El pipeline transforma H&M completo a Parquet; los experimentos PyTorch permanecen reproducibles e historial28d+popularidad7d es referencia provisional. La nueva campaña Q1–Q4 seleccionará el motor antes del servicio. FastAPI servirá una versión portable verificada y PostgreSQL conservará estado operativo; Airflow coordinará preparación/publicación y MLflow conservará experimentos. Docker Compose separa servicio y trabajos pesados.
+**Architecture:** El pipeline transforma H&M completo a Parquet; los experimentos PyTorch permanecen reproducibles e historial28d+popularidad7d (H) queda seleccionado tras cerrar Q1–Q4. FastAPI servirá una versión portable verificada y PostgreSQL conservará estado operativo; Airflow coordinará preparación/publicación y MLflow conservará experimentos. Docker Compose separa servicio y trabajos pesados.
 
 **Tech Stack:** Polars, Parquet, PostgreSQL, FastAPI, Streamlit, Airflow LocalExecutor, uv y Docker Compose para datos/servicio; PyTorch CPU y MLflow para experimentos. Qdrant queda disponible para experimentos vectoriales, sin ser dependencia del futuro perfil `serve` del motor seleccionado.
 
@@ -12,7 +12,7 @@
 
 ## Estado y respuesta a «¿ya podemos desplegar?»
 
-**Estado vigente del 20 de octubre:** T1–T3 y la primera selección en validación están completados; el usuario aprobó después ampliar calidad temporal, grafos y ranking. El [plan Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) y su [diseño](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) preceden ahora a T4. Q1–Q3 ya completaron veinte corridas mac24 descargadas y auditadas. Q4 ya está implementada: intervalos y decisión formal; el siguiente paso es ejecutar y revisar su resumen en mac24 según [la guía](../../quality-summary.md). Historial+popularidad permanece provisional porque G/RH/RG incumplen al menos un control determinista. T4–T7 conservan abajo el diseño aplicable si gana H; Q4 deberá confirmar/adaptarlo. No hay API, paquete portable completo ni latencia medida. Test sigue reservado.
+**Estado vigente del 20 de octubre:** T1–T3 y Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-mac24.json) selecciona H porque G/RH/RG incumplen al menos un control pese a mejorar MAP con intervalos positivos. El siguiente desarrollo es T4-A: paquete portable H y paridad offline. Los contratos y T4–T7 de abajo aplican ahora a H; todavía no existen API, paquete portable completo ni latencia medida. Test y aceptación final siguen reservados para T8. No repetir entrenamientos ni campañas ya cerradas.
 
 **Antecedente del 19 de octubre de 2026:** T1 está implementada y revisada, con 10 pruebas satisfactorias y diagnóstico del entorno sin errores. Existe infraestructura desplegable de PostgreSQL y Qdrant, imágenes de aplicación/trabajos, locks y scripts de configuración. Todavía no hay un recomendador entrenado ni una API de recomendaciones. Consultar [la guía de esta entrega](../../bootstrap.md) y su [evidencia](../../../evidence/bootstrap-2026-10-19.json). El calendario siguiente conserva las etapas del proyecto completo.
 
@@ -28,7 +28,7 @@
 | Arquitectura | Definida | Todos los componentes se ejecutarán localmente; CPU como referencia |
 | Repositorio e infraestructura base | Implementados y comprobados | Git local, locks, imágenes, configuración privada y bootstrap repetible comprobados |
 | Datos procesados | T2 probada también en mac24 | Parquet completo, cortes y ejemplos semanales conciliados; evidencia mac24-t2-2026-10-19.json |
-| Motor y servicios | T3 y Q1–Q3 medidos; resumen Q4 remoto y T4 pendientes | Dos torres/MLflow y reglas evaluados; historial+popularidad como referencia provisional; API, paquete de servicio, interfaz y DAG pendientes |
+| Motor y servicios | T3 y Q1–Q4 medidos; H seleccionado; T4 pendiente | Dos torres/MLflow, grafos y ranking conservados como experimentos; API, paquete de servicio, interfaz y DAG pendientes |
 | Otra computadora | T1, T2 y T3 probadas en mac24 | Reportes publicados y verificados; transferencia de pesos y servicio pendientes |
 
 Fuentes locales: [validación de H&M](../../../validation_hm/README.md), [evidencia Docker](../../../evidence/docker-preparation-2026-10-18.json) y [guía de entorno](../../setup.md). Los recursos libres son una fotografía de esa preparación, no una reserva garantizada. No se repitió la lectura integral del ZIP para redactar este plan.
@@ -138,7 +138,7 @@ FinalProject/
 
 ## Contratos compartidos
 
-Los contratos de servicio siguientes describen la alternativa H preparada anteriormente. No fijan el formato de G/RH/RG: Q4 debe revisar inventario, modelos/grafos, paridad y actualización según el ganador antes de implementar T4. La infraestructura y las garantías de integridad/versionado se conservan.
+Q4 confirmó H. Los contratos de servicio siguientes quedan vigentes para su implementación, conservando integridad/versionado, publicación atómica y portabilidad. El paquete no requiere modelos o grafos; los experimentos se conservan por separado.
 
 Los contratos existentes se conservan en `src/hm_recommender/contracts.py`; T4-A añadirá los contratos de servicio schema2 en `src/hm_recommender/releases/contracts.py`, importados por API y publicación sin duplicarlos. Los manifiestos usan JSON versionado con rutas relativas y huellas SHA-256. Las tablas usan Parquet. Los identificadores se conservan como cadenas, incluidos ceros iniciales de artículos.
 
@@ -148,12 +148,12 @@ Los contratos existentes se conservan en `src/hm_recommender/contracts.py`; T4-A
 | `FeatureManifest` | `schema_version`, `dataset_id`, `data_as_of`, `feature_schema_version`, archivos de vocabulario, catálogo y perfiles; conteos y huellas |
 | `TrainingResult` | `run_id`, `checkpoint_path`, configuración efectiva, semillas, épocas, filas consumidas, dispositivo, tiempo y memoria máxima |
 | `EvaluationReport` | Corte y población, MAP@12, NDCG@12, Recall@200 exacto, cobertura, segmentos y referencia de popularidad; denominadores y filas excluidas |
-| `HistoryReleaseManifest` (nuevo, schema 2) | `release_id`, commit, hash fuente, `data_as_of`, estrategia `recent_then_popular`, protocolo `recent-history-v1`, ventanas 28/7, desempates, inventario con tamaños/SHA-256/conteos, evidencia enlazada por hash y versiones de software; sin campos vectoriales obligatorios |
+| `HistoryReleaseManifest` (nuevo, schema 2) | `release_id`, commit, hash fuente, `data_as_of`, estrategia `recent_then_popular`, protocolo de reglas `recent-history-v1`, selección `quality-v1` enlazada al ZIP Q4 y su huella, ventanas 28/7, desempates, inventario con tamaños/SHA-256/conteos, evidencia enlazada por hash y versiones de software; sin campos vectoriales obligatorios |
 | `HistoryPublicationResult` (nuevo) | `release_id`, conteos de catálogo/historiales, comprobaciones de ranking y estado; activación sólo después de validar |
 | `EventInput` | `event_id`, `customer_id`, `article_id`, `event_type`, `event_time`, `origin`, `request_id` opcional; servidor añade `received_at` |
 | `HistoryRecommendationResponse` (nuevo) | `request_id`, `release_id`, `strategy`, `features_timestamp`, `fallback`, lista ordenada de `{article_id, rank, reason}` sin repetidos; `reason` es `recent_purchase` o `popular_7d`, no probabilidad de compra |
 
-La versión seleccionada incluirá `catalog.parquet`, `histories.parquet`, `popularity.parquet`, `rules.json`, `validation-reference.json` y `manifest.json`. Historias: customer_id/article_id/last_purchase/frequency; popularidad: article_id/frequency/rank; catálogo con IDs y atributos. Guardar el orden completo de artículos disponibles en popularidad y todos los artículos únicos por historial para poder filtrar antes de limitar; sin filtros, top200 debe coincidir exactamente con el diagnóstico congelado. Construir historias para todos los compradores observados antes del corte, sin usar etiquetas de validación para decidir a quién incluir. Referenciar el ZIP de validación y su SHA, conservando su corte: un paquete a otro corte no hereda esas métricas como si se hubieran medido de nuevo. Los contratos vectoriales schema1 ya presentes en `src/hm_recommender/contracts.py` se conservan para compatibilidad; los nuevos contratos vivirán en `releases/contracts.py` y no permitirán interpretar schema1 como schema2. Un hash verifica integridad, no autorización de redistribución.
+La versión seleccionada incluirá `catalog.parquet`, `histories.parquet`, `popularity.parquet`, `rules.json`, `validation-reference.json` y `manifest.json`. Historias: customer_id/article_id/last_purchase/frequency; popularidad: article_id/frequency/rank; catálogo con IDs y atributos. Guardar el orden completo de artículos disponibles en popularidad y todos los artículos únicos por historial para poder filtrar antes de limitar; sin filtros, top200 debe coincidir exactamente con el diagnóstico congelado. Construir historias para todos los compradores observados antes del corte, sin usar etiquetas de validación para decidir a quién incluir. `validation-reference.json` enlazará el ZIP de decisión Q4 y las referencias de paridad Q1-H V3/diagnóstico histórico, con sus SHA y funciones distintas (selección y métricas de validación). Referenciar el ZIP de validación y su SHA, conservando su corte: un paquete a otro corte no hereda esas métricas como si se hubieran medido de nuevo. Los contratos vectoriales schema1 ya presentes en `src/hm_recommender/contracts.py` se conservan para compatibilidad; los nuevos contratos vivirán en `releases/contracts.py` y no permitirán interpretar schema1 como schema2. Un hash verifica integridad, no autorización de redistribución.
 
 El punto de entrada del host es `python3 scripts/project.py <acción>`, sin depender de un entorno Python científico en el host. Éste invoca Compose; la CLI instalada en las imágenes se llama `hmrec`. Ya funcionan `bootstrap`, `check`, `status`, `down` y `verify --suite bootstrap|unit`. La tabla siguiente conserva el contrato objetivo: las demás acciones se implementarán en etapas posteriores.
 
@@ -218,9 +218,9 @@ El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no s
 
 ## Task 4 · T4 — Motor seleccionado, versión portable y API
 
-**Dependencia nueva:** completar [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md). El detalle siguiente se aplica si H sigue seleccionado; Q4 lo revisa si gana otro candidato. No implementar estos contratos como obligatorios antes de esa decisión.
+**Dependencia satisfecha:** [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) cerradas y H seleccionado, con congelación en `evidence/quality-decision-mac24.json`. El detalle siguiente queda confirmado como siguiente implementación; las casillas siguen pendientes hasta ejecutarse.
 
-Se divide en dos entregables independientes después de Q4. T4-A empaqueta el procedimiento elegido; si gana H, no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. Las interfaces de esta sección son futuras; no ejecutar estos comandos hasta implementarlos.
+Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. Las interfaces de esta sección son futuras; no ejecutar estos comandos hasta implementarlos.
 
 ### T4-A · Paquete y paridad offline
 
@@ -229,9 +229,9 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta el pr
 **Interfaces:** `build_history_release(dataset: DatasetManifest, data_as_of: date, output_dir: Path, *, evidence_archive: Path | None = None) -> HistoryReleaseManifest`; `verify_history_release(directory: Path) -> HistoryReleaseManifest`; `rank_history(history: list[str], popularity: list[str], eligible: set[str], *, limit: int = 200) -> list[str]`. Archivos y campos: contrato schema2 anterior. El núcleo de ranking no importa Torch y recibe el corte explícito; ningún default usa la fecha de hoy. El worker produce un reporte agregado con identidad de la versión, paridad, recursos y huellas; nunca incluye perfiles o transacciones en el ZIP de intercambio.
 
 - [ ] Escribir y ejecutar RED `test_history_rank_matches_fixed_fixture`: historial por fecha/frecuencia/ID, popularidad por frecuencia/ID, deduplicación, usuario sin historial y hasta 200 candidatos. `test_cutoff_excludes_future_events` excluye eventos en el corte; `test_build_includes_non_validation_buyers` exige incluir compradores anteriores al corte que no aparecen en validación.
-- [ ] Escribir RED `test_unfiltered_parity_with_frozen_diagnostic`: corte 2020-09-09 y ventanas 28/7; fixture con relevantes fuera de catálogo y usuario desconocido. Exigir igualdad de top200 y métricas `atol=1e-10, rtol=0` contra el diagnóstico fijado, sin cambiar sus reportes ni reglas. Generalizar helpers existentes en `ranking/history.py`, implementar contratos y constructor por lotes; pasar las pruebas y las regresiones de diagnóstico.
+- [ ] Escribir RED `test_unfiltered_parity_with_frozen_diagnostic`: corte 2020-09-09 y ventanas 28/7; fixture con relevantes fuera de catálogo y usuario desconocido. Exigir igualdad de top200 y métricas `atol=1e-10, rtol=0` contra H de Q1-V3 (`quality-mac24-20261020T201805Z-63eb4569`) y su diagnóstico histórico fijado, sin cambiar sus reportes ni reglas. Generalizar helpers existentes en `ranking/history.py`, implementar contratos y constructor por lotes; pasar las pruebas y las regresiones de diagnóstico.
 - [ ] Escribir RED `test_incomplete_or_corrupt_release_not_publishable`, `test_schema1_not_read_as_schema2` y `test_release_paths_are_relative`: salida temporal más publicación atómica local, sin sobreescribir una versión diferente. Verificar inventario exacto, tamaños, hashes, corte, IDs únicos, orden, conteos y referencias. Si el corte es distinto, registrar la evaluación original como referencia, nunca como métrica del nuevo paquete.
-- [ ] Añadir `release-job start/status/export` con commit limpio, dataset `synthetic` o `hm`, corte explícito, recursos `base`/`mac24`, un job pesado y reporte final también ante fallo. El único protocolo inicial es `recent-history-v1`. Reutilizar controles de recursos existentes; no convertir un `train-job` en constructor ni modificar el contrato de sus reportes históricos. Probar lector/ZIP malformado y ausencia de clientes/pesos en el inventario de intercambio.
+- [ ] Añadir `release-job start/status/export` con commit limpio, dataset `synthetic` o `hm`, corte explícito, recursos `base`/`mac24`, un job pesado y reporte final también ante fallo. El protocolo de reglas es `recent-history-v1`; enlazar por separado la selección Q4 `quality-v1` y su evidencia congelada. Reutilizar controles de recursos existentes; no convertir un `train-job` en constructor ni modificar el contrato de sus reportes históricos. Probar lector/ZIP malformado y ausencia de clientes/pesos en el inventario de intercambio.
 - [ ] Implementar `verify --suite releases` para ejecutar pruebas unitarias, integración de paquetes/paridad y host. Ejecutar desde imagen Docker sin montajes auxiliares; repetir bootstrap si cambia infraestructura. Luego corrida demo local y construcción/paridad H&M en mac24 con recursos actuales. En full, conciliar los 72,019 compradores/102,967 artículos de la validación con el ZIP revisado, pero construir el paquete para todos los compradores anteriores al corte. Reportar memoria, disco, duración y límites; no acreditar capacidad del paquete a partir del diagnóstico anterior.
 - [ ] Exportar/validar/publicar reportes cerrados por GitHub privado, conservando fallos; datos de servicio quedan locales en cada Mac. Registrar `evidence/releases.json`, guía y commit probado antes de preparar el prompt mac24. Una vez recibida la ejecución, cerrar T4-A sin iniciar test ni cambiar el candidato.
 
@@ -248,6 +248,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta el pr
 - [ ] Registrar evidencia de API/versión y commit. Reproducir la construcción con los datos propios de cada Mac; cualquier transporte posterior de paquetes completos usa un contrato separado del ZIP de reportes actual. No publicar IDs de compradores como código o reportes.
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
+
+**Decisión Q4 aplicada:** actualizar estado de H con ventanas 28/7 y reglas congeladas. No requiere refit neuronal ni reconstrucción de grafo; caducidad temporal, trazabilidad e intercambio conservan los contratos siguientes.
 
 **Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/003_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
 
@@ -291,7 +293,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta el pr
 
 - [ ] Implementar carga con tasa de llegada controlada: 20 solicitudes/s, dos minutos de calentamiento y diez de medición. Registrar p50, p95, p99, tasa efectiva y errores; no ocultar solicitudes omitidas por saturación del generador. Objetivos: p95 < 200 ms y errores < 1%. Separar peticiones frías, uso de fallback y ranking con historial.
 - [ ] Medir CPU y RAM de servicios y generador, hardware, tamaños del catálogo y perfiles, versión y estado del entrenamiento. Primero servir con entrenamiento pausado; después medir la degradación con trabajo pesado concurrente. Si no cabe todo, documentar el procedimiento secuencial y su impacto en frescura.
-- [ ] Ejecutar evaluación final de T3 una vez cerradas las decisiones, conservar la población y métricas completas y registrar honestamente si no mejora a popularidad. No sustituir esa evaluación por la demo sintética ni prometer de antemano un umbral de calidad sin medición.
+- [ ] Evaluar una única vez el procedimiento H congelado y P en test [2020-09-16, 2020-09-23), con estado reconstruido sólo desde datos anteriores al 2020-09-16; H coincide con elegido/referencia y no se duplica. Conservar población y métricas completas, sin retuning ni cambio de ganador a partir del resultado. Mantener T3 como evidencia histórica; no repetirlo por esta prueba. No sustituir test por una demo sintética ni prometer mejora sin medir.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite acceptance` y `python3 scripts/project.py benchmark --config configs/benchmark.yaml`. Guardar `evidence/acceptance.json`, `evidence/benchmark.json`, `evidence/reproducibility.md` y un inventario de versiones y pruebas; sólo marcar cumplidas las metas observadas.
 - [ ] Entregar informe, guía de instalación, manual de operación, ficha del motor y experimentos, mapa de subtemas y guion de demo. Añadir capturas o video corto de instalación, recomendación, evento, actualización y recuperación; etiquetar la versión Git entregada. Guardar commit de E7/E8.
 
@@ -305,27 +307,27 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta el pr
 | 4.4 Modelo de factor latente | Experimento académico implementado | Embeddings de 64 dimensiones/producto punto, sin atribuir implementación de SVD |
 | 4.5 Evaluación de sistemas | Central | Cortes temporales, MAP@12, NDCG@12, Recall@200, cobertura, segmentos y errores |
 | 4.6 Desafío Netflix | Contextual | Discusión bibliográfica y diferencias con feedback implícito; no es el dataset del proyecto |
-| 1.1 | Herramienta prevista en Q2 | Iteración de potencias y convergencia de PageRank, pendiente de implementar/explicar |
+| 1.1 | Herramienta aplicada en Q2 | Iteración y convergencia de PageRank personalizado acotado; no estudio separado de valores propios |
 | 1.2–1.5 | Fuera del núcleo | Embeddings por sí solos no acreditan SVD/PCA/NMF/t-SNE |
 | 2.1–2.6 | Fuera del núcleo | No se promete Apriori, FP-Growth ni PrefixSpan |
-| 3.1, 3.3 y caminatas de 3.4 | Campaña Q2 aprobada, pendiente | Grafo ponderado y control PageRank personalizado en subgrafos; declarar límites de escala/aproximación |
-| 5.5 | Aplicación prevista en red comercial | Similitud de nodos; no equivale a una red social observada |
+| 3.1, 3.3 y caminatas de 3.4 | Campaña Q2 cerrada y auditada | Grafo ponderado y control PageRank personalizado en subgrafos; declarar límites de escala/aproximación |
+| 5.5 | Aplicación implementada en red comercial | Similitud de nodos; no equivale a una red social observada |
 | 3.2 y 5.1–5.4 | Fuera de esta campaña | Sin HITS, comunidades ni comunidades traslapadas; no declarar cobertura completa del tema 5 |
 
-La ampliación de grafos se ejecuta en Q2 antes de T4, siguiendo el protocolo y presupuesto propios de la campaña aprobada. No se presenta el grafo interno de Qdrant ni el DAG de Airflow como análisis de redes del curso. La entrega combina tema 4 y parte del tema 3; la infraestructura T4–T8 sigue siendo obligatoria. Comunidades y una red social real no forman parte de esta campaña.
+La ampliación de grafos se ejecutó en Q2 antes de T4, siguiendo el protocolo y presupuesto propios de la campaña aprobada. No se presenta el grafo interno de Qdrant ni el DAG de Airflow como análisis de redes del curso. La entrega combina tema 4 y parte del tema 3; la infraestructura T4–T8 sigue siendo obligatoria. Comunidades y una red social real no forman parte de esta campaña.
 
 ## Pendientes que sí deben cerrarse
 
 | Pendiente | Cuándo / cómo se resuelve | ¿Impide empezar? |
 | --- | --- | --- |
-| Versiones exactas y compatibilidad de imágenes | T1 completada en ARM64: locks, digests y ejecución; falta repetir en segundo equipo y probar AMD64 | No; repetir T1 es la primera comprobación en la otra Mac |
-| Memoria y duración reales del entrenamiento completo | T2–T3: lectura por lotes y una época completa | No; sí condiciona el calendario y concurrencia |
+| Versiones exactas y compatibilidad de imágenes | T1 reproducida en ambas Macs ARM64: locks, digests y ejecución; AMD64 físico no probado | No; conservar evidencia y probar AMD64 si se requiere ese soporte |
+| Memoria y duración de construcción/servicio | T2–T3 y Q1–Q4 medidos; T4-A debe medir el paquete para todos los compradores | No; sí condiciona presupuesto y concurrencia del servicio |
 | Acceso a H&M desde otro equipo | Token propio y términos de Kaggle, o ZIP local obtenido con acceso autorizado | Sólo para reproducir datos reales; la demo no lo necesita |
-| Prueba en el segundo equipo | Mac Apple Silicon de 24 GB disponible; adelantar instalación T1 y entrenamiento T2–T3, conservar pruebas de versión/restore en T7 | No; todavía no acredita reproducción física hasta ejecutarse |
-| Remoto Git privado | Privado y escritura comprobada aquí; comprobar autenticación y clonación en la segunda Mac | El acceso del segundo equipo es necesario para la transferencia de código elegida |
-| Calidad y latencia alcanzables | T3 y T8: medir antes de afirmar resultados | No; son criterios de validación, no capacidades ya demostradas |
+| Prueba en el segundo equipo | Mac24 ya reprodujo T1–T3 y Q1–Q4; quedan pruebas de versión/restore en T7 | No; lo medido no acredita todavía portabilidad del futuro paquete de servicio |
+| Remoto Git privado | Privado y escritura comprobada en ambas Macs; intercambio Git/Releases operativo | No; preservar autenticaciones propias de cada equipo |
+| Calidad y latencia alcanzables | Q4 cerró selección en validación; T8 medirá test, carga y latencia | No; son criterios de validación, no capacidades ya demostradas |
 
-No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. El usuario eligió Git privado para compartir código y la visibilidad y escritura ya están configuradas; falta comprobar el acceso desde el segundo equipo. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
+No quedan decisiones obligatorias de nube, presupuesto, cuentas de plataforma de features o servicios administrados. El usuario eligió Git privado para compartir código y la visibilidad y escritura ya están configuradas; el acceso y el intercambio desde mac24 ya se comprobaron. El criterio final es que otra persona pueda partir del código, ejecutar la demo y servir una versión real autorizada siguiendo la documentación, sin usar esta cuenta ni esta computadora; además, el entrenamiento completo debe tener datos, configuración y evidencia trazables.
 
 ## Referencias y control del plan
 
