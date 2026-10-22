@@ -55,19 +55,106 @@
           "swap_peak_bytes": 0,
           "oom_killed": false
         }
-      }
+      },
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T041126Z-d7bc07b3"
+    },
+    {
+      "run_id": "events-development-20261022T042237Z-5238dc2c",
+      "source_commit": "6130943641e599121119660693ed276cf3b3fbca",
+      "status": "passed",
+      "archive_sha256": "171f099931b150a354db70712d4d00800f1eb9c331bfe6f761ecdf96b0311e71",
+      "duration_seconds": 4.263340457982849,
+      "seed": {
+        "daily_rows": 256,
+        "purchases": 256,
+        "first_day": "2020-08-12",
+        "last_day": "2020-09-02",
+        "data_as_of": "2020-09-09"
+      },
+      "checks": {
+        "initial_parity_requests": 4,
+        "new_events": 4,
+        "duplicate_status": 200,
+        "conflict_status": 409,
+        "purchase_changes_profile": true,
+        "views_clicks_not_purchases": true,
+        "late_event_order": true,
+        "refresh_idempotent": true,
+        "base_unchanged": true,
+        "profile_sha256": "02736ff4ab4ca76c0c0ca475130cad132809c282c65821642858b0233f602e41",
+        "revision": 3,
+        "data_as_of": "2020-09-09",
+        "processed_events": 4
+      },
+      "resources": {
+        "seed": {
+          "limit_gib": 3.0,
+          "peak_gib": 0.064053,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "api": {
+          "limit_gib": 4.0,
+          "peak_gib": 0.08437,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "ui": {
+          "limit_gib": 0.5,
+          "peak_gib": 0.062756,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "postgres": {
+          "limit_gib": 0.5,
+          "peak_gib": 0.128174,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        }
+      },
+      "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T042237Z-5238dc2c"
     }
   ],
   "verification": {
-    "scientific_tests": 100,
+    "scientific_tests": 133,
     "host_tests_at_925ba90": 91,
     "host_docker_publication_tests": 1,
     "official_events_suite_at_7781d76": "passed",
-    "browser_observation": "Chrome rendered 12 recommendations, filters, catalog, clocks and event controls; read-only inspection; lost-response UI flow covered by AppTest with real HTTP/PostgreSQL"
+    "browser_observation": "Chrome rendered 12 recommendations, filters, catalog, clocks and event controls; read-only inspection; lost-response UI flow covered by AppTest with real HTTP/PostgreSQL",
+    "scientific_skipped": {
+      "count": 1,
+      "scope": "MLflow integration requires its separate stack; no changes to tracking"
+    },
+    "host_tests": 93,
+    "docker_bootstrap_tests": 8,
+    "docker_bootstrap_commit": "925ba902dffd3c0447346e4e5a30ddb68aa182d7",
+    "distinct_passed": 235,
+    "official_events_suite_final": {
+      "commit": "6130943641e599121119660693ed276cf3b3fbca",
+      "status": "passed",
+      "unit": 62,
+      "serving_integration": 28,
+      "events_demo_ui": 10,
+      "host": 92,
+      "docker_publication": 1
+    },
+    "handoff_listing_regression": "RED then GREEN; real GitHub list includes both reports and final ZIP downloaded and verified"
   },
   "limitations": [
     "H&M reproduction and seed capacity remain pending on mac24.",
     "No training, test evaluation, sustained load benchmark, scheduler or backup/restore acceptance.",
     "Operational streams reconstruct daily aggregates transactionally; they do not modify the frozen H package."
-  ]
+  ],
+  "review": {
+    "type": "one_fresh_read_only_whole_branch_review",
+    "base": "a1bb6e56df0112cca186e09f10570badae3df059",
+    "head": "925ba902dffd3c0447346e4e5a30ddb68aa182d7",
+    "critical": 0,
+    "important_fixed": [
+      "Cleanup timeout still closes a readable failed handoff ZIP.",
+      "Permanent event conflict offers explicit close; uncertain outcomes retain original UUID/payload."
+    ],
+    "minor_deferred": [],
+    "fix_validation": "Both regression paths observed RED then GREEN; 133 scientific + 92 host passed after fixes."
+  }
 }

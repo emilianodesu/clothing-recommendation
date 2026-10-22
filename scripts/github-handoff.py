@@ -250,7 +250,7 @@ def main():
             reports = []
             for release in client.releases():
                 tag = release.get('tag_name', '')
-                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-', 'handoff-diagnose-', 'handoff-quality-', 'handoff-release-', 'handoff-serving-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
+                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-', 'handoff-diagnose-', 'handoff-quality-', 'handoff-release-', 'handoff-serving-', 'handoff-events-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
                     run_id = tag[len('handoff-'):]
                     tag_for(run_id)
                     reports.append({'run_id': run_id, 'draft': release['draft'], 'url': release['html_url']})

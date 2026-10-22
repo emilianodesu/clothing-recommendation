@@ -67,3 +67,9 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload RUTA_EX
 La Mac principal descarga el run publicado con `github-handoff.py download RUN_ID` y valida el ZIP antes de cerrar T5. No hay SSH ni activación automática del otro agente. La selección H y test siguen intactos.
 
 Referencias de implementación: [Streamlit AppTest](https://docs.streamlit.io/develop/api-reference/app-testing/st.testing.v1.apptest) y [estado de sesión](https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state). Versiones exactas en `uv.lock`.
+
+## Verificación local
+
+Dos ensayos desde clones limpios terminaron `passed`, con configuración PostgreSQL propia y sin Kaggle. El último (`events-development-20261022T042237Z-5238dc2c`, código `6130943641e599121119660693ed276cf3b3fbca`) comprobó cuatro interacciones, deduplicación/conflicto, publicación repetida y persistencia tras reiniciar API en 4.263 s, excluyendo construcción y arranque. Son sintéticos, no una medición de capacidad H&M. La [evidencia agregada](../evidence/events-local.json) identifica cada revisión y reporte.
+
+Pasaron 133 pruebas científicas/integración, 93 del host, ocho de bootstrap Docker y una de publicación API/UI (235 casos distintos); la prueba separada de MLflow no se ejecutó. `verify --suite events` también pasó contra la imagen final instalada. Chrome mostró las 12 recomendaciones y controles; la compra/reintento/conflicto se verificó con AppTest y HTTP/PostgreSQL reales. La revisión independiente tuvo dos correcciones comprobadas RED→GREEN y no dejó menores aplazados. [Decisiones y límites de revisión](t5-decisions.md). La reproducción H&M permanece pendiente.

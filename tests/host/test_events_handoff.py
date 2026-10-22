@@ -5,6 +5,8 @@ import sys
 import tempfile
 import unittest
 import subprocess
+import io
+from contextlib import redirect_stdout
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'scripts'))
 from handoff import package_report,read_report,write_json
@@ -33,6 +35,19 @@ def fixture():
 
 
 class EventsHandoffTests(unittest.TestCase):
+    def test_github_list_includes_closed_event_reports(self):
+        import json
+        from unittest.mock import Mock
+        spec=importlib.util.spec_from_file_location('events_github_list',ROOT/'scripts/github-handoff.py')
+        github=importlib.util.module_from_spec(spec);spec.loader.exec_module(github)
+        rid=fixture()[0]['run_id'];client=Mock()
+        client.repository.return_value={'private':True}
+        client.releases.return_value=[{'tag_name':'handoff-'+rid,'body':'<!-- hmrec-events-handoff-v1 -->','draft':False,'html_url':'https://github.com/example/repo/releases/tag/handoff-'+rid}]
+        output=io.StringIO()
+        with patch.object(github,'GitHub',return_value=client),patch.object(sys,'argv',['github-handoff.py','list']),redirect_stdout(output):
+            self.assertEqual(github.main(),0)
+        self.assertEqual([r['run_id'] for r in json.loads(output.getvalue())],[rid])
+
     def test_cleanup_timeout_still_closes_failed_report(self):
         import events_check
         with tempfile.TemporaryDirectory() as d:
