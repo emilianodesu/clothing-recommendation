@@ -164,9 +164,9 @@ Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-m
 
 T4-A también está [cerrada tras revisión](../../../evidence/releases-review-mac24.json): paquete H schema2 y paridad offline reproducidos en mac24. Su prompt es histórico.
 
-1. T4-B implementa API, activación y rollback; [su ensayo H&M interno fue revisado](../../../evidence/serving-review-mac24.json), pero localhost del host no responde.
-2. **Aquí:** corregir publicación de la API y añadir regresión/reporte HTTP desde el host. Conservar backend privado, binding localhost y el reporte v1; su prompt es histórico. No repetir campañas ni activar T5/test.
-3. Preparar una nueva guía acotada de mac24 después de comprobar la corrección local. Conservar todos los resultados Q1–Q4/T4-A/T4-B; no volver a entrenar ni repetir campañas.
+1. T4-B implementa API, activación y rollback; [su ensayo H&M interno v1 fue revisado](../../../evidence/serving-review-mac24.json) y detectó que localhost del host no respondía.
+2. La publicación de la API y el reporte HTTP desde el host ya están [corregidos y probados localmente](../../../evidence/serving-host.json). Conservar backend privado, binding localhost y el reporte v1; su prompt es histórico.
+3. **Siguiente:** ejecutar una vez T4-B v2 en mac24 con [el nuevo prompt](../../mac24-t4b-host-prompt.md). Conservar todos los resultados Q1–Q4/T4-A/T4-B; no volver a entrenar, repetir campañas ni activar T5/test.
 4. Luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
 
 ## Presupuesto de trabajo y dependencias

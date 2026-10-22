@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "stage": "T4-B",
-  "status": "mac24_internal_verified_host_access_blocked",
+  "status": "local_v2_verified_awaiting_mac24",
   "base_commit": "d62f48e30b1d06cb91c3c4cbe44c4bf80926ce3b",
   "execution_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
   "selected_method": "H",
@@ -232,7 +232,7 @@
     "Events/UI/scheduler/portable backup remain T5-T7; no test labels were evaluated.",
     "Closed reports travel through private GitHub, service packages remain local."
   ],
-  "next_step": "Fix and test local host publication plus host-level evidence, then prepare a bounded mac24 follow-up. Do not repeat Q1-Q4/T4-A, train, evaluate test or start T5.",
+  "next_step": "Run T4-B v2 once on mac24 with delivered clean commit. Preserve v1 and original packages; export/validate/publish closed evidence including valid failure. No automatic retry, T5 or test.",
   "post_review_cleanup_fix": {
     "commit": "d926c11628f84fec1f068325075f7f05574f896f",
     "finding": "Actual project down left API running because its Compose profile was disabled.",
@@ -244,5 +244,6 @@
     "api_source_changed": false,
     "closed_http_report_unchanged": true,
     "bootstrap_tests_passed": 8
-  }
+  },
+  "host_follow_up": "evidence/serving-host.json"
 }

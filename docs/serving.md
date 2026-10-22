@@ -176,19 +176,19 @@ sintético también coincide con el ensayo de la Mac principal. Las 167 pruebas
 y preservación de 3,065 originales son declaraciones de mac24, cuyos inventarios
 y archivos privados no se transfirieron.
 
-La revisión identifica dos pendientes: la API sólo se conecta a `backend`,
+La revisión histórica v1 identificó dos pendientes: la API sólo se conecta a `backend`,
 declarada `internal: true`, y `serving-check` no prueba la ruta desde el host.
 Un experimento mínimo independiente en la Mac principal (Docker 29.5.2) comparó
 el mismo servidor HTTP e imagen con redes internal/bridge: ambos respondieron
 dentro del contenedor; internal dejó `8000/tcp: null`, mientras el control bridge
 publicó un puerto en localhost y respondió HTTP 200 desde macOS. Se eliminaron
 sólo los contenedores y redes desechables. Esto reproduce el mecanismo local;
-la topología corregida aún deberá comprobarse en el proyecto y en mac24.
+la corrección posterior se documenta abajo con su ensayo local; falta mac24.
 
-**T4-B no está cerrada.** El próximo cambio debe conservar PostgreSQL en su red
-privada, proporcionar a la API una red apta para publicar sólo en localhost y
-añadir pruebas/reporte desde el host para readiness, recomendaciones e identidad
-tras reinicio/rollback. El reporte v1 conserva su resultado válido de HTTP interno.
+**T4-B no está cerrada.** La corrección v2 descrita abajo conserva PostgreSQL en
+su red privada y verifica publicación, readiness, recomendaciones e identidad
+desde el host tras reinicio/rollback. Falta reproducirla en mac24.
+El reporte v1 conserva su resultado válido de HTTP interno.
 No iniciar T5, repetir campañas ni abrir test para resolver este fallo de red.
 
 ## Corrección v2 y comprobación desde el host
@@ -234,3 +234,18 @@ privado de originales antes/después, incluido el ZIP v1 y ledger.
 Al finalizar registrar `evidence/mac24-serving-host-t4b.json`, separado de la
 evidencia v1, y actualizar esta guía. El [prompt v2](mac24-t4b-host-prompt.md)
 reúne las instrucciones; no usar el prompt histórico ni iniciar T5/test.
+
+### Verificación local de v2
+
+La [evidencia](../evidence/serving-host.json) registra 216 pruebas distintas
+aprobadas: 121 científicas en imagen sin montajes de código, 86 de host, ocho de
+infraestructura Docker y una regresión de publicación con Compose real. La prueba
+externa de MLflow sigue omitida; la de publicación se ejecutó desde el host.
+La revisión independiente del cambio no encontró defectos accionables.
+
+El ensayo limpio `serving-dev-20261022T030938Z-a1c0f662`, commit
+`9ef2ddba975ac028cf97a8364db7e9cf9cf750bb`, pasó con dos paquetes sintéticos:
+205 consultas internas y diez desde localhost, cinco etapas, reinicio/rollback
+y huellas correctas. Duró 10.894 s, sin swap/OOM. El ZIP se publicó y verificó
+por descarga privada. Esto acredita la corrección local; no sustituye el ensayo
+H&M v2 en mac24 ni mide carga T8.

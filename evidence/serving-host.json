@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "scope": "T4B-01/T4B-02 host publication follow-up",
+  "status": "local_v2_verified_awaiting_mac24",
+  "execution_commit": "9ef2ddba975ac028cf97a8364db7e9cf9cf750bb",
+  "selected_method": "H",
+  "data_as_of": "2020-09-09",
+  "resolved_locally": [
+    "T4B-01: API-only publication bridge, localhost binding, PostgreSQL backend-only",
+    "T4B-02: real host HTTP checks at all five lifecycle stages, matched to package-derived digests"
+  ],
+  "local_checks": {
+    "host_tests": 86,
+    "scientific_tests": 121,
+    "docker_bootstrap_tests": 8,
+    "docker_host_publication_tests": 1,
+    "distinct_passed_tests": 216,
+    "image_science_seconds": 20.3,
+    "image_science_without_source_mounts": true,
+    "image_collection_skips": [
+      "host-only publication test, separately passed from host",
+      "external MLflow integration"
+    ],
+    "known_warnings": 3,
+    "serving_suite": {
+      "unit": 60,
+      "integration": 28,
+      "host": 86,
+      "host_docker_publication": 1,
+      "status": "passed"
+    },
+    "bootstrap_suite": "passed; 8 Docker checks plus unit and host suites",
+    "red_then_green": [
+      "effective API port absent with internal-only Compose",
+      "missing host client; real TCP identity/digest/port/redirect/proxy checks",
+      "v2 reports and partial failure exports",
+      "package-derived host reference digest"
+    ],
+    "reader_v1_v2": "passed",
+    "github_upload_and_download_verification": "passed"
+  },
+  "demo": {
+    "run_id": "serving-dev-20261022T030938Z-a1c0f662",
+    "status": "passed",
+    "source_commit": "9ef2ddba975ac028cf97a8364db7e9cf9cf750bb",
+    "source_clean": true,
+    "archive_sha256": "56f62ba7f699a3a6308875b23abca59277a0aed55532797d9ddcddddfcf5dfa0",
+    "archive_bytes": 4773,
+    "package_id": "31c11fe3e53c4504eb44e89b0c5631c39d4d99cdb41f0e6066bba2f5d751a76f",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-dev-20261022T030938Z-a1c0f662",
+    "scope": "Two synthetic packages with 32 past buyers and 24 articles. No H&M run. Sources retained from prior rehearsal; candidate manifest matches mac24 synthetic source.",
+    "protocol": "history-serving-v2",
+    "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+    "sources": {
+      "reference": {
+        "run_id": "release-dev-20261021T045736Z-ccdf867f",
+        "archive_sha256": "c39b90c9dfcff0d79da7bbb5c82572b9ca037bdb679d8cbaafcf4749a7edcdd1",
+        "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+        "manifest_sha256": "b01bc414c286fead1b30356e4c0228c86f846cf4d25b9e4d9d9573f415a090a1",
+        "dataset": "synthetic"
+      },
+      "candidate": {
+        "run_id": "release-mac24-20261021T190539Z-02a850f8",
+        "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+        "dataset": "synthetic"
+      }
+    },
+    "internal_recommendation_requests": 205,
+    "host_recommendation_requests": 10,
+    "host_checks": {
+      "reference": {
+        "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8003,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "c52827a953a49ad82f00dfb1b6bc7609b7fba7a6289a88aafa745f62abcddee4",
+        "request_seconds_mean": 0.0010541454999999367,
+        "request_seconds_max": 0.0011692909999996282,
+        "load_benchmark": false
+      },
+      "candidate": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8003,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2",
+        "request_seconds_mean": 0.0009515835000000195,
+        "request_seconds_max": 0.0010071250000001086,
+        "load_benchmark": false
+      },
+      "restart": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8003,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2",
+        "request_seconds_mean": 0.0010958960000002627,
+        "request_seconds_max": 0.0011705000000006294,
+        "load_benchmark": false
+      },
+      "rollback": {
+        "release_id": "h-3c4568863f9aa44e336dc14c65171d648c078bf615e3013b3f7eadf2288b1a0b",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8003,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "c52827a953a49ad82f00dfb1b6bc7609b7fba7a6289a88aafa745f62abcddee4",
+        "request_seconds_mean": 0.0011439375000010799,
+        "request_seconds_max": 0.001150708000000833,
+        "load_benchmark": false
+      },
+      "final": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8003,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2",
+        "request_seconds_mean": 0.0010242289999995435,
+        "request_seconds_max": 0.001044165999999791,
+        "load_benchmark": false
+      }
+    },
+    "restart_rollback_parity": true,
+    "final_release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+    "duration_seconds": 10.894221292,
+    "api_memory_limit_gib": 4,
+    "api_cpus": 2,
+    "api_threads": 2,
+    "api_peak_gib": 0.11025238037109375,
+    "swap_peak_gib": 0,
+    "oom_killed": false
+  },
+  "review": {
+    "model": "gpt-6-astra",
+    "range": "fafa3d2..9ef2ddb",
+    "read_only": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "fix_passes": 0,
+    "deferred_minors": [],
+    "declined_to_judge": [
+      "E2E/bootstrap were running during review; executor subsequently observed both passing",
+      "mac24 H&M v2 and physical preservation await remote evidence",
+      "T5/T8, training, final test and MLflow publication are outside scope",
+      "executor owns final evidence and routing doc updates"
+    ]
+  },
+  "implementation_rulings": [
+    "API publication bridge allows bridge egress; PostgreSQL remains private without published ports.",
+    "Two fixed unknown-customer host requests per stage avoid transferring profiles; bounded checks do not prove load performance.",
+    "v1 remains immutable/readable and proves only internal HTTP; new v2 report mandatory.",
+    "Stage under Documents for Colima mounts; generate fresh credentials; clean clone and image without source mounts establish local provenance.",
+    "Final: mac24 reproduction pending; local synthetic success cannot close remote T4-B.",
+    "Final: routing docs owned by executor follow measured evidence; reviewer did not approve future mac24 results.",
+    "Final: MLflow publication and T5-T8 outside scope; no quality or load claims."
+  ],
+  "mac24": {
+    "status": "pending",
+    "prompt": "docs/mac24-t4b-host-prompt.md",
+    "guide": "docs/serving.md",
+    "expected_evidence": "evidence/mac24-serving-host-t4b.json",
+    "reference_run_id": "release-mac24-20261021T190539Z-02a850f8",
+    "candidate_run_id": "release-mac24-20261021T190717Z-f0a2d073",
+    "prior_v1_review": "evidence/serving-review-mac24.json"
+  },
+  "test_evaluated": false,
+  "quality_accepted": false,
+  "training_performed": false,
+  "next_step": "Run T4-B v2 once on mac24 with delivered clean commit. Preserve v1 and original packages; export/validate/publish closed evidence including valid failure. No automatic retry, T5 or test."
+}

@@ -213,6 +213,6 @@ con los reportes anteriores. **T4-A queda cerrada operativamente** y se conserva
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
 La [revisión T4-B](../evidence/serving-review-mac24.json) ya verifica carga H&M,
 HTTP interno, activación y rollback en mac24, pero la publicación hacia localhost
-falló. Sigue [corregir y comprobar el acceso desde el host](serving.md). La duración
+falló. La corrección v2 ya pasó el ensayo local; sigue [reproducir el acceso desde el host en mac24](mac24-t4b-host-prompt.md). La duración
 offline y el tamaño del paquete no acreditan latencia de servicio ni carga T8.
 Publicar evidencia no activa al otro agente.

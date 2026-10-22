@@ -1,6 +1,6 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** corregir y probar localmente el acceso HTTP del host en [T4-B](serving.md), antes de preparar una nueva ejecución mac24. El [ensayo recibido](../evidence/serving-review-mac24.json) pasó por HTTP interno, pero localhost no responde. Su [prompt](mac24-t4b-prompt.md) es histórico; no repetirlo. [T4-A](releases.md) sigue cerrada. Conservar paquetes y resultados Q1–Q4/T4-A/T4-B.
+**Paso vigente:** ejecutar una vez el [seguimiento T4-B v2](mac24-t4b-host-prompt.md) con el commit probado recibido. Corrige la red de publicación y añade evidencia desde el host. El [ensayo v1](../evidence/serving-review-mac24.json) conserva su resultado interno; no repetir su prompt. Conservar paquetes y resultados Q1–Q4/T4-A/T4-B.
 
 Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3, Q1–Q4 y T4-A están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación y rollback de T4-B están implementados y probados localmente; `serving-check` verifica el ciclo de versiones con los paquetes existentes y devuelve reportes cerrados.
 

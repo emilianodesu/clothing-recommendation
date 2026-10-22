@@ -199,5 +199,5 @@
     "No private service package, profiles, transactions, predictions or models are included in the GitHub reports.",
     "The primary Mac audited report integrity and source/hash agreement; full private package, individual predictions and preservation inventory stayed on mac24."
   ],
-  "next_step": "Fix and verify T4-B host publication before a bounded mac24 follow-up; see evidence/serving-review-mac24.json."
+  "next_step": "Reproduce T4-B v2 once on mac24 using docs/mac24-t4b-host-prompt.md; local host publication verified in evidence/serving-host.json."
 }
