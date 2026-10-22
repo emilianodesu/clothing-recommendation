@@ -29,6 +29,8 @@ Una solicitud lee metadatos, popularidad e historial en una sola instantánea Po
 
 ## Imágenes y recursos
 
+Ante 409 u otro rechazo permanente, la interfaz deshabilita el reintento e indica **Cerrar este intento**. Esta acción sólo descarta el payload pendiente de esa sesión; no revierte un evento ya guardado. Ante 503 o pérdida de respuesta, mantiene el mismo UUID/payload y permite reintentar. Estos controles siguen disponibles aunque cambie la versión o falte un entorno activo.
+
 La API consulta sólo el JPEG solicitado dentro del ZIP local de Kaggle; no extrae todo el archivo. Usa ruta canónica de artículo, rechaza duplicados/tamaños excesivos y devuelve una imagen de sustitución cuando no existe. La caché temporal elimina los menos recientemente usados y está limitada por `HMREC_IMAGE_CACHE_BYTES` (64 MiB por defecto, máximo 512 MiB). Se pierde al recrear el contenedor. La demo sintética usa sustituciones.
 
 | Componente | RAM máxima | CPU | Observación |

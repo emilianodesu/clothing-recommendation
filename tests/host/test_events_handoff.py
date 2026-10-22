@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import subprocess
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'scripts'))
 from handoff import package_report,read_report,write_json
@@ -32,6 +33,18 @@ def fixture():
 
 
 class EventsHandoffTests(unittest.TestCase):
+    def test_cleanup_timeout_still_closes_failed_report(self):
+        import events_check
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            with patch.object(events_check,'read_configuration',return_value={'ARTIFACTS_DIR':'./artifacts','COMPOSE_PROJECT_NAME':'isolated','UI_PORT':'8501'}),patch.object(events_check.subprocess,'check_output',side_effect=['a'*40,'',subprocess.TimeoutExpired('docker context inspect',30)]),patch.object(events_check.subprocess,'run',side_effect=subprocess.TimeoutExpired('docker rm',30)):
+                self.assertEqual(events_check.run(root,'test','a'*40),1)
+            archives=list((root/'artifacts/handoff').glob('*.zip'));self.assertEqual(len(archives),1)
+            report=read_report(archives[0]);self.assertEqual(report['status'],'failed')
+            self.assertEqual(report['result']['phase'],'preflight')
+            self.assertEqual(report['result']['error_type'],'TimeoutExpired')
+            self.assertTrue(report['warnings'][0].startswith('cleanup_failed:'))
+
     def test_demo_does_not_generate_new_credentials_over_existing_volumes(self):
         import project
         with tempfile.TemporaryDirectory() as d,patch.object(project.subprocess,'run',return_value=type('Result',(),{'stdout':'existing_postgres\n'})()),patch.object(project,'prepare_configuration') as prepare:

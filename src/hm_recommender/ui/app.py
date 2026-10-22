@@ -17,6 +17,33 @@ def main():
         response.raise_for_status()
         return response.json()
     try:
+        if 'pending' not in st.session_state:st.session_state['pending']=None
+        def submit(payload):
+            st.session_state['pending']=payload
+            try:
+                result=call('POST','/events',json=payload)
+                st.session_state['pending']=None
+                st.session_state['pending_terminal']=False
+                st.session_state['receipt']=result
+                st.session_state['notice']=('success','Evento guardado. Actualiza las recomendaciones para incorporar las compras.')
+            except httpx.HTTPError as error:
+                terminal=(isinstance(error,httpx.HTTPStatusError) and 400<=error.response.status_code<500
+                          and error.response.status_code not in (408,429))
+                st.session_state['pending_terminal']=terminal
+                message=('La versión o el contenido del evento no es compatible. Cierra este intento para continuar; cualquier evento ya guardado se conserva.'
+                         if terminal else 'No se confirmó el evento. Reintenta la misma operación; no se duplicará la compra.')
+                st.session_state['notice']=('error',message)
+            st.rerun()
+        if st.session_state.get('notice'):
+            level,message=st.session_state.pop('notice');getattr(st,level)(message)
+        if st.session_state['pending']:
+            st.warning('Hay un evento pendiente de confirmación.')
+            terminal=st.session_state.get('pending_terminal',False)
+            if st.button('Reintentar evento pendiente',key='retry',disabled=terminal):submit(st.session_state['pending'])
+            if terminal:
+                st.caption('Cerrar el intento permite otra operación y no revierte compras guardadas.')
+                if st.button('Cerrar este intento',key='discard_pending'):
+                    st.session_state['pending']=None;st.session_state['pending_terminal']=False;st.rerun()
         health=call('GET','/health/ready')
         streams=call('GET','/streams')['items']
         if not streams:
@@ -32,22 +59,6 @@ def main():
         selected=st.selectbox('Cliente existente',customers or ['demo-visitor'],key='selected_customer',on_change=select_customer)
         customer=st.text_input('Cliente para esta sesión',value=selected,key='customer').strip()
         if not customer:st.warning('Escribe o selecciona un cliente.');return
-        if 'pending' not in st.session_state:st.session_state['pending']=None
-        def submit(payload):
-            st.session_state['pending']=payload
-            try:
-                result=call('POST','/events',json=payload)
-                st.session_state['pending']=None
-                st.session_state['receipt']=result
-                st.session_state['notice']=('success','Evento guardado. Actualiza las recomendaciones para incorporar las compras.')
-            except httpx.HTTPError:
-                st.session_state['notice']=('error','No se confirmó el evento. Reintenta la misma operación; no se duplicará la compra.')
-            st.rerun()
-        if st.session_state.get('notice'):
-            level,message=st.session_state.pop('notice');getattr(st,level)(message)
-        if st.session_state['pending']:
-            st.warning('Hay un evento pendiente de confirmación.')
-            if st.button('Reintentar evento pendiente',key='retry'):submit(st.session_state['pending'])
         page=st.number_input('Página del catálogo',min_value=1,value=1,step=1)
         catalog=call('GET','/catalog',params={'offset':(page-1)*12,'limit':12})
         filters={}

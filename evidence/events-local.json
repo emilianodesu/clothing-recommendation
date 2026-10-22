@@ -1,0 +1,73 @@
+{
+  "stage": "T5",
+  "status": "local_implementation_remote_reproduction_pending",
+  "trials": [
+    {
+      "run_id": "events-development-20261022T041126Z-d7bc07b3",
+      "source_commit": "7781d769ce4a210e690626888fa095bfa38cf99b",
+      "status": "passed",
+      "archive_sha256": "d42b326731c19963047095e6e3f7ba625fa822ec0937ad960a25ae3e7e5136ad",
+      "duration_seconds": 4.250285374990199,
+      "seed": {
+        "daily_rows": 256,
+        "purchases": 256,
+        "first_day": "2020-08-12",
+        "last_day": "2020-09-02",
+        "data_as_of": "2020-09-09"
+      },
+      "checks": {
+        "initial_parity_requests": 4,
+        "new_events": 4,
+        "duplicate_status": 200,
+        "conflict_status": 409,
+        "purchase_changes_profile": true,
+        "views_clicks_not_purchases": true,
+        "late_event_order": true,
+        "refresh_idempotent": true,
+        "base_unchanged": true,
+        "profile_sha256": "575f53e06bd3dbf8742d1a08b496f696c44f91b6d305ecd857533f8064e2f442",
+        "revision": 3,
+        "data_as_of": "2020-09-09",
+        "processed_events": 4
+      },
+      "resources": {
+        "seed": {
+          "limit_gib": 3.0,
+          "peak_gib": 0.063412,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "api": {
+          "limit_gib": 4.0,
+          "peak_gib": 0.096119,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "ui": {
+          "limit_gib": 0.5,
+          "peak_gib": 0.06279,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        },
+        "postgres": {
+          "limit_gib": 0.5,
+          "peak_gib": 0.128479,
+          "swap_peak_bytes": 0,
+          "oom_killed": false
+        }
+      }
+    }
+  ],
+  "verification": {
+    "scientific_tests": 100,
+    "host_tests_at_925ba90": 91,
+    "host_docker_publication_tests": 1,
+    "official_events_suite_at_7781d76": "passed",
+    "browser_observation": "Chrome rendered 12 recommendations, filters, catalog, clocks and event controls; read-only inspection; lost-response UI flow covered by AppTest with real HTTP/PostgreSQL"
+  },
+  "limitations": [
+    "H&M reproduction and seed capacity remain pending on mac24.",
+    "No training, test evaluation, sustained load benchmark, scheduler or backup/restore acceptance.",
+    "Operational streams reconstruct daily aggregates transactionally; they do not modify the frozen H package."
+  ]
+}

@@ -48,5 +48,15 @@ def test_ui_purchase_retry_and_refresh_use_real_service(events,monkeypatch):
         response=serving[0].post(f'/streams/{stream}/recommend',json={'customer_id':'ui-buyer'}).json()
         assert response['fallback'] is False and response['items'][0]['article_id']=='000000'
         assert app.caption  # Release, cutoff, publication and origin are visible.
+        # A permanent 409 must not trap every future interaction behind retry.
+        from hm_recommender.events.store import Conflict
+        def conflict(self,payload):raise Conflict('version changed')
+        monkeypatch.setattr(EventStore,'insert',conflict)
+        app.button(key='purchase').click().run()
+        assert app.error and app.session_state['pending'] is not None
+        assert app.button(key='retry').disabled
+        app.button(key='discard_pending').click().run()
+        assert app.session_state['pending'] is None and not app.button(key='purchase').disabled
+        monkeypatch.setattr(EventStore,'insert',original)
     finally:
         server.should_exit=True;thread.join(timeout=10);sock.close()

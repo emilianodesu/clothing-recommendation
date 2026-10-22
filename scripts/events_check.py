@@ -127,7 +127,11 @@ def run(root,machine_id,expected_commit,source_run=None):
         log(phase+': '+type(error).__name__)
     finally:
         # Only our unique one-shot container; never remove service volumes or stream data.
-        subprocess.run(['docker','rm','-f',container],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=30)
+        try:
+            cleanup=subprocess.run(['docker','rm','-f',container],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=30)
+            if cleanup.returncode:report['warnings'].append('cleanup_failed: inspect attempt container '+container)
+        except (OSError,subprocess.SubprocessError) as error:
+            report['warnings'].append('cleanup_failed: '+type(error).__name__+'; inspect attempt container '+container)
     report.update(finished_at=now(),result=result,steps=[dict(name='events',log='job.log',status=report['status'],exit_code=code)])
     write_json(folder/'environment.json',env);write_json(folder/'result.json',result)
     archive=package_report(folder,report)

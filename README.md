@@ -6,7 +6,7 @@ Plataforma local de recomendaciones para comercio electrónico con H&M y Docker 
 
 Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.
 
-**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. T3 incorpora el entrenamiento de dos torres PyTorch, checkpoints, evaluación exacta y MLflow local. T4-A añade paquetes H schema2 y paridad offline, reproducidos y revisados en mac24. T4-B implementa API, activación y rollback con PostgreSQL; la reproducción H&M v2, incluyendo acceso desde localhost, ya pasó en mac24 y está cerrada tras revisión. Streamlit y los DAG siguen pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
+**Implementación iniciada:** repositorio Git local, paquete Python, dependencias bloqueadas, imágenes de aplicación/trabajos y bootstrap de PostgreSQL y Qdrant. T3 incorpora el entrenamiento de dos torres PyTorch, checkpoints, evaluación exacta y MLflow local. T4-A añade paquetes H schema2 y paridad offline, reproducidos y revisados en mac24. T4-B implementa API, activación y rollback con PostgreSQL; la reproducción H&M v2, incluyendo acceso desde localhost, ya pasó en mac24 y está cerrada tras revisión. T5 añade Streamlit y eventos; la reproducción H&M y los DAG T6 siguen pendientes. T2 ya incluye descarga verificable, ingestión completa a Parquet, perfiles temporales y trabajos desacoplados con reportes por GitHub. Consulta [datos y ejecución T2](docs/data.md).
 
 **Decisión vigente (20 de octubre):** el usuario aprobó ampliar la validación antes de cerrar el motor. Q4 cerró la selección: historial28d+popularidad7d (H) es el motor elegido bajo los criterios predefinidos; test y aceptación final siguen pendientes. El [plan Q1–Q4](docs/superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) añade tres cortes temporales, recuperación por grafo y ordenamiento LightGBM, con presupuesto y criterios de selección fijados antes de medir. [Selección y explicación de resultados](docs/model-selection.md) distingue evidencia, hipótesis y límites. Q1 ya dispone de evaluador y `quality-job`; sigue la [guía de campaña](docs/quality-campaign.md). Los cinco reportes de mac24 ya se descargaron y [revisaron](evidence/quality-q1-review.json): Q1 está cerrada. T4-A y T4-B también están cerradas; siguen interfaz/eventos, operación, recuperación y aceptación final T5–T8.
 
@@ -22,7 +22,7 @@ Q1, Q2 y Q3 están cerradas operativamente: se descargaron y verificaron cinco, 
 
 ## Servir recomendaciones (T4-B)
 
-T4-B está **cerrada tras [auditar el seguimiento v2 de mac24](evidence/serving-host-review-mac24.json)**: 877 recomendaciones internas y diez desde `127.0.0.1:8000`, cinco etapas con identidad y paridad correctas, reinicio y rollback. Duró 20.607 s, con pico API de 1.015 GiB y sin swap/OOM. La [corrección local](evidence/serving-host.json) pasó 216 pruebas distintas y el ensayo sintético; mac24 declara 175 pruebas y preservación de 3,072 archivos, separadas del ZIP auditado. [docs/serving.md](docs/serving.md) conserva el contrato y los procedimientos históricos; no repetir sus prompts. El perfil usa sólo PostgreSQL/API; H&M quedó activo. Sigue T5 (interfaz, eventos idempotentes y actualización de perfiles). Test y carga sostenida siguen reservados para T8.
+T4-B está **cerrada tras [auditar el seguimiento v2 de mac24](evidence/serving-host-review-mac24.json)**: 877 recomendaciones internas y diez desde `127.0.0.1:8000`, cinco etapas con identidad y paridad correctas, reinicio y rollback. Duró 20.607 s, con pico API de 1.015 GiB y sin swap/OOM. La [corrección local](evidence/serving-host.json) pasó 216 pruebas distintas y el ensayo sintético; mac24 declara 175 pruebas y preservación de 3,072 archivos, separadas del ZIP auditado. [docs/serving.md](docs/serving.md) conserva el contrato y los procedimientos históricos; no repetir sus prompts. T4-B dejó H&M activo. T5 amplía el perfil con Streamlit, eventos idempotentes y actualización de perfiles; falta revisar su reproducción H&M. Test y carga sostenida siguen reservados para T8.
 
 ## Empezar en la segunda Mac
 
@@ -76,7 +76,7 @@ python3 scripts/project.py down
 
 `down` conserva los datos. `bootstrap --skip-build` permite volver a arrancar usando imágenes ya construidas; al cambiar código o locks, ejecutar bootstrap sin esa opción. Los scripts también funcionan invocados por ruta absoluta desde otro directorio.
 
-La [guía de la primera entrega](docs/bootstrap.md) explica credenciales, red, versiones, certificados, mantenimiento de locks y límites de lo comprobado. El perfil `serve` ya inicia PostgreSQL/API con un paquete local; `demo` completo con interfaz y `pipeline` todavía están pendientes.
+La [guía de la primera entrega](docs/bootstrap.md) explica credenciales, red, versiones, certificados, mantenimiento de locks y límites de lo comprobado. El perfil `serve` inicia PostgreSQL/API/Streamlit; `demo` genera sintéticos y comprueba eventos. El perfil `pipeline` sigue pendiente. Consulta [T5](docs/events.md).
 
 ## Preparar y comprobar Docker
 
@@ -107,6 +107,6 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 
 ## Requisitos de la futura entrega
 
-Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2 y entrenamiento/evaluación T3. T4-B añade servicio de recomendaciones; se añadirán interfaz, transporte de paquetes completos y respaldo/restauración. Habrá una demo sintética sin Kaggle y un modo completo con acceso propio a los datos H&M. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
+Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2 y entrenamiento/evaluación T3. T4-B añade servicio de recomendaciones y T5 implementa interfaz y demo sintética sin Kaggle. El ensayo H&M T5 está preparado para mac24. Quedan transporte de paquetes completos, respaldo/restauración y operación automática. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
 
 Los datos reales, tokens y credenciales permanecen fuera del código versionado. La documentación distingue la infraestructura disponible de las funcionalidades de recomendación pendientes.
