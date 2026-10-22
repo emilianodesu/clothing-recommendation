@@ -18,7 +18,7 @@ from serving_check import fingerprint,source
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def run(root,machine_id,expected_commit,source_run=None):
+def run(root,machine_id,expected_commit,source_run=None,*,memory_diagnostics=False):
     values=read_configuration(root/'.env')
     artifacts=Path(values['ARTIFACTS_DIR']);artifacts=artifacts if artifacts.is_absolute() else root/artifacts
     rid='events-'+machine_id+'-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
@@ -29,6 +29,12 @@ def run(root,machine_id,expected_commit,source_run=None):
         started_at=now(),finished_at=None,status='failed',warnings=[],steps=[])
     env=dict(run_id=rid,source_commit=None,source_tree_sha256=None)
     result=dict(stage='T5',status='failed',phase='preflight');phase='preflight';started=time.monotonic()
+    observations=[];capture_errors=[]
+    if memory_diagnostics:
+        from events_memory import capture, diagnostics, as_resource
+        from events_memory_handoff import PROTOCOL, final_validation, FinalValidationError
+        env.update(uv_lock_sha256=None,runner_tree_sha256=None)
+        result.update(protocol=PROTOCOL,diagnostics=diagnostics([],[]))
     print('Ejecución: '+rid,flush=True)
     def call(*args):
         remaining=7200-(time.monotonic()-started)
@@ -46,6 +52,16 @@ def run(root,machine_id,expected_commit,source_run=None):
                 'printf "{\\"cgroup_peak_bytes\\":%s,\\"swap_peak_bytes\\":%s}" "$(cat /sys/fs/cgroup/memory.peak)" "$(cat /sys/fs/cgroup/memory.swap.peak)"'],text=True,timeout=30))
         return dict(image_id=info['Image'],memory_bytes=info['HostConfig']['Memory'],nano_cpus=info['HostConfig']['NanoCpus'],
             cgroup_peak_bytes=process['cgroup_peak_bytes'],swap_peak_bytes=process['swap_peak_bytes'],oom_killed=info['State']['OOMKilled'])
+    def observe(label):
+        nonlocal phase
+        if not memory_diagnostics:return
+        phase='memory-'+label;log(phase)
+        for service in ('api','ui','postgres'):
+            try:observations.append(capture(call('ps','-q',service),service,label,started))
+            except (Exception,KeyboardInterrupt) as error:
+                capture_errors.append(dict(phase=label,service=service,error_type=type(error).__name__))
+                raise
+        result['diagnostics']=diagnostics(observations,capture_errors)
     try:
         commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
         clean=not subprocess.check_output(['git','status','--porcelain'],cwd=root,text=True).strip()
@@ -59,6 +75,7 @@ def run(root,machine_id,expected_commit,source_run=None):
         from hm_recommender.api.runtime import source_digest
         from hm_recommender.events.replay import http_request,replay,profile_digest,NoRedirect
         env.update(source_tree_sha256=source_digest(root/'src/hm_recommender'),uv_lock_sha256=fingerprint(root/'uv.lock'))
+        if memory_diagnostics:env['runner_tree_sha256']=source_digest(root/'scripts')
         request=http_request('http://127.0.0.1:'+values['API_PORT'],values['HM_APP_PASSWORD'])
         live=request('/health/live')
         if live['source_tree_sha256']!=env['source_tree_sha256']:raise ValueError('Rebuild and restart API before T5')
@@ -85,11 +102,15 @@ def run(root,machine_id,expected_commit,source_run=None):
         result=dict(stage='T5',protocol='events-v1',status='running',source_tree_sha256=env['source_tree_sha256'],
             source=entry,stream_id=stream,mode=mode,checks={},seed={},resources={},host={},restart_persistent=False,
             source_unchanged=False,test_evaluated=False,training_performed=False,load_benchmark=False,duration_seconds=0)
+        if memory_diagnostics:
+            result.update(protocol=PROTOCOL,diagnostics=diagnostics([],[]))
+        observe('before_seed')
         phase='seed';log(phase)
         seed=json.loads(call('run','--name',container,'--no-deps','-T','events-job','hmrec','events','seed',
             '--dataset',dataset,'--directory','/artifacts/'+directory,'--stream-id',stream,'--mode',mode))
         if seed['process']['source_tree_sha256']!=env['source_tree_sha256']:raise ValueError('Seed image differs from checkout')
         result['seed']=seed['seed'];result['resources']['seed']=resources(container,seed['process'])
+        observe('after_seed')
         phase='host-publication';log(phase)
         for service,port,target in [('api',values['API_PORT'],'8000/tcp'),('ui',values['UI_PORT'],'8501/tcp')]:
             cid=call('ps','-q',service)
@@ -99,7 +120,8 @@ def run(root,machine_id,expected_commit,source_run=None):
             if response.status!=200:raise ValueError('UI unavailable')
         result['host']=dict(host='127.0.0.1',api_port=int(values['API_PORT']),ui_port=int(values['UI_PORT']),bindings_verified=True,ui_healthy=True)
         phase='replay';log(phase);result['checks']=replay(request,stream,entry['release_id'],mode)
-        result['resources']['api']=resources(call('ps','-q','api'))
+        observe('after_replay')
+        result['resources']['api']=as_resource(observations[-3]) if memory_diagnostics else resources(call('ps','-q','api'))
         phase='restart';log(phase);call('restart','api')
         deadline=time.monotonic()+180
         while True:
@@ -111,19 +133,27 @@ def run(root,machine_id,expected_commit,source_run=None):
                 time.sleep(1)
         if profile_digest(request,stream)!=result['checks']['profile_sha256']:raise ValueError('Profile changed after restart')
         result['restart_persistent']=True
-        for service in ('ui','postgres'):result['resources'][service]=resources(call('ps','-q',service))
+        observe('after_restart')
+        for service in ('ui','postgres'):
+            result['resources'][service]=as_resource(next(s for s in reversed(observations) if s['service']==service)) if memory_diagnostics else resources(call('ps','-q',service))
         if source_run:
             if source(artifacts,source_run)!=entry:raise ValueError('Source changed')
         elif fingerprint(artifacts/directory/'manifest.json')!=entry['manifest_sha256']:raise ValueError('Demo source changed')
         result.update(source_unchanged=True,status='passed',duration_seconds=time.monotonic()-started)
         report.update(status='passed',result=result)
-        from events_handoff import validate_events
-        validate_events(report,result,env,{'manifest.json','result.json','environment.json','commit.txt','job.log'})
+        phase='final-validation';log(phase)
+        if memory_diagnostics:final_validation(report,result,env)
+        else:
+            from events_handoff import validate_events
+            validate_events(report,result,env,{'manifest.json','result.json','environment.json','commit.txt','job.log'})
         code=0
     except (Exception,KeyboardInterrupt) as error:
         code=130 if isinstance(error,KeyboardInterrupt) else 1
         report['status']='interrupted' if code==130 else 'failed'
         result.update(status=report['status'],phase=phase,error_type=type(error).__name__)
+        if memory_diagnostics:
+            result.update(protocol=PROTOCOL,diagnostics=diagnostics(observations,capture_errors),duration_seconds=time.monotonic()-started)
+            if isinstance(error,FinalValidationError):result['failure']=error.failure
         log(phase+': '+type(error).__name__)
     finally:
         # Only our unique one-shot container; never remove service volumes or stream data.
@@ -144,10 +174,11 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--machine-id',required=True);parser.add_argument('--expected-commit',required=True)
     parser.add_argument('--source-run-id',required=True)
+    parser.add_argument('--memory-diagnostics',action='store_true')
     args=parser.parse_args(argv)
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}',args.machine_id) or not re.fullmatch(r'[a-f0-9]{40}',args.expected_commit):
         parser.error('Machine alias and full expected SHA required')
-    return run(ROOT,args.machine_id,args.expected_commit,args.source_run_id)
+    return run(ROOT,args.machine_id,args.expected_commit,args.source_run_id,**({'memory_diagnostics':True} if args.memory_diagnostics else {}))
 
 
 if __name__=='__main__':raise SystemExit(main())

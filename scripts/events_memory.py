@@ -33,7 +33,8 @@ def number(value):
 
 def timestamp(value):
     require(isinstance(value,str) and len(value)<=40)
-    parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+    normalized=re.sub(r'(\.\d{6})\d+(?=Z|[+-]\d{2}:\d{2}$)',r'\1',value)
+    parsed=datetime.fromisoformat(normalized.replace('Z','+00:00'))
     require(parsed.tzinfo is not None)
     return parsed
 
@@ -119,3 +120,37 @@ def capture(cid,service,phase,started):
         events={k:events[k] for k in EVENTS},stat={k:stat[k] for k in STATS},pressure_us=pressure)
     validate_snapshot(result)
     return result
+
+
+def diagnostics(snapshots, errors):
+    """Deterministic derived observations, including incomplete/invalid intervals."""
+    expected=[(phase,service) for phase in PHASES for service in SERVICES]
+    require(isinstance(snapshots,list) and len(snapshots)<=len(expected))
+    for i,s in enumerate(snapshots):
+        validate_snapshot(s);require((s['phase'],s['service'])==expected[i])
+    require(isinstance(errors,list) and len(errors)<=1)
+    for error in errors:
+        require(set(error)=={'phase','service','error_type'})
+        require(len(snapshots)<12 and (error['phase'],error['service'])==expected[len(snapshots)])
+        require(isinstance(error['error_type'],str) and re.fullmatch('[A-Za-z][A-Za-z0-9_]{0,63}',error['error_type']))
+    previous={};intervals=[]
+    for s in snapshots:
+        if s['service'] in previous:
+            a=previous[s['service']]
+            try:intervals.append(interval(a,s))
+            except ValueError:
+                intervals.append(dict(service=s['service'],from_phase=a['phase'],to_phase=s['phase'],error='inconsistent_counters'))
+        previous[s['service']]=s
+    return dict(schema_version=1,complete=len(snapshots)==12 and not errors,
+        snapshots=snapshots,capture_errors=errors,intervals=intervals)
+
+
+def validate_diagnostics(value):
+    require(isinstance(value,dict) and set(value)=={'schema_version','complete','snapshots','capture_errors','intervals'})
+    require(type(value['schema_version']) is int and value['schema_version']==1 and type(value['complete']) is bool)
+    require(value==diagnostics(value['snapshots'],value['capture_errors']))
+
+
+def as_resource(s):
+    return dict(image_id=s['image_id'],memory_bytes=s['memory_bytes'],nano_cpus=s['nano_cpus'],
+        cgroup_peak_bytes=s['peak_bytes'],swap_peak_bytes=s['swap_peak_bytes'],oom_killed=s['oom_killed'])
