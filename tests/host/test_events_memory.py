@@ -128,6 +128,7 @@ class EventsMemoryReportTests(unittest.TestCase):
         from test_events_handoff import EventsHandoffTests
         import tempfile
         for edit in [lambda d:d['intervals'][0]['events_delta'].update(max=123),
+                     lambda d:d['intervals'][0]['events_delta'].update(max=False),
                      lambda d:d['snapshots'][0].update(secret='bad'),
                      lambda d:d.update(complete=False)]:
             report,env=diagnostic_fixture();report['status']='failed';report['result'].update(status='failed',phase='final-validation',error_type='ValueError')
@@ -138,6 +139,9 @@ class EventsMemoryReportTests(unittest.TestCase):
     def test_final_gate_names_postgres_and_preserves_v1_failure(self):
         m,h=self.ready();report,env=diagnostic_fixture();r=report['result']
         r['resources']['postgres']['cgroup_peak_bytes']=537141248
+        for observed in r['diagnostics']['snapshots']:
+            if observed['service']=='postgres':observed['peak_bytes']=537141248
+        r['diagnostics']=m.diagnostics(r['diagnostics']['snapshots'],[])
         with self.assertRaises(h.FinalValidationError) as raised:h.final_validation(report,r,env)
         self.assertEqual(raised.exception.failure,{'component':'postgres','criterion':'peak_below_limit','observed':537141248,'expected':536870912})
         self.assertEqual(r['resources']['postgres']['cgroup_peak_bytes'],537141248)
@@ -179,7 +183,7 @@ class EventsMemoryReportTests(unittest.TestCase):
         import tempfile
         from handoff import read_report
         report,env=diagnostic_fixture();r=report['result']
-        r.update(status='failed',phase='memory-before_seed',error_type='TimeoutExpired')
+        r.update(status='failed',phase='memory-before_seed',error_type='TimeoutExpired',resources={})
         r['diagnostics']=m.diagnostics(r['diagnostics']['snapshots'][:1],[dict(phase='before_seed',service='ui',error_type='TimeoutExpired')])
         report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
         with tempfile.TemporaryDirectory() as d:
@@ -206,3 +210,39 @@ class EventsMemoryReportTests(unittest.TestCase):
             self.assertEqual(checked['result']['failure']['observed'],537141248)
             self.assertTrue(checked['result']['diagnostics']['complete'])
             self.assertEqual(checked['result']['diagnostics']['intervals'][2]['events_delta']['max'],0)
+
+    def test_failed_diagnostic_cannot_downgrade_or_omit_protocol(self):
+        m,h=self.ready()
+        from test_events_handoff import EventsHandoffTests
+        import tempfile
+        for protocol in ['events-v1',None,'unknown-v1']:
+            report,env=diagnostic_fixture();r=report['result']
+            report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+            r.update(status='failed',phase='final-validation',error_type='ValueError')
+            if protocol is None:r.pop('protocol')
+            else:r['protocol']=protocol
+            r['diagnostics']['intervals'][0]['events_delta']['max']=999
+            with self.subTest(protocol=protocol),tempfile.TemporaryDirectory() as d,self.assertRaises(ValueError):
+                EventsHandoffTests().package(Path(d),report,env)
+
+    def test_failed_report_cause_and_resources_must_match_observations(self):
+        m,h=self.ready()
+        from test_events_handoff import EventsHandoffTests
+        import tempfile
+        for alter_resources in (False,True):
+            report,env=diagnostic_fixture();r=report['result']
+            report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+            r.update(status='failed',phase='final-validation',error_type='FinalValidationError',
+                failure=dict(component='postgres',criterion='peak_below_limit',observed=537141248,expected=536870912))
+            if alter_resources:r['resources']['postgres']['cgroup_peak_bytes']=537141248
+            with self.subTest(alter_resources=alter_resources),tempfile.TemporaryDirectory() as d,self.assertRaises(ValueError):
+                EventsHandoffTests().package(Path(d),report,env)
+
+    def test_failed_old_protocol_still_rejects_unknown_protocol_name(self):
+        self.ready()
+        from test_events_handoff import EventsHandoffTests,fixture
+        import tempfile
+        report,env=fixture();report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+        report['result']=dict(stage='T5',status='failed',phase='preflight',error_type='ValueError',protocol='unknown-v1')
+        with tempfile.TemporaryDirectory() as d,self.assertRaises(ValueError):
+            EventsHandoffTests().package(Path(d),report,env)

@@ -148,7 +148,7 @@ def diagnostics(snapshots, errors):
 def validate_diagnostics(value):
     require(isinstance(value,dict) and set(value)=={'schema_version','complete','snapshots','capture_errors','intervals'})
     require(type(value['schema_version']) is int and value['schema_version']==1 and type(value['complete']) is bool)
-    require(value==diagnostics(value['snapshots'],value['capture_errors']))
+    require(json.dumps(value,sort_keys=True)==json.dumps(diagnostics(value['snapshots'],value['capture_errors']),sort_keys=True))
 
 
 def as_resource(s):

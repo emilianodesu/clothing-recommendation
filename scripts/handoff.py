@@ -339,10 +339,14 @@ def read_report(archive):
             require(isinstance(report.get('finished_at'),str) and bool(report['finished_at']))
             if 'result.json' in names:
                 result=json.loads(bundle.read('result.json'));no_private_rows(result);require(report.get('result')==result)
-            if result.get('protocol')=='events-memory-v1':
+            environment=json.loads(bundle.read('environment.json')) if 'environment.json' in names else {}
+            if (result.get('protocol')=='events-memory-v1' or 'diagnostics' in result
+                    or 'failure' in result or 'runner_tree_sha256' in environment):
                 from events_memory_handoff import validate_memory_envelope
-                validate_memory_envelope(report,result,json.loads(bundle.read('environment.json')),names)
-            elif report['status']=='passed':validate_events(report,result,json.loads(bundle.read('environment.json')),names)
+                validate_memory_envelope(report,result,environment,names)
+            else:
+                require(result.get('protocol') in (None,'events-v1'))
+                if report['status']=='passed':validate_events(report,result,environment,names)
         if report.get('kind') == 'serving-handoff':
             from serving_handoff import validate_serving, ALLOWED, no_private_rows, require
             require(set(names)<={'manifest.json',*ALLOWED} and report['run_id'].startswith('serving-'))

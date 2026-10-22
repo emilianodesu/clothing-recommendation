@@ -75,7 +75,7 @@
   "api_restart_detected": true,
   "max_events_delta": 0,
   "verification": {
-    "host_tests_passed": 108,
+    "host_tests_passed": 111,
     "scientific_tests_passed": 133,
     "scientific_tests_skipped": 1,
     "official_events_suite": "passed at 20a2f3f; 62 unit + 28 serving + 10 events/UI + 105 host + 1 host publication",
@@ -97,8 +97,8 @@
       ]
     },
     "skipped_test": "tests/integration/test_tracking.py::test_mlflow_postgres_and_http_artifacts requires dedicated MLflow",
-    "distinct_passed": 250,
-    "distinct_count_basis": "133 scientific + 108 host (latest branch) + 8 bootstrap Docker + 1 publication"
+    "distinct_passed": 253,
+    "distinct_count_basis": "133 scientific + 111 host (post-review) + 8 bootstrap Docker + 1 publication"
   },
   "t5_closed": false,
   "quality_accepted": false,
@@ -110,5 +110,19 @@
     "Service source and locks unchanged; all telemetry is sequential and adds small overhead.",
     "Lifetime peaks are preserved and do not represent independent interval maxima.",
     "New diagnostics retain original peak criterion; full H&M may produce another valid failed report."
-  ]
+  ],
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T045741Z-62da9ba1",
+  "publication_download_verified": true,
+  "review": {
+    "reviewer": "gpt-6-astra/high",
+    "range": "0495927..82e51aa",
+    "important_findings": 2,
+    "fixed": [
+      "Protocol downgrade bypass on failed reports",
+      "Failed aggregate resources/causes inconsistent with snapshots"
+    ],
+    "red_green_verified": true,
+    "deferred_minors": [],
+    "declined_to_judge": []
+  }
 }
