@@ -32,6 +32,12 @@ def fixture():
 
 
 class EventsHandoffTests(unittest.TestCase):
+    def test_demo_does_not_generate_new_credentials_over_existing_volumes(self):
+        import project
+        with tempfile.TemporaryDirectory() as d,patch.object(project.subprocess,'run',return_value=type('Result',(),{'stdout':'existing_postgres\n'})()),patch.object(project,'prepare_configuration') as prepare:
+            with self.assertRaises(ValueError):project.prepare_start_configuration(Path(d))
+            prepare.assert_not_called()
+
     def test_documented_events_command_reaches_runner(self):
         import project,events_check
         argv=['scripts/project.py','events-check','--machine-id','mac24','--expected-commit','a'*40,

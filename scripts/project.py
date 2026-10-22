@@ -31,17 +31,21 @@ def compose(root, values, *args, capture=False, log_path=None, timeout=None):
     return result.stdout if capture else ""
 
 
-def run_bootstrap(root, skip_build=False):
-    root = Path(root).resolve()
-    subprocess.run(["docker", "info", "--format", "{{.ServerVersion}}"], check=True,
-                   stdout=subprocess.DEVNULL)
+def prepare_start_configuration(root):
     if not (root / ".env").exists():
         existing = subprocess.run(["docker", "volume", "ls", "--filter",
             "label=com.docker.compose.project=" + project_name(root), "--format", "{{.Name}}"],
             check=True, text=True, capture_output=True)
         if existing.stdout.strip():
             raise ValueError("Existen volúmenes del proyecto pero falta .env. Recuperar la configuración privada del respaldo.")
-    values = prepare_configuration(root)
+    return prepare_configuration(root)
+
+
+def run_bootstrap(root, skip_build=False):
+    root = Path(root).resolve()
+    subprocess.run(["docker", "info", "--format", "{{.ServerVersion}}"], check=True,
+                   stdout=subprocess.DEVNULL)
+    values = prepare_start_configuration(root)
     compose(root, values, "config", "--quiet")
     if not skip_build:
         compose(root, values, "build", "app-check", "jobs")
@@ -136,7 +140,7 @@ def main():
             import re
             if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}',args.machine_id):raise ValueError('Invalid machine alias')
             if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise ValueError('Demo requires a clean committed checkout')
-            values=prepare_configuration(ROOT)
+            values=prepare_start_configuration(ROOT)
         else:values = read_configuration(ROOT / ".env")
         if args.action in ('up','demo'):
             artifacts = Path(values['ARTIFACTS_DIR'])
