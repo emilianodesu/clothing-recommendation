@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "status": "reviewed_internal_pass_host_access_blocked",
+  "reviewed_on": "2026-10-21",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "received_commit": "a648d607f922925b61af312c0c420442e22fbb39",
+  "received_evidence": "evidence/mac24-serving-t4b.json",
+  "source_commit": "d1898dd3e471f208c814888250915b42150e842d",
+  "run_id": "serving-mac24-20261021T200054Z-cce4d43e",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261021T200054Z-cce4d43e",
+  "archive_sha256": "2354a772deb31b76fe019187e9f956bef8f999b689287d8e5bfa34f1e22d7bf4",
+  "archive_bytes": 4154,
+  "report_package_id": "84915f301a1a52fa06e97fc1d5d3392b10f2a57a4af0ae3cd282dd835d0df27e",
+  "closed_report_status": "passed",
+  "report_protocol": "history-serving-v1",
+  "stage_closed": false,
+  "verified_locally": [
+    "Closed ZIP inventory, byte sizes, SHA-256, final status and strict aggregate report contract.",
+    "Versioned mac24 result/environment exactly match closed ZIP; received commit changes only documentation/evidence.",
+    "Source code digest and uv.lock match the frozen execution commit and local implementation.",
+    "Both T4-A source ZIP hashes and package identities match the prior primary audit; dataset, catalog and buyer counts agree.",
+    "Five internal HTTP checks, requested versions, request counts, source hashes and deterministic response digests are consistent.",
+    "Candidate/restart/final response digests match; reference/rollback match; synthetic digest also matches prior primary rehearsal.",
+    "Reported API limits, memory peak, duration, zero swap and no OOM satisfy the frozen internal rehearsal.",
+    "Disposable primary Docker experiment reproduces null effective port on internal-only network; normal bridge control publishes localhost and returns HTTP 200."
+  ],
+  "source_audits": [
+    {
+      "source": "reference",
+      "run_id": "release-mac24-20261021T190539Z-02a850f8",
+      "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+      "matches_prior_review": true
+    },
+    {
+      "source": "candidate",
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+      "matches_prior_review": true
+    }
+  ],
+  "summary": {
+    "checked_requests": 877,
+    "hm_sampled_buyers": 257,
+    "hm_requests_per_check": 265,
+    "synthetic_sampled_buyers": 33,
+    "synthetic_requests_per_check": 41,
+    "duration_seconds": 24.69272458300111,
+    "api_peak_gib": 0.9315681457519531,
+    "api_limit_bytes": 4294967296,
+    "api_cpus": 2,
+    "api_threads": 2,
+    "swap_peak_bytes": 0,
+    "oom_killed": false,
+    "full_catalog_size": 102967,
+    "full_past_buyers": 1351314,
+    "final_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "internal_http_parity": true,
+    "restart_rollback_parity": true,
+    "host_access_validated": false,
+    "load_benchmark": false
+  },
+  "findings": [
+    {
+      "id": "T4B-01",
+      "priority": "important",
+      "status": "open",
+      "title": "Host API access is blocked by port publication",
+      "evidence": "mac24 reports localhost connection failure and effective 8000/tcp=null. API is attached only to backend, whose internal flag is true. The primary control experiment reproduced the same missing effective publication.",
+      "location": "compose.yaml:api.networks and networks.backend.internal",
+      "scope": "Root mechanism reproduced on primary Docker 29.5.2; corrected project topology still requires local and mac24 verification.",
+      "next_action": "Keep PostgreSQL on the private backend; give the API a suitable publication network with localhost-only binding, then verify the actual host path."
+    },
+    {
+      "id": "T4B-02",
+      "priority": "important",
+      "status": "open",
+      "title": "Passed internal rehearsal does not verify published host HTTP",
+      "evidence": "serving_check.py executes health in the API container and the probe in Docker at http://api:8000. Existing real HTTP integration tests also run inside the jobs image.",
+      "location": "scripts/serving_check.py and src/hm_recommender/api/probe.py",
+      "next_action": "Add regression and closed-report checks from the host for readiness/recommendation and identity across restart/rollback; preserve the existing v1 report without rewriting it."
+    }
+  ],
+  "primary_port_diagnostic": {
+    "scope": "primary_mac_disposable_http_server_not_hm",
+    "hypothesis": "An internal-only Docker network suppresses host port publication.",
+    "context": "colima",
+    "docker_version": "29.5.2",
+    "image_id": "sha256:25fb3ff78a9481d996fffef36fe3178179db61c1a94d2d07f110756b7aa2bdc3",
+    "cases": {
+      "internal_only": {
+        "internal_http": {
+          "status": 200
+        },
+        "requested_port_bindings": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": ""
+            }
+          ]
+        },
+        "effective_ports": {
+          "8000/tcp": null
+        },
+        "host_http": {
+          "not_checked": "No effective host port"
+        }
+      },
+      "normal_bridge": {
+        "internal_http": {
+          "status": 200
+        },
+        "requested_port_bindings": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": ""
+            }
+          ]
+        },
+        "effective_ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "32774"
+            }
+          ]
+        },
+        "host_http": {
+          "status": 200
+        }
+      }
+    }
+  },
+  "remote_declarations_not_independently_reperformed": {
+    "serving_suite": {
+      "unit": 60,
+      "integration": 28,
+      "host": 79,
+      "total": 167,
+      "failed": 0
+    },
+    "preservation": {
+      "files": 3065,
+      "all_unchanged": true,
+      "ledger_unchanged": true,
+      "inventory_sha256": "5fffe944253d7dabdef824da1db0f9a48c8dbdc5afb0e865388802768e9a90da"
+    },
+    "post_close_host_access": {
+      "inside_container": "ready",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "host_http_url": "http://127.0.0.1:8000/health/ready",
+      "host_http_access": "failed_connection",
+      "configured_port_binding": "127.0.0.1:8000 -> 8000/tcp",
+      "docker_network_settings_ports": {
+        "8000/tcp": null
+      },
+      "limitation": "The passed rehearsal uses internal container HTTP. Host localhost access failed after closure; root cause not established. No restart, configuration change or retry performed.",
+      "next_action": "Review Docker/Colima port publication in a separately authorized diagnosis before claiming host access."
+    },
+    "limitation": "Private inventories, full service package and raw post-close diagnostic logs were not transferred. The ZIP supports internal HTTP observations; host failure is separately recorded by mac24."
+  },
+  "test_evaluated": false,
+  "quality_accepted": false,
+  "training_performed": false,
+  "t5_started": false,
+  "next_step": "Fix and test local host publication plus host-level evidence, then prepare a bounded mac24 follow-up. Do not repeat Q1-Q4/T4-A, train, evaluate test or start T5."
+}

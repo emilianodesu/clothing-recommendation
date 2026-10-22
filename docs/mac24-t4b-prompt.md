@@ -1,5 +1,10 @@
 # Prompt para mac24: T4-B
 
+**Histórico; no repetir.** El ensayo ya fue recibido y [revisado](../evidence/serving-review-mac24.json).
+La paridad HTTP interna pasó, pero el acceso desde localhost falló. T4-B sigue
+pendiente de corregir la publicación y añadir una comprobación desde el host.
+El texto siguiente conserva la orden ejecutada; esperar la nueva guía probada.
+
 Actualizar main por fast-forward preservando cambios locales. Fijar el SHA
 completo recibido en un clon limpio y leer README, AGENTS, docs/serving.md y
 docs/architecture.md. Esta tarea verifica API, activación, reinicio y rollback

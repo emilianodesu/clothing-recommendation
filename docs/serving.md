@@ -1,7 +1,8 @@
 # T4-B: API, activación, reinicio y rollback
 
 Esta entrega implementa el servicio de H y la comprobación reproducible de su
-ciclo de versiones. La reproducción H&M en mac24 está pendiente; no equivale a
+ciclo de versiones. La reproducción H&M pasó por HTTP interno en mac24, pero
+el acceso desde localhost falló: T4-B permanece abierta. No equivale a
 aceptación final ni a haber cumplido las metas de carga. Véase
 [arquitectura y contrato HTTP](architecture.md).
 
@@ -62,6 +63,9 @@ para el ensayo mac24 usar directamente el comando siguiente, que controla orden
 y recoge evidencia sin mostrar recomendaciones individuales.
 
 ## Ensayo mac24 con reportes cerrados
+
+**Procedimiento histórico, ya ejecutado.** No repetirlo para resolver el acceso
+del host: falta corregir y ampliar esa comprobación. Véase la revisión al final.
 
 Conservar paquetes T4-A originales, datos/features/checkpoints, Q1–Q4, ZIP y
 ledger. Guardar inventario privado de originales antes/después. Se reutilizan:
@@ -157,4 +161,28 @@ no se cambió configuración ni se reinició/reintentó para ocultar el resultad
 
 Los 3,065 archivos inventariados, incluidos paquetes originales y ledger,
 permanecen iguales. Calidad final y test siguen pendientes; no se inició T5.
-La evidencia necesita revisión, incluida la limitación de acceso del host.
+La evidencia ya fue [auditada en la Mac principal](../evidence/serving-review-mac24.json).
+
+## Revisión y bloqueo del acceso local
+
+El ZIP coincide exactamente con el resultado/environment versionado, commit,
+huella de código, lock y ambos reportes T4-A previamente revisados. Los conteos,
+versiones, límites y huellas tras reinicio/rollback son coherentes. El resultado
+sintético también coincide con el ensayo de la Mac principal. Las 167 pruebas
+y preservación de 3,065 originales son declaraciones de mac24, cuyos inventarios
+y archivos privados no se transfirieron.
+
+La revisión identifica dos pendientes: la API sólo se conecta a `backend`,
+declarada `internal: true`, y `serving-check` no prueba la ruta desde el host.
+Un experimento mínimo independiente en la Mac principal (Docker 29.5.2) comparó
+el mismo servidor HTTP e imagen con redes internal/bridge: ambos respondieron
+dentro del contenedor; internal dejó `8000/tcp: null`, mientras el control bridge
+publicó un puerto en localhost y respondió HTTP 200 desde macOS. Se eliminaron
+sólo los contenedores y redes desechables. Esto reproduce el mecanismo local;
+la topología corregida aún deberá comprobarse en el proyecto y en mac24.
+
+**T4-B no está cerrada.** El próximo cambio debe conservar PostgreSQL en su red
+privada, proporcionar a la API una red apta para publicar sólo en localhost y
+añadir pruebas/reporte desde el host para readiness, recomendaciones e identidad
+tras reinicio/rollback. El reporte v1 conserva su resultado válido de HTTP interno.
+No iniciar T5, repetir campañas ni abrir test para resolver este fallo de red.

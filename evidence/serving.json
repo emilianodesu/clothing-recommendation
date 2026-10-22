@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "stage": "T4-B",
-  "status": "implemented_locally_mac24_pending",
+  "status": "mac24_internal_verified_host_access_blocked",
   "base_commit": "d62f48e30b1d06cb91c3c4cbe44c4bf80926ce3b",
   "execution_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
   "selected_method": "H",
@@ -202,7 +202,7 @@
     "Final: Ruling: Finish evidence/status docs after measured rehearsal — reviewer excluded draft metadata and it must reflect actual observations; cost if wrong: documentation errors can misdirect the next agent."
   ],
   "mac24": {
-    "status": "prepared_not_executed",
+    "status": "reviewed_internal_pass_host_access_blocked",
     "prompt": "docs/mac24-t4b-prompt.md",
     "guide": "docs/serving.md",
     "reference_run_id": "release-mac24-20261021T190539Z-02a850f8",
@@ -214,20 +214,25 @@
     "probe_memory_gib": 3,
     "probe_cpus": 1,
     "probe_threads": 2,
-    "time_budget_seconds": 7200
+    "time_budget_seconds": 7200,
+    "execution_commit": "d1898dd3e471f208c814888250915b42150e842d",
+    "run_id": "serving-mac24-20261021T200054Z-cce4d43e",
+    "evidence": "evidence/mac24-serving-t4b.json",
+    "review": "evidence/serving-review-mac24.json",
+    "prompt_status": "historical_do_not_repeat"
   },
   "test_evaluated": false,
   "quality_accepted": false,
   "training_performed": false,
   "limits": [
-    "H&M resident memory and sampled HTTP parity require mac24 evidence.",
+    "H&M full package loading and sampled internal HTTP parity were verified from mac24 report; host localhost access remains blocked.",
     "Sequential probe timings are not a sustained throughput or p95 benchmark; T8 remains pending.",
     "Local synthetic rehearsal contains no private H&M customers or predictions.",
     "One API process owns the PostgreSQL registry; no horizontal-worker contract.",
     "Events/UI/scheduler/portable backup remain T5-T7; no test labels were evaluated.",
     "Closed reports travel through private GitHub, service packages remain local."
   ],
-  "next_step": "Execute T4-B exactly once on mac24 using the existing T4-A packages, publish closed report, then review before T5.",
+  "next_step": "Fix and test local host publication plus host-level evidence, then prepare a bounded mac24 follow-up. Do not repeat Q1-Q4/T4-A, train, evaluate test or start T5.",
   "post_review_cleanup_fix": {
     "commit": "d926c11628f84fec1f068325075f7f05574f896f",
     "finding": "Actual project down left API running because its Compose profile was disabled.",

@@ -220,7 +220,7 @@ El experimento de [tres épocas](../../three-epochs.md) empeoró MAP/NDCG y no s
 
 **Dependencia satisfecha:** [Q1–Q4](2026-10-20-calidad-temporal-grafos-ranking.md) cerradas y H seleccionado, con congelación en `evidence/quality-decision-mac24.json`. El detalle siguiente queda confirmado como siguiente implementación; las casillas distinguen implementación local de reproducción mac24.
 
-Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. T4-A está implementada, reproducida y revisada; seguir `docs/releases.md`. T4-B está implementada localmente; su cierre espera el reporte mac24.
+Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y no requiere entrenamiento. T4-B comienza con su paquete y prueba de paridad aprobados. T4-A está implementada, reproducida y revisada; seguir `docs/releases.md`. T4-B está implementada y su reporte mac24 fue revisado; el cierre está bloqueado por acceso HTTP desde el host.
 
 ### T4-A · Paquete y paridad offline
 
@@ -249,7 +249,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 - [x] Ejecutar `python3 scripts/project.py verify --suite serving` con HTTP real, versión identificable, activación, reinicio, paridad y rollback. Fijar un presupuesto de servicio a partir de la medición de T4-A; no asumir que todos los perfiles caben por haber evaluado 72,019 compradores. Medir las metas de carga en T8; no confundir duración offline con latencia.
 - [ ] Registrar evidencia de API/versión y commit. Reproducir la construcción con los datos propios de cada Mac; cualquier transporte posterior de paquetes completos usa un contrato separado del ZIP de reportes actual. No publicar IDs de compradores como código o reportes.
 
-**Entrega T4-B local:** API y registro PostgreSQL, paridad filtrada, exclusión de propietarios simultáneos, fallo seguro ante confirmación incierta, reinicio y rollback implementados. `serve` usa API/PostgreSQL; `serving-check` genera reportes agregados por GitHub. [Guía](../../serving.md) y [prompt mac24](../../mac24-t4b-prompt.md). API 4 GiB/2 CPU/2 hilos; probe 3 GiB/1 CPU/2 hilos. La muestra HTTP no reemplaza paridad offline exhaustiva T4-A ni benchmark T8. Falta recibir/revisar H&M en mac24.
+**Entrega T4-B local:** API y registro PostgreSQL, paridad filtrada, exclusión de propietarios simultáneos, fallo seguro ante confirmación incierta, reinicio y rollback implementados. `serve` usa API/PostgreSQL; `serving-check` genera reportes agregados por GitHub. [Guía](../../serving.md) y [prompt mac24](../../mac24-t4b-prompt.md). API 4 GiB/2 CPU/2 hilos; probe 3 GiB/1 CPU/2 hilos. La muestra HTTP no reemplaza paridad offline exhaustiva T4-A ni benchmark T8. El [reporte mac24 ya fue revisado](../../../evidence/serving-review-mac24.json): 877 consultas internas, 24.693 s y pico API 0.932 GiB. El host no accede a localhost; el control local reproduce publicación ausente en red internal. **No cerrar T4-B ni iniciar T5 hasta corregir la red y añadir una regresión/reporte desde el host**, incluyendo identidad tras reinicio/rollback. El ensayo v1 y su prompt son históricos.
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 

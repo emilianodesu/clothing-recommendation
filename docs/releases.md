@@ -7,7 +7,7 @@ pertenecen a T4-B; test y aceptación final siguen reservados para T8.
 [auditoría](../evidence/releases-review-mac24.json) verifica reportes, referencias
 y paridad; el estado se registra en [evidence/releases.json](../evidence/releases.json).
 Los comandos siguientes se conservan para reproducción, no para repetir la etapa
-ya aprobada. El siguiente desarrollo es T4-B.
+ya aprobada. El siguiente desarrollo es corregir el acceso HTTP del host en T4-B.
 
 ## Paquete local
 
@@ -211,6 +211,8 @@ transfirieron su inventario, paquete H&M ni tablas privadas. La paridad completa
 fue calculada por el worker en mac24; aquí se contrastaron sus agregados y huellas
 con los reportes anteriores. **T4-A queda cerrada operativamente** y se conservan:
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
-Sigue [reproducir T4-B en mac24](serving.md), con API, activación y rollback
-implementados y probados localmente. La duración offline y el tamaño del paquete no acreditan RAM
-residente ni latencia de la futura API. Publicar evidencia no activa al otro agente.
+La [revisión T4-B](../evidence/serving-review-mac24.json) ya verifica carga H&M,
+HTTP interno, activación y rollback en mac24, pero la publicación hacia localhost
+falló. Sigue [corregir y comprobar el acceso desde el host](serving.md). La duración
+offline y el tamaño del paquete no acreditan latencia de servicio ni carga T8.
+Publicar evidencia no activa al otro agente.
