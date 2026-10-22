@@ -163,3 +163,46 @@ class EventsMemoryReportTests(unittest.TestCase):
             result=read_report(paths[0])['result']
             self.assertEqual(result['protocol'],'events-memory-v1')
             self.assertFalse(result['diagnostics']['complete']);self.assertEqual(result['phase'],'preflight')
+
+    def test_post_restart_api_peak_cannot_escape_the_resource_gate(self):
+        m,h=self.ready();report,env=diagnostic_fixture()
+        for s in report['result']['diagnostics']['snapshots']:
+            if s['service']=='api' and s['phase']=='after_restart':s['peak_bytes']=s['memory_bytes']+4096
+        report['result']['diagnostics']=m.diagnostics(report['result']['diagnostics']['snapshots'],[])
+        with self.assertRaises(h.FinalValidationError) as raised:h.final_validation(report,report['result'],env)
+        self.assertEqual(raised.exception.failure['component'],'api')
+        self.assertEqual(raised.exception.failure['criterion'],'peak_below_limit')
+
+    def test_partial_capture_failure_is_readable_but_never_complete(self):
+        m,h=self.ready()
+        from test_events_handoff import EventsHandoffTests
+        import tempfile
+        from handoff import read_report
+        report,env=diagnostic_fixture();r=report['result']
+        r.update(status='failed',phase='memory-before_seed',error_type='TimeoutExpired')
+        r['diagnostics']=m.diagnostics(r['diagnostics']['snapshots'][:1],[dict(phase='before_seed',service='ui',error_type='TimeoutExpired')])
+        report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+        with tempfile.TemporaryDirectory() as d:
+            checked=read_report(EventsHandoffTests().package(Path(d),report,env))
+            self.assertFalse(checked['result']['diagnostics']['complete'])
+            self.assertEqual(len(checked['result']['diagnostics']['snapshots']),1)
+
+    def test_failed_peak_report_preserves_diagnostics_in_closed_zip(self):
+        m,h=self.ready()
+        from test_events_handoff import EventsHandoffTests
+        import tempfile
+        from handoff import read_report
+        report,env=diagnostic_fixture();r=report['result']
+        r['resources']['postgres']['cgroup_peak_bytes']=537141248
+        for s in r['diagnostics']['snapshots']:
+            if s['service']=='postgres':s['peak_bytes']=537141248
+        r['diagnostics']=m.diagnostics(r['diagnostics']['snapshots'],[])
+        try:h.final_validation(report,r,env)
+        except h.FinalValidationError as error:r['failure']=error.failure
+        r.update(status='failed',phase='final-validation',error_type='FinalValidationError')
+        report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+        with tempfile.TemporaryDirectory() as d:
+            checked=read_report(EventsHandoffTests().package(Path(d),report,env))
+            self.assertEqual(checked['result']['failure']['observed'],537141248)
+            self.assertTrue(checked['result']['diagnostics']['complete'])
+            self.assertEqual(checked['result']['diagnostics']['intervals'][2]['events_delta']['max'],0)

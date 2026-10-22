@@ -45,7 +45,7 @@ Mac24 conserva Colima 14 GiB/4 CPU. Los 3 GiB de semilla consideran el pico prev
 
 ## Ensayo H&M y devolución de evidencia
 
-El [prompt mac24 T5](mac24-t5-prompt.md) conserva el procedimiento ya ejecutado; no repetirlo. Se reutilizó el paquete full activo y su dataset local; los ZIP de reportes no sustituyen esos artefactos privados. Antes de otra corrida se requiere instrumentación y un nuevo prompt, descritos al final de esta guía.
+El [prompt mac24 T5](mac24-t5-prompt.md) conserva el procedimiento ya ejecutado; no repetirlo. Se reutilizó el paquete full activo y su dataset local; los ZIP de reportes no sustituyen esos artefactos privados. La instrumentación y el [nuevo prompt diagnóstico](mac24-t5-memory-prompt.md) están preparados; consulta [su contrato](events-memory.md).
 
 ```bash
 SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py up --profile serve
@@ -131,4 +131,4 @@ Preparar instrumentación y pruebas antes de una nueva ejecución remota:
 3. Separar `final-validation` de `restart` y guardar componente/criterio fallido en el reporte cerrado. Cubrir por regresión un pico histórico alto, presión nueva, OOM, swap y cambio de cgroup.
 4. Mantener el contrato v1 y su ZIP fallido intactos. Versionar explícitamente cualquier nuevo contrato y justificar sus criterios antes de medir; la información actual no permite elegir entre ajustar recursos o aceptar el comportamiento observado. Preparar después un prompt para una sola corrida, con presupuesto PostgreSQL conservado de 512 MiB durante el diagnóstico.
 
-**T5/E4 permanecen abiertas.** No hay todavía un nuevo comando remoto preparado; no repetir el prompt histórico. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.
+**T5/E4 permanecen abiertas.** Los pasos de instrumentación anteriores están implementados en `events-memory-v1`; sigue [la guía de diagnóstico](events-memory.md) y [su nuevo prompt mac24](mac24-t5-memory-prompt.md). No repetir el prompt histórico. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.

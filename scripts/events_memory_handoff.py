@@ -32,6 +32,8 @@ def final_validation(report,result,env):
         name=s['service']
         if (s['memory_bytes'],s['nano_cpus'])!=LIMITS[name] or s['cgroup_limit_bytes']!=s['memory_bytes']:
             raise FinalValidationError(name,'effective_limits',False,True)
+        if s['peak_bytes']>=s['memory_bytes']:
+            raise FinalValidationError(name,'peak_below_limit',s['peak_bytes'],s['memory_bytes'])
         if s['oom_killed'] or any(s['events'][k] for k in ('oom','oom_kill','oom_group_kill')):
             raise FinalValidationError(name,'oom_counters_zero',False,True)
         if s['swap_current_bytes'] or s['swap_peak_bytes']:
