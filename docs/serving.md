@@ -7,7 +7,7 @@ aceptación final ni a haber cumplido las metas de carga. Véase
 [arquitectura y contrato HTTP](architecture.md).
 
 La corrección **v2** añade una red de publicación exclusiva para API y comprueba
-HTTP desde el host. Su reproducción H&M en mac24 sigue pendiente. El ensayo v1
+HTTP desde el host. Su reproducción H&M en mac24 pasó; la evidencia espera revisión. El ensayo v1
 conserva sus resultados; el nuevo procedimiento se encuentra al final.
 
 ## Evidencia local
@@ -249,3 +249,30 @@ El ensayo limpio `serving-dev-20261022T030938Z-a1c0f662`, commit
 y huellas correctas. Duró 10.894 s, sin swap/OOM. El ZIP se publicó y verificó
 por descarga privada. Esto acredita la corrección local; no sustituye el ensayo
 H&M v2 en mac24 ni mide carga T8.
+
+## Resultado mac24 v2 (2026-10-21, America/Mexico_City)
+
+Ensayo único `serving-mac24-20261022T032542Z-59d9bfe4`, protocolo
+`history-serving-v2`, en `58c408e829b1809c5edd95bb6d10ebe219bb8ac2`: **passed**.
+El run_id usa UTC. [Reporte validado y publicado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261022T032542Z-59d9bfe4);
+[evidencia agregada](../evidence/mac24-serving-host-t4b.json).
+
+Se reconstruyeron app-check/jobs y pasaron 175 pruebas: 60 unitarias, 28 de
+integración, una regresión Docker de publicación desde el host y 86 de host.
+Hubo avisos de invariantes sparse de PyTorch y ResourceWarning de Python en la
+prueba que rechaza redirecciones; ninguna prueba falló.
+
+Los paquetes T4-A originales se reutilizaron sin cambios. Cinco etapas comprobaron
+877 recomendaciones internas y diez desde macOS, con paridad, versiones y código
+correctos. El binding efectivo fue exclusivamente 127.0.0.1:8000; readiness,
+reinicio y rollback pasaron. H&M quedó activo; una consulta adicional de readiness
+desde macOS confirmó la misma versión al cierre. Esto resuelve en esta ejecución
+la limitación de acceso del host observada en v1; su reporte permanece intacto.
+
+Duración 20.607 s; pico API 1,090,260,992 bytes (1.015 GiB), sin swap/OOM.
+Límites API efectivos 4 GiB/2 CPU/2 hilos, con Colima 14 GiB/4 CPU. La suite
+y la preservación local de 3,072 archivos, incluido ledger y reporte v1, se
+registran por separado del ZIP. Sólo se publicaron agregados y huellas.
+
+Resultado operativo pendiente de revisión; `quality_accepted=false` y
+`test_evaluated=false`. No mide carga T8 ni autoriza T5.

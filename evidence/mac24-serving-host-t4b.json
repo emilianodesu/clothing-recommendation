@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "protocol": "history-serving-v2",
+  "machine_id": "mac24",
+  "source_commit": "58c408e829b1809c5edd95bb6d10ebe219bb8ac2",
+  "run_id": "serving-mac24-20261022T032542Z-59d9bfe4",
+  "status": "passed",
+  "review_status": "pending_review",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261022T032542Z-59d9bfe4",
+  "archive_sha256": "5efc76a4abb832c4467f7f85ede7c3913163c0d75bcf3ca0d3291f082b99d460",
+  "archive_bytes": 4873,
+  "archive_validated": true,
+  "publication_download_verified": true,
+  "environment": {
+    "run_id": "serving-mac24-20261022T032542Z-59d9bfe4",
+    "source_commit": "58c408e829b1809c5edd95bb6d10ebe219bb8ac2",
+    "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282"
+  },
+  "result": {
+    "stage": "T4-B",
+    "protocol": "history-serving-v2",
+    "status": "passed",
+    "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+    "sources": {
+      "reference": {
+        "run_id": "release-mac24-20261021T190539Z-02a850f8",
+        "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+        "dataset": "synthetic"
+      },
+      "candidate": {
+        "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+        "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+        "dataset": "hm"
+      }
+    },
+    "checks": {
+      "reference": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "sampled_buyers": 33,
+        "checked_requests": 41,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+        "catalog_size": 24,
+        "past_buyers": 32,
+        "request_seconds_mean": 0.0005200324392318158,
+        "request_seconds_max": 0.0008911509939935058,
+        "load_benchmark": false,
+        "host_reference_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2"
+      },
+      "candidate": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.0005303088869110963,
+        "request_seconds_max": 0.0038382040002034046,
+        "load_benchmark": false,
+        "host_reference_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8"
+      },
+      "restart": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.0005419625550067,
+        "request_seconds_max": 0.0038620199993602,
+        "load_benchmark": false,
+        "host_reference_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8"
+      },
+      "rollback": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "sampled_buyers": 33,
+        "checked_requests": 41,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "2b977427da994e7675772b9f373ad34064aef252f0ebdff8a617225cca6e764c",
+        "catalog_size": 24,
+        "past_buyers": 32,
+        "request_seconds_mean": 0.0005019028044998554,
+        "request_seconds_max": 0.000634750998870004,
+        "load_benchmark": false,
+        "host_reference_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2"
+      },
+      "final": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "sampled_buyers": 257,
+        "checked_requests": 265,
+        "filtered_cases": 4,
+        "http_parity": true,
+        "response_sha256": "ae1f70f79b24b9a87bd443e9285394eaafdb72fddaf95eace1f242542d63dc59",
+        "catalog_size": 102967,
+        "past_buyers": 1351314,
+        "request_seconds_mean": 0.0005393060789397426,
+        "request_seconds_max": 0.0038122929981909692,
+        "load_benchmark": false,
+        "host_reference_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8"
+      }
+    },
+    "host_checks": {
+      "reference": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8000,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2",
+        "request_seconds_mean": 0.0011062499979743734,
+        "request_seconds_max": 0.0012120000028517097,
+        "load_benchmark": false
+      },
+      "candidate": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8000,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8",
+        "request_seconds_mean": 0.0032352710113627836,
+        "request_seconds_max": 0.004370042006485164,
+        "load_benchmark": false
+      },
+      "restart": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8000,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8",
+        "request_seconds_mean": 0.0020550415210891515,
+        "request_seconds_max": 0.0027397080266382545,
+        "load_benchmark": false
+      },
+      "rollback": {
+        "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8000,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "a599048bfda275837994bb20a09109b2ce942a54474cdc302dcae787144b8cb2",
+        "request_seconds_mean": 0.0011122915020678192,
+        "request_seconds_max": 0.0012675829930230975,
+        "load_benchmark": false
+      },
+      "final": {
+        "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+        "source_tree_sha256": "c76a038a21a9b63bc19c722dfc2ce414987478e9bfb0278916ad23cabdde511d",
+        "host": "127.0.0.1",
+        "port": 8000,
+        "binding_verified": true,
+        "health_live": true,
+        "health_ready": true,
+        "checked_requests": 2,
+        "http_parity": true,
+        "response_sha256": "c4a2ce80ee334d322aaf94e7c63d4e068f26b04915b666c1f0f53a71a5502dc8",
+        "request_seconds_mean": 0.002778166497591883,
+        "request_seconds_max": 0.004273041995475069,
+        "load_benchmark": false
+      }
+    },
+    "resources": {
+      "before_restart": {
+        "image_id": "sha256:b8d847ef5abede9711f30f53e95aff6129d97f76511fd8265137c5bd82d6490d",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "running": true,
+        "cgroup_peak_bytes": 964755456,
+        "swap_peak_bytes": 0,
+        "threads": 2
+      },
+      "after_restart": {
+        "image_id": "sha256:b8d847ef5abede9711f30f53e95aff6129d97f76511fd8265137c5bd82d6490d",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "running": true,
+        "cgroup_peak_bytes": 1090260992,
+        "swap_peak_bytes": 0,
+        "threads": 2
+      }
+    },
+    "final_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "activated": true,
+    "test_evaluated": false,
+    "quality_accepted": false,
+    "training_performed": false,
+    "duration_seconds": 20.607390375022078
+  },
+  "local_verification": {
+    "suite": "serving",
+    "unit_passed": 60,
+    "integration_passed": 28,
+    "host_publication_regression_passed": 1,
+    "host_passed": 86,
+    "total_passed": 175,
+    "failed": 0,
+    "warnings": [
+      "PyTorch sparse invariant warning",
+      "Python ResourceWarning during redirect rejection test"
+    ],
+    "build": "app-check and jobs rebuilt",
+    "preservation": {
+      "files_checked": 3072,
+      "all_unchanged": true,
+      "ledger_unchanged": true,
+      "v1_report_unchanged": true,
+      "scope": "T4-A packages/reports; processed data, features, checkpoints, Q1-Q4 work/ZIPs, quality ledger, v1 report directory and ZIP",
+      "private_inventory_sha256": "2774713456bcc51c7ddabb118145b92b5d13b6f795b44185a77044b359ddd7cf"
+    },
+    "colima": {
+      "profile": "hm-project",
+      "memory_gib": 14,
+      "cpus": 4
+    },
+    "post_close_host_readiness": {
+      "url": "http://127.0.0.1:8000/health/ready",
+      "status": "ready",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a"
+    }
+  },
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "load_benchmark": false
+}
