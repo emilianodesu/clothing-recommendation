@@ -35,6 +35,43 @@ def fixture():
 
 
 class ServingHandoffTests(unittest.TestCase):
+    def v2(self):
+        report,env=fixture();result=report['result'];result['protocol']='history-serving-v2'
+        result['host_checks']={}
+        for key,check in result['checks'].items():
+            check['host_reference_sha256']=check['response_sha256']
+            result['host_checks'][key]=dict(release_id=check['release_id'],source_tree_sha256=check['source_tree_sha256'],
+                host='127.0.0.1',port=8000,binding_verified=True,health_live=True,health_ready=True,
+                checked_requests=2,http_parity=True,response_sha256=check['host_reference_sha256'],
+                request_seconds_mean=.001,request_seconds_max=.002,load_benchmark=False)
+        return report,env
+
+    def test_v2_roundtrip_requires_host_evidence_for_every_lifecycle_stage(self):
+        report,env=self.v2()
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(read_report(self.package(Path(d),report,env))['result'],report['result'])
+        mutations=[lambda r:r['result'].pop('host_checks'),
+            lambda r:r['result']['host_checks'].pop('restart'),
+            lambda r:r['result']['host_checks']['rollback'].update(release_id='h-'+'0'*64),
+            lambda r:r['result']['host_checks']['final'].update(response_sha256='0'*64),
+            lambda r:r['result']['host_checks']['candidate'].update(port=9000),
+            lambda r:r['result']['host_checks']['reference'].update(binding_verified=False),
+            lambda r:r['result']['host_checks']['final'].update(host='0.0.0.0'),
+            lambda r:r['result']['host_checks']['reference'].update(checked_requests=0),
+            lambda r:r['result']['checks']['final'].pop('host_reference_sha256')]
+        for mutate in mutations:
+            with tempfile.TemporaryDirectory() as d, self.subTest(mutation=mutate):
+                report,env=self.v2();mutate(report)
+                with self.assertRaises(ValueError):self.package(Path(d),report,env)
+
+    def test_failed_v2_host_check_is_exported_without_private_payload(self):
+        report,env=self.v2();report['status']='failed'
+        report['steps'][0].update(status='failed',exit_code=1)
+        report['result'].update(status='failed',phase='candidate-host',error_type='URLError')
+        report['result']['host_checks'].pop('candidate')
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(read_report(self.package(Path(d),report,env))['status'],'failed')
+
     def test_project_down_includes_all_profiles_and_preserves_volumes(self):
         import project
         values = {'COMPOSE_PROJECT_NAME': 'isolated-test'}

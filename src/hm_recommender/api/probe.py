@@ -9,9 +9,10 @@ import httpx
 from hm_recommender.api.recommend import load_state, FILTERS
 from hm_recommender.api.schemas import RecommendationRequest
 from hm_recommender.api.runtime import source_digest
+from hm_recommender.api.host_contract import host_requests, responses_digest
 
 
-def probe(directory, expected_id, url, expected_code):
+def probe(directory, expected_id, url, expected_code, host_reference=False):
     state=load_state(directory)
     if state.release_id != expected_id: raise ValueError('Unexpected package')
     # Bound the sample; include both recent and older known buyers when available.
@@ -45,18 +46,26 @@ def probe(directory, expected_id, url, expected_code):
                 checked+=1
         metrics=client.get('/metrics');metrics.raise_for_status()
         if 'hmrec_recommendations_total' not in metrics.text:raise ValueError('Missing metrics')
-    return {'release_id':expected_id,'source_tree_sha256':expected_code,
+    result={'release_id':expected_id,'source_tree_sha256':expected_code,
         'sampled_buyers':len(users),'checked_requests':checked,'filtered_cases':len(filtered)-1,
         'http_parity':True,'response_sha256':digest.hexdigest(),'catalog_size':len(state.catalog),
         'past_buyers':len(state.customers),'request_seconds_mean':statistics.mean(elapsed),
         'request_seconds_max':max(elapsed),'load_benchmark':False}
+    if host_reference:
+        bodies=[]
+        for query in host_requests():
+            body=state.recommend(RecommendationRequest(**query)).model_dump(mode='json')
+            body.pop('request_id');bodies.append(body)
+        result['host_reference_sha256']=responses_digest(bodies)
+    return result
 
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--directory',type=Path,required=True)
     parser.add_argument('--release-id',required=True);parser.add_argument('--expected-code',required=True)
-    parser.add_argument('--url',default='http://api:8000');args=parser.parse_args()
-    try: print(json.dumps(probe(args.directory,args.release_id,args.url,args.expected_code)))
+    parser.add_argument('--url',default='http://api:8000')
+    parser.add_argument('--host-reference',action='store_true');args=parser.parse_args()
+    try: print(json.dumps(probe(args.directory,args.release_id,args.url,args.expected_code,args.host_reference)))
     except Exception as error:
         print(json.dumps({'status':'failed','phase':'http-probe','error_type':type(error).__name__}))
         return 1

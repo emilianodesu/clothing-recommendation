@@ -16,6 +16,7 @@ import uuid
 from bootstrap import read_configuration
 from handoff import now, package_report, read_report, validate_context, write_json
 from project import compose
+from serving_host import probe_host
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -77,11 +78,19 @@ def run(root,machine_id,expected_commit,reference_run,candidate_run):
             "r=urllib.request.urlopen('http://127.0.0.1:8000/health/live',timeout=10); print(r.read().decode())"))
 
     def probe(key,entry):
+        nonlocal phase
+        phase=key+'-internal'
         log(key)
         data=json.loads(call('run','--rm','--no-deps','-T','serving-probe','python','-m','hm_recommender.api.probe',
             '--directory','/artifacts/data-jobs/'+entry['run_id']+'/work/release',
-            '--release-id',entry['release_id'],'--expected-code',env['source_tree_sha256']))
+            '--release-id',entry['release_id'],'--expected-code',env['source_tree_sha256'],'--host-reference'))
         result['checks'][key]=data
+        phase=key+'-host';log(phase)
+        cid=call('ps','-q','api')
+        bindings=json.loads(subprocess.check_output(['docker','inspect',cid,'--format',
+            '{{json .NetworkSettings.Ports}}'],text=True,timeout=30))
+        result['host_checks'][key]=probe_host(int(values['API_PORT']),entry['release_id'],
+            env['source_tree_sha256'],data['host_reference_sha256'],bindings)
 
     def resource():
         cid=call('ps','-q','api')
@@ -114,8 +123,8 @@ def run(root,machine_id,expected_commit,reference_run,candidate_run):
             "import json,urllib.request,urllib.error\ntry:\n r=urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=10);print(r.read().decode())\nexcept urllib.error.HTTPError as e:\n assert e.code==503;print('{}')"))
         if active.get('release_id') not in (None,sources['reference']['release_id'],sources['candidate']['release_id']):
             raise ValueError('An unrelated version is active')
-        result=dict(stage='T4-B',protocol='history-serving-v1',status='running',source_tree_sha256=env['source_tree_sha256'],
-            sources=sources,checks={},resources={},final_release_id=None,activated=False,
+        result=dict(stage='T4-B',protocol='history-serving-v2',status='running',source_tree_sha256=env['source_tree_sha256'],
+            sources=sources,checks={},host_checks={},resources={},final_release_id=None,activated=False,
             test_evaluated=False,quality_accepted=False,training_performed=False,duration_seconds=0)
         for phase in ('reference','candidate'):
             entry=sources[phase]

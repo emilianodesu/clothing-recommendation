@@ -6,6 +6,10 @@ el acceso desde localhost falló: T4-B permanece abierta. No equivale a
 aceptación final ni a haber cumplido las metas de carga. Véase
 [arquitectura y contrato HTTP](architecture.md).
 
+La corrección **v2** añade una red de publicación exclusiva para API y comprueba
+HTTP desde el host. Su reproducción H&M en mac24 sigue pendiente. El ensayo v1
+conserva sus resultados; el nuevo procedimiento se encuentra al final.
+
 ## Evidencia local
 
 El clon limpio `881e0c2` pasó 121 pruebas científicas/servicio (incluidas 28 de
@@ -186,3 +190,47 @@ privada, proporcionar a la API una red apta para publicar sólo en localhost y
 añadir pruebas/reporte desde el host para readiness, recomendaciones e identidad
 tras reinicio/rollback. El reporte v1 conserva su resultado válido de HTTP interno.
 No iniciar T5, repetir campañas ni abrir test para resolver este fallo de red.
+
+## Corrección v2 y comprobación desde el host
+
+La API participa en backend privada y `api-publication` bridge, publicada sólo
+en `127.0.0.1:${API_PORT}`. PostgreSQL permanece exclusivamente en backend sin
+puertos publicados. `verify --suite serving` incluye una instalación desechable
+con el Compose real: exige HTTP desde macOS, binding loopback y backend privada
+para PostgreSQL. Sus propios volúmenes se eliminan; no toca los del proyecto.
+
+El contrato `history-serving-v2` conserva las cinco muestras internas y añade
+`host_checks` para referencia, candidato, reinicio, rollback y estado final.
+Cada check del host verifica publicación efectiva, `/health/live` y código,
+`/health/ready` y versión, y dos recomendaciones: comprador desconocido sin
+filtros y con un filtro vacío. Compara el digest con la referencia calculada
+desde el paquete por el probe interno. No instala librerías científicas en macOS
+ni envía perfiles privados; sólo guarda agregados y huellas. El cliente usa
+127.0.0.1, ignora proxies y rechaza redirecciones.
+
+Una comprobación host ausente, fallida o de otra versión impide `passed`.
+Los reportes v1 siguen siendo legibles y sólo acreditan HTTP interno. No se
+convierten ni editan los ZIP anteriores. Los tiempos siguen siendo un diagnóstico
+secuencial, sin medir p95 ni 20 solicitudes/s. Para H&M se esperan 877 consultas
+internas de recomendaciones y diez adicionales desde el host; ninguna usa test.
+
+En un clon limpio con el SHA recibido, mantener `.env` y paquetes originales:
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project docker compose --env-file .env --file compose.yaml build app-check jobs
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py verify --suite serving
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py up --profile serve --skip-build
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py serving-check --machine-id mac24 --expected-commit SHA_COMPLETO --reference-run-id release-mac24-20261021T190539Z-02a850f8 --candidate-run-id release-mac24-20261021T190717Z-f0a2d073
+```
+
+`up` recrea la API cuando cambia su imagen/red y recupera el puntero existente;
+no borra volúmenes. Si preparación/verificación falla, conservar diagnóstico y
+detenerse. El ensayo sigue siendo una única ejecución en primer plano con
+presupuesto de 7,200 s. Validar/publicar también un fallo cerrado mediante
+`read-handoff.py` y `github-handoff.py upload`. No reintentar automáticamente.
+No regenerar datos ni modificar recursos para ocultar fallos. Conservar inventario
+privado de originales antes/después, incluido el ZIP v1 y ledger.
+
+Al finalizar registrar `evidence/mac24-serving-host-t4b.json`, separado de la
+evidencia v1, y actualizar esta guía. El [prompt v2](mac24-t4b-host-prompt.md)
+reúne las instrucciones; no usar el prompt histórico ni iniciar T5/test.

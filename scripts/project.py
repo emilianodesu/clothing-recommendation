@@ -186,6 +186,8 @@ def main():
                 compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', '-e', 'HMREC_SERVING_TESTS=1', 'jobs',
                     'python', '-m', 'pytest', 'tests/integration/test_recommendations.py',
                     'tests/integration/test_release_activation.py', 'tests/integration/test_serving_http.py', '-q')
+                subprocess.run([sys.executable, str(ROOT/'tests/integration/test_serving_publication.py'), '-v'],
+                    cwd=ROOT, env=dict(os.environ, HMREC_DOCKER_TESTS='1'), check=True)
             if args.suite == "quality":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "tests/integration/test_quality_campaign.py", "-q")

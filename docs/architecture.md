@@ -69,7 +69,10 @@ No se consultan etiquetas de validación/test durante el ensayo de servicio.
 
 ## Operación y límites
 
-La API se publica sólo en `127.0.0.1`, sobre una red Docker interna. Los comandos
+La API se publica sólo en `127.0.0.1` mediante la red bridge `api-publication`.
+También participa en `backend` interna para acceder a PostgreSQL; la base sólo
+participa en backend y no publica puertos. La red de publicación permite salida
+de la API, aunque servir H no requiere Internet. Los comandos
 administrativos usan `/admin/releases/{prepare,activate,rollback}` con Bearer de
 la credencial local de aplicación. La CLI la toma del entorno del contenedor:
 no aparece en argumentos, ejemplos ni reportes. No habilitar acceso de red sin

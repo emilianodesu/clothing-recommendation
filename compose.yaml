@@ -149,7 +149,7 @@ services:
     read_only: true
     tmpfs: [/tmp]
     restart: unless-stopped
-    networks: [backend]
+    networks: [backend, api-publication]
 
   serving-probe:
     image: hmrec-jobs:0.1.0
@@ -203,6 +203,7 @@ services:
 networks:
   backend:
     internal: true
+  api-publication:
 
 volumes:
   postgres_data:

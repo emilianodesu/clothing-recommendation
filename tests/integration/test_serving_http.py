@@ -32,6 +32,13 @@ def test_real_http_serves_version_and_filters(serving):
         assert report['http_parity'] is True and report['checked_requests']>report['sampled_buyers']
         assert report['past_buyers']==3 and report['catalog_size']==255
         assert 'buyer' not in __import__('json').dumps(report).replace('buyers','')
+        host_report=probe(a._root,a.release_id,f'http://127.0.0.1:{port}',source_digest(),host_reference=True)
+        # Independent known fixture: popularity starts with 254, then 0..10; empty filter has no items.
+        import hashlib,json
+        base=dict(release_id=a.release_id,strategy='recent_then_popular',features_timestamp='2020-09-09',
+            fallback=True,items=[dict(article_id=f'{n:06}',rank=i+1,reason='popular_7d') for i,n in enumerate([254,*range(11)])])
+        want=hashlib.sha256(''.join(json.dumps(x,sort_keys=True,separators=(',',':')) for x in (base,{**base,'items':[]})).encode()).hexdigest()
+        assert host_report['host_reference_sha256']==want
         with pytest.raises(ValueError,match='code differs'):
             probe(a._root,a.release_id,f'http://127.0.0.1:{port}','0'*64)
     finally:
