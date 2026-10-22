@@ -73,3 +73,34 @@ Referencias de implementación: [Streamlit AppTest](https://docs.streamlit.io/de
 Dos ensayos desde clones limpios terminaron `passed`, con configuración PostgreSQL propia y sin Kaggle. El último (`events-development-20261022T042237Z-5238dc2c`, código `6130943641e599121119660693ed276cf3b3fbca`) comprobó cuatro interacciones, deduplicación/conflicto, publicación repetida y persistencia tras reiniciar API en 4.263 s, excluyendo construcción y arranque. Son sintéticos, no una medición de capacidad H&M. La [evidencia agregada](../evidence/events-local.json) identifica cada revisión y reporte.
 
 Pasaron 133 pruebas científicas/integración, 93 del host, ocho de bootstrap Docker y una de publicación API/UI (235 casos distintos); la prueba separada de MLflow no se ejecutó. `verify --suite events` también pasó contra la imagen final instalada. Chrome mostró las 12 recomendaciones y controles; la compra/reintento/conflicto se verificó con AppTest y HTTP/PostgreSQL reales. La revisión independiente tuvo dos correcciones comprobadas RED→GREEN y no dejó menores aplazados. [Decisiones y límites de revisión](t5-decisions.md). La reproducción H&M permanece pendiente.
+
+## Intento H&M mac24 (2026-10-21, America/Mexico_City)
+
+Una única ejecución en `ee27bf7911ff38d15aae66922d716cec7426b9ab`:
+`events-mac24-20261022T043907Z-ddcd2e42` (run_id UTC), **failed**.
+[ZIP válido publicado y verificado por descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T043907Z-ddcd2e42);
+[evidencia agregada](../evidence/events-mac24.json). El lector devuelve 1:
+fallo de ejecución válido, no ZIP inválido. No se reintentó.
+
+La suite events pasó 194 pruebas: 62 unitarias, 28 de integración serving,
+una de publicación, diez de eventos/UI y 93 host. La semilla del paquete H&M
+T4-A original incorporó 972,591 filas diarias y 1,069,693 compras, del
+2020-08-12 al 2020-09-08. Cuatro solicitudes de paridad inicial y cuatro
+eventos completaron duplicado 200, conflicto 409, cambio de perfil, exclusión
+de vistas/clics, orden tardío y publicación idempotente. El endpoint base y
+la fuente permanecieron iguales; persistencia tras reinicio fue verdadera.
+
+La validación final lanzó ValueError porque el pico acumulado PostgreSQL
+fue 537,141,248 bytes, frente a su límite 536,870,912; el contrato exige
+pico estrictamente inferior. La fase reportada sigue siendo restart aunque
+la comprobación de persistencia ya había pasado. El contador es de la vida
+del contenedor existente: no se atribuye todo ese pico exclusivamente a T5.
+Sin swap ni OOM; no se aumentaron límites ni cambió código para aprobar.
+Duración registrada 46.814 s. Picos: semilla 700,850,176 bytes, API
+763,113,472, UI 67,051,520. Los recursos efectivos completos están en la evidencia.
+
+Inventario local antes/después: 3,079 archivos intactos, incluidos originales,
+reportes históricos y ledger. API H&M y [UI](http://127.0.0.1:8501) quedaron
+saludables y disponibles; se conservó el entorno simulation para diagnóstico.
+El siguiente paso es revisar el contrato y la evidencia de memoria en la Mac
+principal. T5 no está cerrada; no se entrenó, evaluó test ni inició T6.

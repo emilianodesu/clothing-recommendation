@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "stage": "T5",
+  "machine_id": "mac24",
+  "source_commit": "ee27bf7911ff38d15aae66922d716cec7426b9ab",
+  "run_id": "events-mac24-20261022T043907Z-ddcd2e42",
+  "status": "failed",
+  "review_status": "pending_primary_review",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T043907Z-ddcd2e42",
+  "archive_sha256": "c11222d32d7cf31a84e6e7659579b8f06265e8cd06aca97c4bef6f1a88e72c74",
+  "archive_bytes": 4013,
+  "reader_exit_code": 1,
+  "publication_download_verified": true,
+  "result": {
+    "stage": "T5",
+    "protocol": "events-v1",
+    "status": "failed",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "source": {
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+      "dataset": "hm"
+    },
+    "stream_id": "097723e5-7928-44c3-b3a1-5d42a00a155f",
+    "mode": "simulation",
+    "checks": {
+      "initial_parity_requests": 4,
+      "new_events": 4,
+      "duplicate_status": 200,
+      "conflict_status": 409,
+      "purchase_changes_profile": true,
+      "views_clicks_not_purchases": true,
+      "late_event_order": true,
+      "refresh_idempotent": true,
+      "base_unchanged": true,
+      "profile_sha256": "f550a9613902736445999505bd5e9005f7cae767d4d29bba19fdfa08fb8310ba",
+      "revision": 3,
+      "data_as_of": "2020-09-09",
+      "processed_events": 4
+    },
+    "seed": {
+      "daily_rows": 972591,
+      "purchases": 1069693,
+      "first_day": "2020-08-12",
+      "last_day": "2020-09-08",
+      "data_as_of": "2020-09-09"
+    },
+    "resources": {
+      "seed": {
+        "image_id": "sha256:67c387ef79ef0bf9eb23c8c5d20796f115dc75b1925415e9d272b55f6229299c",
+        "memory_bytes": 3221225472,
+        "nano_cpus": 1000000000,
+        "cgroup_peak_bytes": 700850176,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "api": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "cgroup_peak_bytes": 763113472,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "ui": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "cgroup_peak_bytes": 67051520,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "postgres": {
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "cgroup_peak_bytes": 537141248,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      }
+    },
+    "host": {
+      "host": "127.0.0.1",
+      "api_port": 8000,
+      "ui_port": 8501,
+      "bindings_verified": true,
+      "ui_healthy": true
+    },
+    "restart_persistent": true,
+    "source_unchanged": true,
+    "test_evaluated": false,
+    "training_performed": false,
+    "load_benchmark": false,
+    "duration_seconds": 46.81369762500981,
+    "phase": "restart",
+    "error_type": "ValueError"
+  },
+  "environment": {
+    "run_id": "events-mac24-20261022T043907Z-ddcd2e42",
+    "source_commit": "ee27bf7911ff38d15aae66922d716cec7426b9ab",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282"
+  },
+  "diagnosis": {
+    "failure": "Final report validator rejects PostgreSQL cgroup_peak_bytes >= memory_bytes",
+    "observed_peak_bytes": 537141248,
+    "limit_bytes": 536870912,
+    "excess_bytes": 270336,
+    "reported_phase": "restart",
+    "clarification": "Restart persistence and source preservation are true; final validation runs while phase remains restart. Peak is cumulative for existing container, not an isolated T5 measurement.",
+    "post_close_postgres_memory_events": {
+      "low": 0,
+      "high": 0,
+      "max": 45963,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "next_action": "Primary review of memory evidence and strict validator contract; no automatic rerun or resource/code change."
+  },
+  "local_verification": {
+    "suite": "events",
+    "unit_passed": 62,
+    "serving_integration_passed": 28,
+    "publication_passed": 1,
+    "events_ui_passed": 10,
+    "host_passed": 93,
+    "total_passed": 194,
+    "failed": 0,
+    "preservation": {
+      "files_checked": 3079,
+      "all_unchanged": true,
+      "ledger_unchanged": true,
+      "historical_reports_unchanged": true,
+      "scope": "processed data/features/checkpoints, Q1-Q4 work/ZIPs, T4-A packages, v1/v2 serving reports, ledger",
+      "private_inventory_sha256": "ebd2b1842cbfc7af4e2ee6f955c8b6579fd36d4cd7a27e208a5aab180d64c8a5"
+    },
+    "colima": {
+      "profile": "hm-project",
+      "memory_gib": 14,
+      "cpus": 4
+    },
+    "post_close": {
+      "api_ready": true,
+      "ui_healthy": true,
+      "active_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a"
+    }
+  },
+  "ui_url": "http://127.0.0.1:8501",
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "t5_closed": false,
+  "t6_started": false
+}
