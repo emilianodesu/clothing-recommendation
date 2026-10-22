@@ -1,6 +1,6 @@
 # T5: interfaz, eventos y perfiles operativos
 
-H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. La reproducción H&M en mac24 está pendiente; no confundir la implementación local con cierre remoto o aceptación T8.
+H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M fue revisado y conserva estado fallido por memoria PostgreSQL; T5/E4 siguen abiertas. No confundir la implementación local con cierre remoto o aceptación T8.
 
 ## Demo reproducible sin Kaggle
 
@@ -45,7 +45,7 @@ Mac24 conserva Colima 14 GiB/4 CPU. Los 3 GiB de semilla consideran el pico prev
 
 ## Ensayo H&M y devolución de evidencia
 
-Sigue [el prompt mac24 T5](mac24-t5-prompt.md). Se reutiliza el paquete full activo y su dataset local; falta de artefactos privados bloquea el ensayo. No se recuperan desde los ZIP de reportes.
+El [prompt mac24 T5](mac24-t5-prompt.md) conserva el procedimiento ya ejecutado; no repetirlo. Se reutilizó el paquete full activo y su dataset local; los ZIP de reportes no sustituyen esos artefactos privados. Antes de otra corrida se requiere instrumentación y un nuevo prompt, descritos al final de esta guía.
 
 ```bash
 SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py up --profile serve
@@ -104,3 +104,31 @@ reportes históricos y ledger. API H&M y [UI](http://127.0.0.1:8501) quedaron
 saludables y disponibles; se conservó el entorno simulation para diagnóstico.
 El siguiente paso es revisar el contrato y la evidencia de memoria en la Mac
 principal. T5 no está cerrada; no se entrenó, evaluó test ni inició T6.
+
+## Revisión en la Mac principal
+
+La [auditoría del intento H&M](../evidence/events-review-mac24.json) verifica el ZIP cerrado de 4,013 bytes, sus huellas e inventario, el código `ee27bf7`, `uv.lock` y la cadena hacia el reporte T4-A original. `read-handoff.py` devuelve 1, como corresponde a un fallo válido. El resultado y el entorno publicados en Git coinciden exactamente con el ZIP. Al reconstruir sólo en memoria la entrada al validador antes del fallo, la única condición falsa es la comparación del pico PostgreSQL contra el límite. No se modificó ni reclasificó el reporte original.
+
+| Componente | Pico reportado, MiB | Límite, MiB |
+| --- | ---: | ---: |
+| Semilla | 668.383 | 3,072 |
+| API | 727.762 | 4,096 |
+| UI | 63.945 | 512 |
+| PostgreSQL | 512.258 | 512 |
+
+El exceso es de 270,336 bytes (264 KiB; 0.0504%). Linux permite que `memory.max` se exceda temporalmente; `memory.peak` representa la vida del cgroup salvo reinicio explícito del contador para su descriptor. Por ello, el exceso no demuestra que Docker haya ignorado el límite. `memory.events:max` cuenta aproximaciones al límite, no procesos eliminados por OOM. [Documentación oficial del kernel](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-interface-files).
+
+Eso tampoco demuestra que 512 MiB sean suficientes con margen. Mac24 declaró posteriormente 45,963 eventos `max` y cero `oom`/`oom_kill`; son contadores acumulados fuera del ZIP, sin medición inicial para atribuirlos a T5. El ZIP sólo registra cero swap y `State.OOMKilled=false`. No contiene desglose de caché, memoria anónima, presión ni eventos por fase. El origen temporal de esa presión queda sin resolver.
+
+Las cuatro comprobaciones iniciales de paridad, cuatro eventos y persistencia tras reiniciar están completas en el reporte. La fase `restart` es imprecisa: el código había terminado la persistencia cuando falló la validación final. Los 46.814 s incluyen semilla y reinicio; no son latencia de recomendación. Las 194 pruebas y preservación de 3,079 archivos son declaraciones de mac24: aquí no se recibieron sus inventarios privados ni se recalcularon perfiles H&M. La salud de UI tampoco sustituye una prueba de navegación completa.
+
+### Siguiente paso de ingeniería
+
+Preparar instrumentación y pruebas antes de una nueva ejecución remota:
+
+1. Capturar identidad de contenedor/cgroup, generación de reinicio, límites efectivos y tiempos por fase. Registrar `memory.current`, pico acumulado, swap y `memory.events` antes/después de semilla, replay y reinicio; calcular diferencias sólo dentro del mismo cgroup.
+2. Añadir agregados de `memory.stat` y `memory.pressure` para distinguir caché, memoria anónima y presión. No exportar filas SQL, clientes ni secretos; no reiniciar PostgreSQL sólo para borrar el historial del contador.
+3. Separar `final-validation` de `restart` y guardar componente/criterio fallido en el reporte cerrado. Cubrir por regresión un pico histórico alto, presión nueva, OOM, swap y cambio de cgroup.
+4. Mantener el contrato v1 y su ZIP fallido intactos. Versionar explícitamente cualquier nuevo contrato y justificar sus criterios antes de medir; la información actual no permite elegir entre ajustar recursos o aceptar el comportamiento observado. Preparar después un prompt para una sola corrida, con presupuesto PostgreSQL conservado de 512 MiB durante el diagnóstico.
+
+**T5/E4 permanecen abiertas.** No hay todavía un nuevo comando remoto preparado; no repetir el prompt histórico. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.

@@ -253,7 +253,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
-**Estado de implementación:** código y pruebas locales disponibles; [guía](../../events.md) y [prompt de reproducción H&M](../../mac24-t5-prompt.md). Mantener T5/E4 pendientes de auditoría remota. Los entornos operativos PostgreSQL están separados del paquete H; la demo usa reloj explícito y reconstrucción transaccional de conteos diarios. T6 no se activa automáticamente.
+**Estado de implementación:** código y pruebas locales disponibles; [guía](../../events.md). El [intento H&M ya fue auditado](../../../evidence/events-review-mac24.json): comprobaciones funcionales completas, fallo por pico acumulado PostgreSQL de 512.258 MiB frente a 512 MiB. **T5/E4 siguen abiertas**. Preparar instrumentación por fase/cgroup y diagnóstico de validación final antes de otra corrida; conservar v1 y sus límites sin reinterpretar el fallo. El prompt original es histórico. Los entornos operativos PostgreSQL están separados del paquete H; la demo usa reloj explícito y reconstrucción transaccional de conteos diarios. T6 no se activa automáticamente.
 
 **Decisión Q4 aplicada:** actualizar estado de H con ventanas 28/7 y reglas congeladas. No requiere refit neuronal ni reconstrucción de grafo; caducidad temporal, trazabilidad e intercambio conservan los contratos siguientes.
 

@@ -1,5 +1,7 @@
 # Mac24: reproducir T5 una sola vez
 
+**Procedimiento histórico, no repetir.** El intento `events-mac24-20261022T043907Z-ddcd2e42` terminó fallido y ya fue [auditado](../evidence/events-review-mac24.json). T5 sigue abierta por el criterio de memoria PostgreSQL. Antes de otra corrida se preparará instrumentación y un nuevo prompt; estas instrucciones conservan el procedimiento original.
+
 Lee `AGENTS.md`, `docs/events.md` y `evidence/serving-host-review-mac24.json`. T4-A/T4-B y Q1–Q4 están cerradas. La tarea es comprobar eventos, perfiles e interfaz con H&M, devolver evidencia y detenerse. No entrenes, no evalúes test, no repitas campañas, no inicies T6 ni cambies H.
 
 1. Conserva modificaciones existentes. Actualiza `main` con fast-forward y verifica clon limpio. Registra el SHA completo recibido como `T5_COMMIT`; no cambies código durante la ejecución. Usa `SSL_CERT_FILE=/etc/ssl/cert.pem` en todos los comandos de host, contexto `colima-hm-project`, Colima 14 GiB/4 CPU. No cambies credenciales ni copies `.env`.

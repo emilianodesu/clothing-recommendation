@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "stage": "T5",
+  "status": "reviewed_failed",
+  "stage_closed": false,
+  "reviewed_on": "2026-10-21",
+  "review_timezone": "America/Mexico_City",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "received_commit": "99a75d7ccfe2c50899265edad7d5315065de3282",
+  "received_evidence": "evidence/events-mac24.json",
+  "source_commit": "ee27bf7911ff38d15aae66922d716cec7426b9ab",
+  "run_id": "events-mac24-20261022T043907Z-ddcd2e42",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T043907Z-ddcd2e42",
+  "archive_sha256": "c11222d32d7cf31a84e6e7659579b8f06265e8cd06aca97c4bef6f1a88e72c74",
+  "archive_bytes": 4013,
+  "report_package_id": "0272c16ecadd5223658351305be72d886c89347459b3056bc390578bdbb71148",
+  "closed_report_status": "failed",
+  "reader_exit_code": 1,
+  "report_protocol": "events-v1",
+  "verified_locally": [
+    "Downloaded closed ZIP; verified inventory, sizes, SHA-256, package identity and failed-report envelope.",
+    "Versioned result/environment equal closed ZIP exactly; received commit only changes documentation/evidence.",
+    "Executable source digest and uv.lock match frozen execution commit ee27bf7911ff38d15aae66922d716cec7426b9ab.",
+    "T4-A source ZIP validates and matches prior primary audit: archive, package identity, release ID and manifest hash.",
+    "Reconstructed in memory the input immediately before final validation; the sole false predicate is PostgreSQL cgroup_peak_bytes < memory_bytes. No original report or measurement was modified.",
+    "All other reported functional checks, seed date bounds, resource settings, publication and restart fields satisfy the frozen validator.",
+    "Result duration agrees with closed report timestamps; no new job, test evaluation, training or service mutation was performed here."
+  ],
+  "source": {
+    "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+    "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+    "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+    "dataset": "hm",
+    "report_package_id": "03c3d7c4b32cd198a4406537d3435e12867bc49771d5814da65427c401eafeb3",
+    "prior_audit": "evidence/releases-review-mac24.json"
+  },
+  "summary": {
+    "seed": {
+      "daily_rows": 972591,
+      "purchases": 1069693,
+      "first_day": "2020-08-12",
+      "last_day": "2020-09-08",
+      "data_as_of": "2020-09-09"
+    },
+    "checks": {
+      "initial_parity_requests": 4,
+      "new_events": 4,
+      "duplicate_status": 200,
+      "conflict_status": 409,
+      "purchase_changes_profile": true,
+      "views_clicks_not_purchases": true,
+      "late_event_order": true,
+      "refresh_idempotent": true,
+      "base_unchanged": true,
+      "profile_sha256": "f550a9613902736445999505bd5e9005f7cae767d4d29bba19fdfa08fb8310ba",
+      "revision": 3,
+      "data_as_of": "2020-09-09",
+      "processed_events": 4
+    },
+    "host": {
+      "host": "127.0.0.1",
+      "api_port": 8000,
+      "ui_port": 8501,
+      "bindings_verified": true,
+      "ui_healthy": true
+    },
+    "restart_persistent": true,
+    "source_unchanged": true,
+    "duration_seconds": 46.81369762500981,
+    "report_elapsed_seconds": 46.849498,
+    "resources": {
+      "seed": {
+        "image_id": "sha256:67c387ef79ef0bf9eb23c8c5d20796f115dc75b1925415e9d272b55f6229299c",
+        "memory_bytes": 3221225472,
+        "nano_cpus": 1000000000,
+        "cgroup_peak_bytes": 700850176,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "api": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "cgroup_peak_bytes": 763113472,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "ui": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "cgroup_peak_bytes": 67051520,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "postgres": {
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "cgroup_peak_bytes": 537141248,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      }
+    },
+    "resources_mib": {
+      "seed": {
+        "peak": 668.3828125,
+        "limit": 3072.0
+      },
+      "api": {
+        "peak": 727.76171875,
+        "limit": 4096.0
+      },
+      "ui": {
+        "peak": 63.9453125,
+        "limit": 512.0
+      },
+      "postgres": {
+        "peak": 512.2578125,
+        "limit": 512.0
+      }
+    }
+  },
+  "findings": [
+    {
+      "id": "T5-01",
+      "status": "open",
+      "title": "PostgreSQL peak violates frozen v1 criterion; measurement cannot isolate T5",
+      "predicate": {
+        "file": "events_handoff.py",
+        "line": 45,
+        "resource": "postgres",
+        "predicate": "require(count(r['cgroup_peak_bytes'],1) and r['cgroup_peak_bytes']<r['memory_bytes'])"
+      },
+      "excess_bytes": 270336,
+      "excess_percent": 0.05035400390625,
+      "evidence": "PostgreSQL memory.peak is 537141248 bytes against 536870912 configured. Snapshot is cumulative; no before/after memory.events, memory.stat, pressure or cgroup identity is in the closed ZIP.",
+      "interpretation": "A transient overshoot is allowed by Linux memory.max semantics. This is not proof that Docker ignored the limit or that T5 requires more RAM. It also does not establish adequate headroom or absence of memory pressure.",
+      "disposition": "Keep failed v1 report intact and T5/E4 open. Instrument before choosing a resource or acceptance change; do not silently relax threshold or increase memory."
+    },
+    {
+      "id": "T5-02",
+      "status": "open",
+      "title": "Failure phase remains restart after persistence succeeded",
+      "evidence": "Source calls validate_events after restart_persistent and source_unchanged become true, without changing phase. job.log only records restart: ValueError.",
+      "disposition": "Next implementation must distinguish final-validation phase and identify failed resource/criterion with safe structured diagnostics."
+    }
+  ],
+  "kernel_reference": {
+    "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-interface-files",
+    "interpretation": "memory.max can be temporarily exceeded; memory.peak records the cgroup lifetime unless reset for the reading FD; memory.events max counts approaches to the boundary, not OOM kills."
+  },
+  "remote_declarations_not_independently_reperformed": {
+    "verification": {
+      "suite": "events",
+      "unit_passed": 62,
+      "serving_integration_passed": 28,
+      "publication_passed": 1,
+      "events_ui_passed": 10,
+      "host_passed": 93,
+      "total_passed": 194,
+      "failed": 0,
+      "preservation": {
+        "files_checked": 3079,
+        "all_unchanged": true,
+        "ledger_unchanged": true,
+        "historical_reports_unchanged": true,
+        "scope": "processed data/features/checkpoints, Q1-Q4 work/ZIPs, T4-A packages, v1/v2 serving reports, ledger",
+        "private_inventory_sha256": "ebd2b1842cbfc7af4e2ee6f955c8b6579fd36d4cd7a27e208a5aab180d64c8a5"
+      },
+      "colima": {
+        "profile": "hm-project",
+        "memory_gib": 14,
+        "cpus": 4
+      },
+      "post_close": {
+        "api_ready": true,
+        "ui_healthy": true,
+        "active_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a"
+      }
+    },
+    "post_close_postgres_memory_events": {
+      "low": 0,
+      "high": 0,
+      "max": 45963,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "scope": "194 tests, 3079 preserved files, private inventory, Colima capacity, post-close health and memory.events were declared by mac24 outside the closed ZIP. Their raw logs/inventory/counters were not transferred."
+  },
+  "limits": [
+    "Primary audited reports, source and digests; it did not query mac24 or recompute private H&M seed/profiles.",
+    "Failed-report envelope validation alone does not imply functional or resource success; successful functional fields were separately audited against source and frozen predicates.",
+    "Reported State.OOMKilled=false and zero swap peaks do not prove zero historical cgroup OOM events; counters were not captured in the closed report.",
+    "The separately declared 45963 memory.events max occurrences are cumulative, with no baseline or T5 attribution; no OOM/oom_kill is declared there.",
+    "Replay covers four initial parity cases and four simulation events; it is not exhaustive per-buyer validation, browser acceptance or load/freshness testing.",
+    "46.814 seconds covers the whole rehearsal, including seed and restart; it is not request latency. T8 and final test remain pending."
+  ],
+  "next_step": {
+    "action": "Prepare versioned T5 diagnostic instrumentation and regression tests before any further mac24 run.",
+    "measurements": [
+      "Per-phase timestamps, container/cgroup identity and restart generation, effective limits.",
+      "memory.current, lifetime peak, swap and memory.events before/after seed, replay and restart; compare deltas only within the same cgroup.",
+      "Selected aggregate memory.stat and memory.pressure counters to distinguish anonymous memory, file cache and reclaim pressure; no SQL rows or secrets.",
+      "Explicit final-validation phase and structured failed predicate; capture diagnostic aggregates in a closed report even on failure."
+    ],
+    "constraints": [
+      "Keep v1 validator and original failed ZIP immutable as historical evidence; version any subsequent acceptance change explicitly.",
+      "Preserve 512 MiB PostgreSQL budget, volumes, stream, data, packages, ledger and frozen H while gathering evidence; do not restart services merely to clear counters.",
+      "No automatic rerun; prepare and verify code plus a new one-shot prompt before requesting mac24 execution.",
+      "No T6, training, test evaluation or Q1-Q4 repeats."
+    ]
+  },
+  "t5_closed": false,
+  "e4_closed": false,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training_performed": false,
+  "t6_started": false
+}

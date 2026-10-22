@@ -1,6 +1,8 @@
 # Decisiones de implementación y revisión T5
 
-Registro de decisiones y sus límites; la reproducción H&M remota permanece pendiente.
+Registro de decisiones y sus límites. La implementación local está disponible; el primer intento H&M falló por memoria PostgreSQL y T5 sigue abierta. Los puntos de implementación siguientes conservan su contexto original.
+
+- Revisión mac24: conservar el intento `events-mac24-20261022T043907Z-ddcd2e42` como fallido. El pico de PostgreSQL supera el criterio v1, aunque todas las comprobaciones funcionales reportadas terminan. Su contador acumulado no permite atribuir el exceso a T5. Coste: instrumentar fases/cgroup y diagnosticar antes de elegir una corrección; no relajar el validador ni aumentar memoria para cambiar el resultado. [Auditoría](../evidence/events-review-mac24.json).
 
 - Ruling: Operational streams distinguish synthetic/simulation data and have explicit date plus reception watermark; no future H&M source rows are ingested. Cost: this demo is a simulation, not live current clothing data.
 
