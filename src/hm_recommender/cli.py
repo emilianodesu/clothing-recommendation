@@ -83,9 +83,37 @@ def main():
     serving_activate = serving_commands.add_parser('activate')
     serving_activate.add_argument('--release-id', required=True)
     serving_commands.add_parser('rollback')
+    events=commands.add_parser('events')
+    event_commands=events.add_subparsers(dest='events_action',required=True)
+    event_seed=event_commands.add_parser('seed')
+    event_seed.add_argument('--dataset',type=Path,required=True)
+    event_seed.add_argument('--directory',type=Path,required=True)
+    event_seed.add_argument('--stream-id',required=True)
+    event_seed.add_argument('--mode',choices=('synthetic','simulation'),required=True)
+    demo=event_commands.add_parser('demo-package')
+    demo.add_argument('--output',type=Path,required=True)
     args = parser.parse_args()
     try:
-        if args.command == 'serving':
+        if args.command=='events':
+            if args.events_action=='seed':
+                from hm_recommender.events.aggregate import initialize_stream
+                output=initialize_stream(args.dataset,args.directory,args.stream_id,mode=args.mode)
+                from hm_recommender.database import connect
+                from hm_recommender.api.runtime import source_digest
+                with connect() as conn:
+                    row=conn.execute('SELECT count(*),sum(frequency),min(day),max(day) FROM stream_daily_seed WHERE stream_id=%s',(args.stream_id,)).fetchone()
+                output['seed']=dict(daily_rows=row[0],purchases=int(row[1] or 0),first_day=str(row[2]),last_day=str(row[3]),data_as_of=output['data_as_of'])
+                cgroup=Path('/sys/fs/cgroup')
+                output['process']=dict(cgroup_peak_bytes=int((cgroup/'memory.peak').read_text()),
+                    swap_peak_bytes=int((cgroup/'memory.swap.peak').read_text()),source_tree_sha256=source_digest())
+            else:
+                from hm_recommender.model.demo import prepare_demo_dataset
+                from hm_recommender.releases.package import build_history_release
+                from datetime import date
+                ds=prepare_demo_dataset(args.output/'input')
+                manifest=build_history_release(ds,date(2020,9,9),args.output/'release')
+                output={'release_id':manifest.release_id,'dataset':'synthetic'}
+        elif args.command == 'serving':
             if args.serving_action == 'run':
                 import uvicorn
                 uvicorn.run('hm_recommender.api.app:create_app',factory=True,host='0.0.0.0',port=8000,

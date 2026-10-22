@@ -40,6 +40,14 @@ class ServingPublicationTests(unittest.TestCase):
                 url='http://127.0.0.1:'+values['API_PORT']
                 with opener.open(url+'/health/live', timeout=5) as r:
                     self.assertEqual(json.load(r)['status'], 'alive')
+                with socket.socket() as s:
+                    s.bind(('127.0.0.1',0));values['UI_PORT']=str(s.getsockname()[1])
+                compose(root,values,'--profile','serve','up','-d','--wait','--wait-timeout','60','ui',timeout=120)
+                uid=compose(root,values,'ps','-q','ui',capture=True).strip()
+                ui_ports=json.loads(subprocess.check_output(['docker','inspect',uid,'--format','{{json .NetworkSettings.Ports}}'],text=True))
+                self.assertEqual(ui_ports.get('8501/tcp'),[{'HostIp':'127.0.0.1','HostPort':values['UI_PORT']}])
+                with opener.open('http://127.0.0.1:'+values['UI_PORT']+'/_stcore/health',timeout=5) as r:
+                    self.assertEqual(r.status,200)
                 with self.assertRaises(urllib.error.HTTPError) as error:
                     opener.open(url+'/health/ready', timeout=5)
                 self.assertEqual(error.exception.code, 503)  # No package activated in this fixture.

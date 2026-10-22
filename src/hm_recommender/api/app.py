@@ -88,4 +88,6 @@ def create_app(registry=None, *, admin_token=None, input_root=None):
     def rollback():
         return {'status':'active','release_id':run_admin(registry.rollback)}
 
+    from hm_recommender.api.events import install_events
+    install_events(app,registry,admin)
     return app

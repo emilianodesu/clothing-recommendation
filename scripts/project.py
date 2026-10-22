@@ -64,7 +64,14 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events"), required=True)
+    demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
+    demo.add_argument('--skip-build',action='store_true')
+    demo.add_argument('--machine-id',default='local')
+    events_check=sub.add_parser('events-check',help='T5 sobre un T4-A existente; sin entrenamiento')
+    events_check.add_argument('--machine-id',required=True)
+    events_check.add_argument('--expected-commit',required=True)
+    events_check.add_argument('--source-run-id',required=True)
     up = sub.add_parser('up', help='Arrancar el perfil de servicio local')
     up.add_argument('--profile', choices=('serve',), required=True)
     up.add_argument('--skip-build', action='store_true')
@@ -98,6 +105,9 @@ def main():
     tracking.add_argument("--port", type=int)
     args = parser.parse_args()
     try:
+        if args.action=='events-check':
+            from events_check import main as check_events
+            return check_events(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,'--source-run-id',args.source_run_id])
         if args.action == 'serving-check':
             from serving_check import main as check_serving
             return check_serving(['--machine-id', args.machine_id,
@@ -122,8 +132,13 @@ def main():
         if args.action == "bootstrap":
             run_bootstrap(ROOT, skip_build=args.skip_build)
             return 0
-        values = read_configuration(ROOT / ".env")
-        if args.action == 'up':
+        if args.action=='demo':
+            import re
+            if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}',args.machine_id):raise ValueError('Invalid machine alias')
+            if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise ValueError('Demo requires a clean committed checkout')
+            values=prepare_configuration(ROOT)
+        else:values = read_configuration(ROOT / ".env")
+        if args.action in ('up','demo'):
             artifacts = Path(values['ARTIFACTS_DIR'])
             if not artifacts.is_absolute(): artifacts = ROOT/artifacts
             (artifacts/'serving').mkdir(exist_ok=True)
@@ -131,8 +146,13 @@ def main():
             compose(ROOT, values, 'up', '-d', '--wait', '--wait-timeout', '120', 'postgres')
             compose(ROOT, values, 'exec', '-T', 'postgres', 'bash', '/docker-entrypoint-initdb.d/10-databases.sh')
             compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', 'jobs', 'hmrec', 'db', 'migrate')
-            compose(ROOT, values, '--profile', 'serve', 'up', '-d', '--wait', '--wait-timeout', '300', 'api')
+            compose(ROOT, values, '--profile', 'serve', 'up', '-d', '--wait', '--wait-timeout', '300', 'api','ui')
             print('API iniciada: http://127.0.0.1:'+values['API_PORT']+'; readiness requiere una versión activa.')
+            print('Interfaz: http://127.0.0.1:'+values['UI_PORT'])
+            if args.action=='demo':
+                from events_check import run as run_events
+                commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+                return run_events(ROOT,args.machine_id,commit)
         elif args.action in ('prepare-release','activate-release','rollback-release'):
             extra = ['prepare','--directory',args.directory] if args.action=='prepare-release' else (
                 ['activate','--release-id',args.release_id] if args.action=='activate-release' else ['rollback'])
@@ -181,13 +201,16 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_release_parity.py", "tests/integration/test_quality_folds.py",
                         "tests/integration/test_recent_history.py", "-q")
-            if args.suite == 'serving':
+            if args.suite in ('serving','events'):
                 compose(ROOT, values, 'up', '-d', '--wait', 'postgres')
                 compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', '-e', 'HMREC_SERVING_TESTS=1', 'jobs',
                     'python', '-m', 'pytest', 'tests/integration/test_recommendations.py',
                     'tests/integration/test_release_activation.py', 'tests/integration/test_serving_http.py', '-q')
                 subprocess.run([sys.executable, str(ROOT/'tests/integration/test_serving_publication.py'), '-v'],
                     cwd=ROOT, env=dict(os.environ, HMREC_DOCKER_TESTS='1'), check=True)
+            if args.suite=='events':
+                compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
+                    'python','-m','pytest','tests/integration/test_events.py','tests/integration/test_demo.py','tests/integration/test_ui.py','-q')
             if args.suite == "quality":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "tests/integration/test_quality_campaign.py", "-q")
@@ -201,7 +224,7 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "-e", "HMREC_TRACKING_TESTS=1",
                         "-e", "MLFLOW_TRACKING_URI=http://mlflow:5000", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_tracking.py", "-q")
-            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving"):
+            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving", "events"):
                 subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
                                cwd=ROOT, check=True)
             if args.suite == "bootstrap":

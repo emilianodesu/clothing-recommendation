@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, timezone
 from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, AwareDatetime, field_validator
 
 
 class StrictModel(BaseModel):
@@ -35,3 +35,18 @@ class PrepareRequest(StrictModel):
 
 class ActivateRequest(StrictModel):
     release_id: str = Field(pattern=r'^h-[a-f0-9]{64}$')
+
+
+class EventInput(StrictModel):
+    event_id: str = Field(pattern=r'^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$')
+    stream_id: str = Field(pattern=r'^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$')
+    release_id: str = Field(pattern=r'^h-[a-f0-9]{64}$')
+    customer_id: str = Field(min_length=1,max_length=128,pattern=r'^\S+$')
+    article_id: str = Field(min_length=1,max_length=32,pattern=r'^\d+$')
+    kind: Literal['purchase','view','click']
+    origin: Literal['synthetic','simulation']
+    event_time: AwareDatetime = Field(strict=False)
+
+    @field_validator('event_time')
+    @classmethod
+    def utc_time(cls,value): return value.astimezone(timezone.utc)

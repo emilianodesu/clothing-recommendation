@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Entrega vigente T5:** [interfaz Streamlit, eventos idempotentes y perfiles operativos](docs/events.md). Ejecuta `python3 scripts/project.py demo` desde un clon limpio con Docker preparado para generar sintéticos, abrir el servicio local y producir un reporte; `verify --suite events` prueba el flujo. La reproducción H&M en mac24 está pendiente siguiendo [este prompt](docs/mac24-t5-prompt.md). Q1–Q4 y T4-A/T4-B siguen cerradas; no repetirlas. T6–T8 y test permanecen pendientes. Las secciones históricas siguientes conservan el alcance de cada entrega.
+
 Plataforma local de recomendaciones para comercio electrónico con H&M y Docker Compose, con selección del motor por calidad medida. La ejecución utiliza recursos propios, sin nube ni servicios de pago. PyTorch se conserva como experimento académico reproducible.
 
 Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.

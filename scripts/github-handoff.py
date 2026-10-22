@@ -20,6 +20,7 @@ MARKER = '<!-- hmrec-bootstrap-handoff-v1 -->'
 TRAIN_MARKER = '<!-- hmrec-training-handoff-v1 -->'
 RELEASE_MARKER = '<!-- hmrec-release-handoff-v1 -->'
 SERVING_MARKER = '<!-- hmrec-serving-handoff-v1 -->'
+EVENTS_MARKER = '<!-- hmrec-events-handoff-v1 -->'
 QUALITY_MARKER = '<!-- hmrec-quality-handoff-v1 -->'
 DIAGNOSTIC_MARKER = '<!-- hmrec-diagnostic-handoff-v1 -->'
 DATA_MARKER = '<!-- hmrec-data-handoff-v1 -->'
@@ -30,11 +31,12 @@ ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {n
 DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'build.log', 'result.json', 'config.resolved.json'}
 
 def marker_for(run_id):
+    if run_id.startswith('events-'): return EVENTS_MARKER
     if run_id.startswith('serving-'): return SERVING_MARKER
     return RELEASE_MARKER if run_id.startswith('release-') else QUALITY_MARKER if run_id.startswith('quality-') else DIAGNOSTIC_MARKER if run_id.startswith('diagnose-') else TRAIN_MARKER if run_id.startswith('train-') else DATA_MARKER if run_id.startswith('data-') else MARKER
 
 def tag_for(run_id):
-    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-')):
+    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-', 'events-')):
         raise ValueError('Run ID inválido; usa el identificador bootstrap-... o data-... del reporte')
     return 'handoff-' + run_id
 
@@ -50,7 +52,7 @@ def validate_archive(path, run_id=None):
     tag_for(report['run_id'])
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
-    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff') else ALLOWED
+    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff') else ALLOWED
     if report['kind'] == 'training-handoff':
         allowed = allowed | {'tracking.log'}
     if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
@@ -61,6 +63,8 @@ def validate_archive(path, run_id=None):
         raise ValueError('Release prefix and report kind differ')
     if report['run_id'].startswith('serving-') != (report['kind']=='serving-handoff'):
         raise ValueError('Serving prefix and report kind differ')
+    if report['run_id'].startswith('events-') != (report['kind']=='events-handoff'):
+        raise ValueError('Events prefix and report kind differ')
     if report['run_id'].startswith('quality-') != (report['kind'] == 'quality-handoff'):
         raise ValueError('Quality prefix and report kind differ')
     if report['run_id'].startswith('diagnose-') != (report['kind'] == 'diagnostic-handoff'):

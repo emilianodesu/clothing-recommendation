@@ -7,14 +7,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgomp1=12.2.0
     && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv --mount=type=secret,id=build_ca,required=true \
-    SSL_CERT_FILE=/run/secrets/build_ca uv sync --locked --extra tracking --group build --group test --no-install-project
+    SSL_CERT_FILE=/run/secrets/build_ca uv sync --locked --extra tracking --extra ui --group build --group test --no-install-project
 COPY src ./src
 COPY configs ./configs
 COPY migrations ./migrations
 COPY tests ./tests
 COPY scripts/handoff.py scripts/quality_handoff.py scripts/quality_summary.py scripts/release_handoff.py ./scripts/
-COPY scripts/serving_handoff.py ./scripts/
+COPY scripts/serving_handoff.py scripts/events_handoff.py ./scripts/
 RUN --mount=type=cache,target=/root/.cache/uv --mount=type=secret,id=build_ca,required=true \
-    SSL_CERT_FILE=/run/secrets/build_ca uv sync --locked --extra tracking --group build --group test --no-editable --no-build-isolation
+    SSL_CERT_FILE=/run/secrets/build_ca uv sync --locked --extra tracking --extra ui --group build --group test --no-editable --no-build-isolation
 USER 10001:10001
 CMD ["hmrec", "check", "--imports-only"]

@@ -1,5 +1,11 @@
 # Instrucciones para agentes
 
+## Paso vigente T5: eventos, perfiles e interfaz
+
+T4-A/T4-B y Q1–Q4 están cerradas. T5 incorpora Streamlit, eventos idempotentes y perfiles operativos PostgreSQL. Lee `docs/events.md` y `docs/mac24-t5-prompt.md`. El siguiente paso remoto es **una comprobación H&M T5 en mac24**, no repetir campañas ni iniciar T6/test. Mantener H, originales, paquetes, ZIP y ledger. La semilla usa sólo transacciones anteriores al corte congelado; las interacciones se guardan en un entorno `simulation` separado y no modifican `/recommend`.
+
+Reconstruir con `project.py up --profile serve`, verificar `--suite events` y ejecutar una vez `events-check --machine-id mac24 --expected-commit SHA_COMPLETO --source-run-id release-mac24-20261021T190717Z-f0a2d073`. Conservar SSL_CERT_FILE, contexto colima-hm-project, VM 14 GiB/4 CPU. La API tiene 4 GiB/2 CPU, semilla 3 GiB/1 CPU/2 hilos, PostgreSQL y UI 512 MiB cada uno. Ejecutar en primer plano sin suspensión; no reintentar automáticamente ni cambiar límites tras un fallo. Exportar/validar/publicar el ZIP cerrado anunciado incluso ante fallo válido. Actualizar sólo evidencia agregada después del cierre. El intercambio privado ya está autorizado; no SSH ni otros canales. La reproducción remota requiere revisión antes de cerrar T5. Esta sección prevalece sobre los siguientes procedimientos históricos.
+
 Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Ejecución local con Docker y PostgreSQL; PyTorch CPU/MLflow y Qdrant existen como infraestructura experimental. No hay presupuesto para nube ni dependencia de Hopsworks.
 
 ## Criterio de selección vigente

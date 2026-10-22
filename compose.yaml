@@ -118,10 +118,18 @@ services:
       HM_APP_PASSWORD: ${HM_APP_PASSWORD:?Run bootstrap first}
       HMREC_SERVING_DIR: /serving
       HMREC_INPUT_ROOT: /artifacts
+      HMREC_IMAGE_ARCHIVE: /data/kaggle_hm/h-and-m-personalized-fashion-recommendations.zip
+      HMREC_IMAGE_CACHE_BYTES: ${HMREC_IMAGE_CACHE_BYTES:-67108864}
       OMP_NUM_THREADS: "2"
       MKL_NUM_THREADS: "2"
       POLARS_MAX_THREADS: "2"
     volumes:
+      - type: bind
+        source: ${DATA_DIR:-./data}
+        target: /data
+        read_only: true
+        bind:
+          create_host_path: false
       - type: bind
         source: ${ARTIFACTS_DIR:-./artifacts}
         target: /artifacts
@@ -151,6 +159,32 @@ services:
     restart: unless-stopped
     networks: [backend, api-publication]
 
+  ui:
+    image: hmrec-app:0.1.0
+    profiles: [serve, demo]
+    user: ${HMREC_UID:?Run bootstrap first}:${HMREC_GID:?Run bootstrap first}
+    command: [streamlit, run, /opt/hmrec/src/hm_recommender/ui/app.py, --server.address=0.0.0.0, --server.port=8501, --server.headless=true, --browser.gatherUsageStats=false]
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      HMREC_API_URL: http://api:8000
+      HM_APP_PASSWORD: ${HM_APP_PASSWORD:?Run bootstrap first}
+    ports:
+      - "127.0.0.1:${UI_PORT:-8501}:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+    mem_limit: 512m
+    cpus: 0.5
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    networks: [api-publication]
+
   serving-probe:
     image: hmrec-jobs:0.1.0
     profiles: [tools]
@@ -172,6 +206,25 @@ services:
     mem_limit: 3g
     cpus: 1
     networks: [backend]
+
+  events-job:
+    extends:
+      service: jobs
+    mem_limit: 3g
+    cpus: 1
+    volumes:
+      - type: bind
+        source: ${DATA_DIR:-./data}
+        target: /data
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${ARTIFACTS_DIR:-./artifacts}
+        target: /artifacts
+        read_only: true
+        bind:
+          create_host_path: false
 
   jobs:
     image: hmrec-jobs:0.1.0

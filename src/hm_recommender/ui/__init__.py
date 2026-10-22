@@ -1,0 +1,1 @@
+"""Local recommendation demonstration UI."""

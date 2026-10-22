@@ -253,6 +253,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
+**Estado de implementación:** código y pruebas locales disponibles; [guía](../../events.md) y [prompt de reproducción H&M](../../mac24-t5-prompt.md). Mantener T5/E4 pendientes de auditoría remota. Los entornos operativos PostgreSQL están separados del paquete H; la demo usa reloj explícito y reconstrucción transaccional de conteos diarios. T6 no se activa automáticamente.
+
 **Decisión Q4 aplicada:** actualizar estado de H con ventanas 28/7 y reglas congeladas. No requiere refit neuronal ni reconstrucción de grafo; caducidad temporal, trazabilidad e intercambio conservan los contratos siguientes.
 
 **Archivos:** crear `src/hm_recommender/api/events.py`, `src/hm_recommender/events/{aggregate,replay}.py`, `src/hm_recommender/ui/{app,images}.py`, `migrations/003_events.sql`, `tests/integration/test_events.py`, `tests/integration/test_demo.py`. Modificar `api/app.py`, `api/schemas.py`, `compose.yaml`, `cli.py` y `scripts/project.py`.
