@@ -246,3 +246,16 @@ class EventsMemoryReportTests(unittest.TestCase):
         report['result']=dict(stage='T5',status='failed',phase='preflight',error_type='ValueError',protocol='unknown-v1')
         with tempfile.TemporaryDirectory() as d,self.assertRaises(ValueError):
             EventsHandoffTests().package(Path(d),report,env)
+
+    def test_missing_result_is_rejected_as_invalid_instead_of_crashing_reader(self):
+        self.ready()
+        import tempfile
+        from test_events_handoff import fixture
+        from handoff import package_report,write_json
+        report,env=fixture();report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+        with tempfile.TemporaryDirectory() as d:
+            folder=Path(d)/report['run_id'];folder.mkdir()
+            write_json(folder/'environment.json',env)
+            (folder/'commit.txt').write_text(report['source_commit']+'\n')
+            (folder/'job.log').write_text('failed\n')
+            with self.assertRaises(ValueError):package_report(folder,report)

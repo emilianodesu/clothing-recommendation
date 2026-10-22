@@ -3,45 +3,45 @@
   "stage": "T5",
   "protocol": "events-memory-v1",
   "scope": "primary_synthetic_only",
-  "source_commit": "20a2f3fcb2d63c17d0460ebca1ab8d9787ffabde",
-  "run_id": "events-development-20261022T045741Z-62da9ba1",
+  "source_commit": "7332cea42df360fd6910b3100412b01948844ed5",
+  "run_id": "events-development-20261022T050923Z-da5ae7f6",
   "status": "passed",
-  "archive_sha256": "89455438aad8f5ac062e7a14c6d449f6143c0b2af96ee1af921c18d88f6e7640",
-  "archive_bytes": 7353,
-  "report_package_id": "aaa6c38bf24e01fd678bb0c8f8471bfc7fbffa4a7ddfdc8d554d13865449a941",
+  "archive_sha256": "1b0e0fe41a345e3415a16b83388c314674e59d9d602488701d8997ae159b54aa",
+  "archive_bytes": 7361,
+  "report_package_id": "640f061674cba8c96ddff7abe919c8e8f922a7691f37a9fde7f855221ffc214b",
   "environment": {
-    "run_id": "events-development-20261022T045741Z-62da9ba1",
-    "source_commit": "20a2f3fcb2d63c17d0460ebca1ab8d9787ffabde",
+    "run_id": "events-development-20261022T050923Z-da5ae7f6",
+    "source_commit": "7332cea42df360fd6910b3100412b01948844ed5",
     "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
     "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282",
-    "runner_tree_sha256": "2146237edd8be0e11b5c690b98ed3e5fac59a1b2fae7f631d55876b7afce6b84"
+    "runner_tree_sha256": "1686992e5c6c6b8aee79e4e1cb3e5c5987a9a15fcfd9cee08179fbaf55ad3251"
   },
   "diagnostics_complete": true,
   "captures": 12,
   "intervals": 9,
-  "duration_seconds": 5.1897516249999995,
+  "duration_seconds": 5.244869875000003,
   "resources": {
     "seed": {
-      "image_id": "sha256:3d96c190a1c851fbcfe08ba948ae4aa7da05f3bde00030ab46b886fb4619b0c6",
+      "image_id": "sha256:98dca933b4a925559efb71ef2a4736d5141a01c1a140d4e21358f195946451eb",
       "memory_bytes": 3221225472,
       "nano_cpus": 1000000000,
-      "cgroup_peak_bytes": 68395008,
+      "cgroup_peak_bytes": 69066752,
       "swap_peak_bytes": 0,
       "oom_killed": false
     },
     "api": {
-      "image_id": "sha256:0f252d5a089b03ad9d9ede597b5e40dcc44eb1b522b5f3332fa9a39530c248c7",
+      "image_id": "sha256:9f5a0b30aaca8a54674f6188fb00b1d77d97288fcb8d1e17a5ba9f60a15f6f47",
       "memory_bytes": 4294967296,
       "nano_cpus": 2000000000,
-      "cgroup_peak_bytes": 89972736,
+      "cgroup_peak_bytes": 90509312,
       "swap_peak_bytes": 0,
       "oom_killed": false
     },
     "ui": {
-      "image_id": "sha256:0f252d5a089b03ad9d9ede597b5e40dcc44eb1b522b5f3332fa9a39530c248c7",
+      "image_id": "sha256:9f5a0b30aaca8a54674f6188fb00b1d77d97288fcb8d1e17a5ba9f60a15f6f47",
       "memory_bytes": 536870912,
       "nano_cpus": 500000000,
-      "cgroup_peak_bytes": 66830336,
+      "cgroup_peak_bytes": 66707456,
       "swap_peak_bytes": 0,
       "oom_killed": false
     },
@@ -49,7 +49,7 @@
       "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
       "memory_bytes": 536870912,
       "nano_cpus": 0,
-      "cgroup_peak_bytes": 136404992,
+      "cgroup_peak_bytes": 136384512,
       "swap_peak_bytes": 0,
       "oom_killed": false
     }
@@ -64,7 +64,7 @@
     "late_event_order": true,
     "refresh_idempotent": true,
     "base_unchanged": true,
-    "profile_sha256": "cfafc2f60ef273d898f0144f462fff197578e6e4c35bf66f170d9faa2b84b9ae",
+    "profile_sha256": "6c3f0efac98870dffb3c276b0b804cb5ceb53b7ab153ad61db45023eaa3fccde",
     "revision": 3,
     "data_as_of": "2020-09-09",
     "processed_events": 4
@@ -75,12 +75,12 @@
   "api_restart_detected": true,
   "max_events_delta": 0,
   "verification": {
-    "host_tests_passed": 111,
+    "host_tests_passed": 112,
     "scientific_tests_passed": 133,
     "scientific_tests_skipped": 1,
-    "official_events_suite": "passed at 20a2f3f; 62 unit + 28 serving + 10 events/UI + 105 host + 1 host publication",
+    "official_events_suite": "passed at 7332cea; 62 unit + 28 serving + 10 events/UI + 111 host + 1 host publication",
     "bootstrap_suite": "passed at 20a2f3f; 8 Docker bootstrap tests",
-    "additional_regressions": "Post-restart API peak gate, partial captures, failed peak ZIP: latest host suite 108 passed.",
+    "additional_regressions": "112 host cases after final review, including missing result rejection; final synthetic ZIP and historical v1 reread with final reader.",
     "historical_failed_v1_readable": true,
     "new_diagnostic_zip_readable": true,
     "corrected_invocation": {
@@ -97,8 +97,9 @@
       ]
     },
     "skipped_test": "tests/integration/test_tracking.py::test_mlflow_postgres_and_http_artifacts requires dedicated MLflow",
-    "distinct_passed": 253,
-    "distinct_count_basis": "133 scientific + 111 host (post-review) + 8 bootstrap Docker + 1 publication"
+    "distinct_passed": 254,
+    "distinct_count_basis": "133 scientific + 112 host (final) + 8 bootstrap Docker + 1 publication",
+    "scientific_verified_commit": "7332cea42df360fd6910b3100412b01948844ed5"
   },
   "t5_closed": false,
   "quality_accepted": false,
@@ -111,7 +112,7 @@
     "Lifetime peaks are preserved and do not represent independent interval maxima.",
     "New diagnostics retain original peak criterion; full H&M may produce another valid failed report."
   ],
-  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T045741Z-62da9ba1",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T050923Z-da5ae7f6",
   "publication_download_verified": true,
   "review": {
     "reviewer": "gpt-6-astra/high",
@@ -124,5 +125,16 @@
     "red_green_verified": true,
     "deferred_minors": [],
     "declined_to_judge": []
+  },
+  "prior_synthetic_attempt": {
+    "source_commit": "20a2f3fcb2d63c17d0460ebca1ab8d9787ffabde",
+    "run_id": "events-development-20261022T045741Z-62da9ba1",
+    "status": "passed",
+    "archive_sha256": "89455438aad8f5ac062e7a14c6d449f6143c0b2af96ee1af921c18d88f6e7640",
+    "archive_bytes": 7353,
+    "report_package_id": "aaa6c38bf24e01fd678bb0c8f8471bfc7fbffa4a7ddfdc8d554d13865449a941",
+    "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T045741Z-62da9ba1",
+    "publication_download_verified": true,
+    "duration_seconds": 5.1897516249999995
   }
 }

@@ -41,3 +41,11 @@ SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima python3 scripts/project.py
 ```
 
 Para H&M sigue [el nuevo prompt mac24](mac24-t5-memory-prompt.md). Hace una única corrida con el paquete original activo. El reporte v1, sus streams, datos, ledger y volúmenes se preservan. No entrenar, abrir test ni iniciar T6.
+
+## Evidencia local y revisión
+
+Dos ensayos sintéticos desde clones limpios produjeron doce capturas completas y reportes aprobados; el último usa `7332cea42df360fd6910b3100412b01948844ed5`, dura 5.245 s y confirma el cambio de generación API sin reiniciar PostgreSQL. [Reporte privado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T050923Z-da5ae7f6), [evidencia agregada](../evidence/events-memory-local.json). Son pruebas locales, no una medición de capacidad H&M.
+
+La revisión independiente encontró y se corrigieron con regresiones dos problemas del lector: evasión mediante cambio de protocolo y causas/recursos contradictorios en reportes fallidos. No quedaron menores aplazados. La suite host final pasó 112 casos; la suite oficial events y las ocho pruebas de bootstrap Docker también pasaron. La suite científica completa pasó 133 casos y omitió la prueba dedicada a MLflow. El primer comando genérico `pytest` dentro de jobs encontró siete errores de colección de pruebas que pertenecen al host; el comando corregido separa ambos entornos y sus resultados están registrados en la evidencia.
+
+Decisiones conservadas: el criterio `peak < limit` permanece, con el coste de que el diagnóstico H&M puede volver a terminar fallido por un pico histórico; la semilla mantiene métricas aisladas del job, sin añadir contadores internos por fase al worker. T5/E4 siguen pendientes de la nueva evidencia H&M y su revisión.

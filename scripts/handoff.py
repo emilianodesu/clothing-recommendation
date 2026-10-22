@@ -335,6 +335,7 @@ def read_report(archive):
                 raise ValueError('Identidad de paquete T3 inválida')
         if report.get('kind') == 'events-handoff':
             from events_handoff import validate_events, ALLOWED, require, no_private_rows
+            require('result.json' in names)
             require(set(names)<={'manifest.json',*ALLOWED} and report['run_id'].startswith('events-'))
             require(isinstance(report.get('finished_at'),str) and bool(report['finished_at']))
             if 'result.json' in names:
