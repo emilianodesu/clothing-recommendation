@@ -211,8 +211,8 @@ transfirieron su inventario, paquete H&M ni tablas privadas. La paridad completa
 fue calculada por el worker en mac24; aquí se contrastaron sus agregados y huellas
 con los reportes anteriores. **T4-A queda cerrada operativamente** y se conservan:
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
-La [revisión T4-B](../evidence/serving-review-mac24.json) ya verifica carga H&M,
-HTTP interno, activación y rollback en mac24, pero la publicación hacia localhost
-falló. La corrección v2 ya pasó el ensayo local; sigue [reproducir el acceso desde el host en mac24](mac24-t4b-host-prompt.md). La duración
-offline y el tamaño del paquete no acreditan latencia de servicio ni carga T8.
+La [revisión T4-B v2](../evidence/serving-host-review-mac24.json) cierra carga H&M,
+HTTP interno y desde el host, activación, reinicio y rollback en mac24.
+Ambos prompts T4-B son históricos; sigue el desarrollo T5. La duración offline
+y el ensayo HTTP secuencial no acreditan carga T8.
 Publicar evidencia no activa al otro agente.

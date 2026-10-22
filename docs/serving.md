@@ -1,14 +1,16 @@
 # T4-B: API, activación, reinicio y rollback
 
 Esta entrega implementa el servicio de H y la comprobación reproducible de su
-ciclo de versiones. La reproducción H&M pasó por HTTP interno en mac24, pero
-el acceso desde localhost falló: T4-B permanece abierta. No equivale a
-aceptación final ni a haber cumplido las metas de carga. Véase
+ciclo de versiones. **T4-B está cerrada tras revisar el seguimiento H&M v2 de
+mac24**, con acceso desde localhost, identidad, reinicio y rollback comprobados.
+No equivale a aceptación final ni a haber cumplido las metas de carga. Véase
 [arquitectura y contrato HTTP](architecture.md).
 
 La corrección **v2** añade una red de publicación exclusiva para API y comprueba
-HTTP desde el host. Su reproducción H&M en mac24 pasó; la evidencia espera revisión. El ensayo v1
-conserva sus resultados; el nuevo procedimiento se encuentra al final.
+HTTP desde el host. Su reproducción H&M en mac24 pasó y está
+[auditada](../evidence/serving-host-review-mac24.json). El ensayo v1 conserva sus
+resultados; ambos procedimientos y prompts son históricos, no deben repetirse
+salvo petición explícita. El siguiente desarrollo del plan es T5.
 
 ## Evidencia local
 
@@ -183,11 +185,11 @@ el mismo servidor HTTP e imagen con redes internal/bridge: ambos respondieron
 dentro del contenedor; internal dejó `8000/tcp: null`, mientras el control bridge
 publicó un puerto en localhost y respondió HTTP 200 desde macOS. Se eliminaron
 sólo los contenedores y redes desechables. Esto reproduce el mecanismo local;
-la corrección posterior se documenta abajo con su ensayo local; falta mac24.
+la corrección posterior y su reproducción mac24 revisada se documentan abajo.
 
-**T4-B no está cerrada.** La corrección v2 descrita abajo conserva PostgreSQL en
+**Estado al revisar v1: T4-B abierta.** La corrección v2 descrita abajo conserva PostgreSQL en
 su red privada y verifica publicación, readiness, recomendaciones e identidad
-desde el host tras reinicio/rollback. Falta reproducirla en mac24.
+desde el host tras reinicio/rollback; su reproducción mac24 ya fue revisada.
 El reporte v1 conserva su resultado válido de HTTP interno.
 No iniciar T5, repetir campañas ni abrir test para resolver este fallo de red.
 
@@ -274,5 +276,33 @@ Límites API efectivos 4 GiB/2 CPU/2 hilos, con Colima 14 GiB/4 CPU. La suite
 y la preservación local de 3,072 archivos, incluido ledger y reporte v1, se
 registran por separado del ZIP. Sólo se publicaron agregados y huellas.
 
-Resultado operativo pendiente de revisión; `quality_accepted=false` y
-`test_evaluated=false`. No mide carga T8 ni autoriza T5.
+La recepción inicial quedó pendiente de revisión; la auditoría siguiente registra
+su cierre. `quality_accepted=false` y `test_evaluated=false` se conservan. No mide
+carga T8 ni inicia automáticamente el desarrollo T5.
+
+## Revisión principal y cierre T4-B
+
+La [auditoría v2](../evidence/serving-host-review-mac24.json) valida inventario,
+tamaños, SHA-256 y contrato del ZIP; concilia exactamente la evidencia versionada
+y el entorno, código/lock del commit ejecutado y ambos paquetes T4-A originales.
+Las cinco huellas de respuesta interna coinciden con v1; las cinco del host
+coinciden con las referencias calculadas desde el paquete. La referencia
+sintética también coincide con el ensayo local v2. Las versiones se mantienen
+correctas tras reinicio y rollback; H&M quedó activo en el estado final reportado.
+
+**T4B-01 y T4B-02 resueltos; T4-B cerrada operativamente.** El puerto efectivo
+y las solicitudes reales desde el host están incluidos en el reporte v2. El ZIP
+v1 conserva su SHA y resultado original. La revisión no repitió trabajos, cambió
+H ni evaluó test. La muestra host cubre dos casos de comprador desconocido por
+etapa; el muestreo interno añade compradores conocidos y filtros. No representa
+una prueba exhaustiva de todas las solicitudes ni de carga sostenida.
+
+Las 175 pruebas independientes, la preservación de 3,072 archivos y la consulta
+posterior de readiness son declaraciones separadas de mac24. No se transfirieron
+su inventario privado ni paquete H&M; aquí se verificaron reportes/huellas, sin
+recalcular recomendaciones privadas ni conectarse al servicio remoto.
+
+No hay otra ejecución mac24 pendiente. Sigue T5 del plan: interfaz, eventos
+idempotentes y actualización temporal de perfiles; T6–T8 conservan operación,
+recuperación, carga y aceptación final. Conservar los originales y ambos prompts
+como procedimientos históricos.

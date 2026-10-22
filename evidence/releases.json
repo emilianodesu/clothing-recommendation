@@ -193,11 +193,11 @@
   "test_evaluated": false,
   "quality_accepted": false,
   "limits": [
-    "H&M package construction/parity is measured offline; serving latency, resident API memory and concurrency remain unmeasured.",
+    "H&M package construction/parity is measured offline; T4-B measured API memory and sequential HTTP parity; sustained load/concurrency remain T8.",
     "H&M reproduction requires the original frozen Q1 private artifacts; reports alone cannot reconstruct them.",
-    "T4-B H&M internal HTTP, activation and rollback passed in mac24; host localhost access remains blocked. Final test and acceptance remain reserved for T8.",
+    "T4-B H&M internal HTTP, activation and rollback passed in mac24; host localhost access subsequently passed v2 (evidence/serving-host-review-mac24.json). Final test and acceptance remain reserved for T8.",
     "No private service package, profiles, transactions, predictions or models are included in the GitHub reports.",
     "The primary Mac audited report integrity and source/hash agreement; full private package, individual predictions and preservation inventory stayed on mac24."
   ],
-  "next_step": "Reproduce T4-B v2 once on mac24 using docs/mac24-t4b-host-prompt.md; local host publication verified in evidence/serving-host.json."
+  "next_step": "T4-B closed after mac24 v2 audit (evidence/serving-host-review-mac24.json). Next development is T5; no package or serving rerun required."
 }

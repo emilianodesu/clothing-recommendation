@@ -1,8 +1,8 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Paso vigente:** ejecutar una vez el [seguimiento T4-B v2](mac24-t4b-host-prompt.md) con el commit probado recibido. Corrige la red de publicación y añade evidencia desde el host. El [ensayo v1](../evidence/serving-review-mac24.json) conserva su resultado interno; no repetir su prompt. Conservar paquetes y resultados Q1–Q4/T4-A/T4-B.
+**Estado vigente:** T4-B v2 ya pasó en mac24 y está [cerrada tras revisión](../evidence/serving-host-review-mac24.json). No hay otra ejecución pendiente allí; ambos prompts T4-B son históricos. El siguiente desarrollo del plan es T5 (interfaz, eventos y actualización de perfiles). Conservar paquetes y resultados Q1–Q4/T4-A/T4-B; no repetir campañas ni evaluar test.
 
-Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T3, Q1–Q4 y T4-A están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación y rollback de T4-B están implementados y probados localmente; `serving-check` verifica el ciclo de versiones con los paquetes existentes y devuelve reportes cerrados.
+Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T4 y Q1–Q4 están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación, acceso desde el host y rollback de T4-B están implementados y reproducidos en mac24; `serving-check` verifica el ciclo de versiones con los paquetes existentes y devuelve reportes cerrados.
 
 ## 1. Obtener el código
 

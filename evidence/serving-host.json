@@ -2,7 +2,7 @@
   "schema_version": 1,
   "stage": "T4-B",
   "scope": "T4B-01/T4B-02 host publication follow-up",
-  "status": "local_v2_verified_awaiting_mac24",
+  "status": "mac24_verified_closed",
   "execution_commit": "9ef2ddba975ac028cf97a8364db7e9cf9cf750bb",
   "selected_method": "H",
   "data_as_of": "2020-09-09",
@@ -183,16 +183,26 @@
     "Final: MLflow publication and T5-T8 outside scope; no quality or load claims."
   ],
   "mac24": {
-    "status": "pending",
+    "status": "reviewed_passed",
     "prompt": "docs/mac24-t4b-host-prompt.md",
     "guide": "docs/serving.md",
     "expected_evidence": "evidence/mac24-serving-host-t4b.json",
     "reference_run_id": "release-mac24-20261021T190539Z-02a850f8",
     "candidate_run_id": "release-mac24-20261021T190717Z-f0a2d073",
-    "prior_v1_review": "evidence/serving-review-mac24.json"
+    "prior_v1_review": "evidence/serving-review-mac24.json",
+    "review": "evidence/serving-host-review-mac24.json",
+    "prompt_status": "historical_do_not_repeat"
   },
   "test_evaluated": false,
   "quality_accepted": false,
   "training_performed": false,
-  "next_step": "Run T4-B v2 once on mac24 with delivered clean commit. Preserve v1 and original packages; export/validate/publish closed evidence including valid failure. No automatic retry, T5 or test."
+  "next_step": "T5 development: UI, idempotent events and temporally correct profile updates. No mac24 rerun needed; preserve originals and test for T8.",
+  "latest_review": "evidence/serving-host-review-mac24.json",
+  "mac24_host_follow_up": {
+    "status": "reviewed_passed",
+    "run_id": "serving-mac24-20261022T032542Z-59d9bfe4",
+    "evidence": "evidence/mac24-serving-host-t4b.json",
+    "review": "evidence/serving-host-review-mac24.json",
+    "prompt_status": "historical_do_not_repeat"
+  }
 }

@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "stage": "T4-B",
+  "status": "reviewed_passed",
+  "stage_closed": true,
+  "reviewed_on": "2026-10-21",
+  "review_timezone": "America/Mexico_City",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "received_commit": "68c96771438eadaac8bf3c0ee0523ca250f2b716",
+  "received_evidence": "evidence/mac24-serving-host-t4b.json",
+  "source_commit": "58c408e829b1809c5edd95bb6d10ebe219bb8ac2",
+  "run_id": "serving-mac24-20261022T032542Z-59d9bfe4",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261022T032542Z-59d9bfe4",
+  "archive_sha256": "5efc76a4abb832c4467f7f85ede7c3913163c0d75bcf3ca0d3291f082b99d460",
+  "archive_bytes": 4873,
+  "report_package_id": "d887920eee349fd3de053b0820cd9697c91fd08dbcf12a79bf8387b7111c13a8",
+  "closed_report_status": "passed",
+  "report_protocol": "history-serving-v2",
+  "verified_locally": [
+    "Closed ZIP inventory, sizes, SHA-256, package identity and strict v2 report contract.",
+    "Versioned result/environment match ZIP exactly; received commit changes documentation/evidence only.",
+    "Executable source digest and uv.lock match frozen execution commit and local v2 implementation.",
+    "T4-A source ZIP hashes, package identities, cutoff, catalog and buyer counts match prior audited sources.",
+    "All five internal response digests match v1; all five host digests match package-derived references.",
+    "Reference host digest also matches the primary synthetic v2 rehearsal.",
+    "Host evidence includes loopback-only binding, health, code/version identity and two recommendations at all five stages.",
+    "Candidate/restart/final agree; reference/rollback agree; final H&M version is the original candidate.",
+    "Reported API limits, memory peak, elapsed time, zero swap and no OOM satisfy the frozen rehearsal.",
+    "Original downloaded v1 ZIP remains byte-identical."
+  ],
+  "source_audits": [
+    {
+      "source": "reference",
+      "run_id": "release-mac24-20261021T190539Z-02a850f8",
+      "archive_sha256": "a6876ab1794b692e970a48db6568c54fc391529ffc62c08fb9c56c65f2ee9e55",
+      "release_id": "h-ea02a53f34f150aab5f0e9a1beb77b7df5a05a3b4dab75c4d91dfe0c2803ecb1",
+      "manifest_sha256": "e72bb26b025aeab15db51466a84bc302f82f74dd5b4bb2fa70911ca383f1fddd",
+      "matches_prior_review": true
+    },
+    {
+      "source": "candidate",
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+      "matches_prior_review": true
+    }
+  ],
+  "summary": {
+    "internal_recommendation_requests": 877,
+    "host_recommendation_requests": 10,
+    "lifecycle_stages": 5,
+    "hm_sampled_buyers": 257,
+    "hm_requests_per_check": 265,
+    "synthetic_sampled_buyers": 33,
+    "synthetic_requests_per_check": 41,
+    "duration_seconds": 20.607390375022078,
+    "api_peak_gib": 1.0153846740722656,
+    "api_memory_limit_gib": 4,
+    "api_cpus": 2,
+    "api_threads": 2,
+    "swap_peak_gib": 0,
+    "oom_killed": false,
+    "full_catalog_size": 102967,
+    "full_past_buyers": 1351314,
+    "final_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "internal_http_parity": true,
+    "host_http_parity": true,
+    "restart_rollback_parity": true,
+    "host": "127.0.0.1",
+    "port": 8000,
+    "load_benchmark": false
+  },
+  "findings": [
+    {
+      "id": "T4B-01",
+      "status": "resolved",
+      "evidence": "v2 records effective loopback binding and real host responses across all five lifecycle stages."
+    },
+    {
+      "id": "T4B-02",
+      "status": "resolved",
+      "evidence": "Strict v2 contract requires five host observations anchored to package-derived hashes, including restart and rollback."
+    }
+  ],
+  "prior_v1_review": "evidence/serving-review-mac24.json",
+  "prior_v1_preserved": true,
+  "remote_declarations_not_independently_reperformed": {
+    "suite": "serving",
+    "unit_passed": 60,
+    "integration_passed": 28,
+    "host_publication_regression_passed": 1,
+    "host_passed": 86,
+    "total_passed": 175,
+    "failed": 0,
+    "warnings": [
+      "PyTorch sparse invariant warning",
+      "Python ResourceWarning during redirect rejection test"
+    ],
+    "build": "app-check and jobs rebuilt",
+    "preservation": {
+      "files_checked": 3072,
+      "all_unchanged": true,
+      "ledger_unchanged": true,
+      "v1_report_unchanged": true,
+      "scope": "T4-A packages/reports; processed data, features, checkpoints, Q1-Q4 work/ZIPs, quality ledger, v1 report directory and ZIP",
+      "private_inventory_sha256": "2774713456bcc51c7ddabb118145b92b5d13b6f795b44185a77044b359ddd7cf"
+    },
+    "colima": {
+      "profile": "hm-project",
+      "memory_gib": 14,
+      "cpus": 4
+    },
+    "post_close_host_readiness": {
+      "url": "http://127.0.0.1:8000/health/ready",
+      "status": "ready",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a"
+    }
+  },
+  "limits": [
+    "Primary audited reports, identities and deterministic digests; it did not access mac24 live or recompute H&M recommendations from private packages.",
+    "Suite of 175 tests, preservation of 3072 files, Colima settings and additional post-close readiness are separate remote declarations; their raw logs/inventory were not transferred.",
+    "Host checks cover two fixed unknown-customer cases per stage, while the bounded internal sample covers known and unknown buyers plus filters. This is not exhaustive HTTP validation.",
+    "Sequential timings do not establish T8 throughput, p95, sustained error rate or final recommendation quality.",
+    "No changes to H, training, campaigns or test. T5-T8 remain pending."
+  ],
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training_performed": false,
+  "t5_started": false,
+  "next_step": "Develop T5 from the approved platform plan: UI, idempotent events and temporally correct profile updates. No mac24 rerun needed; receipt of evidence does not start T5 or test automatically."
+}

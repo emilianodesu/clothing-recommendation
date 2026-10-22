@@ -8,7 +8,7 @@
 
 **Tech Stack:** Docker CPU, Python 3.12, Polars/Parquet, NumPy y los lanzadores/verificadores existentes. Añadir SciPy explícita para grafos dispersos y LightGBM para ranking cuando su tarea verifique compatibilidad y bloquee versiones; sin TensorFlow, Hopsworks, GPU o nube de pago.
 
-**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; T4-A también cerrada y T4-B implementada localmente, con ensayo interno H&M revisado y acceso desde host pendiente**.
+**Spec:** [Diseño y protocolo `quality-v1`](../specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Sus fechas, parámetros, poblaciones, reglas y límites son normativos. Complementa el [plan de plataforma](2026-10-18-plataforma-local-hm.md), insertando Q1–Q4 antes de T4. Estado: **Q1–Q4 cerradas tras revisar los reportes mac24. H seleccionado bajo los criterios predefinidos; T4-A y T4-B también cerradas, con ensayo H&M v2 revisado por HTTP interno y desde el host**.
 
 ## Global Constraints
 
@@ -164,10 +164,10 @@ Q1–Q4 están cerradas. La [auditoría Q4](../../../evidence/quality-decision-m
 
 T4-A también está [cerrada tras revisión](../../../evidence/releases-review-mac24.json): paquete H schema2 y paridad offline reproducidos en mac24. Su prompt es histórico.
 
-1. T4-B implementa API, activación y rollback; [su ensayo H&M interno v1 fue revisado](../../../evidence/serving-review-mac24.json) y detectó que localhost del host no respondía.
-2. La publicación de la API y el reporte HTTP desde el host ya están [corregidos y probados localmente](../../../evidence/serving-host.json). Conservar backend privado, binding localhost y el reporte v1; su prompt es histórico.
-3. **Siguiente:** ejecutar una vez T4-B v2 en mac24 con [el nuevo prompt](../../mac24-t4b-host-prompt.md). Conservar todos los resultados Q1–Q4/T4-A/T4-B; no volver a entrenar, repetir campañas ni activar T5/test.
-4. Luego T5–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
+1. T4-B está [cerrada tras revisar v2](../../../evidence/serving-host-review-mac24.json): API, activación, reinicio, rollback y acceso desde el host reproducidos en mac24.
+2. Conservar backend privado, binding localhost y reportes v1/v2; ambos prompts son históricos. No repetir campañas.
+3. **Siguiente desarrollo:** T5 del plan de plataforma: interfaz, eventos idempotentes y actualización temporal de perfiles. La recepción de evidencia no inicia trabajos automáticamente.
+4. Luego T6–T8. Test se evalúa una única vez en T8 con H/P, sin retuning. Las metas de latencia aún deben medirse.
 
 ## Presupuesto de trabajo y dependencias
 

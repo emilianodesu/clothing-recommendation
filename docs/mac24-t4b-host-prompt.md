@@ -1,5 +1,7 @@
 # Prompt para mac24: acceso HTTP del host, T4-B v2
 
+**Histórico: ejecución terminada y [revisada](../evidence/serving-host-review-mac24.json). No repetir salvo petición explícita.** T4-B está cerrada; conservar este procedimiento y sus reportes para reproducción.
+
 Actualizar main por fast-forward conservando cambios locales. Fijar el SHA
 completo recibido en un clon limpio y leer README, AGENTS, docs/serving.md
 (sección «Corrección v2 y comprobación desde el host») y docs/architecture.md.

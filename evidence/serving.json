@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "stage": "T4-B",
-  "status": "local_v2_verified_awaiting_mac24",
+  "status": "mac24_verified_closed",
   "base_commit": "d62f48e30b1d06cb91c3c4cbe44c4bf80926ce3b",
   "execution_commit": "881e0c2760565977e636d5dbe45f41e56bd2f8f1",
   "selected_method": "H",
@@ -225,14 +225,14 @@
   "quality_accepted": false,
   "training_performed": false,
   "limits": [
-    "H&M full package loading and sampled internal HTTP parity were verified from mac24 report; host localhost access remains blocked.",
+    "H&M full package loading and sampled internal HTTP parity were verified from mac24 report; host localhost access subsequently passed v2; see latest_review.",
     "Sequential probe timings are not a sustained throughput or p95 benchmark; T8 remains pending.",
     "Local synthetic rehearsal contains no private H&M customers or predictions.",
     "One API process owns the PostgreSQL registry; no horizontal-worker contract.",
     "Events/UI/scheduler/portable backup remain T5-T7; no test labels were evaluated.",
     "Closed reports travel through private GitHub, service packages remain local."
   ],
-  "next_step": "Run T4-B v2 once on mac24 with delivered clean commit. Preserve v1 and original packages; export/validate/publish closed evidence including valid failure. No automatic retry, T5 or test.",
+  "next_step": "T5 development: UI, idempotent events and temporally correct profile updates. No mac24 rerun needed; preserve originals and test for T8.",
   "post_review_cleanup_fix": {
     "commit": "d926c11628f84fec1f068325075f7f05574f896f",
     "finding": "Actual project down left API running because its Compose profile was disabled.",
@@ -245,5 +245,13 @@
     "closed_http_report_unchanged": true,
     "bootstrap_tests_passed": 8
   },
-  "host_follow_up": "evidence/serving-host.json"
+  "host_follow_up": "evidence/serving-host.json",
+  "latest_review": "evidence/serving-host-review-mac24.json",
+  "mac24_host_follow_up": {
+    "status": "reviewed_passed",
+    "run_id": "serving-mac24-20261022T032542Z-59d9bfe4",
+    "evidence": "evidence/mac24-serving-host-t4b.json",
+    "review": "evidence/serving-host-review-mac24.json",
+    "prompt_status": "historical_do_not_repeat"
+  }
 }
