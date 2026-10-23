@@ -24,6 +24,7 @@ def validate(report,r,env):
     for k in ('archive_bytes','parity_queries','offline_queries'):require(type(r[k]) is int and r[k]>=0)
     for k in ('archive_sha256','source_state_sha256','source_archive_sha256'):require(r[k] is None or re.fullmatch('[a-f0-9]{64}',r[k]))
     require(r['source_run_id'] is None or re.fullmatch('pipeline-[A-Za-z0-9_-]{1,100}',r['source_run_id']))
+    require((r['source_run_id'] is None)==(r['source_archive_sha256'] is None))
     for k in ('source_postgres','destination_postgres'):
         p=r[k]
         if p is not None:
@@ -34,6 +35,7 @@ def validate(report,r,env):
     require(all(re.fullmatch('sha256:[a-f0-9]{64}',v) for v in r['images'].values()))
     require(r['error_type'] is None or re.fullmatch('[A-Za-z][A-Za-z0-9_]{0,63}',r['error_type']))
     if report['status']=='passed':
+        if report.get('machine_id')=='mac24':require(r['source_run_id'] and r['source_archive_sha256'])
         require(report['source_clean'] is True and all(r['checks'].values()) and r['error_type'] is None)
         require(0<r['archive_bytes']<=20*2**30 and r['archive_sha256'] and r['source_state_sha256'])
         require(r['parity_queries']==r['offline_queries']==6 and len(r['images'])==2)

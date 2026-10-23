@@ -33,3 +33,16 @@ class PortabilityHost(unittest.TestCase):
             two=m.prepare_destination(a,b,18010)
             self.assertNotEqual(one['HM_APP_PASSWORD'],two['HM_APP_PASSWORD'])
             self.assertEqual((a/'src/hm_recommender/portability.py').read_bytes(),(b/'src/hm_recommender/portability.py').read_bytes())
+    def test_network_reservation_handles_null_ipam(self):
+        from unittest.mock import patch
+        m=self.module()
+        with patch.object(m.subprocess,'check_output',side_effect=['one','[{"IPAM":{"Config":null}}]']),patch.object(m.subprocess,'run') as run:
+            chosen=m.reserve_networks({'COMPOSE_PROJECT_NAME':'hmrec_example'})
+            self.assertEqual(len(set(chosen.values())),2)
+            self.assertEqual(run.call_count,2)
+    def test_copy_rechecks_expected_hash(self):
+        m=self.module()
+        self.assertTrue(hasattr(m,'copy_verified'))
+        with tempfile.TemporaryDirectory() as d:
+            a,b=Path(d)/'a',Path(d)/'b';a.write_bytes(b'changed')
+            with self.assertRaises(ValueError):m.copy_verified(a,b,'0'*64)

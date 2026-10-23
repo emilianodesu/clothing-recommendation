@@ -21,6 +21,11 @@ def checksum_file(path):
     return h.hexdigest()
 
 
+def copy_verified(source,target,expected):
+    shutil.copyfile(source,target);os.chmod(target,0o600)
+    if checksum_file(target)!=expected:raise ValueError('Copied backup differs from authorized SHA-256')
+
+
 def source_inventory(source):
     saved=source/'source-inventory.json'
     if saved.is_file():
@@ -72,7 +77,7 @@ def reserve_networks(values):
     import ipaddress
     ids=subprocess.check_output(['docker','network','ls','-q'],text=True).split()
     networks=json.loads(subprocess.check_output(['docker','network','inspect',*ids],text=True)) if ids else []
-    used=[ipaddress.ip_network(c['Subnet']) for n in networks for c in n.get('IPAM',{}).get('Config',[]) if c.get('Subnet')]
+    used=[ipaddress.ip_network(c['Subnet']) for n in networks for c in ((n.get('IPAM') or {}).get('Config') or []) if c.get('Subnet')]
     chosen={}
     for role in ('backend','api-publication'):
         candidate=next((ipaddress.ip_network('10.253.'+str(i)+'.0/24') for i in range(1,255)
@@ -102,7 +107,7 @@ def restore_into(source,archive,destination,checksum,port):
     v=prepare_destination(source,destination,port)
     networks=reserve_networks(v)
     (destination/'artifacts/restore-networks.json').write_text(json.dumps(networks))
-    incoming=destination/'artifacts'/'restore-input.zip';shutil.copyfile(archive,incoming);os.chmod(incoming,0o600)
+    incoming=destination/'artifacts'/'restore-input.zip';copy_verified(archive,incoming,checksum)
     def call(*args):return compose(destination,v,*args,capture=True,timeout=2100)
     # No build/pull: provision caches explicitly beforehand, credentials freshly generated.
     call('up','-d','--pull','never','--no-build','--wait','postgres')
