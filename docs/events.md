@@ -134,3 +134,8 @@ Preparar instrumentación y pruebas antes de una nueva ejecución remota:
 4. Mantener el contrato v1 y su ZIP fallido intactos. Versionar explícitamente cualquier nuevo contrato y justificar sus criterios antes de medir; la información actual no permite elegir entre ajustar recursos o aceptar el comportamiento observado. Preparar después un prompt para una sola corrida, con presupuesto PostgreSQL conservado de 512 MiB durante el diagnóstico.
 
 **T5/E4 permanecen abiertas.** Los pasos de instrumentación anteriores se implementaron en `events-memory-v1` y la corrida H&M ya fue [revisada](../evidence/events-memory-review-mac24.json). Se confirmó el pico heredado y actividad nueva junto al límite sin swap/OOM; se detectó también una discrepancia UTC/monotónico que impide interpretar rendimiento. Sigue [la resolución temporal y del contrato](events-memory.md#revisión-en-la-mac-principal-2026-10-22). Ambos prompts T5 son históricos; no repetirlos. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.
+
+
+## Continuación vigente: protocolo operativo
+
+Se implementó [events-operational-v1](events-operational.md) con relojes por operación, presupuesto y guard de reposo, manteniendo recursos y reportes anteriores. Sigue [una ejecución mac24 con SHA congelado](mac24-t5-operational-prompt.md); T5/E4 siguen abiertas hasta su auditoría.

@@ -1,0 +1,802 @@
+{
+  "schema_version": 1,
+  "scope": "local synthetic; not mac24 H&M; T5/E4 open",
+  "source_commit": "e5f8719141e66a60194ae807e7f362b60d11fe71",
+  "run_id": "events-development-20261023T020441Z-2b6d8c92",
+  "status": "passed",
+  "protocol": "events-operational-v1",
+  "archive": {
+    "bytes": 25086,
+    "sha256": "09afd57bd915c25084b9c4eac2fa72760abeda4fb5f433dce1740f3fa6c3772b",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261023T020441Z-2b6d8c92"
+  },
+  "tests": {
+    "suite": "events",
+    "status": "passed",
+    "unit": 62,
+    "serving_integration": 28,
+    "host_publication": 1,
+    "events_integration": 10,
+    "host": 150,
+    "total": 251
+  },
+  "environment": {
+    "run_id": "events-development-20261023T020441Z-2b6d8c92",
+    "source_commit": "e5f8719141e66a60194ae807e7f362b60d11fe71",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282",
+    "runner_tree_sha256": "7a148547e75e07afe8ed4c0d07fc2a149c3c9083552cf8b3e756a362829210fc"
+  },
+  "temporal": {
+    "assessment": {
+      "coherent": true,
+      "reason": null,
+      "utc_seconds": 5.321129083633423,
+      "monotonic_seconds": 5.321387292000001
+    },
+    "marks": 545,
+    "operations": 106,
+    "guard": {
+      "started": true,
+      "released": true
+    },
+    "complete": true
+  },
+  "diagnostics": {
+    "schema_version": 1,
+    "complete": true,
+    "snapshots": [
+      {
+        "container_id": "80e21a47b97b48c9fe9803840f995a53b81e9a5d794933f72dfcb7e3b15c8d15",
+        "started_at": "2026-10-23T02:04:30.957862565Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 8589934592,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "phase": "before_seed",
+        "service": "api",
+        "elapsed_seconds": 1.4216889170000009,
+        "captured_at": "2026-10-23T02:04:42.988934+00:00",
+        "sample_seconds": 0.05888241699999952,
+        "cgroup_inode": 127104,
+        "current_bytes": 80371712,
+        "peak_bytes": 90009600,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 4294967296,
+        "cgroup_swap_limit_bytes": 4294967296,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 76718080,
+          "file": 57344,
+          "kernel": 3842048,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "ac838e762838be8f484e0591e321ad856825742bd0f0b4ee091ace3951e6c026",
+        "started_at": "2026-10-23T02:04:36.563961258Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 500000000,
+        "oom_killed": false,
+        "phase": "before_seed",
+        "service": "ui",
+        "elapsed_seconds": 1.5233542500000006,
+        "captured_at": "2026-10-23T02:04:43.090592+00:00",
+        "sample_seconds": 0.054797084000000496,
+        "cgroup_inode": 127197,
+        "current_bytes": 52670464,
+        "peak_bytes": 66703360,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 49573888,
+          "file": 0,
+          "kernel": 3248128,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "bf9d0913b6a9d8977913533e65026ccba6b4f553ab815c1d22d5dd199243124e",
+        "started_at": "2026-10-23T02:03:18.401963892Z",
+        "restart_count": 0,
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 0,
+        "oom_killed": false,
+        "phase": "before_seed",
+        "service": "postgres",
+        "elapsed_seconds": 1.6177353750000005,
+        "captured_at": "2026-10-23T02:04:43.184968+00:00",
+        "sample_seconds": 0.047911000000000925,
+        "cgroup_inode": 126360,
+        "current_bytes": 118960128,
+        "peak_bytes": 136331264,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 6250496,
+          "file": 102301696,
+          "kernel": 10752000,
+          "shmem": 20701184
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "80e21a47b97b48c9fe9803840f995a53b81e9a5d794933f72dfcb7e3b15c8d15",
+        "started_at": "2026-10-23T02:04:30.957862565Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 8589934592,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "phase": "after_seed",
+        "service": "api",
+        "elapsed_seconds": 2.661638583000002,
+        "captured_at": "2026-10-23T02:04:44.228823+00:00",
+        "sample_seconds": 0.05434775000000158,
+        "cgroup_inode": 127104,
+        "current_bytes": 80125952,
+        "peak_bytes": 90009600,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 4294967296,
+        "cgroup_swap_limit_bytes": 4294967296,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 76664832,
+          "file": 28672,
+          "kernel": 3837952,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "ac838e762838be8f484e0591e321ad856825742bd0f0b4ee091ace3951e6c026",
+        "started_at": "2026-10-23T02:04:36.563961258Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 500000000,
+        "oom_killed": false,
+        "phase": "after_seed",
+        "service": "ui",
+        "elapsed_seconds": 2.765706667,
+        "captured_at": "2026-10-23T02:04:44.332884+00:00",
+        "sample_seconds": 0.0587439589999974,
+        "cgroup_inode": 127197,
+        "current_bytes": 52445184,
+        "peak_bytes": 66703360,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 49573888,
+          "file": 0,
+          "kernel": 3248128,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "bf9d0913b6a9d8977913533e65026ccba6b4f553ab815c1d22d5dd199243124e",
+        "started_at": "2026-10-23T02:03:18.401963892Z",
+        "restart_count": 0,
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 0,
+        "oom_killed": false,
+        "phase": "after_seed",
+        "service": "postgres",
+        "elapsed_seconds": 2.874689958000001,
+        "captured_at": "2026-10-23T02:04:44.441862+00:00",
+        "sample_seconds": 0.058631209000001405,
+        "cgroup_inode": 126360,
+        "current_bytes": 119308288,
+        "peak_bytes": 136331264,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 6250496,
+          "file": 102776832,
+          "kernel": 10600448,
+          "shmem": 20971520
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "80e21a47b97b48c9fe9803840f995a53b81e9a5d794933f72dfcb7e3b15c8d15",
+        "started_at": "2026-10-23T02:04:30.957862565Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 8589934592,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "phase": "after_replay",
+        "service": "api",
+        "elapsed_seconds": 3.1974652080000006,
+        "captured_at": "2026-10-23T02:04:44.764626+00:00",
+        "sample_seconds": 0.0562620840000001,
+        "cgroup_inode": 127104,
+        "current_bytes": 80568320,
+        "peak_bytes": 90009600,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 4294967296,
+        "cgroup_swap_limit_bytes": 4294967296,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 76759040,
+          "file": 28672,
+          "kernel": 3858432,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "ac838e762838be8f484e0591e321ad856825742bd0f0b4ee091ace3951e6c026",
+        "started_at": "2026-10-23T02:04:36.563961258Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 500000000,
+        "oom_killed": false,
+        "phase": "after_replay",
+        "service": "ui",
+        "elapsed_seconds": 3.301250833000001,
+        "captured_at": "2026-10-23T02:04:44.868404+00:00",
+        "sample_seconds": 0.05630874999999946,
+        "cgroup_inode": 127197,
+        "current_bytes": 52641792,
+        "peak_bytes": 66703360,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 49573888,
+          "file": 0,
+          "kernel": 3252224,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "bf9d0913b6a9d8977913533e65026ccba6b4f553ab815c1d22d5dd199243124e",
+        "started_at": "2026-10-23T02:03:18.401963892Z",
+        "restart_count": 0,
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 0,
+        "oom_killed": false,
+        "phase": "after_replay",
+        "service": "postgres",
+        "elapsed_seconds": 3.404596625,
+        "captured_at": "2026-10-23T02:04:44.971742+00:00",
+        "sample_seconds": 0.0545258749999995,
+        "cgroup_inode": 126360,
+        "current_bytes": 119386112,
+        "peak_bytes": 136331264,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 6254592,
+          "file": 102940672,
+          "kernel": 10592256,
+          "shmem": 21053440
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "80e21a47b97b48c9fe9803840f995a53b81e9a5d794933f72dfcb7e3b15c8d15",
+        "started_at": "2026-10-23T02:04:46.100210856Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 4294967296,
+        "memory_swap_bytes": 8589934592,
+        "nano_cpus": 2000000000,
+        "oom_killed": false,
+        "phase": "after_restart",
+        "service": "api",
+        "elapsed_seconds": 5.0724933750000005,
+        "captured_at": "2026-10-23T02:04:46.639560+00:00",
+        "sample_seconds": 0.05555058300000226,
+        "cgroup_inode": 127476,
+        "current_bytes": 78438400,
+        "peak_bytes": 80011264,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 4294967296,
+        "cgroup_swap_limit_bytes": 4294967296,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 76386304,
+          "file": 28672,
+          "kernel": 2428928,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "ac838e762838be8f484e0591e321ad856825742bd0f0b4ee091ace3951e6c026",
+        "started_at": "2026-10-23T02:04:36.563961258Z",
+        "restart_count": 0,
+        "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 500000000,
+        "oom_killed": false,
+        "phase": "after_restart",
+        "service": "ui",
+        "elapsed_seconds": 5.173813167000002,
+        "captured_at": "2026-10-23T02:04:46.740873+00:00",
+        "sample_seconds": 0.05618920799999927,
+        "cgroup_inode": 127197,
+        "current_bytes": 52535296,
+        "peak_bytes": 66703360,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 49573888,
+          "file": 0,
+          "kernel": 3260416,
+          "shmem": 0
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      {
+        "container_id": "bf9d0913b6a9d8977913533e65026ccba6b4f553ab815c1d22d5dd199243124e",
+        "started_at": "2026-10-23T02:03:18.401963892Z",
+        "restart_count": 0,
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "memory_swap_bytes": 1073741824,
+        "nano_cpus": 0,
+        "oom_killed": false,
+        "phase": "after_restart",
+        "service": "postgres",
+        "elapsed_seconds": 5.282352041999999,
+        "captured_at": "2026-10-23T02:04:46.849408+00:00",
+        "sample_seconds": 0.05738154199999812,
+        "cgroup_inode": 126360,
+        "current_bytes": 119279616,
+        "peak_bytes": 136331264,
+        "swap_current_bytes": 0,
+        "swap_peak_bytes": 0,
+        "cgroup_limit_bytes": 536870912,
+        "cgroup_swap_limit_bytes": 536870912,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 5963776,
+          "file": 102940672,
+          "kernel": 10604544,
+          "shmem": 21053440
+        },
+        "pressure_us": {
+          "some": 0,
+          "full": 0
+        }
+      }
+    ],
+    "capture_errors": [],
+    "intervals": [
+      {
+        "service": "api",
+        "from_phase": "before_seed",
+        "to_phase": "after_seed",
+        "seconds": 1.2399496660000011,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "ui",
+        "from_phase": "before_seed",
+        "to_phase": "after_seed",
+        "seconds": 1.2423524169999993,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "before_seed",
+        "to_phase": "after_seed",
+        "seconds": 1.2569545830000006,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "api",
+        "from_phase": "after_seed",
+        "to_phase": "after_replay",
+        "seconds": 0.5358266249999986,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "ui",
+        "from_phase": "after_seed",
+        "to_phase": "after_replay",
+        "seconds": 0.5355441660000011,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_seed",
+        "to_phase": "after_replay",
+        "seconds": 0.5299066669999988,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "api",
+        "from_phase": "after_replay",
+        "to_phase": "after_restart",
+        "seconds": 1.875028167,
+        "comparable": false,
+        "reason": "generation_changed",
+        "boundary_reached_before": false,
+        "events_delta": null,
+        "pressure_delta_us": null,
+        "peak_growth_bytes": null,
+        "swap_peak_growth_bytes": null
+      },
+      {
+        "service": "ui",
+        "from_phase": "after_replay",
+        "to_phase": "after_restart",
+        "seconds": 1.8725623340000013,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_replay",
+        "to_phase": "after_restart",
+        "seconds": 1.8777554169999995,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": false,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      }
+    ]
+  },
+  "resources": {
+    "seed": {
+      "image_id": "sha256:176936f344c4d50a2b41f544f6c7fbd4cabb39b9f9cda9d8491d43e0c9ea19ba",
+      "memory_bytes": 3221225472,
+      "nano_cpus": 1000000000,
+      "cgroup_peak_bytes": 68382720,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "api": {
+      "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+      "memory_bytes": 4294967296,
+      "nano_cpus": 2000000000,
+      "cgroup_peak_bytes": 90009600,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "ui": {
+      "image_id": "sha256:fd657b4d31e8546782f5ead1bc777706e067270f4c63eb217e289e1cc4365b25",
+      "memory_bytes": 536870912,
+      "nano_cpus": 500000000,
+      "cgroup_peak_bytes": 66703360,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "postgres": {
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+      "memory_bytes": 536870912,
+      "nano_cpus": 0,
+      "cgroup_peak_bytes": 136331264,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    }
+  },
+  "checks": {
+    "initial_parity_requests": 4,
+    "new_events": 4,
+    "duplicate_status": 200,
+    "conflict_status": 409,
+    "purchase_changes_profile": true,
+    "views_clicks_not_purchases": true,
+    "late_event_order": true,
+    "refresh_idempotent": true,
+    "base_unchanged": true,
+    "profile_sha256": "53aa8bd751ad04571fab98b244f2ee9403b4008a4258cedf2d612e7b14645d23",
+    "revision": 3,
+    "data_as_of": "2020-09-09",
+    "processed_events": 4
+  },
+  "cleanup": {
+    "attempted": true,
+    "exit_code": 0,
+    "error_type": null,
+    "utc_seconds": 0.03817105293273926,
+    "monotonic_seconds": 0.03817333299999959
+  },
+  "restart_persistent": true,
+  "source_unchanged": true,
+  "test_evaluated": false,
+  "training_performed": false,
+  "load_benchmark": false,
+  "t5_closed": false,
+  "prior_local_attempt": {
+    "run_id": "events-development-20261023T015609Z-0ac3c4f3",
+    "commit": "8cc9055f6c40f298d2af5f3a63d8fbca40216846",
+    "status": "incomplete_packaging",
+    "reason": "140518 byte manifest exceeded legacy 128KiB cap",
+    "preserved": true,
+    "published": false
+  },
+  "historical_reports_unchanged": true
+}

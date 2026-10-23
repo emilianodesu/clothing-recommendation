@@ -126,3 +126,8 @@ Antes de emitir un prompt H&M se requieren verificación sintética y pruebas
 del nuevo protocolo. No repetir la recolección ni elevar su límite para buscar
 un resultado distinto; si la causa histórica sigue desconocida, la medición
 nueva deberá acreditar su propia continuidad.
+
+
+## Implementación del protocolo prospectivo
+
+La propuesta anterior está implementada en [events-operational-v1](events-operational.md). Consulta [la evidencia local](../evidence/events-operational-local.json) y [el nuevo prompt mac24](mac24-t5-operational-prompt.md). No repetir la captura histórica de energía; su resultado permanece incompleto y la causa desconocida.

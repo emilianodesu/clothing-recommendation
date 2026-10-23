@@ -33,9 +33,9 @@
 
 **Interfaces:** `Monitor(guard=None, sample=None).start()/perform(label, limit, action)/finish()`; action receives a callable remaining budget. `.evidence()` returns policy/clock metadata, marks, operation indices, guard lifecycle and recomputable assessment. `OperationalIO(root,values,monitor)` provides compose, output, inspect, request and UI health. No private paths or payloads in trace labels.
 
-- [ ] RED: coherent timing and decreasing budget, UTC/monotonic regressions and gap, lost guard, timeout, interrupted child, invalid sample and oversized trace; real localhost HTTP read/redirect/non-JSON/slow response behavior and no exported request data. Expected missing module/feature failures.
-- [ ] Implement monitor using Timeline/AwakeGuard; preserve finite failed marks and structured unavailable samples. Bound and observe all transport boundaries, including cgroup capture callback. Recompute assessment independently when reading evidence.
-- [ ] GREEN: targeted host tests and full host suite. Commit and ledger.
+- [x] RED: coherent timing and decreasing budget, UTC/monotonic regressions and gap, lost guard, timeout, interrupted child, invalid sample and oversized trace; real localhost HTTP read/redirect/non-JSON/slow response behavior and no exported request data. Expected missing module/feature failures.
+- [x] Implement monitor using Timeline/AwakeGuard; preserve finite failed marks and structured unavailable samples. Bound and observe all transport boundaries, including cgroup capture callback. Recompute assessment independently when reading evidence.
+- [x] GREEN: targeted host tests and full host suite. Commit and ledger.
 
 ### Task 2: New acceptance envelope and one-shot runner
 
@@ -43,15 +43,15 @@
 
 **Interfaces:** protocol `events-operational-v1`; `events-check --operational` mutually exclusive with memory diagnostics. `run(root,machine_id,expected_commit,source_run=None)` reuses replay but the new IO. `validate_operational(report,result,env,names)` validates full or partial evidence; `validate_operational_files(report,bundle)` restricts aggregate attachments. `final_validation` requires new gates with all raw observations unchanged.
 
-- [ ] RED: historical peak retained and accepted only in new protocol; OOM/swap/limits/generation/counters still fail; corrupted trace, skipped required phase/operations, fabricated failure, free text and downgrade rejected through real ZIP reader/upload boundary. Preflight, clock and cleanup failure close as failed evidence. CLI opt-in reaches new runner without changing legacy paths.
-- [ ] Implement strict aggregate envelope and timed runner; fixed phase order and source/identity checks, bounded readiness polling; retain exact observed metrics. Keep old validators unchanged. Synthetic path uses separate project only.
-- [ ] GREEN: host suite and legacy closed ZIP compatibility. Commit and ledger.
+- [x] RED: historical peak retained and accepted only in new protocol; OOM/swap/limits/generation/counters still fail; corrupted trace, skipped required phase/operations, fabricated failure, free text and downgrade rejected through real ZIP reader/upload boundary. Preflight, clock and cleanup failure close as failed evidence. CLI opt-in reaches new runner without changing legacy paths.
+- [x] Implement strict aggregate envelope and timed runner; fixed phase order and source/identity checks, bounded readiness polling; retain exact observed metrics. Keep old validators unchanged. Synthetic path uses separate project only.
+- [x] GREEN: host suite and legacy closed ZIP compatibility. Commit and ledger.
 
 ### Task 3: Real local rehearsal and mac24 handoff
 
 **Files:** `docs/events-operational.md`, `docs/mac24-t5-operational-prompt.md`, `evidence/events-operational-local.json`, current README/AGENTS/plan status.
 
-- [ ] Commit code, prepare isolated local synthetic environment with its own .env/volumes/ports; reuse local Docker context without altering unrelated services. Run verify --suite events and one clean-commit synthetic operational rehearsal; retain failures and closed reports.
-- [ ] Validate/publish the closed synthetic report with exact source commit, explicitly separating local evidence from mac24. Preserve historical reports and resource gates.
-- [ ] Write mac24 prompt: clean exact commit, jobs-only rebuild/tests, preserve active PostgreSQL/API/UI and private originals, one `events-check --operational`, publish valid failure too, no retries/train/test/T6.
+- [x] Commit code, prepare isolated local synthetic environment with its own .env/volumes/ports; reuse local Docker context without altering unrelated services. Run verify --suite events and one clean-commit synthetic operational rehearsal; retain failures and closed reports.
+- [x] Validate/publish the closed synthetic report with exact source commit, explicitly separating local evidence from mac24. Preserve historical reports and resource gates.
+- [x] Write mac24 prompt: clean exact commit, jobs-only rebuild/tests, preserve active PostgreSQL/API/UI and private originals, one `events-check --operational`, publish valid failure too, no retries/train/test/T6.
 - [ ] One independent whole-branch review per executing-plans; fix Important/Critical in one RED→GREEN pass. Publish verified code via existing authorized Git flow and deliver exact-SHA prompt. Keep T5 open pending remote audit.
