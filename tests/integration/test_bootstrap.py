@@ -168,6 +168,17 @@ class BootstrapIntegrationTests(unittest.TestCase):
         return project_runner.compose(cls.root, values, *args, capture=True)
 
     def project(self, *args):
+        if args and args[0]=='bootstrap' and os.environ.get('HMREC_TEST_EXPLICIT_NETWORKS')=='1':
+            # Opt-in for long-lived validation VMs with exhausted default Docker pools.
+            # Only this fixture's fresh project is eligible; never alter other networks.
+            values=load_bootstrap().prepare_configuration(self.root)
+            existing=subprocess.check_output(['docker','network','ls','--filter',
+                'label=com.docker.compose.project='+values['COMPOSE_PROJECT_NAME'],'--format','{{.Name}}'],text=True).split()
+            if not existing:
+                from restore import reserve_networks
+                reserve_networks(values)
+            elif set(existing)!={values['COMPOSE_PROJECT_NAME']+'_'+n for n in ('backend','api-publication')}:
+                raise ValueError('Partial test networks; inspect fixture')
         result = subprocess.run([sys.executable, str(self.root / "scripts/project.py"), *args],
             cwd=tempfile.gettempdir(), text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
