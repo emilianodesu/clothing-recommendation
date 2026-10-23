@@ -25,6 +25,7 @@ def main():
     os.umask(0o077);os.environ['SSL_CERT_FILE']='/etc/ssl/cert.pem';os.environ['DOCKER_CONTEXT']='colima-hm-project'
     checkout_commit(ROOT,a.expected_commit)
     require(command(['git','branch','--show-current'])=='main','Se requiere main limpio')
+    require(command(['git','remote','get-url','origin']) in ('https://github.com/emilianodesu/clothing-recommendation.git','git@github.com:emilianodesu/clothing-recommendation.git'),'Remoto inesperado')
     require(command(['uname','-m'])=='arm64' and command(['sysctl','-n','hw.memsize'])==str(24*2**30),'Se requiere mac24')
     require('AC Power' in command(['pmset','-g','batt']),'Conecta AC y abre la tapa')
     v=read_configuration(ROOT/'.env');v['HMREC_SOURCE_COMMIT']=a.expected_commit

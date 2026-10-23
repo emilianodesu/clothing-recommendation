@@ -82,6 +82,15 @@ def _run(root,machine,commit,source_run=None):
             program="import json;from hm_recommender.api.runtime import source_digest;print(json.dumps(dict(source_tree_sha256=source_digest(),dag_tree_sha256=source_digest('/opt/airflow/dags'))))"
             result['installed_code'][service]=json.loads(call('exec','-T',service,'/opt/hmrec/.venv/bin/python','-c',program))
         validate_code(result['installed_code'],environment['source_tree_sha256'],result['dag_tree_sha256'])
+        config_bytes=(artifacts/'pipeline/build.json').read_bytes();config=json.loads(config_bytes)
+        receipt=json.loads((artifacts/'pipeline/build.receipt.json').read_text())
+        runs=db("SELECT run_id,state,start_date,end_date FROM dag_run WHERE dag_id='hm_build_release' AND run_id=%s",(receipt.get('orchestrator_run_id'),),service='airflow')
+        require(len(runs)==1,'Missing exact build run')
+        manifest=json.loads(call('run','--rm','--no-deps','-T','jobs','hmrec','release','verify',config['output_dir'],timeout=300))
+        manifest_sha=call('exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',"import hashlib,sys;from pathlib import Path;print(hashlib.sha256((Path(sys.argv[1])/'manifest.json').read_bytes()).hexdigest())",config['output_dir'])
+        frozen=json.loads((root/'configs/releases/history-v1.json').read_text())
+        result['build']=build_proof(config_bytes,receipt,manifest,manifest_sha,runs[0],commit,bool(source_run),frozen)
+        result['checks']['build_completed']=True
         if source_run:
             archive=artifacts/'handoff'/(source_run+'.zip')
             if not archive.exists():archive=artifacts/'incoming'/(source_run+'.zip')
@@ -94,18 +103,9 @@ def _run(root,machine,commit,source_run=None):
         else:
             release=http('/health/ready')['release_id'];stream=str(uuid.uuid4())
             print('T6: seed synthetic stream',flush=True)
-            call('run','--rm','--no-deps','-T','events-job','hmrec','events','seed','--dataset','/artifacts/t6-demo/input/dataset',
-                 '--directory','/artifacts/pipeline/release','--stream-id',stream,'--mode','synthetic',timeout=1800)
+            call('run','--rm','--no-deps','-T','events-job','hmrec','events','seed','--dataset',config['dataset_dir'],
+                 '--directory',config['output_dir'],'--stream-id',stream,'--mode','synthetic',timeout=1800)
         require(http('/health/ready')['release_id']==release,'Active H changed')
-        config_bytes=(artifacts/'pipeline/build.json').read_bytes();config=json.loads(config_bytes)
-        receipt=json.loads((artifacts/'pipeline/build.receipt.json').read_text())
-        runs=db("SELECT run_id,state,start_date,end_date FROM dag_run WHERE dag_id='hm_build_release' AND run_id=%s",(receipt.get('orchestrator_run_id'),),service='airflow')
-        require(len(runs)==1,'Missing exact build run')
-        manifest=json.loads(call('run','--rm','--no-deps','-T','jobs','hmrec','release','verify',config['output_dir'],timeout=300))
-        manifest_sha=call('exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',"import hashlib,sys;from pathlib import Path;print(hashlib.sha256((Path(sys.argv[1])/'manifest.json').read_bytes()).hexdigest())",config['output_dir'])
-        frozen=json.loads((root/'configs/releases/history-v1.json').read_text())
-        result['build']=build_proof(config_bytes,receipt,manifest,manifest_sha,runs[0],commit,bool(source_run),frozen)
-        result['checks']['build_completed']=True
         call('run','--rm','--no-deps','-T','jobs','hmrec','pipeline','register','--stream-id',stream)
         customer=http('/customers')['items'][0];article=http('/catalog?limit=2')['items'][-1]['article_id']
         def base():
