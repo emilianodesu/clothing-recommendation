@@ -3,6 +3,7 @@ from contextlib import contextmanager, nullcontext
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import resource
+import os
 import time
 import uuid
 from hm_recommender.database import connect
@@ -122,7 +123,7 @@ def build(config_path, reports, *, connection=connect, roots=(Path('/data'),Path
             if not cfg['synthetic'] and cfg['evidence_archive'] is None:raise ValueError('H&M publication requires frozen Q4 evidence')
             package=build_history_release(dataset,cfg['data_as_of'],cfg['output_dir'],evidence_archive=cfg['evidence_archive'])
             report.update(status='passed',release_id=package.release_id,rows=dataset.counts,dataset_manifest_sha256=package.dataset_manifest_sha256)
-            atomic_json(Path(config_path).with_suffix('.receipt.json'),dict(config_sha256=report['config_sha256'],release_id=package.release_id))
+            atomic_json(Path(config_path).with_suffix('.receipt.json'),dict(config_sha256=report['config_sha256'],release_id=package.release_id,orchestrator_run_id=os.environ.get('HMREC_ORCHESTRATOR_RUN_ID'),manifest_sha256=sha256(cfg['output_dir']/'manifest.json')))
         return report
     except BaseException as error:
         report.update(status='failed',error_type=type(error).__name__);raise
@@ -140,6 +141,8 @@ def publish(config_path, *, connection=connect, roots=(Path('/data'),Path('/arti
     cfg=build_configuration(config_path,roots)
     receipt=json.loads(Path(config_path).with_suffix('.receipt.json').read_text())
     if receipt['config_sha256']!=sha256(Path(config_path)):raise ValueError('Build configuration changed; rebuild before publication')
+    if receipt.get('orchestrator_run_id')!=os.environ.get('HMREC_ORCHESTRATOR_RUN_ID'):raise ValueError('Receipt belongs to another DAG run')
+    if receipt.get('manifest_sha256')!=sha256(cfg['output_dir']/'manifest.json'):raise ValueError('Built manifest changed')
     # A manual build does not authorize activation unless this explicit flag is set.
     if not cfg['activate']:return dict(published=False,reason='activation_disabled')
     with heavy_lock(connection):

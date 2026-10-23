@@ -129,3 +129,14 @@ def test_publication_rejects_config_change_after_build(events,tmp_path):
     m.build(config,tmp_path/'reports',connection=events[0][4],roots=(tmp_path,events[0][5]))
     cfg=json.loads(config.read_text());cfg['activate']=True;config.write_text(json.dumps(cfg))
     with pytest.raises(ValueError,match='configuration changed'):m.publish(config,connection=events[0][4],roots=(tmp_path,events[0][5]))
+
+
+def test_publication_rejects_receipt_from_another_dag_run(events,tmp_path,monkeypatch):
+    m=module();import json
+    config=tmp_path/'build.json';config.write_text(json.dumps(dict(dataset_dir=str(events[0][5]/'data'),output_dir=str(tmp_path/'package'),data_as_of='2020-09-09',synthetic=True,activate=False)))
+    monkeypatch.setenv('HMREC_ORCHESTRATOR_RUN_ID','manual__one')
+    m.build(config,tmp_path/'reports',connection=events[0][4],roots=(tmp_path,events[0][5]))
+    receipt=json.loads(config.with_suffix('.receipt.json').read_text())
+    assert receipt['orchestrator_run_id']=='manual__one'
+    monkeypatch.setenv('HMREC_ORCHESTRATOR_RUN_ID','manual__two')
+    with pytest.raises(ValueError,match='DAG run'):m.publish(config,connection=events[0][4],roots=(tmp_path,events[0][5]))

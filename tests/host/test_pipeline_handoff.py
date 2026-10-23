@@ -39,3 +39,42 @@ class PipelineHandoffTests(unittest.TestCase):
             self.assertEqual(read_report(archive)['result'],result)
             self.assertEqual(gh.validate_archive(archive)['kind'],'pipeline-handoff')
             self.assertIn('pipeline',gh.marker_for(root.name))
+
+
+class PipelineReviewTests(unittest.TestCase):
+    def test_build_proof_rejects_unrelated_run_and_wrong_hm_source(self):
+        from pipeline_handoff import build_proof
+        import hashlib
+        cfg=dict(data_as_of='2020-09-09',synthetic=False,activate=False)
+        raw=json.dumps(cfg).encode();sha=hashlib.sha256(raw).hexdigest()
+        frozen=json.loads((Path(__file__).resolve().parents[2]/'configs/releases/history-v1.json').read_text())
+        manifest=dict(commit='a'*40,release_id='h-'+'b'*64,data_as_of='2020-09-09',source_sha256=frozen['source_sha256'],dataset_manifest_sha256=frozen['dataset_manifest_sha256'],selection_archive_sha256=frozen['selection']['archive_sha256'],selection_archive_verified=True)
+        receipt=dict(config_sha256=sha,release_id=manifest['release_id'],orchestrator_run_id='manual__test',manifest_sha256='c'*64)
+        run=['manual__test','success','2026-10-23T01:00:00+00:00','2026-10-23T01:01:00+00:00']
+        self.assertEqual(build_proof(raw,receipt,manifest,'c'*64,run,'a'*40,True,frozen)['run_id'],'manual__test')
+        for change in ('run','source','synthetic','cutoff','manifest'):
+            import copy
+            c=copy.deepcopy(cfg);r=copy.deepcopy(receipt);m=copy.deepcopy(manifest);d=run[:]
+            if change=='run':d[0]='manual__other'
+            if change=='source':m['source_sha256']='d'*64
+            if change=='synthetic':c['synthetic']=True
+            if change=='cutoff':m['data_as_of']='2020-09-16'
+            if change=='manifest':r['manifest_sha256']='e'*64
+            encoded=json.dumps(c).encode();r['config_sha256']=hashlib.sha256(encoded).hexdigest()
+            with self.assertRaises(ValueError):build_proof(encoded,r,m,'c'*64,d,'a'*40,True,frozen)
+
+    def test_generation_gap_and_old_installed_code_are_rejected(self):
+        from pipeline_handoff import validate_resources,validate_code,SERVICES
+        samples=[]
+        for phase in ('before','pre_restart','post_restart','after'):
+            for n,(memory,cpu) in SERVICES.items():
+                generation=2 if n=='airflow-scheduler' and phase in ('post_restart','after') else 1
+                samples.append(dict(service=n,phase=phase,container_id='a'*64,image_id='sha256:'+'b'*64,started_at='2026-10-23T00:00:0%dZ'%generation,restart_count=0,cgroup_inode=generation,memory_bytes=memory,nano_cpus=cpu,peak_bytes=100,swap_peak_bytes=0,oom=0,oom_kill=0,max_events=0))
+        validate_resources(samples)
+        with self.assertRaises(ValueError):validate_resources([s for s in samples if s['phase']!='pre_restart'])
+        samples[6]['swap_peak_bytes']=1
+        with self.assertRaises(ValueError):validate_resources(samples)
+        installed={n:dict(source_tree_sha256='a'*64,dag_tree_sha256='b'*64) for n in ('airflow-scheduler','airflow-dag-processor','airflow-api')}
+        validate_code(installed,'a'*64,'b'*64)
+        installed['airflow-scheduler']['source_tree_sha256']='c'*64
+        with self.assertRaises(ValueError):validate_code(installed,'a'*64,'b'*64)
