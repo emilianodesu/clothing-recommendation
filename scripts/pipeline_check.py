@@ -59,7 +59,7 @@ def _run(root,machine,commit,source_run=None):
     def snapshots(phase):
         for name in SERVICES:
             cid=call('ps','-q',name)
-            s=capture(cid,name,'before_seed' if phase=='before' else 'after_replay',started)
+            s=capture(cid,name,'before_seed' if phase=='before' else 'after_replay',started,services=tuple(SERVICES))
             result['resources'].append(dict(service=name,phase=phase,container_id=s['container_id'],started_at=s['started_at'],image_id=s['image_id'],restart_count=s['restart_count'],cgroup_inode=s['cgroup_inode'],
                 memory_bytes=s['memory_bytes'],nano_cpus=s['nano_cpus'],peak_bytes=s['peak_bytes'],swap_peak_bytes=s['swap_peak_bytes'],
                 oom=s['events']['oom'],oom_kill=s['events']['oom_kill'],max_events=s['events']['max']))

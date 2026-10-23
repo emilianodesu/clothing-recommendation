@@ -78,3 +78,12 @@ class PipelineReviewTests(unittest.TestCase):
         validate_code(installed,'a'*64,'b'*64)
         installed['airflow-scheduler']['source_tree_sha256']='c'*64
         with self.assertRaises(ValueError):validate_code(installed,'a'*64,'b'*64)
+
+class PipelineCaptureTests(unittest.TestCase):
+    def test_airflow_capture_requires_explicit_service_contract(self):
+        from test_events_memory import snapshot
+        from events_memory import validate_snapshot
+        from pipeline_handoff import SERVICES
+        s=snapshot(service='airflow-scheduler')
+        with self.assertRaises(ValueError):validate_snapshot(s)
+        validate_snapshot(s,services=tuple(SERVICES))

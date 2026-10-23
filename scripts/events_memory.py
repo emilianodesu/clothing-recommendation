@@ -39,9 +39,9 @@ def timestamp(value):
     return parsed
 
 
-def validate_snapshot(s):
+def validate_snapshot(s, *, services=SERVICES):
     require(isinstance(s,dict) and set(s)==KEYS)
-    require(s['phase'] in PHASES and s['service'] in SERVICES)
+    require(s['phase'] in PHASES and s['service'] in services)
     require(number(s['elapsed_seconds']) and number(s['sample_seconds']))
     timestamp(s['captured_at']);timestamp(s['started_at'])
     require(isinstance(s['container_id'],str) and re.fullmatch('[a-f0-9]{64}',s['container_id']))
@@ -92,7 +92,7 @@ def _inspect(cid, output=None):
         oom_killed=info['State']['OOMKilled'])
 
 
-def capture(cid,service,phase,started,*,output=None):
+def capture(cid,service,phase,started,*,output=None,services=SERVICES):
     output = output or subprocess.check_output
     begin=time.monotonic();before=_inspect(cid,output)
     # All paths are fixed internal metrics; no user input enters shell code.
@@ -120,7 +120,7 @@ def capture(cid,service,phase,started,*,output=None):
         swap_current_bytes=int(raw['memory.swap.current']),swap_peak_bytes=int(raw['memory.swap.peak']),
         cgroup_limit_bytes=int(raw['memory.max']),cgroup_swap_limit_bytes='max' if swap_limit=='max' else int(swap_limit),
         events={k:events[k] for k in EVENTS},stat={k:stat[k] for k in STATS},pressure_us=pressure)
-    validate_snapshot(result)
+    validate_snapshot(result,services=services)
     return result
 
 
