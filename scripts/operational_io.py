@@ -3,6 +3,7 @@ import http.client
 import json
 import socket
 import subprocess
+import threading
 from project import compose
 from events_clock import require
 
@@ -37,7 +38,16 @@ class OperationalIO:
         require(1024<=port<=65535)
         def request(left):
             connection=http.client.HTTPConnection('127.0.0.1',port,timeout=left())
+            timer=None;response=None;expired=threading.Event()
             try:
+                # Socket timeouts alone only bound inactivity. A fixed deadline
+                # must also interrupt http.client's internal header/chunk loops.
+                connection.connect();sock=connection.sock
+                def cancel_read():
+                    expired.set()
+                    try:sock.shutdown(socket.SHUT_RDWR)
+                    except OSError:pass
+                timer=threading.Timer(left(),cancel_read);timer.daemon=True;timer.start()
                 headers={'Content-Type':'application/json'}
                 if label!='ui_health':headers['Authorization']='Bearer '+self.values['HM_APP_PASSWORD']
                 connection.request('GET' if body is None else 'POST',path,
@@ -55,7 +65,14 @@ class OperationalIO:
                     if response.isclosed():break
                 raw=b''.join(chunks)
                 return json.loads(raw) if decode else raw.decode()
-            except socket.timeout:
-                raise TimeoutError('HTTP deadline') from None
-            finally:connection.close()
+            except Exception as error:
+                if expired.is_set() or isinstance(error,socket.timeout):
+                    raise TimeoutError('HTTP deadline') from None
+                raise
+            finally:
+                if timer is not None:
+                    timer.cancel();timer.join(timeout=1)
+                if response is not None:response.close()
+                connection.close()
+                if timer is not None:require(not timer.is_alive())
         return self.monitor.perform(label,min(600,limit),request)

@@ -126,16 +126,20 @@ def run(root,machine_id,expected_commit,source_run=None):
         code=130 if isinstance(error,KeyboardInterrupt) else 1
         result.update(phase=phase,error_type=type(error).__name__,failure=dict(component='execution',criterion='exception'))
     finally:
-        if attempted_seed:
-            wall,mono=time.time(),time.monotonic();result['cleanup']['attempted']=True
-            try:
-                cleanup=subprocess.run(['docker','rm','-f',container],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=30)
-                result['cleanup']['exit_code']=cleanup.returncode
-                if cleanup.returncode:report['warnings'].append('seed_cleanup_failed')
-            except (OSError,subprocess.SubprocessError) as error:
-                result['cleanup']['error_type']=type(error).__name__;report['warnings'].append('seed_cleanup_failed')
-            result['cleanup'].update(utc_seconds=time.time()-wall,monotonic_seconds=time.monotonic()-mono)
-        monitor.finish()
+        try:
+            if attempted_seed:
+                wall,mono=time.time(),time.monotonic();result['cleanup']['attempted']=True
+                try:
+                    cleanup=subprocess.run(['docker','rm','-f',container],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=30)
+                    result['cleanup']['exit_code']=cleanup.returncode
+                    if cleanup.returncode:report['warnings'].append('seed_cleanup_failed')
+                except (OSError,subprocess.SubprocessError,KeyboardInterrupt) as error:
+                    result['cleanup']['error_type']=type(error).__name__;report['warnings'].append('seed_cleanup_failed')
+                    if isinstance(error,KeyboardInterrupt):
+                        code=130;result.update(phase='cleanup',error_type='KeyboardInterrupt',failure=dict(component='execution',criterion='exception'))
+                finally:
+                    result['cleanup'].update(utc_seconds=time.time()-wall,monotonic_seconds=time.monotonic()-mono)
+        finally:monitor.finish()
         if not monitor.released:report['warnings'].append('guard_release_failed')
     result.update(diagnostics=diagnostics(observations,capture_errors),temporal=monitor.evidence())
     duration=result['temporal']['assessment']['monotonic_seconds'];result['duration_seconds']=max(0,duration or 0)

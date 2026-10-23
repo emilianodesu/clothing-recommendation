@@ -168,3 +168,51 @@ class OperationalTimingTests(unittest.TestCase):
         with self.assertRaises(subprocess.TimeoutExpired):
             io.output([sys.executable,'-c','import time; time.sleep(2)'],timeout=.05,text=True)
         monitor.finish();self.assertTrue(guard.released);self.assertFalse(monitor.evidence()['complete'])
+
+    def test_drip_fed_headers_and_chunk_framing_obey_absolute_deadline(self):
+        from operational_io import OperationalIO
+        from operational_timing import Monitor
+        from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+        import threading,time
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                try:
+                    if self.path=='/health/live':
+                        self.wfile.write(b'HTTP/1.1 200 OK\r\nX-Pad: ')
+                        tail=b'\r\nContent-Length: 2\r\n\r\n{}'
+                    else:
+                        self.wfile.write(b'HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n2;pad=')
+                        tail=b'\r\n{}\r\n0\r\n\r\n'
+                    for _ in range(25):
+                        self.wfile.write(b'x');self.wfile.flush();time.sleep(.02)
+                    self.wfile.write(tail);self.wfile.flush()
+                except OSError:pass
+            def log_message(self,*args):pass
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            for path in ('/health/live','/health/ready'):
+                guard=Guard();monitor=Monitor(guard=guard);monitor.start()
+                io=OperationalIO(Path('.'),{'API_PORT':str(server.server_port),'HM_APP_PASSWORD':'secret'},monitor)
+                started=time.monotonic()
+                with self.subTest(path=path),self.assertRaises(TimeoutError):io.request(path,limit=.08)
+                elapsed=time.monotonic()-started;monitor.finish()
+                with self.subTest(path=path):self.assertLess(elapsed,.25)
+                self.assertTrue(guard.released);self.assertFalse(monitor.evidence()['complete'])
+        finally:server.shutdown();server.server_close();thread.join()
+
+    def test_lifecycle_and_nested_operation_order_cannot_be_rewritten(self):
+        from operational_timing import validate_temporal
+        import copy
+        monitor,clock,guard=self.monitor()
+        monitor.perform('sample_before_seed_api',90,
+            lambda left:monitor.perform('cgroup',30,lambda child:clock.advance(.1)))
+        monitor.finish();valid=monitor.evidence();validate_temporal(valid)
+        crossed=copy.deepcopy(valid);a,b=crossed['operations']
+        a['end'],b['end']=b['end'],a['end']
+        crossed['marks'][a['end']]['label']='end_'+a['label']
+        crossed['marks'][b['end']]['label']='end_'+b['label']
+        duplicate=copy.deepcopy(valid)
+        next(m for m in duplicate['marks'] if m['label']=='poll')['label']='start'
+        for trace in (crossed,duplicate):
+            with self.subTest(trace=trace),self.assertRaises(ValueError):validate_temporal(trace)

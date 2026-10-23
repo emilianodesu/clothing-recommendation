@@ -153,6 +153,21 @@ def validate_temporal(t):
     unpaired={i for i,m in enumerate(marks) if m['label'].startswith('begin_')}-set(begins)
     # A failed pre-operation clock check appends its bad begin mark before raising.
     require(not unpaired or (len(unpaired)==1 and not t['assessment']['coherent'] and max(unpaired)>max(begins,default=-1)))
+    require([i for i,m in enumerate(marks) if m['label']=='start']==([0] if marks else []))
+    finish_indices=[i for i,m in enumerate(marks) if m['label']=='finish']
+    require(not finish_indices or finish_indices==[len(marks)-1])
+    by_begin={o['begin']:o for o in ops};by_end={o['end']:o for o in ops if o['end'] is not None}
+    stack=[]
+    for i,m in enumerate(marks):
+        if i in by_begin:
+            op=by_begin[i]
+            if stack:require(stack[-1]['label'].startswith('sample_') and op['label']=='cgroup')
+            stack.append(op)
+        elif i in by_end:
+            require(bool(stack) and stack[-1] is by_end[i]);stack.pop()
+    # Missing ends are possible only when recording the failed tail itself failed.
+    require(not stack or (not t['assessment']['coherent'] and
+                          all(o['status']=='failed' and o['end'] is None for o in stack)))
     expected=(t['guard']['started'] and t['guard']['released'] and t['finished'] and t['assessment']['coherent']
               and all(o['status']=='passed' or o['retry'] for o in ops)
               and all(any(p['label']=='health_ready' and p['status']=='passed' for p in ops[i+1:]) for i,o in enumerate(ops) if o['retry']))

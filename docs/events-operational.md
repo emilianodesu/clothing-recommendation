@@ -5,10 +5,10 @@
 ## Qué exige esta versión
 
 - Mismas ventanas, corte y replay funcional: paridad del paquete, cuatro eventos, idempotencia, perfil actualizado, fuente inmutable y persistencia al reiniciar sólo API.
-- Doce capturas por fase/servicio, límites efectivos exactos, cero swap/OOM capturados y generaciones esperadas. API cambia generación al reiniciar; UI/PostgreSQL la conservan. Descensos incoherentes de contadores invalidan aceptación.
+- Doce capturas por fase/servicio, límites efectivos exactos, cero swap/OOM capturados y generaciones esperadas. API cambia generación al reiniciar, conservando contenedor, imagen, configuración y contador de reinicios automáticos; UI/PostgreSQL la conservan. Descensos incoherentes de contadores invalidan aceptación.
 - API 4 GiB/2 CPU; semilla 3 GiB/1 CPU/2 hilos; PostgreSQL y UI 512 MiB cada uno. VM mac24 14 GiB/4 CPU. No aumenta límites ni limpia picos/contadores.
 - Guard de reposo supervisado y UTC/monotónico coherentes: máximo 2 s de diferencia por intervalo y acumulada, presupuesto total 7,200 s. Conserva versiones e implementaciones actuales de reloj.
-- Limpieza del contenedor único de semilla y liberación del proceso propio de `caffeinate`; un fallo de limpieza impide el aprobado.
+- Limpieza del contenedor único de semilla y liberación del proceso propio de `caffeinate`; un fallo de limpieza impide el aprobado. Ctrl-C durante esa limpieza se registra como interrupción y libera el guard antes de cerrar el reporte.
 
 **Cambio de criterio explícito:** `memory.peak`, crecimiento del pico, eventos `max` y presión se conservan como diagnósticos; el pico histórico no decide el aprobado de esta versión. No se reemplaza el valor por uno menor ni se ajusta una tolerancia a los 264 KiB observados. Los validadores históricos continúan exigiendo `peak < limit` y los ZIP antiguos siguen fallidos. Este criterio comprueba funcionamiento con los recursos fijados; no certifica margen de memoria ni latencia/capacidad bajo carga, que corresponden a T8.
 
@@ -16,7 +16,7 @@
 
 Cada llamada Docker/Compose, captura cgroup y solicitud HTTP registra etiquetas fijas, índices de marcas, presupuesto, resultado y tipo de error. Se conservan UTC y monotónico incluso si divergen. Las marcas cubren semilla, muestras, replay, reinicio y finalización; cada captura se vincula al intervalo de su operación. No se exportan URLs con IDs, clientes, cuerpos, tokens, comandos ni inspect completo.
 
-El presupuesto restante limita los subprocess y cada lectura HTTP. Compose usa hasta 1,800 s por llamada; HTTP hasta 600 s, UI 10 s y cgroup/inspect 30 s; el muestreo completo tiene 90 s. Reinicio API y su espera de readiness tienen límites de 180 s cada uno. Los intentos de readiness que fallan quedan registrados; sólo se toleran si luego se observa readiness correcto. No se reintenta la semilla ni el ensayo. La limpieza del contenedor propio conserva un timeout de 30 s aunque el trabajo ya haya fallado.
+El presupuesto restante limita los subprocess y cada lectura HTTP. Un temporizador absoluto cancela el socket incluso si las cabeceras o el framing chunked llegan a cuentagotas; el temporizador se libera al terminar. Compose usa hasta 1,800 s por llamada; HTTP hasta 600 s, UI 10 s y cgroup/inspect 30 s; el muestreo completo tiene 90 s. Reinicio API y su espera de readiness tienen límites de 180 s cada uno. Los intentos de readiness que fallan quedan registrados; sólo se toleran si luego se observa readiness correcto. No se reintenta la semilla ni el ensayo. La limpieza del contenedor propio conserva un timeout de 30 s aunque el trabajo ya haya fallado.
 
 El host no puede ejecutar verificaciones mientras está suspendido. Una discrepancia se detecta al retomar y el reporte no puede quedar aprobado. Estos controles no son un watchdog externo ni una promesa de impedir cierre de tapa, apagado o suspensión forzada. `caffeinate -is -w PID` se libera al finalizar; `-s` sólo tiene efecto con alimentación AC. Mantén la Mac conectada, tapa abierta y terminal activa. La aserción sólo se soporta actualmente en macOS; esto limita este ensayo adicional, no los contenedores del proyecto.
 

@@ -45,6 +45,12 @@ def final_validation(report,result,env):
         gate('error' not in interval,interval['service'],'consistent_counters')
         restart=interval['service']=='api' and interval['to_phase']=='after_restart'
         gate(interval['comparable']!=restart,interval['service'],'expected_generation')
+    api=[s for s in result['diagnostics']['snapshots'] if s['service']=='api']
+    before,after=api[-2:]
+    stable=('container_id','image_id','restart_count','memory_bytes','memory_swap_bytes',
+            'nano_cpus','cgroup_limit_bytes','cgroup_swap_limit_bytes')
+    gate(all(before[k]==after[k] for k in stable) and utc(after['started_at'])>utc(before['started_at']),
+         'api','intentional_restart')
     temporal=result['temporal'];ops=temporal['operations'];marks=temporal['marks']
     labels=[o['label'] for o in ops]
     gate(labels.count('seed')==labels.count('restart')==1,'operations','phase_order')
@@ -73,6 +79,10 @@ def validate_operational(report,result,env,names):
         require(set(report)=={'schema_version','kind','run_id','machine_id','context','source_commit','source_clean',
                 'started_at','finished_at','status','warnings','steps','result','files','package_id'})
         require(type(report['schema_version']) is int and report['schema_version']==1 and report['kind']=='events-handoff')
+        for field in ('started_at','finished_at'):
+            value=report[field]
+            require(isinstance(value,str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})',value))
+            utc(value) # Validate calendar/offset without erasing genuine regressions.
         require(report['result']==result and result['stage']=='T5' and result['protocol']==PROTOCOL and report['status']==result['status'])
         require(set(result)==(BASE if result['status']=='passed' else BASE|{'phase','error_type','failure'}))
         require(set(env)=={'run_id','source_commit','source_tree_sha256','uv_lock_sha256','runner_tree_sha256'})

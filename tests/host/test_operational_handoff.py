@@ -152,6 +152,50 @@ class OperationalHandoffTests(unittest.TestCase):
             self.assertEqual(got['result']['cleanup']['exit_code'],1)
             self.assertEqual(got['status'],'failed')
 
+    def test_manifest_timestamps_reject_private_text_in_passed_and_failed_reports(self):
+        for status in ('passed','failed'):
+            for field in ('started_at','finished_at'):
+                for value in ('Authorization: Bearer PRIVATE-TOKEN','2026-10-22T00:00:00','2026-10-22X00:00:00+00:00'):
+                    report,env=fixture();report[field]=value
+                    if status=='failed':
+                        report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+                        report['result'].update(status='failed',phase='replay',error_type='ValueError',failure={'component':'execution','criterion':'exception'})
+                    with self.subTest(status=status,field=field,value=value),tempfile.TemporaryDirectory() as d,self.assertRaises(ValueError):
+                        self.package(Path(d),report,env)
+
+    def test_api_manual_restart_cannot_be_container_image_or_configuration_replacement(self):
+        h=self.module();import events_memory
+        for field,value in [('container_id','f'*64),('image_id','sha256:'+'f'*64),('restart_count',99),('memory_swap_bytes',999999999),('started_at','2026-10-20T00:00:00Z')]:
+            report,env=fixture();r=report['result'];r['diagnostics']['snapshots'][9][field]=value
+            r['diagnostics']=events_memory.diagnostics(r['diagnostics']['snapshots'],[])
+            with self.subTest(field=field),self.assertRaises(h.OperationalFailure):h.final_validation(report,r,env)
+
+    def test_interrupt_during_seed_cleanup_closes_interrupted_report_and_releases_guard(self):
+        import operational_check
+        from operational_timing import Monitor
+        from test_operational_timing import Guard
+        from test_events_memory import snapshot
+        from handoff import read_report
+        sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'src'))
+        import hm_recommender.api.runtime as runtime
+        guard=Guard();monitor=Monitor(guard=guard)
+        entry=dict(run_id='release-test',archive_sha256='d'*64,release_id='h-'+'e'*64,manifest_sha256='f'*64,dataset='hm')
+        class IO:
+            def output(self,command,**kwargs):return 'arm64' if command[1]=='info' else 'unix:///var/run/docker.sock'
+            def request(self,path):return dict(source_tree_sha256='a'*64,release_id=entry['release_id'])
+            def call(self,*args,**kwargs):
+                if args[0]=='run':raise ValueError('seed failed')
+                return 'a'*64
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            with patch.object(operational_check,'read_configuration',return_value={'ARTIFACTS_DIR':'./artifacts','COMPOSE_PROJECT_NAME':'isolated'}),patch.object(operational_check,'checkout_commit',return_value='b'*40),patch.object(operational_check,'Monitor',return_value=monitor),patch.object(operational_check,'OperationalIO',return_value=IO()),patch.object(runtime,'source_digest',return_value='a'*64),patch.object(operational_check,'fingerprint',return_value='c'*64),patch.object(operational_check,'runner_digest',return_value='d'*64),patch.object(operational_check,'source',return_value=entry),patch.object(operational_check,'capture',side_effect=lambda cid,service,phase,started,**kw:snapshot(phase,service)),patch.object(operational_check.subprocess,'run',side_effect=KeyboardInterrupt):
+                try:code=operational_check.run(root,'test','b'*40,'release-test')
+                except KeyboardInterrupt:self.fail('Cleanup interruption escaped report closure')
+            self.assertEqual(code,130);self.assertTrue(guard.released)
+            archives=list((root/'artifacts/handoff').glob('*.zip'));self.assertEqual(len(archives),1)
+            r=read_report(archives[0]);self.assertEqual(r['status'],'interrupted')
+            self.assertEqual(r['result']['cleanup']['error_type'],'KeyboardInterrupt')
+
     def test_operational_flag_dispatches_separately_and_excludes_memory_mode(self):
         self.module();import project,operational_check
         args=['project.py','events-check','--machine-id','mac24','--expected-commit','a'*40,'--source-run-id','release-full','--operational']
