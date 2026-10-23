@@ -1,0 +1,486 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-23",
+  "run_id": "concurrency-mac24-20261023T222617Z-2db114fb",
+  "source_commit": "5c102fd48c2de8abcd0d42045e844d4a53ecec73",
+  "status": "reviewed_failed_insufficient_overlap",
+  "original_status": "failed",
+  "t8_b_closed": false,
+  "t8_closed": false,
+  "test_evaluated": false,
+  "archive": {
+    "bytes": 26237,
+    "sha256": "2a9637f993272985427c70cfa368e7d271a441491a624badc66bc482cc97b810",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-concurrency-mac24-20261023T222617Z-2db114fb"
+  },
+  "verified": {
+    "zip_inventory_and_hashes": true,
+    "runner_digest": true,
+    "baseline_capacity_and_cohort_references": true,
+    "resource_acceptance_recomputed": true,
+    "counts_rates_and_auxiliary_identities": true
+  },
+  "acceptance_checks": {
+    "build_exit_zero": true,
+    "internal_build_fraction": true,
+    "minimum_worker_seconds": false,
+    "maximum_worker_seconds": true,
+    "minimum_overlap_arrivals": false,
+    "measurement_latency": true,
+    "measurement_error_rate": true,
+    "overlap_latency": true,
+    "overlap_error_rate": true,
+    "resources": true,
+    "source_preserved": true,
+    "auxiliaries_restored": true
+  },
+  "failed_controls": [
+    "minimum_worker_seconds",
+    "minimum_overlap_arrivals"
+  ],
+  "internal_build_fraction": 0.8029296691999481,
+  "environment": {
+    "source_commit": "5c102fd48c2de8abcd0d42045e844d4a53ecec73",
+    "runner_tree_sha256": "9e7c715594308ed7b547eb722f452dc1bcbad361a2f3509687f689f9af46d3e5",
+    "baseline_archive_sha256": "c30c903d50692e9e0a3cbfa7e58812e2e9122c11bd7c1285eaa614f6eb23722a",
+    "capacity_archive_sha256": "67944dc92461b98a256ac1fd14ce70a964471f5ee9fa4fc68e48c870484da0fe",
+    "cases_sha256": "bc1ef1a487c41ed0fc623a07d1bb70b6b351ba6e4508a84f0c28be75ed82152b",
+    "api_code_sha256": "b1f69269be9960d1df0f2693e0f13b53ce0cbaabcd98ea1f6ad68703f5a3a7b3",
+    "scheduler_code_sha256": "5e0ba69395ee17158d4b823d63776dadc072a5559204b3101df00b348765d442",
+    "state_before_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "state_after_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44"
+  },
+  "result": {
+    "protocol": "scheduler-concurrency-v1",
+    "status": "failed",
+    "warmup": {
+      "scheduled": 2400,
+      "completed": 2400,
+      "successful": 2400,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 19.999134377800225,
+      "completed_rps": 19.999134377800225,
+      "latency_seconds": {
+        "p50": 0.008091499999864027,
+        "p95": 0.014608707999286707,
+        "p99": 0.015492667000216898
+      },
+      "service_seconds": {
+        "p50": 0.004042750000735396,
+        "p95": 0.009758250000231783,
+        "p99": 0.011527209000632865
+      },
+      "offered_rps": 20,
+      "window_seconds": 120,
+      "elapsed_seconds": 120.00519395799893,
+      "clock_discrepancy_seconds": 0.000432243630712037,
+      "groups": {
+        "history": {
+          "scheduled": 800,
+          "completed": 800,
+          "successful": 800,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666378125933408,
+          "completed_rps": 6.666378125933408,
+          "latency_seconds": {
+            "p50": 0.008076541998889297,
+            "p95": 0.01469974999963597,
+            "p99": 0.016031457998906262
+          },
+          "service_seconds": {
+            "p50": 0.004008416999567999,
+            "p95": 0.009878124999886495,
+            "p99": 0.011530458001288935
+          }
+        },
+        "known_fallback": {
+          "scheduled": 800,
+          "completed": 800,
+          "successful": 800,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666378125933408,
+          "completed_rps": 6.666378125933408,
+          "latency_seconds": {
+            "p50": 0.008006832998944446,
+            "p95": 0.01458591700065881,
+            "p99": 0.01519945800100686
+          },
+          "service_seconds": {
+            "p50": 0.0039239590005308855,
+            "p95": 0.009679917000539717,
+            "p99": 0.010608957998556434
+          }
+        },
+        "unknown": {
+          "scheduled": 800,
+          "completed": 800,
+          "successful": 800,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666378125933408,
+          "completed_rps": 6.666378125933408,
+          "latency_seconds": {
+            "p50": 0.008119457999782753,
+            "p95": 0.014491375000943663,
+            "p99": 0.015166957999099395
+          },
+          "service_seconds": {
+            "p50": 0.00411891600015224,
+            "p95": 0.009677916999862646,
+            "p99": 0.011892708000232233
+          }
+        }
+      }
+    },
+    "measurement": {
+      "scheduled": 12000,
+      "completed": 12000,
+      "successful": 12000,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 19.999982398648807,
+      "completed_rps": 19.999982398648807,
+      "latency_seconds": {
+        "p50": 0.007961958001033054,
+        "p95": 0.014059999999517458,
+        "p99": 0.015061250001963344
+      },
+      "service_seconds": {
+        "p50": 0.0039018330007820623,
+        "p95": 0.009345915999801946,
+        "p99": 0.010306500000297092
+      },
+      "offered_rps": 20,
+      "window_seconds": 600,
+      "elapsed_seconds": 600.0005280410005,
+      "clock_discrepancy_seconds": 0.003830250625469489,
+      "groups": {
+        "history": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666660799549602,
+          "completed_rps": 6.666660799549602,
+          "latency_seconds": {
+            "p50": 0.008002500000657164,
+            "p95": 0.014149958000416518,
+            "p99": 0.015167707999353297
+          },
+          "service_seconds": {
+            "p50": 0.004000416000053519,
+            "p95": 0.009438917000807123,
+            "p99": 0.010433875000671833
+          }
+        },
+        "known_fallback": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666660799549602,
+          "completed_rps": 6.666660799549602,
+          "latency_seconds": {
+            "p50": 0.007877541000198107,
+            "p95": 0.014046750000488828,
+            "p99": 0.015102833000128157
+          },
+          "service_seconds": {
+            "p50": 0.0038708749998477288,
+            "p95": 0.009344541998871136,
+            "p99": 0.010350624999773572
+          }
+        },
+        "unknown": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666660799549602,
+          "completed_rps": 6.666660799549602,
+          "latency_seconds": {
+            "p50": 0.008005499999853782,
+            "p95": 0.01399991600192152,
+            "p99": 0.014861250001558801
+          },
+          "service_seconds": {
+            "p50": 0.0038778750003984896,
+            "p95": 0.009250791999875219,
+            "p99": 0.010093458999108407
+          }
+        }
+      }
+    },
+    "overlap": {
+      "scheduled": 101,
+      "completed": 101,
+      "successful": 101,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 19.956268437961132,
+      "completed_rps": 19.956268437961132,
+      "latency_seconds": {
+        "p50": 0.006864958000733168,
+        "p95": 0.008122708000882994,
+        "p99": 0.008854207999320352
+      },
+      "service_seconds": {
+        "p50": 0.002441417000227375,
+        "p95": 0.0035107080002489965,
+        "p99": 0.004128417000174522
+      },
+      "groups": {
+        "history": {
+          "scheduled": 33,
+          "completed": 33,
+          "successful": 33,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.52036493517542,
+          "completed_rps": 6.52036493517542,
+          "latency_seconds": {
+            "p50": 0.007255166001414182,
+            "p95": 0.008854207999320352,
+            "p99": 0.009096291001696954
+          },
+          "service_seconds": {
+            "p50": 0.0025915419992088573,
+            "p95": 0.003736166998351109,
+            "p99": 0.0038471250009024516
+          }
+        },
+        "known_fallback": {
+          "scheduled": 34,
+          "completed": 34,
+          "successful": 34,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.717951751392857,
+          "completed_rps": 6.717951751392857,
+          "latency_seconds": {
+            "p50": 0.006515125001897104,
+            "p95": 0.00778066600105376,
+            "p99": 0.008285833002446452
+          },
+          "service_seconds": {
+            "p50": 0.002412042000287329,
+            "p95": 0.0033365830004186137,
+            "p99": 0.003461584001342999
+          }
+        },
+        "unknown": {
+          "scheduled": 34,
+          "completed": 34,
+          "successful": 34,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.717951751392857,
+          "completed_rps": 6.717951751392857,
+          "latency_seconds": {
+            "p50": 0.006895125001392444,
+            "p95": 0.008500458001435618,
+            "p99": 0.00861533300121664
+          },
+          "service_seconds": {
+            "p50": 0.002435124999465188,
+            "p95": 0.004128417000174522,
+            "p99": 0.004221249999318388
+          }
+        }
+      }
+    },
+    "worker_seconds": 5.061066416999893,
+    "build_seconds": 4.0636803840006905,
+    "build_release_id": "h-d47a9d65c7780ec3f5e705e399a8556d84c0e6ec8a0640fdcf69d25617b8b5e3",
+    "build_exit_code": 0,
+    "resources_ok": true,
+    "source_preserved": true,
+    "auxiliaries_restored": true,
+    "auxiliary_transitions": [
+      {
+        "service": "postgres",
+        "before": {
+          "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "running": true,
+          "started_at": "2026-10-23T20:49:42.443023644Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 536870912,
+          "nano_cpus": 0
+        },
+        "after": {
+          "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "running": true,
+          "started_at": "2026-10-23T22:38:27.958354372Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 536870912,
+          "nano_cpus": 0
+        }
+      },
+      {
+        "service": "api",
+        "before": {
+          "container_id": "ad4d5b814dffc547f3f5b976fd552ce68e6b6bfcfc4a84d0fd0b68d443a06ee7",
+          "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+          "running": true,
+          "started_at": "2026-10-23T20:50:24.7442008Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 4294967296,
+          "nano_cpus": 2000000000
+        },
+        "after": {
+          "container_id": "ad4d5b814dffc547f3f5b976fd552ce68e6b6bfcfc4a84d0fd0b68d443a06ee7",
+          "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+          "running": true,
+          "started_at": "2026-10-23T22:38:34.167157782Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 4294967296,
+          "nano_cpus": 2000000000
+        }
+      },
+      {
+        "service": "mlflow",
+        "before": {
+          "container_id": "adff71cf5beedd35a1aa805fe9de496159a9d8dc19c5320a49a9e1846d33001a",
+          "image_id": "sha256:c571c0b6f8aaeb5054ebb2eac825289f0cdd36ebe746d3cf271db2a1a68a0312",
+          "running": true,
+          "started_at": "2026-10-23T19:15:26.349197379Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 1073741824,
+          "nano_cpus": 1000000000
+        },
+        "after": {
+          "container_id": "adff71cf5beedd35a1aa805fe9de496159a9d8dc19c5320a49a9e1846d33001a",
+          "image_id": "sha256:c571c0b6f8aaeb5054ebb2eac825289f0cdd36ebe746d3cf271db2a1a68a0312",
+          "running": true,
+          "started_at": "2026-10-23T22:38:40.468019188Z",
+          "restart_count": 0,
+          "health": "healthy",
+          "memory_bytes": 1073741824,
+          "nano_cpus": 1000000000
+        }
+      }
+    ],
+    "generator_cpu_seconds": 18.667389,
+    "generator_max_rss_bytes": 38649856,
+    "error_type": "ValueError",
+    "training_performed": false,
+    "test_evaluated": false,
+    "t8_closed": false
+  },
+  "resource_review": {
+    "api": {
+      "samples": 74,
+      "span_seconds": 720.789838708999,
+      "max_gap_seconds": 10.38694195899916,
+      "lifetime_peak_before_bytes": 817324032,
+      "lifetime_peak_after_bytes": 817324032,
+      "max_observed_current_bytes": 525066240,
+      "limit_bytes": 4294967296,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_delta_bytes": 0,
+      "cpu_seconds_delta": 70.568962
+    },
+    "postgres": {
+      "samples": 74,
+      "span_seconds": 720.7858434169993,
+      "max_gap_seconds": 10.393051375000141,
+      "lifetime_peak_before_bytes": 536879104,
+      "lifetime_peak_after_bytes": 536879104,
+      "max_observed_current_bytes": 528543744,
+      "limit_bytes": 536870912,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_delta_bytes": 0,
+      "cpu_seconds_delta": 13.462541
+    },
+    "ui": {
+      "samples": 74,
+      "span_seconds": 720.7922641660007,
+      "max_gap_seconds": 10.388689790999706,
+      "lifetime_peak_before_bytes": 91471872,
+      "lifetime_peak_after_bytes": 91471872,
+      "max_observed_current_bytes": 89149440,
+      "limit_bytes": 536870912,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_delta_bytes": 0,
+      "cpu_seconds_delta": 24.041752
+    },
+    "airflow-scheduler": {
+      "samples": 74,
+      "span_seconds": 720.7838487499994,
+      "max_gap_seconds": 10.381924458999492,
+      "lifetime_peak_before_bytes": 513216512,
+      "lifetime_peak_after_bytes": 2648944640,
+      "max_observed_current_bytes": 410247168,
+      "limit_bytes": 5368709120,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_delta_bytes": 0,
+      "cpu_seconds_delta": 116.795964
+    }
+  },
+  "decision": "Preserve failed and all originals; no automatic repeat or relaxed thresholds. Sustained concurrent workload remains unvalidated.",
+  "limitations": [
+    "Host worker window includes docker exec/startup/result collection; it is not exact CPU-active time. Only 101 scheduled arrivals overlap it.",
+    "Individual latency samples and private references were not transferred; quantiles/parity are reported aggregates from reviewed code.",
+    "A single short build cannot establish sustained-load behavior. No empirical latency/resource failure was observed in the captured window.",
+    "Resource captures are spaced about 10 seconds; the build lasted about 4 seconds. Cgroup lifetime peaks are retained but do not establish the exact timing of transient usage.",
+    "Baseline A had auxiliary services active; this run temporarily stopped them, so A/B differences are not purely caused by the builder.",
+    "The private new package and runner logs were not downloaded; build success is reported by the audited runner. Data/state preservation checks are aggregate, not bytewise database backups."
+  ]
+}

@@ -1,6 +1,29 @@
 # T8-B: carga con construcción H dentro del scheduler existente
 
-## Diagnóstico vigente antes del ensayo
+## Resultado revisado: failed por cobertura temporal insuficiente
+
+[Auditoría del ZIP](../evidence/concurrency-review-mac24.json) de `concurrency-mac24-20261023T222617Z-2db114fb`, commit `5c102fd48c2de8abcd0d42045e844d4a53ecec73`. Mantener failed y reserva; no repetir carga, modificar umbrales ni ejecutar recuperación: los auxiliares ya se recuperaron.
+
+| Control | Observado | Criterio |
+| --- | ---: | ---: |
+| Construcción interna | 4.064s; salida0 | Construcción válida |
+| Ventana worker | 5.061s | ≥10s y <580s |
+| Llegadas solapadas | 101 | ≥200 |
+| Proporción construcción/worker | 80.293% | ≥80% |
+| p95 medición completa | 14.060ms | <200ms |
+| p95 solapamiento | 8.123ms | <200ms |
+| Errores/omisiones en medición | 0/0 de12,000 | <1% |
+| Errores/omisiones solapadas | 0/0 de101 | <1% |
+
+Los dos mínimos de cobertura fallan; no se observó un incumplimiento de latencia o recursos. Los controles se recalcularon desde el ZIP sin reinterpretarlo como passed. La función de construcción reportó un paquete nuevo y no lo activó; su ID distinto refleja la procedencia del constructor, no un cambio del H servido.
+
+Se revisaron296 capturas,74 por servicio, cobertura≈720.8s y huecos≤10.4s. Scheduler: pico acumulado creció a2.467GiB frente a5GiB de límite; no hubo swap capturado, nuevos OOM ni eventos max nuevos. Las muestras espaciadas10s no localizan con precisión un trabajo de4s. API/PostgreSQL/UI mantuvieron las identidades de A; huellas de estado agregado antes/después coinciden. Los tres auxiliares conservan IDs/imágenes/límites y quedaron healthy con nuevas fechas de arranque registradas.
+
+La evidencia acredita funcionamiento durante una construcción breve. No acredita concurrencia sostenida, comportamiento de cargas mayores ni capacidad máxima. No se conoce por este reporte la causa de la menor duración frente a ensayos anteriores: no atribuirla a caché sin medición. A/B también difieren en auxiliares activos. No ralentizar artificialmente ni repetir construcciones sólo para alcanzar el umbral.
+
+Política provisional: no prometer construcción pesada concurrente con la garantía de latencia; usar las ventanas de mantenimiento documentadas si se requiere una garantía operativa conservadora. Antes de cerrar T8-B debe acordarse documentar este límite de alcance o preparar un protocolo nuevo para un escenario sostenido real. Test sigue reservado y no hay otro comando pendiente de mac24 por esta revisión.
+
+## Diagnóstico histórico antes del ensayo
 
 mac24 se detuvo en de2a8ec con ValueError tras el primer anuncio de comprobaciones. No hay ZIP anunciado ni evidencia de carga. El mensaje anterior no identificaba qué requisito falló; la causa sigue pendiente. El siguiente comando autorizado es **sólo diagnóstico** con el SHA entregado:
 
