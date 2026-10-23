@@ -105,3 +105,44 @@ class OperationalTimingTests(unittest.TestCase):
             self.assertNotIn('PRIVATE',encoded);self.assertNotIn('/events',encoded)
             self.assertFalse(monitor.evidence()['complete'])
         finally:server.shutdown();server.server_close();thread.join()
+
+    def test_http_readiness_cap_and_slow_body_fail_with_closed_trace(self):
+        self.assertIsNotNone(importlib.util.find_spec('operational_io'))
+        from operational_io import OperationalIO
+        from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+        import threading,time
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200);self.send_header('Content-Length','10');self.end_headers()
+                try:self.wfile.write(b'{');self.wfile.flush();time.sleep(.3);self.wfile.write(b'         ')
+                except OSError:pass
+            def log_message(self,*args):pass
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            monitor,clock,guard=self.monitor()
+            io=OperationalIO(Path('.'),{'API_PORT':str(server.server_port),'HM_APP_PASSWORD':'secret'},monitor)
+            started=time.monotonic()
+            with self.assertRaises(TimeoutError):io.request('/health/ready',limit=.05)
+            self.assertLess(time.monotonic()-started,1)
+            monitor.finish();self.assertFalse(monitor.evidence()['complete'])
+        finally:server.shutdown();server.server_close();thread.join()
+
+    def test_retry_is_allowed_only_for_readiness_that_later_succeeds(self):
+        monitor,clock,guard=self.monitor()
+        with self.assertRaises(OSError):monitor.perform('health_ready',10,lambda left:(_ for _ in ()).throw(OSError('pending')))
+        monitor.retry_ready();monitor.perform('health_ready',10,lambda left:'ready');monitor.finish()
+        self.assertTrue(monitor.evidence()['complete']);self.assertEqual(monitor.evidence()['operations'][0]['status'],'failed')
+        monitor,clock,guard=self.monitor()
+        with self.assertRaises(OSError):monitor.perform('seed',10,lambda left:(_ for _ in ()).throw(OSError('failed')))
+        with self.assertRaises(ValueError):monitor.retry_ready()
+        monitor.finish();self.assertFalse(monitor.evidence()['complete'])
+
+    def test_real_child_timeout_is_reaped_and_guard_is_released(self):
+        self.assertIsNotNone(importlib.util.find_spec('operational_io'))
+        from operational_io import OperationalIO
+        import subprocess
+        monitor,clock,guard=self.monitor();io=OperationalIO(Path('.'),{},monitor)
+        with self.assertRaises(subprocess.TimeoutExpired):
+            io.output([sys.executable,'-c','import time; time.sleep(2)'],timeout=.05,text=True)
+        monitor.finish();self.assertTrue(guard.released);self.assertFalse(monitor.evidence()['complete'])

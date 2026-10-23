@@ -149,6 +149,9 @@ def summary(report):
     if report.get('kind') == 'events-handoff':
         lines[0] = '# Resultado de eventos e interfaz T5'
         lines[-2] = 'T5: flujo HTTP de eventos y salud de interfaz, perfiles y reinicio. No acredita carga T8 ni aceptación final.'
+        if report.get('result', {}).get('protocol') == 'events-operational-v1':
+            lines[0] = '# Ensayo operativo T5 con continuidad temporal'
+            lines[-2] = 'Protocolo operativo versionado: revisar continuidad, memoria y funciones. No cierra T5 sin auditoría ni acredita carga T8.'
         if report.get('result', {}).get('protocol') == 'events-clock-v1':
             lines[0] = '# Diagnóstico de relojes T5 en lectura'
             lines[-2] = 'Sólo recolección de relojes/energía: passed no acredita causa confirmada, cierre T5 ni rendimiento.'
@@ -348,6 +351,10 @@ def read_report(archive):
                 from clock_handoff import validate_clock, validate_clock_files
                 validate_clock(report,result,environment,names)
                 validate_clock_files(report,bundle)
+            elif result.get('protocol')=='events-operational-v1' or 'temporal' in result:
+                from operational_handoff import validate_operational,validate_operational_files
+                validate_operational(report,result,environment,names)
+                validate_operational_files(report,bundle)
             elif (result.get('protocol')=='events-memory-v1' or 'diagnostics' in result
                     or 'failure' in result or 'runner_tree_sha256' in environment):
                 from events_memory_handoff import validate_memory_envelope

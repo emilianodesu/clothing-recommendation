@@ -1,6 +1,7 @@
 """Local bounded IO for operational T5. Trace labels never contain URLs or bodies."""
 import http.client
 import json
+import socket
 import subprocess
 from project import compose
 from events_clock import require
@@ -19,7 +20,7 @@ class OperationalIO:
         template='{"Id":{{json .Id}},"Image":{{json .Image}},"RestartCount":{{.RestartCount}},"State":{"Running":{{.State.Running}},"StartedAt":{{json .State.StartedAt}},"OOMKilled":{{.State.OOMKilled}}},"HostConfig":{"Memory":{{.HostConfig.Memory}},"MemorySwap":{{.HostConfig.MemorySwap}},"NanoCpus":{{.HostConfig.NanoCpus}}},"NetworkSettings":{"Ports":{{json .NetworkSettings.Ports}}}}'
         return json.loads(self.output(['docker','inspect','--format',template,cid],text=True,label='inspect'))
 
-    def request(self,path,body=None,expected=200):
+    def request(self,path,body=None,expected=200,*,limit=600):
         labels={'/health/live':'health_live','/health/ready':'health_ready','/customers':'http_customers',
                 '/catalog?limit=2':'http_catalog','/recommend':'http_recommend','/events':'http_events',
                 '/admin/releases/prepare':'http_prepare','/admin/releases/activate':'http_activate'}
@@ -27,12 +28,12 @@ class OperationalIO:
         if label is None and path.startswith('/streams/') and path.endswith('/recommend'):label='http_profile'
         if label is None and path.startswith('/admin/streams/') and path.endswith('/refresh'):label='http_refresh'
         require(label is not None)
-        return self._http(label,int(self.values['API_PORT']),path,body,expected,True)
+        return self._http(label,int(self.values['API_PORT']),path,body,expected,True,limit)
 
     def ui_health(self):
-        return self._http('ui_health',int(self.values['UI_PORT']),'/_stcore/health',None,200,False)
+        return self._http('ui_health',int(self.values['UI_PORT']),'/_stcore/health',None,200,False,10)
 
-    def _http(self,label,port,path,body,expected,decode):
+    def _http(self,label,port,path,body,expected,decode,limit):
         require(1024<=port<=65535)
         def request(left):
             connection=http.client.HTTPConnection('127.0.0.1',port,timeout=left())
@@ -54,5 +55,7 @@ class OperationalIO:
                     if response.isclosed():break
                 raw=b''.join(chunks)
                 return json.loads(raw) if decode else raw.decode()
+            except socket.timeout:
+                raise TimeoutError('HTTP deadline') from None
             finally:connection.close()
-        return self.monitor.perform(label,10 if label=='ui_health' else 600,request)
+        return self.monitor.perform(label,min(600,limit),request)

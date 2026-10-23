@@ -76,12 +76,16 @@ def main():
     demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
     demo.add_argument('--skip-build',action='store_true')
     demo.add_argument('--machine-id',default='local')
-    demo.add_argument('--memory-diagnostics',action='store_true')
+    demo_mode=demo.add_mutually_exclusive_group()
+    demo_mode.add_argument('--memory-diagnostics',action='store_true')
+    demo_mode.add_argument('--operational',action='store_true')
     events_check=sub.add_parser('events-check',help='T5 sobre un T4-A existente; sin entrenamiento')
     events_check.add_argument('--machine-id',required=True)
     events_check.add_argument('--expected-commit',required=True)
     events_check.add_argument('--source-run-id',required=True)
-    events_check.add_argument('--memory-diagnostics',action='store_true')
+    events_mode=events_check.add_mutually_exclusive_group()
+    events_mode.add_argument('--memory-diagnostics',action='store_true')
+    events_mode.add_argument('--operational',action='store_true')
     up = sub.add_parser('up', help='Arrancar el perfil de servicio local')
     up.add_argument('--profile', choices=('serve',), required=True)
     up.add_argument('--skip-build', action='store_true')
@@ -120,6 +124,12 @@ def main():
             return check_clock(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,
                                 '--source-report',args.source_report])
         if args.action=='events-check':
+            if args.operational:
+                from operational_check import run
+                import re
+                if not re.fullmatch('[a-z][a-z0-9_-]{0,31}',args.machine_id) or not re.fullmatch('[a-f0-9]{40}',args.expected_commit):
+                    parser.error('Machine alias and full expected SHA required')
+                return run(ROOT,args.machine_id,args.expected_commit,args.source_run_id)
             from events_check import main as check_events
             return check_events(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,'--source-run-id',args.source_run_id]+(['--memory-diagnostics'] if args.memory_diagnostics else []))
         if args.action == 'serving-check':
@@ -166,6 +176,9 @@ def main():
             if args.action=='demo':
                 from events_check import run as run_events
                 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+                if args.operational:
+                    from operational_check import run as run_operational
+                    return run_operational(ROOT,args.machine_id,commit)
                 return run_events(ROOT,args.machine_id,commit,**({'memory_diagnostics':True} if args.memory_diagnostics else {}))
         elif args.action in ('prepare-release','activate-release','rollback-release'):
             extra = ['prepare','--directory',args.directory] if args.action=='prepare-release' else (
