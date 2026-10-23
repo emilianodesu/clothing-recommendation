@@ -1,5 +1,13 @@
 # Instrucciones para agentes
 
+## Paso vigente T7: implementación y ensayo sintético disponibles; una ejecución mac24 pendiente
+
+Lee `docs/reproducibility.md`, `docs/mac24-t7-prompt.md` y `evidence/portability-local.json`. T6/E5 cerradas. T7/E6 siguen abiertas hasta revisión principal H&M. Con main limpio, SHA completo recibido, AC y Terminal abierta, ejecutar una vez `scripts/mac24_t7.py --expected-commit SHA`. Conserva contexto colima-hm-project, SSL_CERT_FILE y VM14GiB/4CPU. No repetir campañas, entrenamientos o test.
+
+El lanzador construye jobs/app sin recrear PostgreSQL/API originales; verifica suite portability, inventario y fuente T6. Produce respaldo privado lógico de tablas+paquetes y restaura en `.runtime/T7 restored installation`, credenciales/volúmenes nuevos, API localhost18024, sin scheduler destino. Verifica seis consultas, funcionamiento sin red externa en el destino y estado original. Conserva todos los artefactos, destinos fallidos, reservas y contadores. Sólo el reporte agregado se publica por GitHub; no subir respaldos privados con clientes ni copiar credenciales. El respaldo usa bloqueos de escritura; los DAG originales recuperan su estado de pausa anterior. Ante fallo, conservar ZIP/logs, no repetir ni ampliar recursos.
+
+No cerrar T7/E6 por `passed` del lanzador ni iniciar T8 antes de auditoría. Segunda ruta/credenciales nuevas no equivalen a otro usuario de SO. La prueba física en mac24 reproduce el flujo allí; no prueba un traslado del respaldo H&M a esta Mac. SSH desde Terminal sigue autorizado, sin crear claves. Esta sección prevalece sobre instrucciones históricas siguientes.
+
 ## Estado vigente: T6/E5 cerradas; siguiente desarrollo T7 a solicitud
 
 La corrida `pipeline-mac24-20261023T193510Z-532c902f`, commit `13af71c012cc8f0142e2b6eba111357160fb6f69`, fue descargada y auditada: `evidence/pipeline-review-mac24.json`. ZIP 6,441 bytes, SHA-256 `99aeda54a172fbe1d5bfceea153ed0904f71e3a21c4d490abd7f88efd57b69ea`. Protocolo `pipeline-v2`: dos eventos simulados, dos ciclos programados, frescura 30.465/276.191 s y duración 327.475 s. Veinticuatro capturas, límites e identidades correctos; sólo scheduler cambia de generación durante T6. Cero swap/OOM capturados. H vigente y recomendaciones base conservados; construcción nueva con `activate=false`; ambos DAG pausados.

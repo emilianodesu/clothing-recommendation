@@ -74,3 +74,7 @@ Seguridad: consultas de sólo lectura con parámetros y timeout, salida limitada
 Las 24 capturas conservan límites y generaciones; cero swap/OOM capturados. PostgreSQL registra 73,327 eventos `max` nuevos y pico 536,879,104 bytes (8 KiB sobre 512 MiB). Se acepta funcionamiento bajo el protocolo operativo, no margen de memoria ni carga sostenida. El cambio de generación previo de Colima se documenta por identidad y agregados; no se comparan contadores con T5. La recuperación no acredita igualdad fila por fila.
 
 La suite pipeline con salida cero, 3,380 archivos preservados y capacidad VM son declaraciones del adaptador mac24. Aquí se verificaron reportes, huellas y contratos; no se recibieron tablas privadas ni el paquete completo. La prueba de dos eventos no demuestra una garantía general de frescura. No repetir T6; siguen T7 y T8 a solicitud, manteniendo test reservado.
+
+## Respaldo y recuperación T7
+
+Consultar [reproducibilidad](reproducibility.md) para backup, restauración aislada y controles offline. El ensayo sintético pasó; H&M requiere [una ejecución mac24](mac24-t7-prompt.md) y revisión. No se modifica el servicio original ni se reanuda Airflow automáticamente en el destino.

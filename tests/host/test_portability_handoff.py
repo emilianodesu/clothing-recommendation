@@ -29,3 +29,7 @@ class PortableReport(unittest.TestCase):
             write_json(folder/'result.json',r);write_json(folder/'environment.json',env)
             (folder/'commit.txt').write_text('a'*40+'\n');(folder/'job.log').write_text('portability T7\nstatus: failed\n')
             self.assertEqual(read_report(package_report(folder,report))['result'],r)
+    def test_github_accepts_portability_prefix(self):
+        path=Path(__file__).resolve().parents[2]/'scripts/github-handoff.py'
+        spec=importlib.util.spec_from_file_location('gh_portable',path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        self.assertEqual(module.tag_for('portability-local-example'),'handoff-portability-local-example')

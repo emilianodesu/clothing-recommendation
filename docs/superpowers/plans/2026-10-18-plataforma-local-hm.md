@@ -288,6 +288,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 
+**Implementación disponible:** [guía](../../reproducibility.md), [evidencia local](../../../evidence/portability-local.json) y [ensayo mac24 pendiente](../../mac24-t7-prompt.md). T7/E6 abiertas. Se implementó dump lógico COPY de tablas de aplicación y paquetes registrados (sin roles/SQL ejecutable), restauración en proyecto nuevo, huellas de código y paridad. La prueba local usa otra ruta con espacios/credenciales, no otro usuario de SO; no se marca reproducción física hasta auditar mac24.
+
 **Archivos:** crear `scripts/backup.py`, `scripts/restore.py`, `docs/reproducibility.md`, `tests/integration/test_release_transfer.py`, `tests/integration/test_backup_restore.py`, `tests/integration/test_offline.py`. Modificar `releases/package.py`, `scripts/project.py`, `.gitignore`, `README.md`, `docs/setup.md` y `docs/operations.md`.
 
 **Interfaces:** `export_release(release_id: str, output: Path) -> Path`; `import_release(archive: Path, destination: Path) -> HistoryReleaseManifest`; `backup(output_dir: Path) -> Path`; `restore(input_dir: Path, project_name: str) -> None`. El manifiesto del respaldo enlaza dumps lógicos PostgreSQL, artefactos y versión activa. Los experimentos vectoriales, si se respaldan, son un conjunto separado; el motor seleccionado no necesita reconstruir Qdrant.

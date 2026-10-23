@@ -103,6 +103,8 @@ def restore_into(source,archive,destination,checksum,port):
     for command in (['docker','volume','ls','--filter','label=com.docker.compose.project='+name,'-q'],
                     ['docker','ps','-a','--filter','label=com.docker.compose.project='+name,'-q']):
         if subprocess.check_output(command,text=True).strip():raise ValueError('Destination already owns Docker resources')
+    if archive.stat().st_size>20*2**30:raise ValueError('Backup exceeds supported size')
+    if shutil.disk_usage(destination.parent).free<3*archive.stat().st_size+2**30:raise ValueError('Insufficient destination disk space')
     images=verify_images(source)
     v=prepare_destination(source,destination,port)
     networks=reserve_networks(v)

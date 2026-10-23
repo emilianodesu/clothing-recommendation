@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "scope": "synthetic local only; H&M mac24 pending, T7/E6 open",
+  "source_commit": "a84fa2a9709b0e39ff7da1df5faa5cb04cbf9123",
+  "run_id": "portability-development-20261023T202132Z-fd8fdbce",
+  "status": "passed",
+  "archive": {
+    "bytes": 3103,
+    "sha256": "a081e3c90e6d06b1d13f0aa90f1e1befb3f6e130ccc88ccdc5ed31366f7c14e3"
+  },
+  "result": {
+    "stage": "T7",
+    "protocol": "portability-v1",
+    "status": "passed",
+    "checks": {
+      "source_preserved": true,
+      "source_parity": true,
+      "restored_parity": true,
+      "offline": true,
+      "fresh_credentials": true
+    },
+    "duration_seconds": 16.611397167,
+    "archive_bytes": 71125,
+    "archive_sha256": "9268f903543eff0d93bdbf9f9fae1594a0d7bafaf855a11ae38d94c9b2f913d5",
+    "parity_queries": 6,
+    "offline_queries": 6,
+    "source_state_sha256": "d9cc199fafe29f9dc666db3f7c25a4fd418ef891f7fdb7f85a77132e0e5ee384",
+    "source_run_id": null,
+    "source_archive_sha256": null,
+    "source_postgres": {
+      "container_id": "445c11ecbf154584d0a1a7b092851ae1851e40ed2940c3b8a53944510d41c624",
+      "started_at": "2026-10-23T20:14:03.476431605Z",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "destination_postgres": {
+      "container_id": "f939a45633975eac2acc742b3ca3641f08264a04bd1bf2baeb2e3bdaaff2d3c7",
+      "started_at": "2026-10-23T20:21:35.277733684Z",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "images": {
+      "hmrec-jobs:0.1.0": "sha256:59d513c77601dc8537cd4fe80286ac72555d3a634041690e5ad4385c77f86372",
+      "hmrec-app:0.1.0": "sha256:2019bdf69ec57a1c6ffc0b4c821f4228db8690d0e16e72591fa77bc6751986e4"
+    },
+    "error_type": null,
+    "training_performed": false,
+    "test_evaluated": false,
+    "t7_closed": false
+  },
+  "validation": {
+    "host_tests": 187,
+    "integration_portability_tests": 10,
+    "unit_tests": 62,
+    "full_compose_restore": true,
+    "different_path_with_spaces": true,
+    "fresh_credentials": true,
+    "different_os_user": false,
+    "physical_mac24": false,
+    "held_out_test_evaluated": false
+  },
+  "limitations": [
+    "Local ARM64 Docker only; another path and fresh database credentials are not another OS user or physical machine.",
+    "T7 validates six fixed recommendation queries, not a throughput benchmark.",
+    "Originals preserved; local failed report and failed destination retained.",
+    "mac24 adapter and H&M execution pending."
+  ],
+  "failed_attempts": [
+    {
+      "run_id": "portability-development-20261023T202036Z-d7adf3e1",
+      "cause": "Docker network IPAM Config=null not handled; fixed with regression test",
+      "sha256": "3dd913bf333992f76cc459ac31e2b5fd7863244a3b73bd680d1aeec2ab45db0e"
+    }
+  ],
+  "preflight_failures": [
+    "Synthetic package preparation first omitted HMREC_SOURCE_COMMIT; no backup created.",
+    "First independent destination hit exhausted Docker default address pools after DB restoration; destination retained, no success report. Explicit nonoverlapping /24 allocation added."
+  ]
+}

@@ -106,3 +106,7 @@ Homebrew y APT pueden ofrecer otras versiones al repetir la instalación. El pre
 | `DOCKER_HOST` o contexto remoto | Elegir un contexto local y quitar `DOCKER_HOST` de esa terminal antes de la prueba |
 
 La asignación de recursos de Colima está documentada en su [guía oficial](https://github.com/abiosoft/colima#customizing-the-vm).
+
+## Restaurar sin el entorno del autor
+
+La [guía T7](reproducibility.md) permite restaurar tablas y paquetes H en una ruta nueva, con credenciales propias e imágenes precargadas. No requiere Kaggle ni MLflow original. Sigue sus verificaciones antes de declarar utilizable el destino.

@@ -1,5 +1,9 @@
 # Proyecto final de Datos Masivos
 
+**T7 implementada, pendiente de ensayo H&M:** exportación/importación de paquetes, respaldo lógico, restauración en instalación nueva y paridad offline. [Guía reproducible](docs/reproducibility.md) y [procedimiento mac24](docs/mac24-t7-prompt.md). No repetir T6; T8/test siguen reservados.
+
+**Seguridad de recuperación:** se rechazan rutas/enlaces e inventarios inválidos, se verifican huellas y código instalado y se generan credenciales nuevas. Los respaldos con perfiles permanecen privados; GitHub recibe sólo reportes agregados.
+
 **T6/E5 cerradas tras revisión:** [auditoría mac24](evidence/pipeline-review-mac24.json), protocolo `pipeline-v2`. Dos ciclos programados y recuperación del scheduler; frescura 30.465/276.191 s (<600 s), duración 327.475 s y 24 capturas sin swap/OOM capturados. H vigente se conserva. PostgreSQL registró 73,327 eventos `max` nuevos y pico 8 KiB superior a su límite: no acredita margen de memoria ni carga sostenida. [Operación y límites](docs/operations.md). El prompt T6 es histórico; no repetirlo. Siguen T7 (portabilidad/respaldo/restauración) y T8 (carga, test reservado e informe), sin iniciarlos automáticamente.
 
 Las notas anteriores de implementación conservadas abajo son históricas; prevalece este estado de cierre.

@@ -38,7 +38,7 @@ def marker_for(run_id):
     return RELEASE_MARKER if run_id.startswith('release-') else QUALITY_MARKER if run_id.startswith('quality-') else DIAGNOSTIC_MARKER if run_id.startswith('diagnose-') else TRAIN_MARKER if run_id.startswith('train-') else DATA_MARKER if run_id.startswith('data-') else MARKER
 
 def tag_for(run_id):
-    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-', 'events-', 'pipeline-')):
+    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-', 'events-', 'pipeline-', 'portability-')):
         raise ValueError('Run ID inválido; usa el identificador bootstrap-... o data-... del reporte')
     return 'handoff-' + run_id
 

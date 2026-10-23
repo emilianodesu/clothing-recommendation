@@ -21,12 +21,10 @@ def create(root):
     def airflow(*args):return call('exec','-T','airflow-scheduler','airflow',*args)
     try:
         if scheduler:
-            dags=json.loads(airflow('dags','list','--output','json'))
-            for row in dags:
-                if row['dag_id'] in ('hm_build_release','hm_refresh_profiles'):
-                    paused=row['is_paused']
-                    if not isinstance(paused,bool):raise ValueError('Unrecognized DAG pause state')
-                    original[row['dag_id']]=paused
+            # CLI list emits warnings and string booleans in Airflow 3.3; read typed DB state.
+            program="from hm_recommender.database import connect\nimport json\nwith connect('airflow') as c: print(json.dumps(dict(c.execute(\"SELECT dag_id,is_paused FROM dag WHERE dag_id IN ('hm_build_release','hm_refresh_profiles')\").fetchall())))"
+            original=json.loads(call('exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',program))
+            if not all(type(v) is bool for v in original.values()):raise ValueError('Unrecognized DAG pause state')
             if len(original)!=2:raise ValueError('Expected two installed DAGs')
             for dag in original:airflow('dags','pause',dag)
             # Pause prevents new schedules, but wait for tasks already queued/running.
