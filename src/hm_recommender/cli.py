@@ -92,9 +92,22 @@ def main():
     event_seed.add_argument('--mode',choices=('synthetic','simulation'),required=True)
     demo=event_commands.add_parser('demo-package')
     demo.add_argument('--output',type=Path,required=True)
+    orchestration=commands.add_parser('pipeline')
+    operations=orchestration.add_subparsers(dest='pipeline_action',required=True)
+    register=operations.add_parser('register');register.add_argument('--stream-id',required=True)
+    refresh=operations.add_parser('refresh');refresh.add_argument('--reports',type=Path,default=Path('/artifacts/pipeline/reports'))
+    for action in ('build','publish'):
+        op=operations.add_parser(action);op.add_argument('--config',type=Path,required=True)
+        op.add_argument('--reports',type=Path,default=Path('/artifacts/pipeline/reports'))
     args = parser.parse_args()
     try:
-        if args.command=='events':
+        if args.command=='pipeline':
+            from hm_recommender.pipeline import runner
+            if args.pipeline_action=='register':output=runner.register(args.stream_id)
+            elif args.pipeline_action=='refresh':output=runner.refresh(args.reports)
+            elif args.pipeline_action=='build':output=runner.build(args.config,args.reports)
+            else:output=runner.publish(args.config)
+        elif args.command=='events':
             if args.events_action=='seed':
                 from hm_recommender.events.aggregate import initialize_stream
                 output=initialize_stream(args.dataset,args.directory,args.stream_id,mode=args.mode)

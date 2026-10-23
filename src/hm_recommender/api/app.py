@@ -19,6 +19,8 @@ def create_app(registry=None, *, admin_token=None, input_root=None):
     root = Path(input_root or os.environ.get('HMREC_INPUT_ROOT','/artifacts')).resolve()
     counts = {'ok':0,'unavailable':0}; duration = [0.0]; metrics_lock = threading.Lock()
     code_digest = source_digest()
+    from hm_recommender.api.metrics import Metrics
+    telemetry=Metrics()
 
     @asynccontextmanager
     async def lifespan(app):
@@ -27,6 +29,14 @@ def create_app(registry=None, *, admin_token=None, input_root=None):
         finally: registry.close()
 
     app = FastAPI(lifespan=lifespan)
+
+    @app.middleware('http')
+    async def measure(request, call_next):
+        started=time.perf_counter();status=500
+        try:
+            response=await call_next(request);status=response.status_code;return response
+        finally:
+            if request.url.path!='/metrics':telemetry.observe(status,time.perf_counter()-started)
 
     @app.exception_handler(RequestValidationError)
     async def invalid(request, error):
@@ -50,7 +60,9 @@ def create_app(registry=None, *, admin_token=None, input_root=None):
         started=time.perf_counter(); status='ok'
         try:
             # The retained object remains consistent after the lock is released.
-            return registry.snapshot().recommend(request)
+            response=registry.snapshot().recommend(request)
+            if response.fallback:telemetry.used_fallback()
+            return response
         except Unavailable:
             status='unavailable'
             raise HTTPException(status_code=503,detail='No valid active release') from None
@@ -64,7 +76,7 @@ def create_app(registry=None, *, admin_token=None, input_root=None):
             return ('# TYPE hmrec_recommendations_total counter\n'+
                 ''.join(f'hmrec_recommendations_total{{status="{k}"}} {v}\n' for k,v in counts.items())+
                 '# TYPE hmrec_recommendation_seconds_sum counter\n'+
-                f'hmrec_recommendation_seconds_sum {duration[0]}\n')
+                f'hmrec_recommendation_seconds_sum {duration[0]}\n'+telemetry.render())
 
     def run_admin(operation):
         try: return operation()

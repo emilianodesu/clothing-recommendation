@@ -19,3 +19,6 @@
 **/*.pyc
 
 !scripts/quality_handoff.py
+
+!dags/
+!dags/**

@@ -71,6 +71,12 @@ def run_bootstrap(root, skip_build=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
+    check_pipeline=sub.add_parser('pipeline-check')
+    check_pipeline.add_argument('--machine-id',required=True)
+    check_pipeline.add_argument('--expected-commit',required=True)
+    check_pipeline.add_argument('--source-run-id')
+    pipeline=sub.add_parser('pipeline',help='T6: explicit Airflow lifecycle; preserve existing services')
+    pipeline.add_argument('pipeline_args',nargs=argparse.REMAINDER)
     clock = sub.add_parser('clock-check', help='T5: diagnóstico de relojes/energía en lectura; no ejecuta Docker')
     clock.add_argument('--machine-id', required=True)
     clock.add_argument('--expected-commit', required=True)
@@ -81,7 +87,7 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline"), required=True)
     verify.add_argument("--existing-services", action="store_true", help="Exigir PostgreSQL activo sin arrancarlo ni recrearlo (serving/events)")
     demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
     demo.add_argument('--skip-build',action='store_true')
@@ -128,6 +134,12 @@ def main():
     tracking = sub.add_parser("tracking-up", help="Arrancar MLflow local; --port se conserva en .env")
     tracking.add_argument("--port", type=int)
     args = parser.parse_args()
+    if args.action=='pipeline-check':
+        from pipeline_check import main as check_pipeline_main
+        return check_pipeline_main(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit]+(['--source-run-id',args.source_run_id] if args.source_run_id else []))
+    if args.action=='pipeline':
+        from pipeline_control import main as pipeline_main
+        return pipeline_main(args.pipeline_args)
     try:
         if args.action == 'clock-check':
             from clock_check import main as check_clock
@@ -230,7 +242,7 @@ def main():
         elif args.action == "status":
             compose(ROOT, values, "ps")
         elif args.action == "verify":
-            if args.existing_services and args.suite not in ("serving", "events"):
+            if args.existing_services and args.suite not in ("serving", "events", "pipeline"):
                 raise ValueError("--existing-services sólo aplica a serving/events")
             compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest", "tests/unit", "-q")
             if args.suite == "data":
@@ -240,16 +252,21 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_release_parity.py", "tests/integration/test_quality_folds.py",
                         "tests/integration/test_recent_history.py", "-q")
-            if args.suite in ('serving','events'):
+            if args.suite in ('serving','events','pipeline'):
                 verification_postgres(ROOT, values, existing_only=args.existing_services)
                 compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', '-e', 'HMREC_SERVING_TESTS=1', 'jobs',
                     'python', '-m', 'pytest', 'tests/integration/test_recommendations.py',
                     'tests/integration/test_release_activation.py', 'tests/integration/test_serving_http.py', '-q')
                 subprocess.run([sys.executable, str(ROOT/'tests/integration/test_serving_publication.py'), '-v'],
                     cwd=ROOT, env=dict(os.environ, HMREC_DOCKER_TESTS='1'), check=True)
-            if args.suite=='events':
+            if args.suite in ('events','pipeline'):
                 compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
                     'python','-m','pytest','tests/integration/test_events.py','tests/integration/test_demo.py','tests/integration/test_ui.py','-q')
+            if args.suite=='pipeline':
+                compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
+                    'python','-m','pytest','tests/integration/test_pipeline.py','-q')
+                compose(ROOT,values,'run','--rm','--no-deps','-T','--entrypoint','/opt/airflow-env/bin/python','airflow-scheduler',
+                    '-c',"import sys;sys.path.insert(0,'/opt/airflow/dags');import build_release,refresh_profiles;assert len(build_release.dag.tasks)==2;assert refresh_profiles.dag.catchup is False;print('DAG imports passed')")
             if args.suite == "quality":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_quality_folds.py", "tests/integration/test_quality_worker.py", "tests/integration/test_graph_quality.py", "tests/integration/test_ranker_quality.py", "tests/integration/test_ranker_worker.py", "tests/integration/test_quality_campaign.py", "-q")
@@ -263,7 +280,7 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "-e", "HMREC_TRACKING_TESTS=1",
                         "-e", "MLFLOW_TRACKING_URI=http://mlflow:5000", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_tracking.py", "-q")
-            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving", "events"):
+            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline"):
                 subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
                                cwd=ROOT, check=True)
             if args.suite == "bootstrap":

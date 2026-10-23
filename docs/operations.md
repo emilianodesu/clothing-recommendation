@@ -1,0 +1,52 @@
+# Operación local T6
+
+T6 añade Airflow 3.3.2 con LocalExecutor: API, scheduler y procesador de DAG. No instala Celery/Redis, no monta el socket Docker y no entrena. El runtime de Airflow vive en `/opt/airflow-env`; las tareas usan `/opt/hmrec/.venv/bin/hmrec`, el mismo paquete y lock del motor. Constraints oficiales y hashes de ambas resoluciones quedan en Git. [Arquitectura oficial](https://airflow.apache.org/docs/apache-airflow/3.3.2/core-concepts/executor/local.html).
+
+## Preparación explícita
+
+Parte de un clon limpio, `.env` propio y PostgreSQL ya iniciado. `pipeline init` no lo arranca ni recrea; aplica la migración aditiva 004 al esquema de aplicación e inicializa la base `hm_airflow` ya provisionada. Conserva datos, credenciales, servicios y el paquete seleccionado. Construye jobs antes de Airflow, porque la imagen de Airflow incorpora el entorno de trabajos local. Para desarrollo, usa un proyecto Compose y puertos propios: 8000 puede estar ocupado.
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline init
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py verify --suite pipeline --existing-services
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline up
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline status
+```
+
+El API de recomendaciones debe actualizarse a esta versión para exponer las métricas; sólo `mac24_t6.py` automatiza esa sustitución controlada de API tras las pruebas. No recrea PostgreSQL ni UI. Los volúmenes y originales permanecen. Los perfiles base `/recommend` no se modifican. Una migración fallida detiene la preparación; no borres tablas ni repitas automáticamente un ensayo.
+
+Airflow publica su UI sólo en `127.0.0.1:${AIRFLOW_PORT}`. Usuario `admin`; contraseña local en `ARTIFACTS_DIR/airflow/simple_auth_manager_passwords.json`, permisos privados. No subir ese archivo ni sus logs. Las claves de ejecución se derivan con propósitos distintos de la credencial local; no se copian entre equipos. SimpleAuthManager se limita a esta instalación local; no exponer esta UI en Internet.
+
+Presupuestos: scheduler+tarea 5 GiB/2 CPU; API Airflow 768 MiB/0.5 CPU; procesador DAG 512 MiB/0.5 CPU. API H conserva 4 GiB/2 CPU, UI/PostgreSQL 512 MiB. VM mac24 14 GiB/4 CPU. Los límites de los contenedores no prometen que todos puedan alcanzar sus máximos simultáneamente; comprobar picos, swap y OOM. Un pool global de un slot, parallelism=1 y bloqueo advisory PostgreSQL serializan las tareas T6. El ensayo host también usa el bloqueo de lanzamiento de trabajos; no ejecutar entrenamientos manuales a la vez.
+
+## Construcción y publicación manual
+
+`hm_build_release` no tiene calendario. Procesa `/artifacts/pipeline/build.json`, preparado localmente, con campos `dataset_dir`, `output_dir`, `data_as_of`, `synthetic`, `activate` y opcionales `source_zip`, `evidence_archive`. Las rutas deben pertenecer a `/data` o `/artifacts`; el corte T6 permanece **2020-09-09**. No usa test. Si hay ZIP fuente, llama a la ingesta idempotente T2; si ya existe dataset verificado, lo reutiliza. Construye y verifica el paquete H usando T4. La tarea siguiente sólo publica si `activate=true` estaba presente al construir. Un recibo liga configuración y versión: editar el JSON exige reconstruir antes de publicar. Los archivos finales se publican atómicamente; los reintentos conservan particiones verificadas. Una construcción fallida no habilita la tarea de publicación.
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline trigger hm_build_release
+```
+
+En mac24 el ensayo usa `activate=false`: materializa una nueva versión auditable sin reemplazar H activo ni invalidar el stream T5. La activación automática se comprueba con sintéticos aislados. La selección del motor, ventanas y desempates permanecen congelados.
+
+## Perfiles, reintentos y recuperación
+
+Ambos DAG nacen pausados. Registra explícitamente **un stream ya sembrado** de la versión activa; no se siembra H&M cada cinco minutos ni se seleccionan todos los streams históricos. La fecha de simulación queda fija. Sólo se procesan eventos recibidos antes del watermark elegido. Perfil y cursor se confirman en la misma transacción y con el bloqueo de stream que usan las inserciones de eventos. Un fallo revierte ambos.
+
+```bash
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline register --stream-id UUID_DEL_STREAM
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline enable-refresh
+SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py pipeline pause
+```
+
+`hm_refresh_profiles` se programa cada cinco minutos, `catchup=false`, un run activo y un reintento un minuto después. Cada ejecución consume como máximo una ventana de recepción de cinco minutos y 1,000 eventos. Salta huecos sin eventos; conserva el backlog para ejecuciones siguientes sin una tormenta de trabajos atrasados. Si más de 1,000 eventos comparten exactamente la misma marca, falla sin adelantar el cursor. El agregado T5 todavía reconstruye tablas del stream: no promete actualización incremental ni frescura menor de diez minutos hasta medirla con H&M.
+
+Los trabajos de construcción/refresh escriben JSON agregados en `artifacts/pipeline/reports`, incluyendo duración, filas/eventos, error de tipo y RSS. Airflow conserva estado y número de reintentos. Las tareas publican sólo conteos y versión, sin clientes en XCom (`do_xcom_push=false`). `/metrics` añade histograma de latencia HTTP, códigos por clase y contador de respaldo para `/recommend`; no tiene etiquetas de cliente, stream ni URL libre. Los contadores son locales al proceso y se reinician con API: no son métricas durables ni benchmark T8.
+
+## Ensayo y evidencia
+
+`pipeline-check` exige preparación completa, clon limpio y SHA exacto. Comprueba el DAG de construcción, verifica el paquete, registra dos compras idempotentes en el stream, observa dos ejecuciones **programadas** y detiene/reinicia sólo el scheduler para comprobar un evento pendiente. Compara `/recommend` antes/después, captura recursos de seis servicios y pausa ambos DAG al terminar, también ante fallo controlado. No borra eventos ni paquetes. No se reintenta el ensayo automáticamente.
+
+El contrato `pipeline-v1` exige frescura recepción→publicación menor de 600 s para ambos eventos; si se excede, conserva el fallo. Guarda un ZIP agregado con inventario/huellas. La suite y el inventario privado de originales se reportan por separado. Un corte abrupto puede dejar sólo carpeta/log: no interpretarlo como aprobado ni volver a lanzar. Un DAG pausado puede tener una tarea aún en ejecución; inspecciona el estado antes de detener procesos.
+
+En mac24 sigue [el procedimiento dedicado](mac24-t6-prompt.md). T6/E5 sólo se cierra después de revisión principal. T7, T8, evaluación final y carga siguen pendientes.

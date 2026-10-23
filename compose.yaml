@@ -253,6 +253,81 @@ services:
     cpus: 3
     networks: [backend]
 
+  airflow-scheduler:
+    image: hmrec-airflow:0.1.0
+    build:
+      context: .
+      dockerfile: docker/airflow.Dockerfile
+      secrets: *build-secrets
+    profiles: [pipeline]
+    user: ${HMREC_UID:?Run bootstrap first}:${HMREC_GID:?Run bootstrap first}
+    command: [scheduler]
+    environment: &airflow-environment
+      <<: *job-environment
+      AIRFLOW_HOME: /opt/airflow/state
+      HOME: /opt/airflow/state
+      USER: hmrec
+      LOGNAME: hmrec
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: "1"
+      AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: "1"
+      AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: "1"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api:8080/execution/
+      AIRFLOW__SCHEDULER__CATCHUP_BY_DEFAULT: "false"
+      AIRFLOW__DAG_PROCESSOR__PARSING_PROCESSES: "1"
+      AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/state/logs
+      AIRFLOW__API__WORKERS: "1"
+      AIRFLOW__API__SECRET_KEY: ${HM_AIRFLOW_PASSWORD:?Run bootstrap first}
+      HMREC_SOURCE_COMMIT: ${HMREC_SOURCE_COMMIT:-unset}
+      HMREC_API_URL: http://api:8000
+    volumes: &airflow-volumes
+      - ${ARTIFACTS_DIR:-./artifacts}/airflow:/opt/airflow/state
+      - ${ARTIFACTS_DIR:-./artifacts}:/artifacts
+      - ${DATA_DIR:-./data}:/data
+    mem_limit: 5g
+    cpus: 2
+    read_only: true
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    networks: [backend]
+    healthcheck:
+      test: [CMD, /opt/airflow-env/bin/python, /opt/airflow/entrypoint.py, jobs, check, --job-type, SchedulerJob, --local]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  airflow-api:
+    extends:
+      service: airflow-scheduler
+    command: [api-server]
+    mem_limit: 768m
+    cpus: 0.5
+    ports:
+      - "127.0.0.1:${AIRFLOW_PORT:-8080}:8080"
+    networks: [backend, api-publication]
+    healthcheck:
+      test: [CMD, /opt/airflow-env/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/v2/monitor/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  airflow-dag-processor:
+    extends:
+      service: airflow-scheduler
+    command: [dag-processor]
+    mem_limit: 512m
+    cpus: 0.5
+    healthcheck:
+      test: [CMD, /opt/airflow-env/bin/python, /opt/airflow/entrypoint.py, jobs, check, --job-type, DagProcessorJob, --local]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
 networks:
   backend:
     internal: true

@@ -26,8 +26,8 @@ def main():
             "--mount", f"type=bind,source={ROOT / '.runtime/build-ca.pem'},target=/run/ca.pem,readonly",
             "--env", "SSL_CERT_FILE=/run/ca.pem", "hmrec-lock:0.13.1"]
         subprocess.run(command + ["lock", "--python", "/usr/local/bin/python"], check=True)
-        subprocess.run(command + ["pip", "compile", "pyproject.toml", "requirements.in",
-            "--group", "build", "--extra", "tracking", "--constraint", "constraints-3.12.txt",
+        subprocess.run(command + ["pip", "compile", "requirements.in",
+            "--constraint", "constraints-3.12.txt",
             "--universal", "--python-version", "3.12", "--generate-hashes",
             "--output-file", "requirements.lock", "--quiet"], check=True)
         # Replace only after BOTH resolutions succeed.
