@@ -2,6 +2,16 @@
 
 T7/E6 están cerradas bajo el alcance autorizado; no crear otra cuenta ni ejecutar os_user_check. Este ensayo abre T8-A, no T8 completo. No evaluar test, entrenar, activar otra versión, reiniciar servicios o repetir T5–T7.
 
+## Diagnóstico vigente tras el error genérico
+
+La ejecución en 27e87fe informó `ValueError` sin etapa ni reporte cerrado. La causa todavía no está comprobada. No volver a ejecutar la carga ni eliminar reservas. Con el nuevo SHA entregado, ejecutar sólo:
+
+```bash
+python3 scripts/mac24_t8_baseline.py --preflight-only --expected-commit SHA_COMPLETO
+```
+
+Este modo imprime cada comprobación y `FALLO: etapa (tipo)` sin revelar el contenido de excepciones. Ejecuta pruebas host y guarda sus logs privados en `.runtime/t8-preflight-*`; ante errores muestra únicamente nombres de pruebas. Comprueba alimentación, guard de reposo, Docker, servicios y antecedentes; no reserva un ensayo, prepara cohortes ni envía carga. No cambia servicios ni criterios. Si existe una reserva anterior, se detiene y la conserva. Devolver la salida para revisión antes de autorizar el siguiente comando de carga. Un preflight correcto no acredita rendimiento.
+
 ## Protocolo fijado antes de medir
 
 `configs/benchmark.yaml` (JSON compatible con YAML) fija load-baseline-v1:

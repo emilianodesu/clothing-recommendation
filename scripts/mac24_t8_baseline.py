@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """One T8-A baseline load run; no activation, training, test labels or service restart."""
 import argparse
+from contextlib import contextmanager
 from datetime import datetime,timezone
 import fcntl
 import hashlib
@@ -29,52 +30,101 @@ from restore import checksum_file
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True);a=p.parse_args()
+@contextmanager
+def check_stage(name):
+    print('T8-A preflight: '+name,flush=True)
+    try:
+        yield
+    except Exception as error:
+        print('FALLO: '+name+' ('+type(error).__name__+')',flush=True)
+        raise
+    print('OK: '+name,flush=True)
+
+
+def preflight(commit):
     os.umask(0o077);os.environ['SSL_CERT_FILE']='/etc/ssl/cert.pem';os.environ['DOCKER_CONTEXT']='colima-hm-project'
-    checkout_commit(ROOT,a.expected_commit)
-    if command(['uname','-m'])!='arm64' or command(['sysctl','-n','hw.memsize'])!=str(24*2**30):raise ValueError('Require mac24')
-    if 'AC Power' not in command(['pmset','-g','batt']):raise ValueError('Connect AC and keep lid open')
-    review=json.loads((ROOT/'evidence/portability-review-mac24.json').read_text())
-    if not review['t7_closed']:raise ValueError('T7 review required')
-    v=read_configuration(ROOT/'.env');art=Path(v['ARTIFACTS_DIR']);art=art if art.is_absolute() else ROOT/art
-    prior=art/'handoff'/(review['run_id']+'.zip')
-    if checksum_file(prior)!=review['archive']['sha256'] or read_report(prior)['status']!='passed':raise ValueError('T7 archive mismatch')
+    with check_stage('checkout'):
+        checkout_commit(ROOT,commit)
+    with check_stage('hardware'):
+        if command(['uname','-m'])!='arm64' or command(['sysctl','-n','hw.memsize'])!=str(24*2**30):raise ValueError('Require mac24')
+    with check_stage('power'):
+        if 'AC Power' not in command(['pmset','-g','batt']):raise ValueError('Connect AC and keep lid open')
+    with check_stage('t7_review_and_configuration'):
+        review=json.loads((ROOT/'evidence/portability-review-mac24.json').read_text())
+        if not review['t7_closed']:raise ValueError('T7 review required')
+        v=read_configuration(ROOT/'.env');art=Path(v['ARTIFACTS_DIR']);art=art if art.is_absolute() else ROOT/art
+    with check_stage('t7_archive'):
+        prior=art/'handoff'/(review['run_id']+'.zip')
+        if checksum_file(prior)!=review['archive']['sha256'] or read_report(prior)['status']!='passed':raise ValueError('T7 archive mismatch')
     marker=art/'handoff/.mac24-t8-baseline-once.json'
-    if marker.exists() or list((art/'handoff').glob('benchmark-mac24-*')):raise ValueError('Existing load attempt; do not repeat')
-    engine=json.loads(command(['docker','info','--format','{"cpus":{{.NCPU}},"memory":{{.MemTotal}}}']))
-    if engine['cpus']!=4 or not 13*2**30<=engine['memory']<=14*2**30:raise ValueError('Keep VM14GiB/4CPU')
-    # Host tests do not start/recreate source services or run held-out evaluation.
-    command([sys.executable,'-m','unittest','discover','-s','tests/host','-q'],timeout=180)
-    names=command(['docker','ps','--format','{{.Names}}']).splitlines()
-    allowed=('-api-1','-ui-1','-postgres-1','-mlflow-1','-airflow-scheduler-1','-airflow-api-1','-airflow-dag-processor-1')
-    if any(not n.endswith(allowed) for n in names):raise ValueError('Unexpected running workload; inspect first')
-    check_airflow(ROOT,v)
-    identities={s:service(v,s) for s in ('api','postgres','ui')}
-    same_service(review['result']['source_postgres'],identities['postgres'])
+    with check_stage('no_prior_load_attempt'):
+        if marker.exists() or list((art/'handoff').glob('benchmark-mac24-*')):raise ValueError('Existing load attempt; do not repeat')
+    with check_stage('engine_capacity'):
+        engine=json.loads(command(['docker','info','--format','{"cpus":{{.NCPU}},"memory":{{.MemTotal}}}']))
+        if engine['cpus']!=4 or not 13*2**30<=engine['memory']<=14*2**30:raise ValueError('Keep VM14GiB/4CPU')
+    with check_stage('host_tests'):
+        logs=ROOT/'.runtime'/('t8-preflight-'+uuid.uuid4().hex);logs.mkdir(parents=True)
+        print('Logs privados: '+str(logs),flush=True)
+        try:
+            command([sys.executable,'-m','unittest','discover','-s','tests/host','-q'],log=logs/'host-tests.log',timeout=180)
+        except Exception:
+            import re
+            for test,module in re.findall(r'^(?:FAIL|ERROR): (test_[A-Za-z0-9_]+) \(([A-Za-z0-9_.]+)\)$',(logs/'host-tests.log').read_text(),re.M)[:10]:
+                print('Prueba fallida: '+module+'.'+test,flush=True)
+            raise
+    with check_stage('running_workloads'):
+        names=command(['docker','ps','--format','{{.Names}}']).splitlines()
+        allowed=('-api-1','-ui-1','-postgres-1','-mlflow-1','-airflow-scheduler-1','-airflow-api-1','-airflow-dag-processor-1')
+        if any(not n.endswith(allowed) for n in names):raise ValueError('Unexpected running workload; inspect first')
+    with check_stage('airflow_paused'):
+        check_airflow(ROOT,v)
+    with check_stage('source_services'):
+        identities={s:service(v,s) for s in ('api','postgres','ui')}
+        same_service(review['result']['source_postgres'],identities['postgres'])
     sys.path.insert(0,str(ROOT/'src'))
     from hm_recommender.api.runtime import source_digest
-    expected_code=source_digest(ROOT/'src/hm_recommender')
-    port=int(v['API_PORT'])
-    bindings=json.loads(command(['docker','inspect',identities['api']['container_id'],'--format','{{json .NetworkSettings.Ports}}']))
-    if bindings.get('8000/tcp')!=[{'HostIp':'127.0.0.1','HostPort':str(port)}]:raise ValueError('Require loopback binding')
-    if request_json(port,v['HM_APP_PASSWORD'],'/health/live')['source_tree_sha256']!=expected_code:raise ValueError('API source differs')
-    if request_json(port,v['HM_APP_PASSWORD'],'/health/ready')['release_id']!=RELEASE:raise ValueError('Active release differs')
-    config=json.loads((ROOT/'configs/benchmark.yaml').read_text())
+    expected_code=source_digest(ROOT/'src/hm_recommender');port=int(v['API_PORT'])
+    with check_stage('api_binding'):
+        bindings=json.loads(command(['docker','inspect',identities['api']['container_id'],'--format','{{json .NetworkSettings.Ports}}']))
+        if bindings.get('8000/tcp')!=[{'HostIp':'127.0.0.1','HostPort':str(port)}]:raise ValueError('Require loopback binding')
+    with check_stage('api_code'):
+        if request_json(port,v['HM_APP_PASSWORD'],'/health/live')['source_tree_sha256']!=expected_code:raise ValueError('API source differs')
+    with check_stage('active_release'):
+        if request_json(port,v['HM_APP_PASSWORD'],'/health/ready')['release_id']!=RELEASE:raise ValueError('Active release differs')
+    with check_stage('awake_guard'):
+        with AwakeGuard():pass
+    with check_stage('configuration'):
+        config=json.loads((ROOT/'configs/benchmark.yaml').read_text())
+    return dict(commit=commit,v=v,art=art,marker=marker,identities=identities,expected_code=expected_code,port=port,config=config)
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
+    p.add_argument('--preflight-only',action='store_true',help='Diagnóstico previo: sin reserva, cohorte ni carga')
+    a=p.parse_args();context=preflight(a.expected_commit)
+    if a.preflight_only:
+        print('Preflight OK; no se reservó ni inició la carga.',flush=True)
+        return 0
+    return execute_load(context)
+
+
+def execute_load(context):
+    commit=context['commit'];v=context['v'];art=context['art'];marker=context['marker']
+    identities=context['identities'];expected_code=context['expected_code'];port=context['port'];config=context['config']
     rid='benchmark-mac24-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
     private=art/'benchmark-private'/rid;private.mkdir(parents=True)
     folder=art/'handoff'/rid
     result=dict(protocol='load-baseline-v1',status='failed',warmup=None,measurement=None,first_contact=None,
         resources_ok=False,source_preserved=False,error_type=None,test_evaluated=False,training_performed=False,t8_closed=False,
         generator_cpu_seconds=0.,generator_max_rss_bytes=0,population={})
-    env=dict(source_commit=a.expected_commit,runner_tree_sha256=runner_digest(ROOT),config_sha256=checksum_file(ROOT/'configs/benchmark.yaml'),
+    env=dict(source_commit=commit,runner_tree_sha256=runner_digest(ROOT),config_sha256=checksum_file(ROOT/'configs/benchmark.yaml'),
         cases_sha256=None,release_id=RELEASE,source_state_sha256=None,source_tree_sha256=expected_code)
     rows=[];errors=[];stop=threading.Event();thread=None;start=time.monotonic();cpu=time.process_time();code=1
-    report=dict(schema_version=1,kind='benchmark-handoff',run_id=rid,machine_id='mac24',context=os.environ['DOCKER_CONTEXT'],source_commit=a.expected_commit,
+    report=dict(schema_version=1,kind='benchmark-handoff',run_id=rid,machine_id='mac24',context=os.environ['DOCKER_CONTEXT'],source_commit=commit,
         source_clean=True,started_at=now(),finished_at=None,status='failed',warnings=[],steps=[])
     with AwakeGuard(),(art/'.heavy-launch.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        with marker.open('x') as f:json.dump({'commit':a.expected_commit,'run_id':rid},f)
+        with marker.open('x') as f:json.dump({'commit':commit,'run_id':rid},f)
         folder.mkdir()
         try:
             env['source_state_sha256']=state_hash(ROOT,v)
@@ -108,7 +158,7 @@ def main():
             for s,before in identities.items():same_service(before,service(v,s))
             check_airflow(ROOT,v)
             result['source_preserved']=state_hash(ROOT,v)==env['source_state_sha256']
-            checkout_commit(ROOT,a.expected_commit)
+            checkout_commit(ROOT,commit)
             measured=result['measurement']
             if not (result['resources_ok'] and result['source_preserved'] and measured['latency_seconds']['p95'] is not None
                 and measured['latency_seconds']['p95']<config['p95_seconds_strict_max'] and measured['error_fraction']<config['error_fraction_strict_max']
@@ -125,7 +175,7 @@ def main():
     report['status']=result['status']='passed' if code==0 else 'failed';report.update(finished_at=now(),result=result)
     report['steps']=[dict(name='benchmark',log='job.log',status=report['status'],exit_code=code),dict(name='resources',log='resources.log',status='passed' if rows and not errors else 'failed',exit_code=0 if rows and not errors else 1)]
     write_json(folder/'result.json',result);write_json(folder/'environment.json',env);write_json(folder/'resources.log',rows)
-    (folder/'commit.txt').write_text(a.expected_commit+'\n');(folder/'job.log').write_text('benchmark T8-A\nstatus: '+report['status']+'\n')
+    (folder/'commit.txt').write_text(commit+'\n');(folder/'job.log').write_text('benchmark T8-A\nstatus: '+report['status']+'\n')
     archive=package_report(folder,report);read_report(archive)
     print('Reporte cerrado: '+str(archive),flush=True)
     command([sys.executable,'scripts/github-handoff.py','upload',str(archive)],log=private/'upload.log',timeout=300)
