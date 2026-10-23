@@ -6,7 +6,8 @@
   "status": "passed",
   "archive": {
     "bytes": 3103,
-    "sha256": "a081e3c90e6d06b1d13f0aa90f1e1befb3f6e130ccc88ccdc5ed31366f7c14e3"
+    "sha256": "a081e3c90e6d06b1d13f0aa90f1e1befb3f6e130ccc88ccdc5ed31366f7c14e3",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-portability-development-20261023T202132Z-fd8fdbce"
   },
   "result": {
     "stage": "T7",
@@ -49,7 +50,7 @@
     "t7_closed": false
   },
   "validation": {
-    "host_tests": 187,
+    "host_tests": 190,
     "integration_portability_tests": 10,
     "unit_tests": 62,
     "full_compose_restore": true,
@@ -57,7 +58,10 @@
     "fresh_credentials": true,
     "different_os_user": false,
     "physical_mac24": false,
-    "held_out_test_evaluated": false
+    "held_out_test_evaluated": false,
+    "bootstrap_integration_tests": 8,
+    "bootstrap_explicit_network_fixture": true,
+    "bootstrap_validation_commit": "15f6795"
   },
   "limitations": [
     "Local ARM64 Docker only; another path and fresh database credentials are not another OS user or physical machine.",
@@ -69,11 +73,14 @@
     {
       "run_id": "portability-development-20261023T202036Z-d7adf3e1",
       "cause": "Docker network IPAM Config=null not handled; fixed with regression test",
-      "sha256": "3dd913bf333992f76cc459ac31e2b5fd7863244a3b73bd680d1aeec2ab45db0e"
+      "sha256": "3dd913bf333992f76cc459ac31e2b5fd7863244a3b73bd680d1aeec2ab45db0e",
+      "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-portability-development-20261023T202036Z-d7adf3e1"
     }
   ],
   "preflight_failures": [
     "Synthetic package preparation first omitted HMREC_SOURCE_COMMIT; no backup created.",
-    "First independent destination hit exhausted Docker default address pools after DB restoration; destination retained, no success report. Explicit nonoverlapping /24 allocation added."
-  ]
+    "First independent destination hit exhausted Docker default address pools after DB restoration; destination retained, no success report. Explicit nonoverlapping /24 allocation added.",
+    "Standard bootstrap integration first failed four cases because default address pools were exhausted. All eight passed with HMREC_TEST_EXPLICIT_NETWORKS=1, which only provisions the fresh test fixture networks."
+  ],
+  "static_review": "Fresh reviewer findings fixed: bounded hashing, copied archive checksum, image/code parity, source inventory without Git, and mandatory mac24 T6 link. Reviewer did not execute services."
 }

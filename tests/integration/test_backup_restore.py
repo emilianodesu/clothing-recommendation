@@ -29,13 +29,15 @@ def empty_database(events):
 def test_restore_into_empty_database_preserves_profiles_and_rejects_nonempty(events,pipeline_schema,empty_database,tmp_path):
     m=backup_module();s,stream=events
     from hm_recommender.pipeline.runner import register,refresh
-    register(stream,connection=s[4]);s[0].post('/events',json=event(events));refresh(tmp_path/'reports',connection=s[4])
+    register(stream,connection=s[4]);payload=event(events);s[0].post('/events',json=payload);refresh(tmp_path/'reports',connection=s[4])
     archive=m.backup(tmp_path/'backup.zip',s[1].root,connection=s[4])
     target=tmp_path/'new registry'
     result=m.restore(archive,target,connection=empty_database)
     assert result['status']=='passed'
     from hm_recommender.events.store import EventStore
     assert EventStore(s[4]).profile(stream,'buyer')==EventStore(empty_database).profile(stream,'buyer')
+    from hm_recommender.api.schemas import EventInput
+    assert EventStore(empty_database).insert(EventInput.model_validate(payload))['status']=='duplicate'
     with empty_database() as c:assert c.execute('SELECT count(*) FROM interaction_events').fetchone()[0]==1
     from hm_recommender.releases.registry import ReleaseRegistry
     r=ReleaseRegistry(target,empty_database);r.open()

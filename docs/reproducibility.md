@@ -50,3 +50,5 @@ Ante error, conservar destino, ZIP y logs. No borrar la reserva ni reutilizar un
 La segunda ruta en una misma Mac **no equivale a otro equipo ni a otro usuario de SO**. Las credenciales PostgreSQL sí son distintas. La reproducción física del flujo se hará en mac24; el transporte de un respaldo H&M a otra máquina queda pendiente de autorización/canal privado, no se disfraza con el envío de reportes.
 
 Sólo un ZIP agregado `portability-v1` viaja por GitHub. Código, imagen, fuente T6, respaldo, estado y consultas se registran mediante huellas/conteos; ni clientes ni eventos individuales salen por ese canal. El respaldo real permanece privado. [Procedimiento mac24](mac24-t7-prompt.md).
+
+La validación ampliada local de bootstrap usa `HMREC_TEST_EXPLICIT_NETWORKS=1` cuando la VM acumuló redes históricas y agotó los pools predeterminados; el indicador afecta exclusivamente a proyectos temporales de esa suite. No limpia ni modifica redes originales.
