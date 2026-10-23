@@ -71,6 +71,8 @@ def run_bootstrap(root, skip_build=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
+    for command in ('backup','restore'):
+        item=sub.add_parser(command);item.add_argument('arguments',nargs=argparse.REMAINDER)
     check_pipeline=sub.add_parser('pipeline-check')
     check_pipeline.add_argument('--machine-id',required=True)
     check_pipeline.add_argument('--expected-commit',required=True)
@@ -87,7 +89,7 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline", "portability"), required=True)
     verify.add_argument("--existing-services", action="store_true", help="Exigir PostgreSQL activo sin arrancarlo ni recrearlo (serving/events)")
     demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
     demo.add_argument('--skip-build',action='store_true')
@@ -175,7 +177,9 @@ def main():
         if args.action == "data-job":
             from data_job import main as data_job_main
             return data_job_main(args.job_args)
-        if args.action == "bootstrap":
+        if args.action in ('backup','restore'):
+            return __import__(args.action).main(args.arguments)
+        elif args.action == "bootstrap":
             run_bootstrap(ROOT, skip_build=args.skip_build)
             return 0
         if args.action=='demo':
@@ -242,7 +246,7 @@ def main():
         elif args.action == "status":
             compose(ROOT, values, "ps")
         elif args.action == "verify":
-            if args.existing_services and args.suite not in ("serving", "events", "pipeline"):
+            if args.existing_services and args.suite not in ("serving", "events", "pipeline", "portability"):
                 raise ValueError("--existing-services sólo aplica a serving/events")
             compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest", "tests/unit", "-q")
             if args.suite == "data":
@@ -262,6 +266,9 @@ def main():
             if args.suite in ('events','pipeline'):
                 compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
                     'python','-m','pytest','tests/integration/test_events.py','tests/integration/test_demo.py','tests/integration/test_ui.py','-q')
+            if args.suite=='portability':
+                verification_postgres(ROOT,values,existing_only=args.existing_services)
+                compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs','python','-m','pytest','tests/integration/test_release_transfer.py','tests/integration/test_backup_restore.py','-q')
             if args.suite=='pipeline':
                 compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
                     'python','-m','pytest','tests/integration/test_pipeline.py','-q')
@@ -280,7 +287,7 @@ def main():
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "-e", "HMREC_TRACKING_TESTS=1",
                         "-e", "MLFLOW_TRACKING_URI=http://mlflow:5000", "jobs", "python", "-m", "pytest",
                         "tests/integration/test_tracking.py", "-q")
-            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline"):
+            if args.suite in ("bootstrap", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline", "portability"):
                 subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests/host"), "-v"],
                                cwd=ROOT, check=True)
             if args.suite == "bootstrap":

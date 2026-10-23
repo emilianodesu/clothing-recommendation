@@ -75,6 +75,16 @@ def main():
     release_build.add_argument("--evidence-archive", type=Path)
     release_verify = release_commands.add_parser("verify")
     release_verify.add_argument("directory", type=Path)
+    release_export = release_commands.add_parser('export')
+    release_export.add_argument('directory',type=Path)
+    release_export.add_argument('output',type=Path)
+    release_import = release_commands.add_parser('import')
+    release_import.add_argument('archive',type=Path)
+    release_import.add_argument('destination',type=Path)
+    portable = commands.add_parser('portability')
+    portable.add_argument('action',choices=('backup','restore'))
+    portable.add_argument('archive',type=Path)
+    portable.add_argument('--registry',type=Path,required=True)
     serving = commands.add_parser('serving')
     serving_commands = serving.add_subparsers(dest='serving_action', required=True)
     serving_commands.add_parser('run')
@@ -150,9 +160,24 @@ def main():
             else:
                 from hm_recommender.data.pipeline import run_pipeline
                 output = run_pipeline(args.config, args.run_dir)
+        elif args.command == 'portability':
+            from hm_recommender.portability import backup,restore
+            if args.action=='backup':
+                result=backup(args.archive,args.registry)
+                from hm_recommender.data.io import sha256
+                output={'status':'passed','archive_bytes':result.stat().st_size,'archive_sha256':sha256(result)}
+            else:output=restore(args.archive,args.registry)
         elif args.command == "release":
             from hm_recommender.releases.package import build_history_release, verify_history_release
-            if args.release_action == "verify":
+            if args.release_action == 'export':
+                from hm_recommender.releases.transfer import export_release
+                from hm_recommender.data.io import sha256
+                path=export_release(args.directory,args.output)
+                output={'archive_bytes':path.stat().st_size,'archive_sha256':sha256(path)}
+            elif args.release_action == 'import':
+                from hm_recommender.releases.transfer import import_release
+                output=import_release(args.archive,args.destination).model_dump(mode='json')
+            elif args.release_action == "verify":
                 output = verify_history_release(args.directory).model_dump(mode="json")
             else:
                 from hm_recommender.data.ingest import load_dataset
