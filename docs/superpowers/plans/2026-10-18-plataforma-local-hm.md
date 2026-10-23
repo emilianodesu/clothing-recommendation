@@ -304,7 +304,9 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
-**T8-B preparado:** [inventario de capacidad](../../mac24-t8-capacity.md), previo a decidir concurrencia/política secuencial. No medir ni admitir trabajos automáticamente; contar auxiliares y restauración T7.
+**Capacidad T8-B auditada:** límites activos16.75GiB frente a VM13.621GiB; no admitir constructor adicional4GiB+margen1GiB. [Revisión](../../../evidence/capacity-review-mac24.json). Preparar ensayo dentro del scheduler existente y transición explícita de auxiliares, o mantenimiento secuencial; no se ejecutó concurrencia ni se cierra T8-B.
+
+**T8-B preparado (histórico):** [inventario de capacidad](../../mac24-t8-capacity.md), previo a decidir concurrencia/política secuencial. No medir ni admitir trabajos automáticamente; contar auxiliares y restauración T7.
 
 **T8-A aceptado el 23 de octubre:** [auditoría mac24](../../../evidence/benchmark-review-mac24.json). 12,000 solicitudes medidas a 20 req/s, cero errores/omisiones, p95 14.099 ms; 222 capturas válidas. Conservar dos eventos max nuevos de PostgreSQL y picos históricos. No repetir baseline/alineación. T8-B concurrencia, T8-C test y T8-D entrega siguen pendientes; T8/E7 no se cierran sólo por baseline.
 

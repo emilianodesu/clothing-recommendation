@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-23",
+  "run_id": "capacity-mac24-20261023T215903Z-197987c4",
+  "source_commit": "e6c2147957269d5df847c5f892d56efd56c0a5d5",
+  "status": "accepted_capacity_inventory",
+  "t8_b_closed": false,
+  "t8_closed": false,
+  "archive": {
+    "bytes": 4226,
+    "sha256": "67944dc92461b98a256ac1fd14ce70a964471f5ee9fa4fc68e48c870484da0fe",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-capacity-mac24-20261023T215903Z-197987c4"
+  },
+  "verified": {
+    "inventory_and_checksums": true,
+    "runner_digest": true,
+    "baseline_archive_reference": true,
+    "decision_recomputed": true,
+    "api_postgres_ui_ids_and_images_match_baseline": true
+  },
+  "summary": {
+    "vm_effective_gib": 13.620552062988281,
+    "original_limits_gib": 12.25,
+    "other_limits_gib": 4.5,
+    "total_limits_gib": 16.75,
+    "required_with_isolated_job_gib": 21.75,
+    "shortfall_gib": 8.129447937011719
+  },
+  "environment": {
+    "source_commit": "e6c2147957269d5df847c5f892d56efd56c0a5d5",
+    "runner_tree_sha256": "5069ce6eb9f0aa26d9913560333dd2824e1f6a2c6f8ab892de111420f959dc0e",
+    "baseline_archive_sha256": "c30c903d50692e9e0a3cbfa7e58812e2e9122c11bd7c1285eaa614f6eb23722a"
+  },
+  "result": {
+    "protocol": "capacity-v1",
+    "status": "passed",
+    "engine": {
+      "cpus": 4,
+      "memory_bytes": 14624956416
+    },
+    "containers": [
+      {
+        "container_id": "3214a818fd082fcf790670935c685fc1646fc412e37421f22be4e9202da611db",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "service": "airflow-dag-processor",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "5dae9d2413fd45c42a7b4f2a649745755e2a71fbccd074a2ed060d71a0964e81",
+        "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "service": "api",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "ad4d5b814dffc547f3f5b976fd552ce68e6b6bfcfc4a84d0fd0b68d443a06ee7",
+        "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "service": "api",
+        "scope": "other",
+        "project_sha256": "798eaa5b23325fddb29f968920d2e17c7b5502ff355c3ac16c6b997e59ab595a"
+      },
+      {
+        "container_id": "adff71cf5beedd35a1aa805fe9de496159a9d8dc19c5320a49a9e1846d33001a",
+        "image_id": "sha256:c571c0b6f8aaeb5054ebb2eac825289f0cdd36ebe746d3cf271db2a1a68a0312",
+        "memory_bytes": 1073741824,
+        "nano_cpus": 1000000000,
+        "service": "mlflow",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "service": "postgres",
+        "scope": "other",
+        "project_sha256": "798eaa5b23325fddb29f968920d2e17c7b5502ff355c3ac16c6b997e59ab595a"
+      },
+      {
+        "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "service": "postgres",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "f3f72e958b84b7052d48d76510039f2b10b02c8d49145c0eb9fc4866b437d7ed",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "memory_bytes": 5368709120,
+        "nano_cpus": 2000000000,
+        "service": "airflow-scheduler",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "fa4f5769c546864cd5724f3e0ee86f1bd1632d37ac339c02ec66ec7682c08003",
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "service": "ui",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      },
+      {
+        "container_id": "fc006354bcf43bcd6e5e156892d5db8b7ed9f0f3b4fa0535f27bcf79204d403b",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "memory_bytes": 805306368,
+        "nano_cpus": 500000000,
+        "service": "airflow-api",
+        "scope": "original",
+        "project_sha256": "5b1cb0354e64277c4b02b9af65d06f56fb124a5140c8abe65c82700721475125"
+      }
+    ],
+    "policy": {
+      "job_memory_bytes": 4294967296,
+      "job_nano_cpus": 1000000000,
+      "job_threads": 2,
+      "vm_reserve_bytes": 1073741824
+    },
+    "decision": {
+      "allocated_limits_bytes": 17985175552,
+      "required_with_job_bytes": 23353884672,
+      "headroom_after_job_bytes": -8728928256,
+      "unlimited_memory_containers": 0,
+      "known_cpu_limits_nanos": 8500000000,
+      "unlimited_cpu_containers": 2,
+      "admission": "sequential_policy_required"
+    },
+    "baseline_run_id": "benchmark-mac24-20261023T213836Z-a7a170b5",
+    "load_started": false,
+    "test_evaluated": false
+  },
+  "limitations": [
+    "Memory values are configured container limits, not current usage or reservations. Their sum exceeding VM capacity does not demonstrate an OOM or a performance failure.",
+    "The rejection applies to the proposed additional isolated 4 GiB builder with 1 GiB VM reserve. It does not rule out executing within an existing scheduler budget or other controlled deployments.",
+    "CPU quotas are upper bounds, not dedicated CPU reservations; two PostgreSQL containers have no CPU quota.",
+    "No concurrent workload or latency measurement was performed; T8-B remains open.",
+    "Other project contains API/PostgreSQL and is consistent with the T7 restoration; only aggregated project hashes and resource identities were received."
+  ]
+}
