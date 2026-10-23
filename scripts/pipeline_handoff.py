@@ -30,9 +30,6 @@ def validate(report,result,environment):
         from pipeline_recovery import validate_proof
         validate_proof(result['postgres_transition'])
         require(result['dataset']=='hm' and result['source_run_id']==result['postgres_transition']['source_run_id'] and result['source_archive_sha256']==result['postgres_transition']['source_archive_sha256'])
-        for sample in result['resources']:
-            if sample['service']=='postgres':
-                require(all(sample[k]==v for k,v in result['postgres_transition']['current_identity'].items()))
     require(result['stage']=='T6' and result['status']==report['status'])
     require(report['run_id'].startswith('pipeline-') and re.fullmatch('[a-zA-Z0-9_-]{1,100}',report['run_id']))
     require(result['dataset'] in ('hm','synthetic'))
@@ -55,6 +52,10 @@ def validate(report,result,environment):
         require(re.fullmatch('[a-f0-9]{64}',s['container_id']) and re.fullmatch('sha256:[a-f0-9]{64}',s['image_id']))
         require(re.fullmatch('[0-9TZ:.+-]{20,40}',s['started_at']))
         for k in fields-{'service','phase','container_id','started_at','image_id'}:require(type(s[k]) is int and s[k]>=0)
+    if result.get('postgres_transition') is not None:
+        for sample in result['resources']:
+            if sample['service']=='postgres':
+                require(all(sample[k]==v for k,v in result['postgres_transition']['current_identity'].items()))
     validate_build_shape(result['build'])
     require(result['dag_tree_sha256'] is None or re.fullmatch('[a-f0-9]{64}',result['dag_tree_sha256']))
     require(type(result['installed_code']) is dict and set(result['installed_code'])<=set(AIRFLOW))
@@ -65,6 +66,13 @@ def validate(report,result,environment):
         require(result['dataset']!='hm' or result['source_run_id'] is not None and result['source_archive_sha256'] is not None)
         require(len(result['freshness_seconds'])==2 and max(result['freshness_seconds'])<600 and result['processed_events']==2 and result['scheduled_runs']>=2)
         validate_resources(result['resources'])
+        if result['protocol']=='pipeline-v2' and result['dataset']=='hm':
+            from pipeline_recovery import APPROVED, IDENTITY
+            if result['source_run_id']==APPROVED['source_run_id']:
+                pg=next(s for s in result['resources'] if s['service']=='postgres' and s['phase']=='before')
+                if any(pg[k]!=APPROVED['previous_identity'][k] for k in IDENTITY):
+                    require(result['postgres_transition'] is not None)
+
         validate_code(result['installed_code'],environment['source_tree_sha256'],result['dag_tree_sha256'])
         require(result['build'] is not None)
         validate_build(result['build'],report['source_commit'],result['dataset']=='hm')

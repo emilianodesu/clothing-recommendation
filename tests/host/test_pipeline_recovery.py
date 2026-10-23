@@ -54,3 +54,18 @@ class RecoveryTests(unittest.TestCase):
         with self.assertRaises(ValueError):check(Path('.'),{},dict(run_id=APPROVED['source_run_id']),archive,APPROVED['previous_identity'],dict(APPROVED['current_identity'],started_at='different'),execute=execute)
         execute.assert_not_called()
         self.assertIsNone(check(Path('.'),{},None,None,APPROVED['previous_identity'],APPROVED['previous_identity'],execute=execute))
+
+    def test_passed_v2_cannot_drop_recovery_proof(self):
+        import json
+        from pipeline_recovery import APPROVED
+        from pipeline_handoff import validate,FROZEN_SOURCE,FROZEN_DATASET
+        fixture=json.loads((Path(__file__).resolve().parents[2]/'evidence/pipeline-local.json').read_text())
+        v=fixture['result'];v.update(protocol='pipeline-v2',dataset='hm',source_run_id=APPROVED['source_run_id'],source_archive_sha256=APPROVED['source_archive_sha256'],postgres_transition=copy.deepcopy(APPROVED))
+        v['build'].update(source_sha256=FROZEN_SOURCE,dataset_manifest_sha256=FROZEN_DATASET,synthetic=False,activate=False,selection_archive_verified=True)
+        for sample in v['resources']:
+            if sample['service']=='postgres':sample.update(APPROVED['current_identity'])
+        report=dict(run_id=fixture['run_id'],source_commit=fixture['source_commit'],source_clean=True,status='passed')
+        env=dict(source_commit=fixture['source_commit'],source_tree_sha256=v['installed_code']['airflow-api']['source_tree_sha256'],runner_tree_sha256='c'*64)
+        validate(report,v,env)
+        v['postgres_transition']=None
+        with self.assertRaises(ValueError):validate(report,v,env)
