@@ -54,4 +54,4 @@
 - [x] Commit code, prepare isolated local synthetic environment with its own .env/volumes/ports; reuse local Docker context without altering unrelated services. Run verify --suite events and one clean-commit synthetic operational rehearsal; retain failures and closed reports.
 - [x] Validate/publish the closed synthetic report with exact source commit, explicitly separating local evidence from mac24. Preserve historical reports and resource gates.
 - [x] Write mac24 prompt: clean exact commit, jobs-only rebuild/tests, preserve active PostgreSQL/API/UI and private originals, one `events-check --operational`, publish valid failure too, no retries/train/test/T6.
-- [ ] One independent whole-branch review per executing-plans; fix Important/Critical in one RED→GREEN pass. Publish verified code via existing authorized Git flow and deliver exact-SHA prompt. Keep T5 open pending remote audit.
+- [x] One independent whole-branch review per executing-plans; fix Important/Critical in one RED→GREEN pass. Publish verified code via existing authorized Git flow and deliver exact-SHA prompt. Keep T5 open pending remote audit.

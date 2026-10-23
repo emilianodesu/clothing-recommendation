@@ -49,3 +49,5 @@ Salida 0 indica ensayo aprobado por el contrato nuevo; 1 o 130 indican fallo/int
 ## Evidencia y siguiente ejecución
 
 La evidencia local se registra en `evidence/events-operational-local.json`: pruebas y ensayo sintético se distinguen de la ejecución H&M pendiente. La guía mac24 está en [el prompt versionado](mac24-t5-operational-prompt.md). No cerrar T5/E4 ni iniciar T6 hasta descargar y auditar el nuevo reporte remoto.
+
+Validación final local: 257 pruebas (62 unitarias, 28 integración serving, 1 publicación HTTP, 10 eventos y 156 host). Ensayo `events-development-20261023T021835Z-75f5c65b` aprobado con 106 operaciones y 12 capturas, relojes coherentes, limpieza/guard correctos y cero swap/OOM; véase la evidencia enlazada. Las cinco correcciones de revisión tienen regresiones RED→GREEN. Conservamos el ensayo inicial incompleto y el primer ZIP aprobado; la validación H&M todavía corresponde a mac24.
