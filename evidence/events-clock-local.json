@@ -23,7 +23,7 @@
     "protocol": "events-memory-v1"
   },
   "local_tests": {
-    "host_passed": 128,
+    "host_passed": 131,
     "baseline_passed": 112,
     "initial_sandbox_errors": {
       "count": 5,
@@ -32,7 +32,13 @@
     },
     "initial_helper_error": "sdd-workspace looped on denied mkdir; own process stopped, workspace created with approved access.",
     "initial_cli_preflight": "Wrong expected SHA rejected before collection; exact verified SHA succeeded.",
-    "initial_publication": "HTTP 422 target_commitish invalid before branch was pushed; same ZIP publication resumed after pushing code."
+    "initial_publication": "HTTP 422 target_commitish invalid before branch was pushed; same ZIP publication resumed after pushing code.",
+    "review_regressions": {
+      "targeted_passed": 19,
+      "new_tests": 3,
+      "red_failures": 23,
+      "scope": "Content/privacy and source-timeline validation through packaging, reader and upload validation; same correctly checksummed ZIPs rejected after fix."
+    }
   },
   "current_clock_metadata": {
     "system": "Darwin",
@@ -103,11 +109,68 @@
     "integrated_into_events_check": false,
     "memory_acceptance": "proposal_only"
   },
-  "review": "pending",
+  "review": {
+    "kind": "independent_fresh_context",
+    "reviewed_head": "28acb36acebec10d52c15461369f905bd9ff84de",
+    "independent_tests_passed": 16,
+    "critical": 0,
+    "important": 2,
+    "minor": 0,
+    "status": "important_fixed_with_red_green_full_host_suite",
+    "second_review": false,
+    "fixes": [
+      {
+        "finding": "Aggregate-only report accepted free text in attachments or manifest fields.",
+        "tests": [
+          "test_private_attachment_text_and_manifest_fields_rejected_by_reader_and_upload",
+          "test_packager_rejects_raw_power_text"
+        ]
+      },
+      {
+        "finding": "Recomputed timing accepted missing/reordered source snapshots and backward UTC.",
+        "tests": [
+          "test_missing_reordered_or_regressive_snapshots_rejected_by_reader_and_upload"
+        ]
+      }
+    ],
+    "rulings": [
+      {
+        "decision": "Collect read-only historical evidence before integrating a new H&M acceptance protocol.",
+        "reason": "The temporal gap has no confirmed cause.",
+        "cost": "One extra GitHub exchange before acceptance."
+      },
+      {
+        "decision": "Future temporal utilities retain the fixed 2-second continuity tolerance and 7200-second budget.",
+        "reason": "Continuity guard rather than fitting the historical gap.",
+        "cost": "A future clock adjustment may cause a reportable failure."
+      },
+      {
+        "decision": "mac24 historical availability and causal interpretation remain pending actual collection.",
+        "reason": "Local execution cannot establish remote historical state.",
+        "cost": "The historical cause may remain unknown."
+      },
+      {
+        "decision": "Unknown power categories are counted but do not prevent collection-complete status.",
+        "reason": "Normal power logs include unrelated categories; completion is not exhaustive interpretation or absence proof.",
+        "cost": "An unknown format may yield passed collection with no interpretable events; inspect unknown counts."
+      },
+      {
+        "decision": "Keep Timeline/AwakeGuard integration and the new memory criterion deferred.",
+        "reason": "The read-only follow-up precedes the separately versioned prospective protocol.",
+        "cost": "T5 stays open and needs implementation plus a subsequent measured run."
+      },
+      {
+        "decision": "Treat the independent 16-test review separately from our full suite and real Release roundtrip.",
+        "reason": "The reviewer did not independently reproduce publication or the other host tests.",
+        "cost": "Transport and full-suite evidence remain author-verified, not independently re-run."
+      }
+    ]
+  },
   "t5_closed": false,
   "e4_closed": false,
   "quality_accepted": false,
   "test_evaluated": false,
   "training_performed": false,
-  "t6_started": false
+  "t6_started": false,
+  "fixed_reader_compatibility_verified": true
 }

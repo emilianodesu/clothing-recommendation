@@ -345,8 +345,9 @@ def read_report(archive):
                 result=json.loads(bundle.read('result.json'));no_private_rows(result);require(report.get('result')==result)
             environment=json.loads(bundle.read('environment.json')) if 'environment.json' in names else {}
             if result.get('protocol')=='events-clock-v1' or 'clock_diagnostic' in result:
-                from clock_handoff import validate_clock
+                from clock_handoff import validate_clock, validate_clock_files
                 validate_clock(report,result,environment,names)
+                validate_clock_files(report,bundle)
             elif (result.get('protocol')=='events-memory-v1' or 'diagnostics' in result
                     or 'failure' in result or 'runner_tree_sha256' in environment):
                 from events_memory_handoff import validate_memory_envelope

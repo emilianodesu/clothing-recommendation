@@ -1,6 +1,6 @@
 # T5: seguimiento de relojes y preparación del control temporal
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Producir evidencia acotada de relojes/energía en mac24 sin repetir H&M y preparar un control temporal comprobado para el siguiente protocolo.
 
@@ -34,9 +34,9 @@
 
 **Interfaces:** `analyze_timing(started_at, finished_at, duration, snapshots) -> dict`; `parse_power(lines, start, end) -> dict`; `collect_power(start, end) -> dict`. Capturas reducidas a fase/servicio/UTC/monotónico, intervalos recalculables. Eventos exportados: `sleep`, `wake`, `darkwake`; zona obligatoria, orden UTC, máximo 256. Estado de cobertura independiente de causalidad.
 
-- [ ] Escribir y observar RED para diferencia UTC 900 s/monotónico 1 s, offsets, log fuera de ventana/privado, desconocidos, falta de cobertura y truncamiento.
-- [ ] Implementar cálculos puros y captura acotada del único comando fijo en lectura, sin imprimir stdout/stderr.
-- [ ] Ejecutar `python3 -m unittest discover -s tests/host -p 'test_events_clock.py' -v`; comprobar GREEN y commit.
+- [x] Escribir y observar RED para diferencia UTC 900 s/monotónico 1 s, offsets, log fuera de ventana/privado, desconocidos, falta de cobertura y truncamiento.
+- [x] Implementar cálculos puros y captura acotada del único comando fijo en lectura, sin imprimir stdout/stderr.
+- [x] Ejecutar `python3 -m unittest discover -s tests/host -p 'test_events_clock.py' -v`; comprobar GREEN y commit.
 
 ### Task 2: Reporte cerrado y controles para la siguiente versión
 
@@ -44,15 +44,15 @@
 
 **Interfaces:** `project.py clock-check --machine-id ID --expected-commit SHA --source-report ZIP` crea un nuevo reporte `events-clock-v1` en `artifacts/handoff/`. `clock_handoff.validate_clock(report,result,env,names)` valida identidad/forma/derivados incluso ante falta de logs. `Timeline.mark(label)` captura y conserva ambos relojes; `Timeline.check()` impide aceptar discrepancia >2 s, reloj regresivo o presupuesto >7,200 s. `AwakeGuard` crea y libera su propia aserción temporal macOS, sin cambios persistentes. Son utilidades futuras, no una activación del ensayo.
 
-- [ ] Escribir y observar RED para cierre de reporte incompleto, transporte GitHub, manipulación/downgrade, fuente ajena o inválida; relojes desajustados y limpieza de guard al fallar.
-- [ ] Implementar CLI sin `.env`/Docker, commit limpio y fuente del mismo alias de equipo. Guardar identidad/hash de fuente y su estado original. `passed` significa recolección completa, nunca T5 aprobada ni causa confirmada; `failed` conserva faltantes.
-- [ ] Ejecutar toda la suite host con loopback; verificar compatibilidad de tres ZIP históricos locales, commit.
+- [x] Escribir y observar RED para cierre de reporte incompleto, transporte GitHub, manipulación/downgrade, fuente ajena o inválida; relojes desajustados y limpieza de guard al fallar.
+- [x] Implementar CLI sin `.env`/Docker, commit limpio y fuente del mismo alias de equipo. Guardar identidad/hash de fuente y su estado original. `passed` significa recolección completa, nunca T5 aprobada ni causa confirmada; `failed` conserva faltantes.
+- [x] Ejecutar toda la suite host con loopback; verificar compatibilidad de tres ZIP históricos locales, commit.
 
 ### Task 3: Handoff mac24 y revisión
 
 **Files:** Crear `docs/clock-diagnostics.md`, `docs/mac24-t5-clock-prompt.md`, `evidence/events-clock-local.json`; actualizar `AGENTS.md`, `README.md`, guía T5/plan.
 
-- [ ] Documentar la propuesta de memoria para una versión futura: límites efectivos, cero swap/OOM, controles funcionales y continuidad; pico/max/presión como diagnóstico, sin tolerancia ajustada al resultado. No activar criterio ni nueva corrida en esta entrega.
-- [ ] Verificar CLI desde clon limpio con fuente sintética del mismo alias; no atribuir resultado local a mac24. Publicar sólo reporte diagnóstico cerrado si se usa GitHub.
-- [ ] Ejecutar revisión independiente final según executing-plans, corregir hallazgos importantes con RED→GREEN, preservar evidencia local y publicar por el flujo Git autorizado.
-- [ ] Entregar prompt de una recolección en lectura con SHA exacto; exportar incluso incompleto, sin repetir H&M.
+- [x] Documentar la propuesta de memoria para una versión futura: límites efectivos, cero swap/OOM, controles funcionales y continuidad; pico/max/presión como diagnóstico, sin tolerancia ajustada al resultado. No activar criterio ni nueva corrida en esta entrega.
+- [x] Verificar CLI desde clon limpio con fuente sintética del mismo alias; no atribuir resultado local a mac24. Publicar sólo reporte diagnóstico cerrado si se usa GitHub.
+- [x] Ejecutar revisión independiente final según executing-plans, corregir hallazgos importantes con RED→GREEN, preservar evidencia local y publicar por el flujo Git autorizado.
+- [x] Entregar prompt de una recolección en lectura con SHA exacto; exportar incluso incompleto, sin repetir H&M.

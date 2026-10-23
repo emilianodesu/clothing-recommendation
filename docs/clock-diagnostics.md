@@ -16,6 +16,8 @@ No necesita `.env`, dependencias científicas, build, Colima ni acceso SQL. El a
 
 Se crea un nuevo run `events-…` con protocolo **`events-clock-v1`** y contexto `host-read-only`, compatible con el lector/transportador actualizado. Se registra SHA del ZIP original, identidad de paquete y commit, sin modificarlo. Se recalculan la duración UTC, la monotónica y las diferencias entre capturas. No se atribuye automáticamente la diferencia a suspensión.
 
+La fuente debe conservar sus doce capturas, en orden de fase (`before_seed`, `after_seed`, `after_replay`, `after_restart`) y servicio (`api`, `ui`, `postgres`), sin regresiones UTC o monotónicas. Capturas faltantes, reordenadas o regresivas se rechazan como fuente inválida; no se fabrican observaciones para cerrar un reporte. Este control del seguimiento no cambia el estado del ZIP histórico.
+
 ## Energía y privacidad
 
 El único comando de energía es `/usr/bin/pmset -g log`, en lectura. La captura tiene límite de 16 MiB y 30 s comprobados al ejecutar; si el host se suspende, el proceso sólo puede comprobar el vencimiento al volver a ejecutarse. Un archivo temporal con modo 0600 se elimina al terminar. No se exporta texto libre, motivos de wake, nombres de procesos/dispositivos, rutas ni configuración de energía.
@@ -23,6 +25,8 @@ El único comando de energía es `/usr/bin/pmset -g log`, en lectura. La captura
 El reporte conserva únicamente categorías `sleep`, `wake`, `darkwake` y fechas con zona normalizadas a UTC **dentro de la ventana del ZIP fuente**, hasta 256 entradas, más conteos y señales de cobertura/formato. Son entradas del log, no un conteo deduplicado de ciclos completos. Se indica si las fechas disponibles abarcan ambos extremos de la ventana; esto no garantiza que el sistema haya conservado todos los eventos.
 
 Una lectura vacía, incompleta, no disponible o truncada queda explícita. `passed` significa comando completo, ventana abarcada y sin truncamiento/formato inválido detectado; **no prueba ausencia de suspensión, causalidad, rendimiento ni cierre T5**. `failed` por faltantes sigue siendo un reporte válido y se publica. La lectura incompleta no se soluciona repitiendo H&M. No se consulta todo el Unified Log ni se piden privilegios adicionales.
+
+Las categorías ajenas a Sleep/Wake/DarkWake se contabilizan como desconocidas y no vuelven fallida una captura completa: el log contiene otras clases de eventos. Incluso si todas las filas de la ventana son desconocidas, `passed` sólo acredita la recolección, nunca una interpretación exhaustiva del formato. Los lectores de paquetes y el publicador rechazan campos extra y texto libre: `job.log`, `summary.md` y `commit.txt` deben coincidir exactamente con su contenido agregado generado.
 
 También se registran versiones de Python/macOS, arquitectura e implementación/resolución de `time`, `monotonic` y `perf_counter` **en el momento del seguimiento**. No prueban qué intérprete se usó en el ensayo pasado. Los relojes actuales no se presentan como una reconstrucción de aquel entorno. Python distingue estas fuentes y permite [consultar su implementación](https://docs.python.org/3/library/time.html#time.get_clock_info).
 

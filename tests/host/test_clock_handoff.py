@@ -1,5 +1,6 @@
 """Closed read-only follow-ups must not change their source or leak logs."""
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -7,11 +8,45 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
 
 
 class ClockHandoffTests(unittest.TestCase):
+    def github(self):
+        spec = importlib.util.spec_from_file_location('clock_github', Path(__file__).resolve().parents[2]/'scripts/github-handoff.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def repack(self, source, target, change):
+        """Keep all hashes coherent so tests exercise content, not ZIP integrity."""
+        with zipfile.ZipFile(source) as bundle:
+            contents = {name: bundle.read(name) for name in bundle.namelist()}
+        report = json.loads(contents['manifest.json'])
+        change(report, contents)
+        contents['result.json'] = json.dumps(report['result']).encode()
+        for item in report['files']:
+            data = contents[item['path']]
+            item.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+        report.pop('package_id')
+        report['package_id'] = hashlib.sha256(json.dumps(report,sort_keys=True,separators=(',', ':')).encode()).hexdigest()
+        contents['manifest.json'] = json.dumps(report).encode()
+        with zipfile.ZipFile(target, 'w') as bundle:
+            for name, data in contents.items():
+                bundle.writestr(name, data)
+        return target
+
+    def package(self, root, report, env, log=None):
+        from handoff import package_report, write_json
+        folder = root/report['run_id']; folder.mkdir()
+        write_json(folder/'environment.json', env)
+        write_json(folder/'result.json', report['result'])
+        (folder/'commit.txt').write_text(report['source_commit']+'\n')
+        (folder/'job.log').write_text(log if log is not None else 'read-only clock follow-up\ncollection: '+report['result']['clock_diagnostic']['power']['collection_status']+'\n')
+        return package_report(folder, report)
+
     def module(self):
         self.assertIsNotNone(importlib.util.find_spec('clock_check'), 'Missing read-only collector')
         import clock_check
@@ -69,7 +104,7 @@ class ClockHandoffTests(unittest.TestCase):
                            lambda r:r['clock_diagnostic'].update(complete=True)]:
                 report=copy.deepcopy(original);change(report['result'])
                 with self.subTest(change=change),self.assertRaises(ValueError):
-                    validate_clock(report,report['result'],env,{'manifest.json','result.json','environment.json','commit.txt','job.log'})
+                    validate_clock(report,report['result'],env,{'manifest.json','result.json','environment.json','commit.txt','job.log','summary.md'})
             # Exercise routing through the real package reader as well as the validator.
             from test_events_handoff import EventsHandoffTests
             report=copy.deepcopy(original);report['result']['protocol']='events-v1'
@@ -89,9 +124,66 @@ class ClockHandoffTests(unittest.TestCase):
             result['clock_diagnostic']['power'].update(collection_status='complete',log_brackets_window=True)
             result['clock_diagnostic']['complete']=True
             with tempfile.TemporaryDirectory() as completed:
-                verified=read_report(EventsHandoffTests().package(Path(completed),report,env))
+                verified=read_report(self.package(Path(completed),report,env))
                 self.assertFalse(verified['result']['t5_closed'])
                 self.assertFalse(verified['result']['clock_diagnostic']['timing']['cause_confirmed'])
+
+    def test_private_attachment_text_and_manifest_fields_rejected_by_reader_and_upload(self):
+        from handoff import read_report
+        private = b'PRIVATE device /Users/private-owner/power-log\n'
+        mutations = [
+            (name, lambda r, c, name=name: c.update({name: private}))
+            for name in ('job.log', 'summary.md', 'commit.txt')]
+        mutations += [
+            ('manifest-extra', lambda r,c: r.update(raw_log=private.decode())),
+            ('warnings', lambda r,c: r.update(warnings=[private.decode()])),
+            ('step-extra', lambda r,c: r['steps'][0].update(message=private.decode())),
+            ('inventory-extra', lambda r,c: r['files'][0].update(message=private.decode())),
+        ]
+        with tempfile.TemporaryDirectory() as d:
+            original = self.collect(Path(d))
+            for name, change in mutations:
+                archive = self.repack(original, Path(d)/(name+'.zip'), change)
+                for reader in (read_report, self.github().validate_archive):
+                    with self.subTest(case=name, reader=reader.__name__), self.assertRaises(ValueError):
+                        reader(archive)
+
+    def test_packager_rejects_raw_power_text(self):
+        from handoff import read_report
+        with tempfile.TemporaryDirectory() as d:
+            source = self.collect(Path(d)); report = read_report(source)
+            with zipfile.ZipFile(source) as bundle:
+                env = json.loads(bundle.read('environment.json'))
+            with tempfile.TemporaryDirectory() as bad, self.assertRaises(ValueError):
+                self.package(Path(bad), report, env, log='PRIVATE device /Users/private-owner/power-log\n')
+
+    def test_missing_reordered_or_regressive_snapshots_rejected_by_reader_and_upload(self):
+        from handoff import read_report
+        from events_clock import analyze_timing
+        def change_shape(report, contents, mode):
+            timing = report['result']['clock_diagnostic']['timing']
+            snapshots = timing['snapshots']
+            if mode == 'empty': snapshots.clear()
+            elif mode == 'missing': snapshots.pop()
+            elif mode == 'reordered':
+                snapshots[0]['service'], snapshots[1]['service'] = snapshots[1]['service'], snapshots[0]['service']
+            # Recompute derivatives to expose missing validation of source shape.
+            report['result']['clock_diagnostic']['timing'] = analyze_timing(
+                timing['started_at'],timing['finished_at'],timing['monotonic_duration_seconds'],snapshots)
+        def regress(report, contents):
+            timing = report['result']['clock_diagnostic']['timing']
+            timing['snapshots'][0]['captured_at'] = '2026-10-22T00:00:01Z'
+            timing['intervals'][0]['utc_seconds'] = -1.0
+            timing['intervals'][0]['difference_seconds'] = -1.0-timing['intervals'][0]['monotonic_seconds']
+        changes = [(mode, lambda r,c,mode=mode: change_shape(r,c,mode)) for mode in ('empty','missing','reordered')]
+        changes.append(('backward-utc', regress))
+        with tempfile.TemporaryDirectory() as d:
+            original = self.collect(Path(d))
+            for name, change in changes:
+                archive = self.repack(original,Path(d)/(name+'.zip'),change)
+                for reader in (read_report, self.github().validate_archive):
+                    with self.subTest(case=name, reader=reader.__name__), self.assertRaises(ValueError):
+                        reader(archive)
 
     def test_dirty_or_wrong_checkout_fails_before_collection(self):
         m=self.module()

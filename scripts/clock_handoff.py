@@ -2,7 +2,7 @@
 from collections import Counter
 import json
 import re
-from events_clock import analyze_timing, utc, number, require, MAX_EVENTS
+from events_clock import analyze_memory_timing, utc, number, require, MAX_EVENTS
 
 PROTOCOL = 'events-clock-v1'
 
@@ -18,8 +18,21 @@ def complete(power):
 
 def validate_clock(report, result, env, names):
     try:
-        needed = {'manifest.json', 'result.json', 'environment.json', 'commit.txt', 'job.log'}
-        require(needed <= set(names) <= needed | {'summary.md'})
+        needed = {'manifest.json', 'result.json', 'environment.json', 'commit.txt', 'job.log', 'summary.md'}
+        require(set(names) == needed)
+        require(set(report) == {'schema_version','kind','run_id','machine_id','context','source_commit',
+                'source_clean','started_at','finished_at','status','warnings','steps','result','files','package_id'})
+        require(type(report['schema_version']) is int and report['schema_version'] == 1)
+        require(report['warnings'] == [])
+        require(re.fullmatch(r'events-'+re.escape(report['machine_id'])+r'-\d{8}T\d{6}Z-[a-f0-9]{8}',report['run_id']))
+        require(utc(report['finished_at']) >= utc(report['started_at']))
+        expected_steps = [dict(name='clock-followup',log='job.log',status=report['status'],
+                               exit_code=0 if report['status']=='passed' else 1)]
+        require(json.dumps(report['steps'],sort_keys=True) == json.dumps(expected_steps,sort_keys=True))
+        require(isinstance(report['files'],list) and len(report['files']) == len(needed)-1)
+        for item in report['files']:
+            require(set(item) == {'path','bytes','sha256'} and item['path'] in needed-{'manifest.json'})
+            require(count(item['bytes']) and re.fullmatch('[a-f0-9]{64}',item['sha256']))
         require(report['source_clean'] is True and report['result'] == result)
         require(report['kind'] == 'events-handoff' and report['context'] == 'host-read-only')
         require(report['status'] == result['status'] and report['status'] in ('passed','failed'))
@@ -42,7 +55,7 @@ def validate_clock(report, result, env, names):
         for k, size in (('source_commit',40),('archive_sha256',64),('package_id',64)):
             require(re.fullmatch('[a-f0-9]{'+str(size)+'}',source[k]) is not None)
         timing = d['timing']
-        expected = analyze_timing(timing['started_at'], timing['finished_at'], timing['monotonic_duration_seconds'], timing['snapshots'])
+        expected = analyze_memory_timing(timing['started_at'], timing['finished_at'], timing['monotonic_duration_seconds'], timing['snapshots'])
         require(json.dumps(timing,sort_keys=True) == json.dumps(expected,sort_keys=True))
         host = d['host']
         require(set(host) == {'system','system_version','machine','python','clocks'})
@@ -79,4 +92,14 @@ def validate_clock(report, result, env, names):
         require(result['status'] == ('passed' if d['complete'] else 'failed'))
     except (KeyError, TypeError, AttributeError) as error:
         raise ValueError('Malformed clock follow-up') from error
+
+
+def validate_clock_files(report, bundle):
+    """Only deterministic aggregate text may accompany the strict JSON payloads."""
+    from handoff import summary
+    collection = report['result']['clock_diagnostic']['power']['collection_status']
+    expected = {'commit.txt': report['source_commit']+'\n', 'summary.md': summary(report),
+                'job.log': 'read-only clock follow-up\ncollection: '+collection+'\n'}
+    for name, text in expected.items():
+        require(bundle.read(name) == text.encode())
 

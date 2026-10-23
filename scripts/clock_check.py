@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import uuid
-from events_clock import analyze_timing, collect_power, clock_metadata, require
+from events_clock import analyze_memory_timing, collect_power, clock_metadata, require
 from clock_handoff import PROTOCOL, complete
 from handoff import read_report, package_report, write_json, now, MAX_TOTAL
 
@@ -37,7 +37,7 @@ def run(root, machine_id, expected_commit, source_report):
     value = source['result']
     require(source['machine_id'] == machine_id and value['protocol'] == 'events-memory-v1')
     require(source['status'] in ('passed','failed') and value['diagnostics']['complete'])
-    timing = analyze_timing(source['started_at'],source['finished_at'],value['duration_seconds'],value['diagnostics']['snapshots'])
+    timing = analyze_memory_timing(source['started_at'],source['finished_at'],value['duration_seconds'],value['diagnostics']['snapshots'])
     run_id = 'events-'+machine_id+'-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
     folder = root/'artifacts/handoff'/run_id
     folder.mkdir(parents=True,mode=0o700)

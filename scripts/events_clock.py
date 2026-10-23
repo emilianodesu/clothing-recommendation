@@ -46,6 +46,7 @@ def analyze_timing(started_at, finished_at, duration, snapshots):
         elapsed = b['elapsed_seconds'] - a['elapsed_seconds']
         require(elapsed > 0)
         wall = (utc(b['captured_at']) - utc(a['captured_at'])).total_seconds()
+        require(wall >= 0)
         intervals.append(dict(from_phase=a['phase'], from_service=a['service'],
             to_phase=b['phase'], to_service=b['service'], utc_seconds=wall,
             monotonic_seconds=elapsed, difference_seconds=wall-elapsed))
@@ -53,6 +54,16 @@ def analyze_timing(started_at, finished_at, duration, snapshots):
     return dict(started_at=started_at, finished_at=finished_at, monotonic_duration_seconds=duration,
         utc_elapsed_seconds=wall, difference_seconds=wall-duration, snapshots=reduced,
         intervals=intervals, cause_confirmed=False)
+
+
+def analyze_memory_timing(started_at, finished_at, duration, snapshots):
+    """A memory follow-up requires every ordered observation of its source protocol."""
+    expected = [(phase, service)
+                for phase in ('before_seed', 'after_seed', 'after_replay', 'after_restart')
+                for service in ('api', 'ui', 'postgres')]
+    require(isinstance(snapshots, list)
+            and [(s['phase'], s['service']) for s in snapshots] == expected)
+    return analyze_timing(started_at, finished_at, duration, snapshots)
 
 
 def parse_power(lines, start, end):
