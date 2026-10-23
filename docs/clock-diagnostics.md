@@ -2,6 +2,8 @@
 
 El diagnóstico H&M conserva `failed` y T5/E4 siguen abiertas. La [auditoría](../evidence/events-memory-review-mac24.json) encontró 15,767.860 s UTC frente a 1,593.043 s monotónicos. Esta entrega prepara una recolección breve sobre ese ZIP y el historial de energía del host; no reproduce compras ni inicia Docker.
 
+**Estado vigente:** la recolección mac24 ya fue [auditada](../evidence/events-clock-review-mac24.json) y resultó incompleta por límite de tamaño. El procedimiento siguiente se conserva como histórico; no repetirlo automáticamente. Sigue implementar y comprobar el protocolo prospectivo descrito abajo, con la causa histórica aún desconocida.
+
 ## Comando reproducible
 
 Desde un clon limpio, con Python 3.9+ estándar y el SHA completo recibido:
@@ -60,7 +62,7 @@ Después de recibir el seguimiento, revisar correlación con energía y limitaci
 
 La [evidencia local](../evidence/events-clock-local.json) distingue los tests y el seguimiento del reporte sintético `events-development-20261022T050923Z-da5ae7f6` de la tarea pendiente en mac24. Se verificaron también los dos ZIP T5 fallidos y la fuente T4-A con el lector nuevo, conservando sus estados. No se cambiaron imágenes, dependencias, servicio, motor ni datos.
 
-Para el otro equipo sigue [el prompt de recolección](mac24-t5-clock-prompt.md). Al terminar, validar/publicar el ZIP cerrado y devolver el resultado por Git; no entrenar, evaluar test, repetir H&M ni iniciar T6.
+El [prompt de recolección](mac24-t5-clock-prompt.md) ya se ejecutó y se conserva como histórico. No hay otra ejecución pendiente en mac24 hasta preparar y comprobar el siguiente protocolo; no entrenar, evaluar test, repetir H&M ni iniciar T6.
 
 ## Recolección mac24 (2026-10-22, America/Mexico_City)
 
@@ -92,3 +94,35 @@ después el SHA-256 de la fuente:
 Pruebas y preservación son declaraciones separadas del ZIP. No se ejecutó
 events-check, Docker, entrenamiento, test ni T6. T5/E4 permanecen abiertas;
 la Mac principal revisará esta evidencia antes de preparar otro paso.
+
+## Revisión en la Mac principal (2026-10-22)
+
+La [auditoría](../evidence/events-clock-review-mac24.json) verifica el ZIP de
+5,159 bytes, su inventario/identidad/hash, igualdad de `result` y `environment`
+con Git y huella de todos los scripts desde el commit congelado. También
+verifica la fuente original y recalcula las doce capturas y los once intervalos
+cronológicos. Estos once intervalos de reloj son distintos de los nueve
+intervalos por servicio del diagnóstico de memoria anterior.
+
+**La recolección termina revisada como incompleta; T5/E4 no se cierran.** El
+límite de captura se respetó, pero sólo se conservó el fragmento inicial del
+log. No permite afirmar que el historial completo carezca de eventos para la
+ventana. `events_truncated=false` sólo describe el límite de 256 eventos
+reconocidos; no contradice `collection_status=size_limit`. La fila malformada
+podría ser un corte de línea u otro problema de formato: sin el log original
+no puede decidirse. Tampoco puede atribuirse la diferencia temporal a reposo.
+
+Las 131 pruebas y la preservación antes/después siguen siendo declaraciones
+de mac24, separadas de los bytes y cálculos comprobados aquí. No se transfirió
+ni volvió a consultar su historial de energía. Se conservan los tres reportes
+T5 fallidos; no se modifica el criterio congelado de memoria.
+
+El siguiente paso es desarrollo local: integrar marcas UTC/monotónicas por
+operación y guard de reposo supervisado, límites de 2 s/7,200 s ya declarados,
+timeouts según presupuesto restante y cierre estructurado ante discontinuidad.
+El contrato operativo nuevo conservará límites y controles funcionales,
+swap/OOM e identidades, documentando por separado pico histórico y presión.
+Antes de emitir un prompt H&M se requieren verificación sintética y pruebas
+del nuevo protocolo. No repetir la recolección ni elevar su límite para buscar
+un resultado distinto; si la causa histórica sigue desconocida, la medición
+nueva deberá acreditar su propia continuidad.

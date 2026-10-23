@@ -1,5 +1,7 @@
 # Mac24: diagnóstico de relojes y energía, sin repetir H&M
 
+**Histórico: ya ejecutado y [auditado](../evidence/events-clock-review-mac24.json).** La captura terminó incompleta por límite de tamaño; conservar el fallo válido. No repetir este prompt ni aumentar límites automáticamente. El siguiente paso requiere implementar y verificar el nuevo protocolo temporal en la Mac principal.
+
 Lee `AGENTS.md`, `docs/clock-diagnostics.md` y `evidence/events-memory-review-mac24.json`. Esta tarea sólo consulta un reporte cerrado y el historial de energía de **esta Mac**. No ejecutes `events-check`, `demo`, entrenamiento, test ni T6. No arranques, reconstruyas o reinicies Docker/Colima/PostgreSQL/API; no limpies contadores, streams ni volúmenes.
 
 1. Conserva cambios existentes; actualiza `main` por fast-forward al SHA completo recibido y comprueba clon limpio. Guarda ese SHA en `T5_CLOCK_COMMIT`. No actualices código durante la recolección. Mantén `SSL_CERT_FILE=/etc/ssl/cert.pem`.

@@ -2,7 +2,7 @@
 
 H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M fue revisado y conserva estado fallido por memoria PostgreSQL; T5/E4 siguen abiertas. No confundir la implementación local con cierre remoto o aceptación T8.
 
-Paso vigente: [seguimiento de relojes/energía en lectura](clock-diagnostics.md), sin repetir el flujo H&M. La medición temporal y el siguiente contrato operativo requieren cierre antes de otro ensayo de aceptación.
+Paso vigente: integrar y comprobar continuidad temporal y el siguiente contrato operativo. El [seguimiento de relojes/energía](clock-diagnostics.md) ya fue auditado como captura incompleta; no se repite ni hay otro ensayo H&M pendiente. La causa histórica sigue desconocida y el nuevo protocolo debe verificarse antes de otra aceptación.
 
 ## Demo reproducible sin Kaggle
 

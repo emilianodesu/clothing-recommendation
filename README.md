@@ -4,7 +4,7 @@
 
 Plataforma local de recomendaciones para comercio electrónico con H&M y Docker Compose, con selección del motor por calidad medida. La ejecución utiliza recursos propios, sin nube ni servicios de pago. PyTorch se conserva como experimento académico reproducible.
 
-**Siguiente paso preparado:** [diagnóstico de relojes y energía en lectura](docs/clock-diagnostics.md), mediante [este prompt mac24](docs/mac24-t5-clock-prompt.md). Produce un reporte cerrado sin Docker ni repetición H&M. Los controles temporales futuros están probados, pero no se activó un nuevo protocolo de aceptación ni se cambió la memoria. La recolección local y sus límites están en [la evidencia](evidence/events-clock-local.json).
+**Seguimiento de relojes revisado:** el [reporte mac24](evidence/events-clock-review-mac24.json) es un fallo válido por captura incompleta: alcanzó 16 MiB y no cubrió la ventana del ensayo. La causa de la discrepancia temporal sigue desconocida; cero eventos exportados no prueba ausencia de reposo. El [prompt de recolección](docs/mac24-t5-clock-prompt.md) es histórico y no se repite. Sigue integrar y comprobar los controles temporales y el contrato operativo propuesto en [la guía](docs/clock-diagnostics.md), antes de preparar otro ensayo H&M. T5/E4 siguen abiertas; todavía no hay ejecución mac24 pendiente.
 
 Repositorio privado: [emilianodesu/clothing-recommendation](https://github.com/emilianodesu/clothing-recommendation). Cada equipo necesita autenticación Git con acceso al repositorio; sus credenciales de ejecución se generan localmente mediante bootstrap.
 

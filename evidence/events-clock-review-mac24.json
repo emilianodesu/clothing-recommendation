@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "stage": "T5-clock-followup",
+  "status": "reviewed_incomplete",
+  "collection_task_reviewed": true,
+  "reviewed_on": "2026-10-22",
+  "review_timezone": "America/Mexico_City",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "received_commit": "1669d56bf930d173bdea2fb05a678bd4af9d52f5",
+  "received_evidence": "evidence/events-clock-mac24.json",
+  "source_commit": "7900b82f5e7483624ba4df888d821b16438839c3",
+  "run_id": "events-mac24-20261023T012714Z-659b1686",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261023T012714Z-659b1686",
+  "archive_sha256": "84bd39a1591d40bff6fd611ff58e2e5b4268898e67252a9a0663bcdb8c7cb701",
+  "archive_bytes": 5159,
+  "report_package_id": "be5b10810076f8504f2e9cd9f60b4bbe50d389b6ee71f1efa9ac0d7f129777f3",
+  "closed_report_status": "failed",
+  "reader_exit_code": 1,
+  "report_protocol": "events-clock-v1",
+  "verified_locally": [
+    "Downloaded the closed ZIP from the authorized private Release. Verified inventory, sizes, SHA-256, package identity and strict aggregate content without extracting or executing archive content.",
+    "Received result and environment match the ZIP exactly. The received Git commit changes only evidence and documentation; source_clean is true in the closed report.",
+    "Recomputed the SHA-256 of every tracked Python runner from frozen commit 7900b82f5e7483624ba4df888d821b16438839c3; it matches environment.json.",
+    "Validated the original events-memory-v1 ZIP and matched its hash, package identity, machine alias, source commit, status and protocol with both follow-up and prior primary review.",
+    "Compared all twelve reduced snapshots against the source archive and independently recomputed all eleven consecutive clock intervals, total UTC duration and UTC-minus-monotonic difference. These eleven chronological intervals differ from the nine per-service memory intervals in the earlier audit.",
+    "Confirmed failed is the required collection status: size_limit, no bracketing of the source window, one malformed timestamp row and complete=false. CLI reader returns 1 for valid failed evidence.",
+    "Read the bounded collector code: the size-limit path retains only the initial at-most-16-MiB fragment; the absence of a window match in that fragment does not establish absence of matching rows in the full host log.",
+    "This primary audit did not run pmset, Docker, H&M, training, held-out evaluation, T6 or a remote command."
+  ],
+  "environment": {
+    "run_id": "events-mac24-20261023T012714Z-659b1686",
+    "source_commit": "7900b82f5e7483624ba4df888d821b16438839c3",
+    "runner_tree_sha256": "e0612ba0f8d7847ddf0e314b7a73ef56864546383cf2c3c23a0cdc987f30d4ca"
+  },
+  "current_host_metadata": {
+    "system": "Darwin",
+    "system_version": "26.6.2",
+    "machine": "arm64",
+    "python": "3.14.3",
+    "clocks": {
+      "time": {
+        "implementation": "clock_gettime(CLOCK_REALTIME)",
+        "monotonic": false,
+        "adjustable": true,
+        "resolution": 1.0000000000000002e-06
+      },
+      "monotonic": {
+        "implementation": "mach_absolute_time()",
+        "monotonic": true,
+        "adjustable": false,
+        "resolution": 4.166666666666666e-08
+      },
+      "perf_counter": {
+        "implementation": "mach_absolute_time()",
+        "monotonic": true,
+        "adjustable": false,
+        "resolution": 4.166666666666666e-08
+      }
+    }
+  },
+  "source": {
+    "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+    "machine_id": "mac24",
+    "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+    "archive_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+    "package_id": "63fd1b7da548d5e09d4361ade6160ed273e84387e9d35be9328c140a77db2be6",
+    "status": "failed",
+    "protocol": "events-memory-v1"
+  },
+  "summary": {
+    "collection_complete": false,
+    "power": {
+      "log_brackets_window": false,
+      "window_timestamped_rows": 0,
+      "unrecognized_window_rows": 0,
+      "malformed_timestamp_rows": 1,
+      "counts": {
+        "sleep": 0,
+        "wake": 0,
+        "darkwake": 0
+      },
+      "events": [],
+      "events_truncated": false,
+      "collection_status": "size_limit"
+    },
+    "collection_started_at": "2026-10-23T01:27:14.736001+00:00",
+    "collection_finished_at": "2026-10-23T01:27:19.010608+00:00",
+    "collection_utc_seconds": 4.274607,
+    "source_snapshots_verified": 12,
+    "source_consecutive_clock_intervals_verified": 11,
+    "source_utc_seconds": 15767.860335,
+    "source_monotonic_seconds": 1593.0425461659906,
+    "source_difference_seconds": 14174.817788834009,
+    "cause_confirmed": false,
+    "performance_comparison_usable": false
+  },
+  "findings": [
+    {
+      "id": "T5C-01",
+      "status": "reviewed_incomplete_no_retry",
+      "title": "Power log capture hit its byte bound without covering the source window.",
+      "evidence": "size_limit, log_brackets_window=false, zero in-window timestamp rows and one malformed timestamp row.",
+      "interpretation": "The capture bound worked, but historical correlation is unavailable in this report. events_truncated=false refers only to the 256 recognized-event cap; it does not mean the raw capture was complete. The malformed row may be a cut line or another parsing problem; no raw log was transferred to decide.",
+      "disposition": "Preserve the failed ZIP. Do not raise bounds or repeat collection automatically. Continue with prospective continuity instrumentation before another acceptance experiment."
+    },
+    {
+      "id": "T5M-02",
+      "status": "open",
+      "title": "Historical UTC/monotonic discrepancy remains unexplained.",
+      "evidence": "15767.860335 UTC seconds versus 1593.0425461659906 monotonic seconds; current host reports Python 3.14.3 and mach_absolute_time() for monotonic/perf_counter.",
+      "interpretation": "Current metadata does not identify the historical interpreter or distinguish sleep, clock adjustment or another timing issue. Zero exported sleep events does not prove no sleep.",
+      "disposition": "Keep cause_confirmed=false and avoid historical throughput or latency conclusions. Require both clocks, per-operation measurements and a supervised awake guard in the next version."
+    },
+    {
+      "id": "T5M-01",
+      "status": "open",
+      "title": "The historical PostgreSQL peak still fails the frozen memory predicate.",
+      "evidence": "Source events-memory-v1 remains failed; this follow-up makes no new memory observation.",
+      "disposition": "No resource increase, counter reset, reinterpretation or promotion. A separately versioned prospective operational criterion remains to be implemented and tested."
+    }
+  ],
+  "declared_by_mac24_not_independently_reproduced": {
+    "local_verification": {
+      "host_tests": {
+        "passed": 131,
+        "failed": 0,
+        "seconds": 8.498,
+        "docker_used": false
+      },
+      "source_preservation": {
+        "unchanged": true,
+        "before_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+        "after_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05"
+      },
+      "interpreter_comparison": {
+        "changed_since_source_run": "unknown",
+        "reason": "Source environment records commit and hashes but no Python version or executable identity. Current Python 3.14.3 does not establish the historical interpreter."
+      }
+    },
+    "scope": "131 host tests, before/after local source preservation and execution scope are mac24 declarations. The main Mac verified received archive/source bytes and code, but did not inspect the physical host, rerun its tests or receive raw power logs."
+  },
+  "limits": [
+    "Incomplete historical capture is accepted as valid failure evidence, not as successful collection or completed T5.",
+    "No raw power log was transferred; observed counts and capture status cannot be independently regenerated from the original host log here.",
+    "The frozen source lacks historical Python/executable identity. No inference that the interpreter changed or stayed the same is justified.",
+    "Prospective clock controls and the proposed memory criterion are not integrated into events-check. Historical failed reports remain unchanged.",
+    "No new mac24 execution is pending from receipt of this evidence; T6-T8 and final quality acceptance remain pending."
+  ],
+  "next_step": {
+    "status": "development_pending_no_mac24_run",
+    "action": "Implement and verify a separately versioned T5 operational protocol with prospective continuity evidence.",
+    "sequence": [
+      "Integrate the existing Timeline and supervised AwakeGuard; record current clock metadata and UTC/monotonic start/end marks around seed, captures, each HTTP operation and restart. Preserve observations and a structured failure on discontinuity.",
+      "Apply the predeclared 2-second continuity tolerance and 7200-second budget; pass remaining time to bounded subprocess/HTTP operations. A suspended host can only detect failure after resuming.",
+      "Version acceptance explicitly: retain exact resource limits, no captured swap/OOM, complete functional replay, source integrity and expected generations. Preserve lifetime peak/max/pressure as diagnostics under the proposed new contract; keep both historical validators unchanged. Load/headroom remain T8.",
+      "Validate code and failure reporting with local synthetic and appropriate host/integration checks, then issue one exact-commit mac24 prompt for H&M. No automatic collection retry, old-protocol replay, training, test or T6."
+    ]
+  },
+  "t5_closed": false,
+  "e4_closed": false,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training_performed": false,
+  "t6_started": false
+}

@@ -175,8 +175,8 @@ verificó reportes, fuentes y cálculos agregados; no ejecutó Docker ni recalcu
 perfiles H&M. **T5/E4 permanecen abiertas; T6, entrenamiento y test no se
 activan al recibir este reporte.**
 
-El primer paso de seguimiento ya está preparado: [recolección de relojes/energía
-en lectura](clock-diagnostics.md) y [prompt mac24](mac24-t5-clock-prompt.md).
-Los controles temporales se prueban como utilidades para la siguiente versión;
-el ensayo H&M y sus validadores vigentes no se modificaron. Recibir ese reporte
-será el siguiente punto de revisión antes de otra corrida.
+El primer paso de seguimiento ya se ejecutó y fue [auditado](../evidence/events-clock-review-mac24.json): la [recolección de relojes/energía
+en lectura](clock-diagnostics.md) quedó incompleta por límite de tamaño y su [prompt mac24](mac24-t5-clock-prompt.md) es histórico; no repetirlo. La causa permanece desconocida. Sigue integrar y comprobar el protocolo prospectivo antes de otra ejecución H&M.
+Los controles temporales están probados como utilidades para la siguiente
+versión; aún no se integraron al ensayo H&M ni se modificaron sus validadores
+vigentes. La nueva integración debe verificarse antes de otra corrida.
