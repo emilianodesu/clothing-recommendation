@@ -311,9 +311,16 @@ def read_report(archive):
                 raise ValueError('El paquete contiene una ruta o tipo de archivo inválido')
             if entry.file_size > MAX_FILE or entry.flag_bits & 1:
                 raise ValueError('Archivo demasiado grande o cifrado')
-        if 'manifest.json' not in names or bundle.getinfo('manifest.json').file_size > 128 * 1024:
+        # The bounded operational trace is larger than legacy aggregate results.
+        # Read at most 1 MiB, then apply the old cap unless this exact protocol owns it.
+        if 'manifest.json' not in names or bundle.getinfo('manifest.json').file_size > 1024 * 1024:
             raise ValueError('Falta un manifiesto válido')
         report = json.loads(bundle.read('manifest.json'))
+        operational = (isinstance(report,dict) and report.get('kind')=='events-handoff'
+                       and isinstance(report.get('result'),dict)
+                       and report['result'].get('protocol')=='events-operational-v1')
+        if not operational and bundle.getinfo('manifest.json').file_size > 128 * 1024:
+            raise ValueError('Falta un manifiesto válido')
         if (not isinstance(report, dict) or report.get('schema_version') != 1 or report.get('kind') not in ('bootstrap-handoff', 'data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff')
                 or report.get('status') not in ('passed', 'failed', 'interrupted')):
             raise ValueError('Versión o estado de reporte no admitido')

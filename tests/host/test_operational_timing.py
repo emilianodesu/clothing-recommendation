@@ -138,6 +138,28 @@ class OperationalTimingTests(unittest.TestCase):
         with self.assertRaises(ValueError):monitor.retry_ready()
         monitor.finish();self.assertFalse(monitor.evidence()['complete'])
 
+    def test_non_json_and_oversized_http_body_fail_without_exporting_contents(self):
+        from operational_io import OperationalIO
+        from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+        import threading
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                data=b'PRIVATE not json' if self.path=='/health/live' else b'x'*(2*1024*1024+1)
+                self.send_response(200);self.send_header('Content-Length',str(len(data)));self.end_headers()
+                try:self.wfile.write(data)
+                except OSError:pass
+            def log_message(self,*args):pass
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            for path in ('/health/live','/health/ready'):
+                monitor,clock,guard=self.monitor()
+                io=OperationalIO(Path('.'),{'API_PORT':str(server.server_port),'HM_APP_PASSWORD':'secret'},monitor)
+                with self.subTest(path=path),self.assertRaises(ValueError):io.request(path)
+                monitor.finish();self.assertFalse(monitor.evidence()['complete'])
+                self.assertNotIn('PRIVATE',json.dumps(monitor.evidence()))
+        finally:server.shutdown();server.server_close();thread.join()
+
     def test_real_child_timeout_is_reaped_and_guard_is_released(self):
         self.assertIsNotNone(importlib.util.find_spec('operational_io'))
         from operational_io import OperationalIO

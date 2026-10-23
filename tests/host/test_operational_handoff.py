@@ -72,6 +72,19 @@ class OperationalHandoffTests(unittest.TestCase):
         old=copy.deepcopy(r);old.pop('temporal');old.pop('t5_closed');old.pop('cleanup');old['protocol']='events-memory-v1'
         with self.assertRaises(FinalValidationError):final_validation(dict(report,result=old),old,env)
 
+    def test_bounded_full_trace_packages_above_legacy_manifest_limit(self):
+        from handoff import read_report
+        report,env=fixture();marks=report['result']['temporal']['marks']
+        sample=dict(marks[-1],label='poll')
+        marks[-1:-1]=[dict(sample) for _ in range(1500)]
+        with tempfile.TemporaryDirectory() as d:
+            archive=self.package(Path(d),report,env)
+            self.assertGreater((archive.with_suffix('')/'manifest.json').stat().st_size,128*1024)
+            self.assertEqual(len(read_report(archive)['result']['temporal']['marks']),len(marks))
+        report['result']['protocol']='events-v1'
+        with tempfile.TemporaryDirectory() as d,self.assertRaisesRegex(ValueError,'manifiesto'):
+            self.package(Path(d),report,env)
+
     def test_swap_oom_limits_and_generation_remain_mandatory(self):
         h=self.module()
         import events_memory
@@ -125,6 +138,19 @@ class OperationalHandoffTests(unittest.TestCase):
             archives=list((root/'artifacts/handoff').glob('*.zip'));self.assertEqual(len(archives),1)
             r=read_report(archives[0]);self.assertEqual(r['status'],'failed');self.assertFalse(r['result']['temporal']['complete'])
             self.assertEqual(r['result']['phase'],'preflight')
+
+    def test_cleanup_failure_is_readable_but_cannot_pass(self):
+        h=self.module();report,env=fixture();r=report['result']
+        r['cleanup']['exit_code']=1
+        with self.assertRaises(h.OperationalFailure):h.final_validation(report,r,env)
+        report['status']='failed';report['steps'][0].update(status='failed',exit_code=1)
+        report['warnings']=['seed_cleanup_failed']
+        r.update(status='failed',phase='cleanup',error_type='RuntimeError',failure={'component':'execution','criterion':'exception'})
+        from handoff import read_report
+        with tempfile.TemporaryDirectory() as d:
+            got=read_report(self.package(Path(d),report,env))
+            self.assertEqual(got['result']['cleanup']['exit_code'],1)
+            self.assertEqual(got['status'],'failed')
 
     def test_operational_flag_dispatches_separately_and_excludes_memory_mode(self):
         self.module();import project,operational_check
