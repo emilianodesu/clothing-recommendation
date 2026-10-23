@@ -146,3 +146,5 @@ La última orden comprueba construcción de imágenes, HTTP, red interna, montaj
 Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts de diagnóstico, configuración y pruebas de la infraestructura. Ya hay procesamiento temporal T2 y entrenamiento/evaluación T3. T4-B añade servicio de recomendaciones y T5 implementa interfaz y demo sintética sin Kaggle. El ensayo H&M T5 está preparado para mac24. Quedan transporte de paquetes completos, respaldo/restauración y operación automática. Los contratos y criterios de aceptación están definidos en el diseño y el plan.
 
 Los datos reales, tokens y credenciales permanecen fuera del código versionado. La documentación distingue la infraestructura disponible de las funcionalidades de recomendación pendientes.
+
+Evaluación final T8-C: [componente, protocolo y pasos operativos pendientes](docs/final-evaluation.md). Test real aún reservado; no ejecutar sobre H&M.

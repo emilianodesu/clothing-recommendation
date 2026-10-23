@@ -24,7 +24,7 @@ def exposure(counter,lists,sets,catalog_size,k):
         effective_items=float(np.exp(-np.sum(probabilities*np.log(probabilities)))))
 
 
-def evaluate_ranking(ranking,labels,snapshot,output_dir):
+def evaluate_ranking(ranking,labels,snapshot,output_dir, *, artifact_type=FoldEvaluation):
     if ranking.fold!=snapshot.fold or ranking.identity['snapshot']!=digest(snapshot.model_dump(mode='json')):
         raise ValueError('Ranking snapshot identity mismatch')
     label_frame=labels.collect(engine='streaming')
@@ -39,7 +39,7 @@ def evaluate_ranking(ranking,labels,snapshot,output_dir):
     root=Path(output_dir)
     identity={'ranking':digest(ranking.model_dump(mode='json')),'labels_sha256':digest(label_frame.to_dicts())}
     with locked(root):
-        saved=existing(root,identity,FoldEvaluation)
+        saved=existing(root,identity,artifact_type)
         if saved: return saved
         rows=[]; targets={'repeat':[],'discovery':[]}
         counters={n:Counter() for n in (12,200)}
@@ -70,7 +70,7 @@ def evaluate_ranking(ranking,labels,snapshot,output_dir):
         denominators={'relevant_items':sum(r['relevant_items'] for r in rows),
             'out_of_catalog_relevant_items':sum(r['relevant_items']-r['available_relevant_items'] for r in rows),
             'mean_available_recall_ceiling':float(np.mean([r['available_relevant_items']/r['relevant_items'] for r in rows]))}
-        return publish(root,FoldEvaluation(identity=identity,files=files,fold=snapshot.fold,method=ranking.method,
+        return publish(root,artifact_type(identity=identity,files=files,fold=snapshot.fold,method=ranking.method,
             population={'users':len(rows),'catalog_size':len(catalog)},metrics=average(rows),
             segments={s:{'users':sum(r['segment']==s for r in rows),'metrics':average([r for r in rows if r['segment']==s])} for s in SEGMENTS},
             denominators=denominators,

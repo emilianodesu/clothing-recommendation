@@ -1,0 +1,38 @@
+{
+  "status": "component_verified_operational_launcher_pending",
+  "protocol": "final-hp-v1",
+  "real_test_read": false,
+  "mac24_executed": false,
+  "validation": {
+    "host": {
+      "passed": 223
+    },
+    "bootstrap_on_host": {
+      "passed": 3,
+      "skipped": 5
+    },
+    "docker_components": {
+      "passed": 106,
+      "skipped": 61,
+      "failed": 2,
+      "failures": [
+        "test_bootstrap.ConfigurationTests.test_repeated_configuration_preserves_private_values_and_data",
+        "test_bootstrap.ComposeIsolationTests.test_every_test_helper_ignores_inherited_compose_configuration"
+      ],
+      "cause": "Host-only bootstrap requires host CA trust; both pass in native host run.",
+      "final_evaluation_tests_passed": 4
+    },
+    "initial_combined_attempt": {
+      "passed": 325,
+      "skipped": 61,
+      "failed": 6,
+      "cause": "Host tests run in jobs image without git, mounted pipeline evidence or host CA trust. Rerun in correct host environment passed."
+    }
+  },
+  "limitations": [
+    "No real held-out evaluation",
+    "No global one-shot ledger or operational launcher yet",
+    "PostgreSQL and Docker integration tests requiring isolated services skipped",
+    "T8-B remains failed; sustained concurrency unproven"
+  ]
+}

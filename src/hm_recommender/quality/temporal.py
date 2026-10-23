@@ -50,14 +50,15 @@ def existing(root, identity, model):
     if list(root.glob('*.parquet')): raise ValueError('Incomplete artifact; preserve it and use a new run')
 
 
-def build_snapshot(dataset, fold, output_dir, config):
+def build_snapshot(dataset, fold, output_dir, config, *, artifact_type=FoldManifest):
+    artifact_type.model_fields['fold'].annotation.model_validate(fold.model_dump())
     if config.model_dump()!=QualityConfig().model_dump(): raise ValueError('Fixed quality protocol required')
     root=Path(output_dir)
     identity={'dataset_id':dataset.dataset_id,'source_sha256':dataset.source_sha256,
         'dataset_manifest_sha256':sha256(dataset._root/'manifest.json'),
         'fold':fold.model_dump(mode='json'),'config_sha256':digest(config.model_dump()),'feature_version':1}
     with locked(root):
-        saved=existing(root,identity,FoldManifest)
+        saved=existing(root,identity,artifact_type)
         if saved: return saved
         past=scan(dataset).filter(pl.col('t_dat')<fold.cutoff)
         catalog=(past.group_by('article_id').agg(pl.col('t_dat').min().alias('first_seen'))
@@ -73,7 +74,7 @@ def build_snapshot(dataset, fold, output_dir, config):
         popularity=popular_table(past,catalog,fold.cutoff)
         tables={'catalog':catalog,'profiles':profiles,'histories':history,'popularity':popularity}
         files={name:file_entry(root,name,table) for name,table in tables.items()}
-        return publish(root,FoldManifest(identity=identity,files=files,fold=fold,counts={name:table.height for name,table in tables.items()}))
+        return publish(root,artifact_type(identity=identity,files=files,fold=fold,counts={name:table.height for name,table in tables.items()}))
 
 
 def history_table(transactions,cutoff,days=28):

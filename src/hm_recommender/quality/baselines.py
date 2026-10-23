@@ -13,13 +13,13 @@ def compose_history(history,popularity,k=200):
     return unique_prefix((history,popularity),limit=k)
 
 
-def rank_baseline(snapshot,customers,method,output_dir):
+def rank_baseline(snapshot,customers,method,output_dir, *, artifact_type=RankingArtifact):
     if method not in ('P','H') or not customers or customers!=sorted(set(customers)):
         raise ValueError('Expected P/H and nonempty sorted unique customers')
     root=Path(output_dir)
     identity={'snapshot':digest(snapshot.model_dump(mode='json')),'customers_sha256':digest(customers),'method':method}
     with locked(root):
-        saved=existing(root,identity,RankingArtifact)
+        saved=existing(root,identity,artifact_type)
         if saved: return saved
         catalog=frame(snapshot,'catalog'); k=min(200,len(catalog))
         popular=frame(snapshot,'popularity')['article_id'].to_list()[:k]
@@ -43,4 +43,4 @@ def rank_baseline(snapshot,customers,method,output_dir):
             if writer: writer.close()
         path=root/'ranking.parquet'; temporary.replace(path)
         entry=QualityFile(path=path.name,sha256=sha256(path),rows=total,size_bytes=path.stat().st_size)
-        return publish(root,RankingArtifact(identity=identity,files={'ranking':entry},fold=snapshot.fold,method=method,customers=len(customers)))
+        return publish(root,artifact_type(identity=identity,files={'ranking':entry},fold=snapshot.fold,method=method,customers=len(customers)))
