@@ -46,10 +46,22 @@ El lector/transporte de estos reportes se ejecuta con Python estándar en el hos
 
 Salida 0 indica ensayo aprobado por el contrato nuevo; 1 o 130 indican fallo/interrupción con evidencia a conservar. Validar el ZIP anunciado con `scripts/read-handoff.py`: 1 significa fallo válido publicable, 2 paquete inválido que no se publica. Un corte abrupto puede dejar carpeta incompleta sin ZIP; no presentarla como éxito ni reintentar automáticamente. Logs y resumen son agregados deterministas, también ante fallo. El manifiesto del protocolo nuevo admite hasta 1 MiB para su traza de máximo 2,048 marcas; los protocolos anteriores conservan 128 KiB.
 
-## Evidencia y siguiente ejecución
+## Evidencia local e instrucciones históricas
 
 La evidencia local se registra en `evidence/events-operational-local.json`: pruebas y ensayo sintético se distinguen de la ejecución H&M pendiente. La guía mac24 está en [el prompt versionado](mac24-t5-operational-prompt.md). No cerrar T5/E4 ni iniciar T6 hasta descargar y auditar el nuevo reporte remoto.
 
 Validación final local: 257 pruebas (62 unitarias, 28 integración serving, 1 publicación HTTP, 10 eventos y 156 host). Ensayo `events-development-20261023T021835Z-75f5c65b` aprobado con 106 operaciones y 12 capturas, relojes coherentes, limpieza/guard correctos y cero swap/OOM; véase la evidencia enlazada. Las cinco correcciones de revisión tienen regresiones RED→GREEN. Conservamos el ensayo inicial incompleto y el primer ZIP aprobado; la validación H&M todavía corresponde a mac24.
 
 Mac24 publicó `events-mac24-20261023T030009Z-3f97f2a0`, estado `passed`. Revisión principal pendiente; no cierra T5/E4.
+
+## Revisión principal de mac24
+
+**T5/E4 cerradas bajo `events-operational-v1`**, tras descargar y auditar `events-mac24-20261023T030009Z-3f97f2a0`; [auditoría completa](../evidence/events-operational-review-mac24.json). El reporte original permanece intacto, incluido `t5_closed=false`: la decisión de cierre pertenece a esta revisión posterior. No repetir el adaptador ni el prompt operativo.
+
+Se verificaron el ZIP de 26,419 bytes, su inventario/huellas, igualdad con evidencia recibida, árboles de código/runner y lock desde el commit congelado, y fuente T4-A. Se recalcularon nueve intervalos de memoria y la continuidad de 548 marcas/108 operaciones. Doce capturas completas, límites conservados, cero swap/OOM capturados, paridad inicial, cuatro eventos, idempotencia/conflicto, actualización, fuente inmutable, persistencia tras reiniciar API, limpieza y guard correctos.
+
+La ejecución duró 1,482.481 s (24 min 42 s). La semilla tomó 1,391.480 s (23 min 11 s), por debajo de su límite de 1,800 s: preparó 972,591 filas diarias y 1,069,693 compras entre 2020-08-12 y 2020-09-08, corte 2020-09-09. UTC y monotónico difieren 0.009690 s acumulados y como máximo 0.009095 s entre marcas adyacentes. Esto explica la espera observada, pero no es un benchmark de carga.
+
+PostgreSQL conserva contenedor, arranque, imagen, reinicios y generación cgroup frente al diagnóstico de memoria anterior. Su pico sigue en 537,141,248 bytes frente al límite 536,870,912; hubo 123,770 eventos `max` nuevos y presión adicional registrada. Se acepta funcionamiento con los límites del protocolo prospectivo, sin afirmar margen de RAM. Los ZIP históricos permanecen fallidos y su anomalía de relojes sigue sin causa comprobada.
+
+La preservación de 3,372 archivos, suite events con salida cero y capacidad VM proceden del adaptador mac24; no se inspeccionaron aquí sus inventarios privados ni se atribuye a esta auditoría ejecución remota de pruebas. La simulación de cuatro eventos y salud HTTP de UI no sustituye interacción de navegador, carga sostenida ni test. Siguiente desarrollo: T6 a solicitud del usuario; esta revisión no lo ejecuta.

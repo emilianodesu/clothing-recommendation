@@ -1,6 +1,14 @@
 # Instrucciones para agentes
 
-## Paso vigente T5: ejecutar una vez el nuevo protocolo operativo
+## Estado vigente: T5/E4 cerradas tras revisión operativa
+
+La corrida `events-mac24-20261023T030009Z-3f97f2a0`, ejecutada en `9c51b9e43aac768024465c72fea2070292b83684`, fue descargada y auditada en la Mac principal: lee `evidence/events-operational-review-mac24.json` y `docs/events-operational.md`. ZIP de 26,419 bytes, SHA-256 `f302f73d3a35772e0fb0dd44f784607ccff95737e185f63bffac0e0baa1ee7aa`. T5/E4 se aceptan bajo `events-operational-v1`: 1,482.481 s monotónicos, semilla 1,391.480 s, 548 marcas, 108 operaciones, doce capturas y nueve intervalos. Diferencia UTC/monotónico acumulada 0.009690 s, cero swap/OOM capturados, controles funcionales, persistencia, limpieza y guard correctos. PostgreSQL conserva identidad y pico histórico 537,141,248 bytes frente a límite 536,870,912; registró 123,770 eventos max nuevos. Esto no acredita margen de memoria ni rendimiento bajo carga. Los tres ZIP históricos siguen fallidos y su discrepancia de relojes sigue sin causa comprobada.
+
+Las 3,372 entradas preservadas, suite events con salida cero y capacidad VM son declaraciones separadas del adaptador mac24; aquí se verificaron ZIP, huellas Git, fuentes, generaciones, contadores y relojes. No se recibieron tablas privadas ni se ejecutó H&M en la Mac principal. El reporte original conserva `t5_closed=false` por diseño: el cierre reside en esta auditoría posterior.
+
+No repetir T5, su adaptador ni los prompts históricos; conservar la reserva de ejecución, servicios, paquetes, streams, originales y ledger. El siguiente desarrollo es T6 según el plan de plataforma cuando el usuario solicite continuar. Esta recepción no inicia T6, entrenamientos ni test; T7/T8 siguen pendientes. Mantener H y recursos vigentes. SSH desde Terminal fue autorizado por el usuario; no crear claves ni cambiar permisos automáticamente. Código/reportes siguen en GitHub privado. Esta sección prevalece sobre todas las instrucciones históricas siguientes.
+
+## Histórico T5: protocolo operativo ya ejecutado y revisado
 
 T4-A/T4-B y Q1–Q4 están cerradas. El intento original T5 y el diagnóstico `events-mac24-20261022T184956Z-e167c9d2` ya se descargaron y revisaron: `evidence/events-review-mac24.json` y `evidence/events-memory-review-mac24.json`. Ambos conservan **failed** y T5/E4 abiertas. El diagnóstico contiene doce capturas completas y nueve intervalos recalculados. El pico PostgreSQL de 537,141,248 bytes frente a 536,870,912 ya existía antes de semilla y no creció; hubo 164,089 eventos `max` nuevos y cero swap/OOM capturados. Las comprobaciones funcionales y persistencia reportadas cumplen sus controles. El criterio congelado `peak < limit` sigue fallando. Las 213 pruebas, preservación de 3,086 archivos, identidad durante preparación y capacidad Colima son declaraciones separadas de mac24; aquí se verificaron ZIP, huellas, código, fuentes y contadores.
 

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "stage": "T5/E4",
+  "status": "accepted_operational_v1",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "reviewed_on": "2026-10-22",
+  "review_timezone": "America/Mexico_City",
+  "run_id": "events-mac24-20261023T030009Z-3f97f2a0",
+  "source_commit": "9c51b9e43aac768024465c72fea2070292b83684",
+  "received_commit": "0e64efc1b4c6b0c0af921168eff57714ed68c25d",
+  "archive_bytes": 26419,
+  "archive_sha256": "f302f73d3a35772e0fb0dd44f784607ccff95737e185f63bffac0e0baa1ee7aa",
+  "report_package_id": "628edbf1504c39778c86b97617a096f2838b291b6a671f5cb2de3dad37ef1ced",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261023T030009Z-3f97f2a0",
+  "closed_report_status": "passed",
+  "reader_exit_code": 0,
+  "protocol": "events-operational-v1",
+  "t5_closed": true,
+  "e4_closed": true,
+  "verified_locally": [
+    "Private ZIP inventory, sizes, SHA-256 and strict operational reader validation; no archive content executed.",
+    "Received result and environment equal the ZIP exactly.",
+    "Runner/source tree and uv.lock hashes recomputed from the frozen Git commit.",
+    "T4-A archive hash, passed status, release identity and package manifest matched. Private package tables were not transferred.",
+    "Twelve snapshots and nine memory intervals recomputed; 548 marks independently checked for adjacent and cumulative UTC/monotonic continuity.",
+    "PostgreSQL container/start/restart/image/cgroup identity and lifetime peak match the prior memory archive.",
+    "Functional checks, temporal completion, fixed resource limits, captured zero swap/OOM, expected generations, seed cleanup and guard release pass the operational reader."
+  ],
+  "summary": {
+    "utc_seconds": 1482.4717869758606,
+    "monotonic_seconds": 1482.481477415975,
+    "absolute_clock_difference_seconds": 0.009690440114354715,
+    "max_adjacent_clock_difference_seconds": 0.009095000452362001,
+    "seed_seconds": 1391.479926333006,
+    "marks": 548,
+    "operations": 108,
+    "snapshots": 12,
+    "memory_intervals": 9,
+    "postgres_peak_bytes": 537141248,
+    "postgres_limit_bytes": 536870912,
+    "postgres_new_max_events": 123770,
+    "postgres_pressure_delta_us": {
+      "some": 1139669,
+      "full": 1138542
+    }
+  },
+  "checks": {
+    "initial_parity_requests": 4,
+    "new_events": 4,
+    "duplicate_status": 200,
+    "conflict_status": 409,
+    "purchase_changes_profile": true,
+    "views_clicks_not_purchases": true,
+    "late_event_order": true,
+    "refresh_idempotent": true,
+    "base_unchanged": true,
+    "profile_sha256": "6d075610089ae6d0493fb0cda06a1e7ec7ef2b0fc1e9091266eda74147470f2d",
+    "revision": 3,
+    "data_as_of": "2020-09-09",
+    "processed_events": 4
+  },
+  "seed": {
+    "daily_rows": 972591,
+    "purchases": 1069693,
+    "first_day": "2020-08-12",
+    "last_day": "2020-09-08",
+    "data_as_of": "2020-09-09"
+  },
+  "resources": {
+    "seed": {
+      "image_id": "sha256:523dd92a9cb03f113f20050da07cee2c1e0da9e7f3fdcfcb7a8185ee2bb4ee5c",
+      "memory_bytes": 3221225472,
+      "nano_cpus": 1000000000,
+      "cgroup_peak_bytes": 691662848,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "api": {
+      "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+      "memory_bytes": 4294967296,
+      "nano_cpus": 2000000000,
+      "cgroup_peak_bytes": 768389120,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "ui": {
+      "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+      "memory_bytes": 536870912,
+      "nano_cpus": 500000000,
+      "cgroup_peak_bytes": 67346432,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    },
+    "postgres": {
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+      "memory_bytes": 536870912,
+      "nano_cpus": 0,
+      "cgroup_peak_bytes": 537141248,
+      "swap_peak_bytes": 0,
+      "oom_killed": false
+    }
+  },
+  "operator_claims_not_independently_verified": {
+    "suite": "events",
+    "verification_exit_code": 0,
+    "preservation": {
+      "files": 3372,
+      "inventory_sha256": "7e021f0e90b92873ebfa048ac6ad6ccc0ecfbaea6eeeda0aa902f3f794303eed",
+      "unchanged": true
+    },
+    "postgres_historical_identity_verified": true,
+    "engine": {
+      "cpus": 4,
+      "memory": 14623768576
+    }
+  },
+  "limitations": [
+    "3372-file preservation inventory, suite exit zero and VM capacity are separate mac24 adapter declarations, not direct inspection from primary.",
+    "This is one H&M simulation at the frozen cutoff with four replay events; not sustained load, UI browser interaction, or held-out test.",
+    "PostgreSQL lifetime peak remains above its limit and new max/pressure events are retained; operational acceptance does not establish memory headroom.",
+    "Historical failed ZIPs remain failed and historical clock discrepancy causality is unresolved."
+  ],
+  "next_step": "T6 implementation may be planned on request; no execution or T6 changes in this review",
+  "training_performed": false,
+  "test_evaluated": false,
+  "load_benchmark": false
+}

@@ -253,7 +253,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
-**Paso vigente:** [protocolo operativo implementado](../../events-operational.md); [ejecutar una vez en mac24](../../mac24-t5-operational-prompt.md) con el SHA recibido. La validación local es sintética y no cierra T5/E4. Los recursos y reportes históricos permanecen intactos.
+**T5/E4 cerradas tras revisión:** [auditoría H&M](../../../evidence/events-operational-review-mac24.json), protocolo `events-operational-v1`, corrida `events-mac24-20261023T030009Z-3f97f2a0`. Doce capturas, continuidad UTC/monotónico y controles funcionales/persistencia correctos; 24 min 42 s. Se conservan presión y pico histórico PostgreSQL, sin acreditar margen de memoria o carga. No repetir T5. T6 es el siguiente desarrollo a solicitud del usuario. Las notas de revisión siguientes son históricas y no reabren esta entrega.
 
 **Seguimiento recibido y revisado:** [diagnóstico de relojes/energía](../../clock-diagnostics.md), [auditoría](../../../evidence/events-clock-review-mac24.json). La consulta alcanzó 16 MiB sin cubrir la ventana histórica y conserva fallo válido; la causa sigue desconocida. El [prompt mac24](../../mac24-t5-clock-prompt.md) es histórico y no se repite. Los controles de continuidad/reposo están probados por separado; sigue integrarlos y comprobar el nuevo protocolo antes de otra ejecución H&M. Los criterios históricos y recursos permanecen intactos.
 
@@ -269,7 +269,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 - [x] Actualizar perfiles operativos en PostgreSQL de forma transaccional y reanudable, conservando inmutables los perfiles iniciales del paquete. Usar `received_at` para detectar trabajo nuevo y `event_time` para ubicarlo temporalmente; eventos tardíos recalculan el perfil afectado. Mantener un reloj de simulación explícito y separar sus datos de validación/prueba. Para avanzar ese reloj, conservar conteos diarios por usuario/artículo y popularidad: los agregados last_purchase/frequency de T4 no bastan para caducar contribuciones al salir de las ventanas 28/7. Reconstruir desde las transacciones locales o esos conteos, usando sólo eventos anteriores al nuevo corte, y publicar el estado completo de forma atómica.
 - [x] Construir Streamlit con selección de cliente, catálogo y 12 recomendaciones, versión activa, corte de datos y frescura. Emitir eventos con ID estable para reintentos. Mostrar imagen de sustitución cuando falta JPEG; cachear sólo imágenes solicitadas, con límite configurable y extracción segura.
 - [x] Añadir `test_duplicate_event_is_counted_once`, `test_late_event_rebuilds_correct_profile`, `test_database_failure_is_not_acknowledged` y prueba de demo HTTP: generar sintéticos → preparar motor → publicar → recomendar → comprar → actualizar → volver a recomendar. Comprobar que la actualización conserva compatibilidad y cambia el perfil; no prometer que toda compra cambie necesariamente el ranking.
-- [ ] Ejecutar `python3 scripts/project.py demo` y `python3 scripts/project.py verify --suite events`. Probar el mismo flujo con una versión H&M. Guardar evidencia y commit que completa E4; la programación automática se añade en T6.
+- [x] Demo/suite local y flujo H&M operativos comprobados; evidencia local y auditoría mac24 enlazadas. E4 completada bajo el contrato operativo versionado; la programación automática se añade en T6.
 
 ## Task 6 · T6 — Orquestación, reintentos y observabilidad
 
