@@ -6,6 +6,8 @@
 
 **Seguimiento T7 mac24:** el intento `portability-mac24-20261023T203910Z-ed135689` falló al invocar la pausa de Airflow, antes de completar el respaldo. La llamada directa omitía el entrypoint que configura PostgreSQL y autenticación. Se corrigió para usar el mismo lanzador de T6, sin poner secretos en argumentos ni logs. La corrección tiene prueba host; falta comprobación remota. Conservar el intento y su reserva: no repetir T7 automáticamente ni iniciar T8.
 
+El diagnóstico posterior de mac24 confirmó conexión y ambos DAG pausados. El [seguimiento único](docs/mac24-t7-airflow-followup.md) usa `--airflow-followup`, valida el SHA-256 del antecedente y conserva archivos/reservas/evidencia originales. El nuevo ensayo mantiene los criterios de T7 y aún requiere ejecución y revisión principal.
+
 **T6/E5 cerradas tras revisión:** [auditoría mac24](evidence/pipeline-review-mac24.json), protocolo `pipeline-v2`. Dos ciclos programados y recuperación del scheduler; frescura 30.465/276.191 s (<600 s), duración 327.475 s y 24 capturas sin swap/OOM capturados. H vigente se conserva. PostgreSQL registró 73,327 eventos `max` nuevos y pico 8 KiB superior a su límite: no acredita margen de memoria ni carga sostenida. [Operación y límites](docs/operations.md). El prompt T6 es histórico; no repetirlo. Siguen T7 (portabilidad/respaldo/restauración) y T8 (carga, test reservado e informe), sin iniciarlos automáticamente.
 
 Las notas anteriores de implementación conservadas abajo son históricas; prevalece este estado de cierre.

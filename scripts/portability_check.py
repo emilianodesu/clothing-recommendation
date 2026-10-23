@@ -20,6 +20,24 @@ from backup import create
 from restore import restore_into,offline_check,checksum_file
 from pipeline_check import request_json
 
+FAILED_T7='portability-mac24-20261023T203910Z-ed135689'
+FAILED_T7_SHA='9c62660615e4f98a9b6b3f2cf25822b5ad27131969e8be3edf90fd036cfe78be'
+
+
+def check_attempts(handoff,machine,followup=False):
+    existing={p.name for p in handoff.glob('portability-'+machine+'-*')}
+    if not followup:
+        if existing:raise ValueError('Existing T7 attempt; do not repeat')
+        return
+    archive=handoff/(FAILED_T7+'.zip')
+    if (machine!='mac24' or not archive.is_file() or archive.is_symlink()
+            or existing-{FAILED_T7,FAILED_T7+'.zip'}
+            or checksum_file(archive)!=FAILED_T7_SHA):
+        raise ValueError('Follow-up requires only the unchanged audited failed T7')
+    old=read_report(archive)
+    if old['status']!='failed' or old['run_id']!=FAILED_T7:
+        raise ValueError('Invalid failed T7 source')
+
 
 def identity(root,v):
     cid=compose(root,v,'ps','--status','running','-q','postgres',capture=True,timeout=30).strip()
@@ -41,11 +59,11 @@ with connect() as c:
     return compose(root,v,'run','--rm','--no-deps','-T','jobs','python','-c',program,capture=True,timeout=300).strip()
 
 
-def run(root,machine,commit,destination,port,source_run=None):
+def run(root,machine,commit,destination,port,source_run=None,*,airflow_followup=False):
     root=Path(root);checkout_commit(root,commit);os.umask(0o077)
     v=read_configuration(root/'.env');art=Path(v['ARTIFACTS_DIR']);art=art if art.is_absolute() else root/art
     handoff=art/'handoff';handoff.mkdir(exist_ok=True)
-    if source_run and list(handoff.glob('portability-'+machine+'-*')):raise ValueError('Existing T7 attempt; do not repeat')
+    if source_run or airflow_followup:check_attempts(handoff,machine,airflow_followup)
     rid='portability-'+machine+'-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
     folder=handoff/rid;folder.mkdir(mode=0o700)
     report=dict(schema_version=1,kind='portability-handoff',run_id=rid,machine_id=machine,context=os.environ.get('DOCKER_CONTEXT','default'),source_commit=commit,source_clean=True,started_at=now(),finished_at=None,status='failed',warnings=[],steps=[])

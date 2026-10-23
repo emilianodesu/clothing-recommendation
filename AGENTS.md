@@ -1,5 +1,9 @@
 # Instrucciones para agentes
 
+## Paso vigente: un seguimiento T7 por corrección Airflow
+
+El usuario confirmó conexión Airflow OK y ambos DAG pausados tras el fallo. Está preparado `scripts/mac24_t7.py --airflow-followup --expected-commit SHA_COMPLETO`: seguir `docs/mac24-t7-airflow-followup.md`. Verifica la huella exacta del ZIP fallido y conserva su reserva, carpeta y evidencia; sólo permite ese antecedente. Usa reserva/destino/evidencia separados, mismo protocolo portability-v1 y criterios. No ejecutar el comando histórico sin la opción. Ante fallo, publicar reporte cerrado y detenerse, sin borrar reservas ni reintentar. T7/E6 requieren revisión principal; T8/test siguen reservados. Esta sección prevalece sobre el seguimiento histórico siguiente.
+
 ## Seguimiento T7: intento fallido, no repetir
 
 `portability-mac24-20261023T203910Z-ed135689` conserva failed. Se verificó su ZIP y fuente T6; la traza recibida ubica el fallo en la pausa de Airflow (`backup.py:29`), antes del respaldo completo/restauración. La invocación directa omitía el entrypoint de configuración; se corrigió usando el lanzador de T6. Falta comprobar conexión y pausa de ambos DAG en mac24 antes de diseñar seguimiento. Conservar reserva, ZIP, servicios y originales. No ejecutar el adaptador T7 de nuevo ni T8. Este seguimiento prevalece sobre el prompt original siguiente. Las comprobaciones false del reporte no ejecutadas no demuestran pérdida de datos; preservación de 3,402 archivos es declaración remota separada.
