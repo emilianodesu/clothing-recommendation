@@ -1,6 +1,8 @@
 # T7: suite sintética desde otra cuenta de macOS
 
-Complementa la recuperación H&M ya auditada (`portability-mac24-20261023T204855Z-579f1842`). No repite ese ensayo, no importa el respaldo H&M, no descarga Kaggle ni inicia T8. Verifica la suite portability desde un UID/home propios, ruta con espacios, credenciales nuevas y motor vacío independiente. El cierre requiere revisión conjunta de ambas evidencias.
+**Procedimiento opcional suspendido por decisión del usuario (23 de octubre). No ejecutar ni crear otra cuenta/perfil. No es condición de cierre T7/E6. Se conserva sólo como referencia para una futura solicitud explícita.**
+
+Complementa la recuperación H&M ya auditada (`portability-mac24-20261023T204855Z-579f1842`). No repite ese ensayo, no importa el respaldo H&M, no descarga Kaggle ni inicia T8. Verifica la suite portability desde un UID/home propios, ruta con espacios, credenciales nuevas y motor vacío independiente. La ejecución descrita no se realizó; el cierre vigente se basa en la recuperación auditada y el alcance ajustado por el usuario.
 
 ## 1. Cuenta y requisitos
 

@@ -1,6 +1,6 @@
 # T7: paquetes portables y recuperación local
 
-Implementación disponible; **E6/T7 no se cierran hasta revisar el ensayo H&M mac24**. T8 y test siguen reservados. No se necesita Kaggle, MLflow original, nube ni reentrenamiento para servir un paquete ya exportado. El dataset y experimentos históricos permanecen en su instalación original.
+**E6/T7 cerradas tras auditar el ensayo H&M mac24 y ajustar el alcance con el usuario.** La prueba con otra cuenta de SO fue omitida por decisión explícita; no está verificada ni es requisito de cierre. T8 y test siguen reservados. No se necesita Kaggle, MLflow original, nube ni reentrenamiento para servir un paquete ya exportado. El dataset y experimentos históricos permanecen en su instalación original.
 
 ## Exportar/importar un paquete
 
@@ -55,4 +55,4 @@ La validación ampliada local de bootstrap usa `HMREC_TEST_EXPLICIT_NETWORKS=1` 
 
 ## Revisión H&M mac24
 
-La [auditoría](../evidence/portability-review-mac24.json) acepta el ensayo portability-v1 del 23 de octubre: 96.531 s, 918,506,419 bytes de respaldo, seis consultas iguales tras restaurar y seis sin red externa. Se verificaron huellas de ZIP/código/runner y controles agregados; el respaldo privado no se descargó aquí. El reporte fallido anterior permanece intacto. La reproducción del flujo ya ocurrió físicamente en mac24, con otra ruta y nuevas credenciales de base de datos. Falta ejecutar bajo otro usuario de SO para completar el criterio original T7/E6. No repetir los adaptadores ni iniciar T8 automáticamente.
+La [auditoría](../evidence/portability-review-mac24.json) acepta el ensayo portability-v1 del 23 de octubre: 96.531 s, 918,506,419 bytes de respaldo, seis consultas iguales tras restaurar y seis sin red externa. Se verificaron huellas de ZIP/código/runner y controles agregados; el respaldo privado no se descargó aquí. El reporte fallido anterior permanece intacto. La reproducción del flujo ya ocurrió físicamente en mac24, con otra ruta y nuevas credenciales de base de datos. El usuario retiró el criterio de ejecutar bajo otro usuario de SO; se conserva como limitación no probada, sin bloquear el cierre T7/E6. No repetir los adaptadores ni iniciar T8 automáticamente.

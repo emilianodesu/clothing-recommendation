@@ -8,9 +8,9 @@
     "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-portability-mac24-20261023T204855Z-579f1842"
   },
   "protocol": "portability-v1",
-  "review_status": "accepted_recovery_scope",
-  "t7_closed": false,
-  "e6_closed": false,
+  "review_status": "accepted_agreed_scope",
+  "t7_closed": true,
+  "e6_closed": true,
   "verified": {
     "archive_inventory_sizes_hashes": true,
     "result_matches_git_evidence": true,
@@ -81,12 +81,21 @@
     "3410 preserved files and verification suite are remote operator claims, not a local filesystem inspection.",
     "Six fixed parity queries and six offline queries are not a throughput benchmark or held-out quality evaluation.",
     "New Compose project, path and DB credentials on mac24 do not establish execution under another OS user.",
-    "Another OS user remains an explicit Task 7 acceptance item; T7/E6 stay open. No T8 initiated."
+    "Another OS user was explicitly removed from required acceptance by the user on 2026-10-23; remains untested. T7/E6 closed under agreed scope. No T8 initiated."
   ],
   "terminal_only_claims": {
     "releases": 2,
     "tables": 11,
     "operational_profiles": 704970,
     "note": "User-provided terminal output; these counts are not fields in the aggregate ZIP."
+  },
+  "scope_decision": {
+    "date": "2026-10-23",
+    "authority": "explicit_user_instruction",
+    "instruction": "No quiero crear otro usuario y otra cuenta, saltemos eso",
+    "omitted_requirement": "Execution under another macOS account",
+    "executed": false,
+    "optional_only": true,
+    "historical_reports_unchanged": true
   }
 }
