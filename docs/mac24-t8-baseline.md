@@ -2,6 +2,14 @@
 
 T7/E6 están cerradas bajo el alcance autorizado; no crear otra cuenta ni ejecutar os_user_check. Este ensayo abre T8-A, no T8 completo. No evaluar test, entrenar, activar otra versión, reiniciar servicios o repetir T5–T7.
 
+## Alineación previa de API confirmada el 23 de octubre
+
+mac24 confirmó HTTP200, API con huella T6 `5e0ba69395ee17158d4b823d63776dadc072a5559204b3101df00b348765d442` y checkout con huella T7 `b1f69269be9960d1df0f2693e0f13b53ce0cbaabcd98ea1f6ad68703f5a3a7b3`. El diff de fuente sólo añade portabilidad/transferencia y sus comandos CLI; el código de recomendaciones permanece idéntico. T7 construyó imágenes nuevas pero conservó la API original. No cambiar ni omitir el control de huella de T8.
+
+Con el SHA entregado ejecutar `python3 scripts/mac24_t8_align_api.py --expected-commit SHA_COMPLETO` una sola vez. Verifica las imágenes exactas de T7, código instalado, H vigente, DAG pausados y PostgreSQL original. Conserva identidad/cgroup/métricas API antes de recrearla mediante `up -d --no-deps --no-build --pull never api`. Habrá una interrupción breve y una nueva generación de contadores API, explícitamente documentada. PostgreSQL, UI y destinos T7 permanecen activos. No descarga imágenes, ejecuta migraciones, activa versiones ni inicia carga. Comprueba readiness, identidad de PostgreSQL/UI, huella de estado agregado y una respuesta de comprador desconocido antes/después; esa consulta no equivale a paridad exhaustiva.
+
+El reporte y los contadores quedan privados en `.runtime/t8-api-alignment`. La carpeta se conserva también ante fallo y bloquea reintentos automáticos; no borrarla. Sólo después de `passed` ejecutar `--preflight-only` con el mismo SHA y devolver salida. Esta actualización excepcional es preparación anterior al ensayo, no modifica los controles de estabilidad durante la carga ni acredita arranque frío. No ejecutar carga hasta revisión.
+
 ## Diagnóstico vigente tras el error genérico
 
 La ejecución en 27e87fe informó `ValueError` sin etapa ni reporte cerrado. La causa todavía no está comprobada. No volver a ejecutar la carga ni eliminar reservas. Con el nuevo SHA entregado, ejecutar sólo:
