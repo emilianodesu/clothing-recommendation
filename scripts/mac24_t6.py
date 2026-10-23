@@ -15,6 +15,7 @@ from clock_guard import AwakeGuard
 from handoff import read_report, write_json
 from mac24_terminal import command, service, same_service, inventory, preserved, require, readiness
 from project import compose
+from pipeline_recovery import check as check_recovery
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE='events-mac24-20261023T030009Z-3f97f2a0'
@@ -35,7 +36,9 @@ def main():
     require(not list(handoff.glob('pipeline-mac24-*')) and not (handoff/'.mac24-t6-once.json').exists(),'Ya existe un intento/reserva T6; no repetir')
     archive=handoff/(SOURCE+'.zip');source=read_report(archive)
     require(source['status']=='passed' and source['result']['protocol']=='events-operational-v1','Falta T5 aprobado')
-    pg=service(v,'postgres');old=next(s for s in reversed(source['result']['diagnostics']['snapshots']) if s['service']=='postgres');same_service(old,pg)
+    pg=service(v,'postgres');old=next(s for s in reversed(source['result']['diagnostics']['snapshots']) if s['service']=='postgres')
+    recovery=check_recovery(ROOT,v,source,archive,old,pg)
+    same_service(pg,service(v,'postgres'))
     readiness(v)
     engine=json.loads(command(['docker','info','--format','{"cpus":{{.NCPU}},"memory":{{.MemTotal}}}']))
     require(engine['cpus']==4 and 13*2**30<=engine['memory']<=14*2**30,'VM incompatible con 14 GiB/4 CPU')
@@ -53,6 +56,7 @@ def main():
         fcntl.flock(launch_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         originals=inventory([path('DATA_DIR')/'processed',artifacts/'data-jobs',handoff,artifacts/'quality-budget'])
         write_json(logs/'originals.json',originals)
+        if recovery is not None:write_json(logs/'postgres-recovery.json',recovery)
         with (handoff/'.mac24-t6-once.json').open('x') as f:json.dump({'commit':a.expected_commit},f)
         def logged(name,*args,timeout=1800):
             # All commands use explicit project identity; local logs are never uploaded.

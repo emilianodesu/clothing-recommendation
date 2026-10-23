@@ -140,3 +140,25 @@ def test_publication_rejects_receipt_from_another_dag_run(events,tmp_path,monkey
     assert receipt['orchestrator_run_id']=='manual__one'
     monkeypatch.setenv('HMREC_ORCHESTRATOR_RUN_ID','manual__two')
     with pytest.raises(ValueError,match='DAG run'):m.publish(config,connection=events[0][4],roots=(tmp_path,events[0][5]))
+
+
+def test_recovery_query_reads_real_aggregates_without_changing_stream(events,monkeypatch,capsys):
+    import json,sys
+    from pathlib import Path
+    sys.path.insert(0,str(Path('/opt/hmrec/scripts')))
+    from pipeline_recovery import QUERY_PROGRAM
+    from hm_recommender import database
+    s,stream=events
+    with s[4]() as c:
+        before=c.execute('SELECT revision,processed_events FROM event_streams WHERE stream_id=%s',(stream,)).fetchone()
+        seed=c.execute('SELECT count(*),sum(frequency) FROM stream_daily_seed WHERE stream_id=%s',(stream,)).fetchone()
+    connection=s[4]()
+    with monkeypatch.context() as m:
+        m.setattr(database,'connect',lambda:connection)
+        m.setattr(sys,'argv',['recovery',stream])
+        exec(QUERY_PROGRAM,{'__name__':'__main__'})
+    result=json.loads(capsys.readouterr().out)
+    assert (result['revision'],result['processed_events'])==before
+    assert (result['daily_rows'],result['purchases'])==seed
+    assert result['stored_events']==0
+    with s[4]() as c:assert c.execute('SELECT revision,processed_events FROM event_streams WHERE stream_id=%s',(stream,)).fetchone()==before

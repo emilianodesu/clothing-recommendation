@@ -14,15 +14,26 @@ def require(value):
     if not value:raise ValueError('Invalid or incomplete aggregate pipeline report')
 
 
-def empty_result():
-    return dict(stage='T6',protocol=PROTOCOL,status='failed',dataset='synthetic',source_run_id=None,source_archive_sha256=None,
+def empty_result(protocol=PROTOCOL):
+    result=dict(stage='T6',protocol=protocol,status='failed',dataset='synthetic',source_run_id=None,source_archive_sha256=None,
         checks={k:False for k in CHECKS},duration_seconds=0.,freshness_seconds=[],processed_events=0,scheduled_runs=0,
         resources=[],build=None,installed_code={},dag_tree_sha256=None,error_type=None,training_performed=False,test_evaluated=False,t6_closed=False)
 
+    if protocol=='pipeline-v2':result['postgres_transition']=None
+    return result
+
 
 def validate(report,result,environment):
-    require(set(result)==set(empty_result()))
-    require(result['stage']=='T6' and result['protocol']==PROTOCOL and result['status']==report['status'])
+    require(result['protocol'] in (PROTOCOL,'pipeline-v2'))
+    require(set(result)==set(empty_result(result['protocol'])))
+    if result.get('postgres_transition') is not None:
+        from pipeline_recovery import validate_proof
+        validate_proof(result['postgres_transition'])
+        require(result['dataset']=='hm' and result['source_run_id']==result['postgres_transition']['source_run_id'] and result['source_archive_sha256']==result['postgres_transition']['source_archive_sha256'])
+        for sample in result['resources']:
+            if sample['service']=='postgres':
+                require(all(sample[k]==v for k,v in result['postgres_transition']['current_identity'].items()))
+    require(result['stage']=='T6' and result['status']==report['status'])
     require(report['run_id'].startswith('pipeline-') and re.fullmatch('[a-zA-Z0-9_-]{1,100}',report['run_id']))
     require(result['dataset'] in ('hm','synthetic'))
     require(result['source_run_id'] is None or re.fullmatch('events-[a-zA-Z0-9_-]{1,90}',result['source_run_id']))

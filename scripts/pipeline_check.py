@@ -49,7 +49,7 @@ def _run(root,machine,commit,source_run=None):
     folder=handoff/rid;folder.mkdir(mode=0o700)
     report=dict(schema_version=1,kind='pipeline-handoff',run_id=rid,machine_id=machine,context=os.environ.get('DOCKER_CONTEXT','default'),
         source_commit=commit,source_clean=True,started_at=now(),finished_at=None,status='failed',warnings=[],steps=[])
-    result=empty_result();result['dataset']='hm' if source_run else 'synthetic'
+    result=empty_result('pipeline-v2');result['dataset']='hm' if source_run else 'synthetic'
     environment=dict(source_commit=commit,source_tree_sha256='',runner_tree_sha256=runner_digest(root))
     sys.path.insert(0,str(root/'src'))
     from hm_recommender.api.runtime import source_digest
@@ -104,7 +104,8 @@ def _run(root,machine,commit,source_run=None):
             result.update(source_run_id=source_run,source_archive_sha256=hashlib.sha256(archive.read_bytes()).hexdigest())
             oldpg=next(s for s in reversed(old['result']['diagnostics']['snapshots']) if s['service']=='postgres')
             pg=next(s for s in result['resources'] if s['service']=='postgres')
-            require(all(pg[k]==oldpg[k] for k in ('container_id','started_at','image_id')),'Historical PostgreSQL identity changed')
+            from pipeline_recovery import check as check_recovery
+            result['postgres_transition']=check_recovery(root,values,old,archive,oldpg,pg)
         else:
             release=http('/health/ready')['release_id'];stream=str(uuid.uuid4())
             print('T6: seed synthetic stream',flush=True)
