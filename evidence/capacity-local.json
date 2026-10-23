@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "protocol": "capacity-v1",
+  "host_tests": 213,
+  "status": "local_checks_passed",
+  "mac24_executed": false,
+  "load_started": false,
+  "test_evaluated": false,
+  "checks": [
+    "All active projects count toward memory admission",
+    "Unlimited memory is not interpreted as zero usage",
+    "Forged decisions and private result fields rejected",
+    "Closed ZIP roundtrip and GitHub archive validation"
+  ],
+  "limitations": [
+    "Admission policy only; no concurrency performance measured",
+    "4 GiB job budget is proposed, not validated by this collector"
+  ]
+}

@@ -304,6 +304,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
+**T8-B preparado:** [inventario de capacidad](../../mac24-t8-capacity.md), previo a decidir concurrencia/política secuencial. No medir ni admitir trabajos automáticamente; contar auxiliares y restauración T7.
+
 **T8-A aceptado el 23 de octubre:** [auditoría mac24](../../../evidence/benchmark-review-mac24.json). 12,000 solicitudes medidas a 20 req/s, cero errores/omisiones, p95 14.099 ms; 222 capturas válidas. Conservar dos eventos max nuevos de PostgreSQL y picos históricos. No repetir baseline/alineación. T8-B concurrencia, T8-C test y T8-D entrega siguen pendientes; T8/E7 no se cierran sólo por baseline.
 
 **Implementación inicial T8-A (23 de octubre):** [baseline](../../mac24-t8-baseline.md), generador de llegada abierta, cohortes privadas, paridad por respuesta y contadores cgroup. Pruebas host y smoke HTTP sintético disponibles; este párrafo describe la preparación histórica, anterior a la aceptación T8-A indicada arriba. Test sigue pendiente. T8-B concurrencia, T8-C test único y T8-D informe siguen pendientes.
