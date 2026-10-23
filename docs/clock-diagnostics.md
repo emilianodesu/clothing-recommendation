@@ -61,3 +61,34 @@ Después de recibir el seguimiento, revisar correlación con energía y limitaci
 La [evidencia local](../evidence/events-clock-local.json) distingue los tests y el seguimiento del reporte sintético `events-development-20261022T050923Z-da5ae7f6` de la tarea pendiente en mac24. Se verificaron también los dos ZIP T5 fallidos y la fuente T4-A con el lector nuevo, conservando sus estados. No se cambiaron imágenes, dependencias, servicio, motor ni datos.
 
 Para el otro equipo sigue [el prompt de recolección](mac24-t5-clock-prompt.md). Al terminar, validar/publicar el ZIP cerrado y devolver el resultado por Git; no entrenar, evaluar test, repetir H&M ni iniciar T6.
+
+## Recolección mac24 (2026-10-22, America/Mexico_City)
+
+Una única recolección `events-mac24-20261023T012714Z-659b1686` (run_id UTC),
+en `7900b82f5e7483624ba4df888d821b16438839c3`: **failed**, evidencia incompleta
+válida, `clock_diagnostic.complete=false`. [Reporte publicado y verificado por
+descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261023T012714Z-659b1686).
+[Resultado y entorno exactos](../evidence/events-clock-mac24.json).
+
+La consulta pmset terminó con `collection_status=size_limit` (límite 16 MiB).
+El fragmento disponible no abarca la ventana fuente: cero filas fechadas dentro
+de ella y una fila con timestamp no reconocido. Sleep/Wake/DarkWake: 0/0/0
+observadas; no demuestra ausencia de reposo. No se repitió la consulta ni se
+exportaron mensajes completos. El lector devolvió 1, fallo válido.
+
+Entorno actual: Darwin 26.6.2, ARM64, Python 3.14.3. `time` usa
+`clock_gettime(CLOCK_REALTIME)`, ajustable, resolución aproximada 1 µs;
+`monotonic` y `perf_counter` usan `mach_absolute_time()`, no ajustables,
+resolución aproximada 41.67 ns. El ZIP anterior no registra versión/identidad
+del intérprete: no puede afirmarse si cambió desde aquel ensayo.
+
+Se recalculan 15,767.860335 s UTC y 1,593.042546 s monotónicos, diferencia
+14,174.817789 s. La causa permanece sin confirmar; esta recolección incompleta
+no permite atribuirla a reposo ni hacer comparaciones de rendimiento.
+
+La suite host pasó 131 pruebas en 8.498 s, sin Docker. Se comprobó antes y
+después el SHA-256 de la fuente:
+`98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05`, intacto.
+Pruebas y preservación son declaraciones separadas del ZIP. No se ejecutó
+events-check, Docker, entrenamiento, test ni T6. T5/E4 permanecen abiertas;
+la Mac principal revisará esta evidencia antes de preparar otro paso.

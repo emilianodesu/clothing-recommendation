@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "stage": "T5",
+  "machine_id": "mac24",
+  "run_id": "events-mac24-20261023T012714Z-659b1686",
+  "source_commit": "7900b82f5e7483624ba4df888d821b16438839c3",
+  "protocol": "events-clock-v1",
+  "status": "failed",
+  "archive_sha256": "84bd39a1591d40bff6fd611ff58e2e5b4268898e67252a9a0663bcdb8c7cb701",
+  "archive_bytes": 5159,
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261023T012714Z-659b1686",
+  "reader_exit_code": 1,
+  "publication_download_verified": true,
+  "result": {
+    "stage": "T5",
+    "protocol": "events-clock-v1",
+    "status": "failed",
+    "training_performed": false,
+    "test_evaluated": false,
+    "t5_closed": false,
+    "clock_diagnostic": {
+      "source": {
+        "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+        "machine_id": "mac24",
+        "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+        "archive_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+        "package_id": "63fd1b7da548d5e09d4361ade6160ed273e84387e9d35be9328c140a77db2be6",
+        "status": "failed",
+        "protocol": "events-memory-v1"
+      },
+      "host": {
+        "system": "Darwin",
+        "system_version": "26.6.2",
+        "machine": "arm64",
+        "python": "3.14.3",
+        "clocks": {
+          "time": {
+            "implementation": "clock_gettime(CLOCK_REALTIME)",
+            "monotonic": false,
+            "adjustable": true,
+            "resolution": 1.0000000000000002e-06
+          },
+          "monotonic": {
+            "implementation": "mach_absolute_time()",
+            "monotonic": true,
+            "adjustable": false,
+            "resolution": 4.166666666666666e-08
+          },
+          "perf_counter": {
+            "implementation": "mach_absolute_time()",
+            "monotonic": true,
+            "adjustable": false,
+            "resolution": 4.166666666666666e-08
+          }
+        }
+      },
+      "timing": {
+        "started_at": "2026-10-22T18:49:56.268490+00:00",
+        "finished_at": "2026-10-22T23:12:44.128825+00:00",
+        "monotonic_duration_seconds": 1593.0425461659906,
+        "utc_elapsed_seconds": 15767.860335,
+        "difference_seconds": 14174.817788834009,
+        "snapshots": [
+          {
+            "phase": "before_seed",
+            "service": "api",
+            "captured_at": "2026-10-22T18:49:57.201946+00:00",
+            "elapsed_seconds": 0.9334480410034303
+          },
+          {
+            "phase": "before_seed",
+            "service": "ui",
+            "captured_at": "2026-10-22T18:49:57.338750+00:00",
+            "elapsed_seconds": 1.0702535829914268
+          },
+          {
+            "phase": "before_seed",
+            "service": "postgres",
+            "captured_at": "2026-10-22T18:49:57.457666+00:00",
+            "elapsed_seconds": 1.1891696249949746
+          },
+          {
+            "phase": "after_seed",
+            "service": "api",
+            "captured_at": "2026-10-22T20:22:15.277685+00:00",
+            "elapsed_seconds": 1429.102161332994
+          },
+          {
+            "phase": "after_seed",
+            "service": "ui",
+            "captured_at": "2026-10-22T20:22:15.416207+00:00",
+            "elapsed_seconds": 1429.2406815830036
+          },
+          {
+            "phase": "after_seed",
+            "service": "postgres",
+            "captured_at": "2026-10-22T20:36:54.841705+00:00",
+            "elapsed_seconds": 1429.581847916008
+          },
+          {
+            "phase": "after_replay",
+            "service": "api",
+            "captured_at": "2026-10-22T23:12:14.280936+00:00",
+            "elapsed_seconds": 1588.1044982080057
+          },
+          {
+            "phase": "after_replay",
+            "service": "ui",
+            "captured_at": "2026-10-22T23:12:14.478649+00:00",
+            "elapsed_seconds": 1588.3022121660179
+          },
+          {
+            "phase": "after_replay",
+            "service": "postgres",
+            "captured_at": "2026-10-22T23:12:14.669485+00:00",
+            "elapsed_seconds": 1588.4930480410112
+          },
+          {
+            "phase": "after_restart",
+            "service": "api",
+            "captured_at": "2026-10-22T23:12:43.789605+00:00",
+            "elapsed_seconds": 1592.7470505830133
+          },
+          {
+            "phase": "after_restart",
+            "service": "ui",
+            "captured_at": "2026-10-22T23:12:43.912623+00:00",
+            "elapsed_seconds": 1592.8700686660013
+          },
+          {
+            "phase": "after_restart",
+            "service": "postgres",
+            "captured_at": "2026-10-22T23:12:44.051522+00:00",
+            "elapsed_seconds": 1593.0089675000054
+          }
+        ],
+        "intervals": [
+          {
+            "from_phase": "before_seed",
+            "from_service": "api",
+            "to_phase": "before_seed",
+            "to_service": "ui",
+            "utc_seconds": 0.136804,
+            "monotonic_seconds": 0.13680554198799655,
+            "difference_seconds": -1.5419879965394845e-06
+          },
+          {
+            "from_phase": "before_seed",
+            "from_service": "ui",
+            "to_phase": "before_seed",
+            "to_service": "postgres",
+            "utc_seconds": 0.118916,
+            "monotonic_seconds": 0.11891604200354777,
+            "difference_seconds": -4.200354777883497e-08
+          },
+          {
+            "from_phase": "before_seed",
+            "from_service": "postgres",
+            "to_phase": "after_seed",
+            "to_service": "api",
+            "utc_seconds": 5537.820019,
+            "monotonic_seconds": 1427.912991707999,
+            "difference_seconds": 4109.907027292001
+          },
+          {
+            "from_phase": "after_seed",
+            "from_service": "api",
+            "to_phase": "after_seed",
+            "to_service": "ui",
+            "utc_seconds": 0.138522,
+            "monotonic_seconds": 0.13852025000960566,
+            "difference_seconds": 1.7499903943452022e-06
+          },
+          {
+            "from_phase": "after_seed",
+            "from_service": "ui",
+            "to_phase": "after_seed",
+            "to_service": "postgres",
+            "utc_seconds": 879.425498,
+            "monotonic_seconds": 0.3411663330043666,
+            "difference_seconds": 879.0843316669956
+          },
+          {
+            "from_phase": "after_seed",
+            "from_service": "postgres",
+            "to_phase": "after_replay",
+            "to_service": "api",
+            "utc_seconds": 9319.439231,
+            "monotonic_seconds": 158.5226502919977,
+            "difference_seconds": 9160.916580708003
+          },
+          {
+            "from_phase": "after_replay",
+            "from_service": "api",
+            "to_phase": "after_replay",
+            "to_service": "ui",
+            "utc_seconds": 0.197713,
+            "monotonic_seconds": 0.19771395801217295,
+            "difference_seconds": -9.580121729524382e-07
+          },
+          {
+            "from_phase": "after_replay",
+            "from_service": "ui",
+            "to_phase": "after_replay",
+            "to_service": "postgres",
+            "utc_seconds": 0.190836,
+            "monotonic_seconds": 0.19083587499335408,
+            "difference_seconds": 1.2500664592351995e-07
+          },
+          {
+            "from_phase": "after_replay",
+            "from_service": "postgres",
+            "to_phase": "after_restart",
+            "to_service": "api",
+            "utc_seconds": 29.12012,
+            "monotonic_seconds": 4.254002542002127,
+            "difference_seconds": 24.866117457997873
+          },
+          {
+            "from_phase": "after_restart",
+            "from_service": "api",
+            "to_phase": "after_restart",
+            "to_service": "ui",
+            "utc_seconds": 0.123018,
+            "monotonic_seconds": 0.12301808298798278,
+            "difference_seconds": -8.298798277739383e-08
+          },
+          {
+            "from_phase": "after_restart",
+            "from_service": "ui",
+            "to_phase": "after_restart",
+            "to_service": "postgres",
+            "utc_seconds": 0.138899,
+            "monotonic_seconds": 0.13889883400406688,
+            "difference_seconds": 1.6599593311017458e-07
+          }
+        ],
+        "cause_confirmed": false
+      },
+      "power": {
+        "log_brackets_window": false,
+        "window_timestamped_rows": 0,
+        "unrecognized_window_rows": 0,
+        "malformed_timestamp_rows": 1,
+        "counts": {
+          "sleep": 0,
+          "wake": 0,
+          "darkwake": 0
+        },
+        "events": [],
+        "events_truncated": false,
+        "collection_status": "size_limit"
+      },
+      "complete": false
+    }
+  },
+  "environment": {
+    "run_id": "events-mac24-20261023T012714Z-659b1686",
+    "source_commit": "7900b82f5e7483624ba4df888d821b16438839c3",
+    "runner_tree_sha256": "e0612ba0f8d7847ddf0e314b7a73ef56864546383cf2c3c23a0cdc987f30d4ca"
+  },
+  "local_verification": {
+    "host_tests": {
+      "passed": 131,
+      "failed": 0,
+      "seconds": 8.498,
+      "docker_used": false
+    },
+    "source_preservation": {
+      "unchanged": true,
+      "before_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+      "after_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05"
+    },
+    "interpreter_comparison": {
+      "changed_since_source_run": "unknown",
+      "reason": "Source environment records commit and hashes but no Python version or executable identity. Current Python 3.14.3 does not establish the historical interpreter."
+    }
+  },
+  "interpretation": {
+    "collection_complete": false,
+    "reason": "pmset collection reached its size limit; log does not bracket source window",
+    "zero_counts_do_not_prove_no_sleep": true,
+    "cause_confirmed": false,
+    "next_action": "Primary review of incomplete collection and prospective clock continuity; no repeat collection or H&M execution authorized by this result."
+  },
+  "t5_closed": false,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "t6_started": false
+}
