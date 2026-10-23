@@ -31,6 +31,15 @@ def compose(root, values, *args, capture=False, log_path=None, timeout=None):
     return result.stdout if capture else ""
 
 
+def verification_postgres(root, values, *, existing_only=False):
+    if existing_only:
+        cid = compose(root, values, "ps", "--status", "running", "-q", "postgres", capture=True, timeout=30).strip()
+        if not cid:
+            raise ValueError("PostgreSQL debe estar activo; no se arranca ni recrea en este modo.")
+    else:
+        compose(root, values, "up", "-d", "--wait", "postgres")
+
+
 def prepare_start_configuration(root):
     if not (root / ".env").exists():
         existing = subprocess.run(["docker", "volume", "ls", "--filter",
@@ -73,6 +82,7 @@ def main():
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
     verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events"), required=True)
+    verify.add_argument("--existing-services", action="store_true", help="Exigir PostgreSQL activo sin arrancarlo ni recrearlo (serving/events)")
     demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
     demo.add_argument('--skip-build',action='store_true')
     demo.add_argument('--machine-id',default='local')
@@ -220,6 +230,8 @@ def main():
         elif args.action == "status":
             compose(ROOT, values, "ps")
         elif args.action == "verify":
+            if args.existing_services and args.suite not in ("serving", "events"):
+                raise ValueError("--existing-services sólo aplica a serving/events")
             compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest", "tests/unit", "-q")
             if args.suite == "data":
                 compose(ROOT, values, "run", "--rm", "--no-deps", "-T", "jobs", "python", "-m", "pytest",
@@ -229,7 +241,7 @@ def main():
                         "tests/integration/test_release_parity.py", "tests/integration/test_quality_folds.py",
                         "tests/integration/test_recent_history.py", "-q")
             if args.suite in ('serving','events'):
-                compose(ROOT, values, 'up', '-d', '--wait', 'postgres')
+                verification_postgres(ROOT, values, existing_only=args.existing_services)
                 compose(ROOT, values, 'run', '--rm', '--no-deps', '-T', '-e', 'HMREC_SERVING_TESTS=1', 'jobs',
                     'python', '-m', 'pytest', 'tests/integration/test_recommendations.py',
                     'tests/integration/test_release_activation.py', 'tests/integration/test_serving_http.py', '-q')

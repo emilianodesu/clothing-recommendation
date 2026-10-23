@@ -1,5 +1,7 @@
 # Mac24: una ejecución de T5 operativo con continuidad temporal
 
+**Alternativa autorizada:** [adaptador desde Terminal/SSH](mac24-terminal.md). Ejecuta la misma secuencia; no ejecutar este prompt si el adaptador ya reservó o inició un intento.
+
 Lee `AGENTS.md`, `docs/events-operational.md` y `evidence/events-clock-review-mac24.json`. Ejecuta el protocolo nuevo una sola vez con el SHA completo recibido. Los prompts anteriores son históricos; no repetir `clock-check`, aumentar memoria, recrear PostgreSQL, borrar streams/volúmenes o resetear contadores. Conserva H, originales, ledger, Q1–Q4, T4-A/T4-B y los tres ZIP T5 fallidos. No entrenar, abrir test ni iniciar T6.
 
 1. Actualiza `main` por fast-forward conservando cambios existentes. Comprueba clon limpio y guarda el SHA recibido en `T5_OPERATIONAL_COMMIT`. No actualices código durante la corrida. Usa `SSL_CERT_FILE=/etc/ssl/cert.pem`, `DOCKER_CONTEXT=colima-hm-project` y Colima 14 GiB/4 CPU; no generes otro `.env` ni copies credenciales.
@@ -16,7 +18,7 @@ from project import ROOT,compose
 compose(ROOT,read_configuration(ROOT/'.env'),'build','jobs')
 PY
 SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project \
-python3 scripts/project.py verify --suite events
+python3 scripts/project.py verify --suite events --existing-services
 ```
 
 Conserva logs locales y comprueba otra vez identidad PostgreSQL. Un fallo de pruebas o cambio inesperado de identidad detiene la secuencia; devuelve diagnóstico agregado, sin lanzar el ensayo.

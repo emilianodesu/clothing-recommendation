@@ -10,7 +10,7 @@ T4-A/T4-B y Q1–Q4 están cerradas. El intento original T5 y el diagnóstico `e
 
 Conservar PostgreSQL activo, identidad/contadores, originales, streams, volúmenes, paquetes, ZIP, ledger y H. No usar `up --profile serve`, recrear servicios ni limpiar contadores para ocultar el historial. No entrenar ni evaluar test. La semilla sigue usando datos anteriores al corte y `/recommend` permanece inmutable. La nueva corrida sigue exclusivamente el prompt operativo enlazado, con AC, tapa abierta y el guard de reposo supervisado.
 
-Conservar SSL_CERT_FILE, contexto colima-hm-project y VM 14 GiB/4 CPU. API 4 GiB/2 CPU, semilla 3 GiB/1 CPU/2 hilos, PostgreSQL/UI 512 MiB cada uno. El intercambio privado de reportes sigue autorizado; no SSH ni otros canales. Esta sección prevalece sobre los procedimientos históricos siguientes.
+Conservar SSL_CERT_FILE, contexto colima-hm-project y VM 14 GiB/4 CPU. API 4 GiB/2 CPU, semilla 3 GiB/1 CPU/2 hilos, PostgreSQL/UI 512 MiB cada uno. El usuario autorizó posteriormente SSH desde Terminal para iniciar el adaptador de [docs/mac24-terminal.md](docs/mac24-terminal.md). Esta excepción prevalece sobre las prohibiciones históricas de SSH: no configura claves ni cambia permisos; los reportes siguen por GitHub privado. Usar el adaptador o el prompt operativo, nunca ambos. Esta sección prevalece sobre los procedimientos históricos siguientes.
 
 Este es un proyecto académico personal de Datos Masivos. Lee primero `README.md` y distingue la infraestructura implementada del trabajo pendiente. Ejecución local con Docker y PostgreSQL; PyTorch CPU/MLflow y Qdrant existen como infraestructura experimental. No hay presupuesto para nube ni dependencia de Hopsworks.
 
