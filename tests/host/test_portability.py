@@ -6,6 +6,29 @@ import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
 
 class PortabilityHost(unittest.TestCase):
+    def test_backup_uses_configured_airflow_entrypoint_and_restores_pause_state(self):
+        import json
+        from unittest.mock import patch
+        import backup
+        calls = []
+        def compose(root, values, *args, **kwargs):
+            calls.append(args)
+            if args[0] == 'ps':
+                return 'running'
+            if '-c' in args:
+                program = args[args.index('-c') + 1]
+                return json.dumps({'hm_build_release': True, 'hm_refresh_profiles': False}) if 'is_paused' in program else '0'
+            if args[0] == 'run':
+                raise RuntimeError('simulated backup failure')
+            return ''
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(backup, 'read_configuration', return_value={'ARTIFACTS_DIR': d}), patch.object(backup, 'compose', side_effect=compose):
+                with self.assertRaisesRegex(RuntimeError, 'simulated backup failure'):
+                    backup.create(Path(d))
+        dag_calls = [args for args in calls if 'dags' in args]
+        prefix = ('exec', '-T', 'airflow-scheduler', '/opt/airflow-env/bin/python', '/opt/airflow/entrypoint.py', 'dags')
+        self.assertEqual(dag_calls, [prefix + ('pause', 'hm_build_release'), prefix + ('pause', 'hm_refresh_profiles'), prefix + ('unpause', 'hm_refresh_profiles')])
+
     def module(self):
         self.assertIsNotNone(importlib.util.find_spec('restore'),'restore launcher missing')
         import restore

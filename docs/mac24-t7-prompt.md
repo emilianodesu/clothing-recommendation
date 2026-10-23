@@ -1,5 +1,7 @@
 # T7 en mac24: una ejecución, después de T6 auditada
 
+**Procedimiento histórico tras el intento fallido:** `portability-mac24-20261023T203910Z-ed135689` se detuvo en `backup.py:29`, al pausar un DAG. La llamada directa a `airflow` omitía la configuración del entrypoint; la corrección reutiliza el lanzador de T6. Todavía requiere comprobar conexión y estados de los DAG en mac24. No volver a ejecutar este prompt ni borrar la reserva. El reporte conserva failed y T7/E6 abiertas.
+
 Lee AGENTS.md, docs/reproducibility.md y evidence/pipeline-review-mac24.json. Conserva H, PostgreSQL/API/UI/Airflow, datos, streams, contadores, paquetes y ledger. No repetir T5/T6, entrenar ni abrir test. Conecta AC, abre la tapa y mantén Terminal abierta. No enviar eventos ni operar la demo durante el ensayo, para poder comprobar el estado original.
 
 1. Con `SSL_CERT_FILE=/etc/ssl/cert.pem`, `DOCKER_CONTEXT=colima-hm-project` y main limpio, fija el SHA completo recibido. No cambiar de código durante el ensayo. VM14GiB/4CPU; no ampliar presupuestos.

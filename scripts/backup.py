@@ -18,7 +18,9 @@ def create(root):
     folder=artifacts/'backups';folder.mkdir(exist_ok=True,mode=0o700)
     name='backup-'+uuid.uuid4().hex+'.zip';original={}
     scheduler=call('ps','--status','running','-q','airflow-scheduler')
-    def airflow(*args):return call('exec','-T','airflow-scheduler','airflow',*args)
+    # docker exec does not inherit environment configured by PID 1's entrypoint.
+    # Reuse the configured CLI used by T6; never pass connection secrets as args.
+    def airflow(*args):return call('exec','-T','airflow-scheduler','/opt/airflow-env/bin/python','/opt/airflow/entrypoint.py',*args)
     try:
         if scheduler:
             # CLI list emits warnings and string booleans in Airflow 3.3; read typed DB state.

@@ -1,5 +1,9 @@
 # Instrucciones para agentes
 
+## Seguimiento T7: intento fallido, no repetir
+
+`portability-mac24-20261023T203910Z-ed135689` conserva failed. Se verificó su ZIP y fuente T6; la traza recibida ubica el fallo en la pausa de Airflow (`backup.py:29`), antes del respaldo completo/restauración. La invocación directa omitía el entrypoint de configuración; se corrigió usando el lanzador de T6. Falta comprobar conexión y pausa de ambos DAG en mac24 antes de diseñar seguimiento. Conservar reserva, ZIP, servicios y originales. No ejecutar el adaptador T7 de nuevo ni T8. Este seguimiento prevalece sobre el prompt original siguiente. Las comprobaciones false del reporte no ejecutadas no demuestran pérdida de datos; preservación de 3,402 archivos es declaración remota separada.
+
 ## Paso vigente T7: implementación y ensayo sintético disponibles; una ejecución mac24 pendiente
 
 Lee `docs/reproducibility.md`, `docs/mac24-t7-prompt.md` y `evidence/portability-local.json`. T6/E5 cerradas. T7/E6 siguen abiertas hasta revisión principal H&M. Con main limpio, SHA completo recibido, AC y Terminal abierta, ejecutar una vez `scripts/mac24_t7.py --expected-commit SHA`. Conserva contexto colima-hm-project, SSL_CERT_FILE y VM14GiB/4CPU. No repetir campañas, entrenamientos o test.
