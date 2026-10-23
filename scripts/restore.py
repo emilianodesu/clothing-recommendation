@@ -123,3 +123,32 @@ def main(argv=None):
     restore_into(Path(__file__).resolve().parents[1],a.archive,a.destination,a.sha256,a.port)
     return 0
 if __name__=='__main__':raise SystemExit(main())
+
+
+def offline_check(destination):
+    """Temporarily remove only the destination's external network; keep DB internal."""
+    from bootstrap import read_configuration
+    v=read_configuration(Path(destination)/'.env')
+    cid=compose(destination,v,'ps','-q','api',capture=True).strip()
+    network=v['COMPOSE_PROJECT_NAME']+'_api-publication'
+    backend=v['COMPOSE_PROJECT_NAME']+'_backend'
+    if subprocess.check_output(['docker','network','inspect',backend,'--format','{{.Internal}}'],text=True).strip()!='true':raise ValueError('Backend must be internal')
+    with __import__('zipfile').ZipFile(Path(destination)/'artifacts/restore-input.zip') as z:cases=json.loads(z.read('backup.json'))['parity']
+    program="""import json,sys,urllib.request
+cases=json.loads(sys.argv[1]);opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+with opener.open('http://127.0.0.1:8000/health/ready') as r: assert json.load(r)['status']=='ready'
+for case in cases:
+ req=urllib.request.Request('http://127.0.0.1:8000/recommend',data=json.dumps(case['request']).encode(),headers={'Content-Type':'application/json'})
+ with opener.open(req) as r: actual=json.load(r)
+ actual.pop('request_id',None)
+ assert actual==case['response']
+print(len(cases))
+"""
+    subprocess.run(['docker','network','disconnect',network,cid],check=True,capture_output=True)
+    try:
+        networks=json.loads(subprocess.check_output(['docker','inspect',cid,'--format','{{json .NetworkSettings.Networks}}'],text=True))
+        if set(networks)!={backend}:raise ValueError('Unexpected network attached to restored API')
+        result=subprocess.check_output(['docker','exec',cid,'python','-c',program,json.dumps(cases)],text=True,stderr=subprocess.DEVNULL,timeout=120)
+        if int(result)!=len(cases):raise ValueError('Offline parity incomplete')
+        return len(cases)
+    finally:subprocess.run(['docker','network','connect',network,cid],check=True,capture_output=True)
