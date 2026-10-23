@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "portability-mac24-20261023T204855Z-579f1842",
+  "source_commit": "b7655ef24d560ed93bc46f9a31b68aa874fd676d",
+  "status": "passed",
+  "archive_bytes": 3239,
+  "archive_sha256": "afc813f8ec2fd93f837e3107c4b6b15934ab45231e48b2b520d3de0255c5789e",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-portability-mac24-20261023T204855Z-579f1842",
+  "result": {
+    "stage": "T7",
+    "protocol": "portability-v1",
+    "status": "passed",
+    "checks": {
+      "source_preserved": true,
+      "source_parity": true,
+      "restored_parity": true,
+      "offline": true,
+      "fresh_credentials": true
+    },
+    "duration_seconds": 96.53055233300074,
+    "archive_bytes": 918506419,
+    "archive_sha256": "b40ed253fee3c5913a0d94ca9549d5db5ed3683065530d5fdb85c7c5cd022f50",
+    "parity_queries": 6,
+    "offline_queries": 6,
+    "source_state_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "source_run_id": "pipeline-mac24-20261023T193510Z-532c902f",
+    "source_archive_sha256": "99aeda54a172fbe1d5bfceea153ed0904f71e3a21c4d490abd7f88efd57b69ea",
+    "source_postgres": {
+      "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+      "started_at": "2026-10-23T19:15:26.34851292Z",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "destination_postgres": {
+      "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+      "started_at": "2026-10-23T20:49:42.443023644Z",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "images": {
+      "hmrec-jobs:0.1.0": "sha256:18d76194a018466097cf3d2b1c0b6ac48cf56098cfca4b6d0effbbdb5307ae5f",
+      "hmrec-app:0.1.0": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf"
+    },
+    "error_type": null,
+    "training_performed": false,
+    "test_evaluated": false,
+    "t7_closed": false
+  },
+  "previous_attempt": {
+    "run_id": "portability-mac24-20261023T203910Z-ed135689",
+    "archive_sha256": "9c62660615e4f98a9b6b3f2cf25822b5ad27131969e8be3edf90fd036cfe78be"
+  },
+  "operator_claims": {
+    "verification_suite": "portability",
+    "verification_exit_code": 0,
+    "preservation": {
+      "files": 3410,
+      "inventory_sha256": "1379da82b238aac6ea1f4ffd954d0a1782dba61f365b87c2e42f47e87546ae46",
+      "unchanged": true
+    },
+    "engine": {
+      "cpus": 4,
+      "memory": 14624956416
+    }
+  },
+  "review_status": "pending_primary_review"
+}
