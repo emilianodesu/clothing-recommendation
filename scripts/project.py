@@ -62,6 +62,10 @@ def run_bootstrap(root, skip_build=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
+    clock = sub.add_parser('clock-check', help='T5: diagnóstico de relojes/energía en lectura; no ejecuta Docker')
+    clock.add_argument('--machine-id', required=True)
+    clock.add_argument('--expected-commit', required=True)
+    clock.add_argument('--source-report', required=True)
     setup = sub.add_parser("bootstrap", help="Preparar y comprobar la infraestructura base")
     setup.add_argument("--skip-build", action="store_true", help="Usar imágenes construidas previamente")
     sub.add_parser("check", help="Comprobar dependencias y servicios reales")
@@ -111,6 +115,10 @@ def main():
     tracking.add_argument("--port", type=int)
     args = parser.parse_args()
     try:
+        if args.action == 'clock-check':
+            from clock_check import main as check_clock
+            return check_clock(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,
+                                '--source-report',args.source_report])
         if args.action=='events-check':
             from events_check import main as check_events
             return check_events(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,'--source-run-id',args.source_run_id]+(['--memory-diagnostics'] if args.memory_diagnostics else []))

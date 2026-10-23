@@ -149,6 +149,9 @@ def summary(report):
     if report.get('kind') == 'events-handoff':
         lines[0] = '# Resultado de eventos e interfaz T5'
         lines[-2] = 'T5: flujo HTTP de eventos y salud de interfaz, perfiles y reinicio. No acredita carga T8 ni aceptación final.'
+        if report.get('result', {}).get('protocol') == 'events-clock-v1':
+            lines[0] = '# Diagnóstico de relojes T5 en lectura'
+            lines[-2] = 'Sólo recolección de relojes/energía: passed no acredita causa confirmada, cierre T5 ni rendimiento.'
     return '\n'.join(lines) + '\n'
 
 
@@ -341,7 +344,10 @@ def read_report(archive):
             if 'result.json' in names:
                 result=json.loads(bundle.read('result.json'));no_private_rows(result);require(report.get('result')==result)
             environment=json.loads(bundle.read('environment.json')) if 'environment.json' in names else {}
-            if (result.get('protocol')=='events-memory-v1' or 'diagnostics' in result
+            if result.get('protocol')=='events-clock-v1' or 'clock_diagnostic' in result:
+                from clock_handoff import validate_clock
+                validate_clock(report,result,environment,names)
+            elif (result.get('protocol')=='events-memory-v1' or 'diagnostics' in result
                     or 'failure' in result or 'runner_tree_sha256' in environment):
                 from events_memory_handoff import validate_memory_envelope
                 validate_memory_envelope(report,result,environment,names)
