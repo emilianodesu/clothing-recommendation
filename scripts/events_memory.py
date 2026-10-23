@@ -81,9 +81,10 @@ def interval(a,b):
     return result
 
 
-def _inspect(cid):
+def _inspect(cid, output=None):
+    output = output or subprocess.check_output
     # Never export Docker Config/Env, mounts or host paths.
-    info=json.loads(subprocess.check_output(['docker','inspect',cid],text=True,timeout=30))[0]
+    info=json.loads(output(['docker','inspect',cid],text=True,timeout=30))[0]
     require(info['State']['Running'] is True)
     return dict(container_id=info['Id'],started_at=info['State']['StartedAt'],restart_count=info['RestartCount'],
         image_id=info['Image'],memory_bytes=info['HostConfig']['Memory'],
@@ -91,16 +92,17 @@ def _inspect(cid):
         oom_killed=info['State']['OOMKilled'])
 
 
-def capture(cid,service,phase,started):
-    begin=time.monotonic();before=_inspect(cid)
+def capture(cid,service,phase,started,*,output=None):
+    output = output or subprocess.check_output
+    begin=time.monotonic();before=_inspect(cid,output)
     # All paths are fixed internal metrics; no user input enters shell code.
     command="set -eu\nstat -c '%i' /sys/fs/cgroup\nprintf '\\0'\n"
     for name in FILES:
         command+='cat /sys/fs/cgroup/'+name+"\nprintf '\\0'\n"
-    parts=subprocess.check_output(['docker','exec',cid,'sh','-c',command],text=True,timeout=30)
+    parts=output(['docker','exec',cid,'sh','-c',command],text=True,timeout=30)
     require(len(parts)<65536)
     parts=parts.split('\0');require(len(parts)==len(FILES)+2 and parts[-1]=='')
-    raw=dict(zip(FILES,parts[1:-1]));after=_inspect(cid)
+    raw=dict(zip(FILES,parts[1:-1]));after=_inspect(cid,output)
     require(before==after)  # A restart during sampling invalidates the observation.
     def table(name):
         rows=[line.split() for line in raw[name].splitlines()]
