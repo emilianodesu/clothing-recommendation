@@ -2,13 +2,14 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
-import http.client
+from http.client import HTTPConnection
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import time
+import traceback
 import uuid
 from bootstrap import read_configuration
 from clock_check import checkout_commit, runner_digest
@@ -23,6 +24,17 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def require(value,message='T6 control failed'):
     if not value:raise ValueError(message)
+
+
+def request_json(port,password,path,body=None,expected=200):
+    c=HTTPConnection('127.0.0.1',port,timeout=30)
+    try:
+        c.request('POST' if body is not None else 'GET',path,body=json.dumps(body) if body is not None else None,
+            headers={'Content-Type':'application/json','Authorization':'Bearer '+password})
+        response=c.getresponse();raw=response.read(1024*1024+1)
+        require(response.status==expected and len(raw)<=1024*1024)
+        return json.loads(raw)
+    finally:c.close()
 
 
 def _run(root,machine,commit,source_run=None):
@@ -48,14 +60,7 @@ def _run(root,machine,commit,source_run=None):
     def db(query,args=(),service='app'):
         program="import json,sys;from hm_recommender.database import connect\nwith connect(sys.argv[1]) as c:print(json.dumps(c.execute(sys.argv[2],json.loads(sys.argv[3])).fetchall(),default=str))"
         return json.loads(call('exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',program,service,query,json.dumps(args)))
-    def http(path,body=None,expected=200):
-        c=http.client.HTTPConnection('127.0.0.1',int(values['API_PORT']),timeout=30)
-        try:
-            c.request('POST' if body is not None else 'GET',path,body=json.dumps(body) if body is not None else None,
-                headers={'Content-Type':'application/json','Authorization':'Bearer '+values['HM_APP_PASSWORD']})
-            r=c.getresponse();raw=r.read(1024*1024+1);require(r.status==expected and len(raw)<=1024*1024)
-            return json.loads(raw)
-        finally:c.close()
+    def http(path,body=None,expected=200):return request_json(int(values['API_PORT']),values['HM_APP_PASSWORD'],path,body,expected)
     def snapshots(phase):
         for name in SERVICES:
             cid=call('ps','-q',name)
@@ -147,6 +152,7 @@ def _run(root,machine,commit,source_run=None):
         result['checks']['base_unchanged']=base()==original
         code=0
     except BaseException as error:
+        traceback.print_exc()  # Private operator log only, never copied into the ZIP.
         result['error_type']=type(error).__name__;code=130 if isinstance(error,KeyboardInterrupt) else 1
         print('T6 stopped: '+type(error).__name__+'; inspect private state, do not repeat',flush=True)
     finally:
