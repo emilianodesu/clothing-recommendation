@@ -304,6 +304,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
+**Implementación inicial T8-A (23 de octubre):** [baseline](../../mac24-t8-baseline.md), generador de llegada abierta, cohortes privadas, paridad por respuesta y contadores cgroup. Pruebas host y smoke HTTP sintético disponibles; carga mac24 pendiente. No marcar objetivos de rendimiento ni test como cumplidos. T8-B concurrencia, T8-C test único y T8-D informe siguen pendientes.
+
 **Archivos:** crear `scripts/benchmark.py`, `configs/benchmark.yaml`, `docs/course-coverage.md`, `docs/final-report.md`, `docs/demo.md`, `tests/integration/test_acceptance.py`. Actualizar `docs/evaluation.md`, `README.md` y el documento académico al cerrar los resultados.
 
 **Interfaces:** `benchmark(config_path: Path, output_dir: Path) -> dict` produce percentiles, tasa ofrecida/efectiva, errores y uso de recursos. `verify --suite acceptance` reúne las comprobaciones críticas sin repetir una descarga o entrenamiento completo si existen artefactos verificados de esa ejecución.

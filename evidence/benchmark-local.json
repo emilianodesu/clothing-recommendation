@@ -1,0 +1,93 @@
+{
+  "scope": "3-second synthetic HTTP smoke only; no H&M, resource sampling or mac24 baseline",
+  "result": {
+    "scheduled": 60,
+    "completed": 60,
+    "successful": 60,
+    "omitted": 0,
+    "errors": 0,
+    "error_fraction": 0.0,
+    "success_rps": 19.964902254256362,
+    "completed_rps": 19.964902254256362,
+    "latency_seconds": {
+      "p50": 0.005374666987336241,
+      "p95": 0.006308791998890229,
+      "p99": 0.00645995800732635
+    },
+    "service_seconds": {
+      "p50": 0.0010093330056406558,
+      "p95": 0.0013969169958727434,
+      "p99": 0.0015100419986993074
+    },
+    "offered_rps": 20,
+    "window_seconds": 3,
+    "elapsed_seconds": 3.0052739169914275,
+    "clock_discrepancy_seconds": 0.00016894075088202953,
+    "groups": {
+      "history": {
+        "scheduled": 20,
+        "completed": 20,
+        "successful": 20,
+        "omitted": 0,
+        "errors": 0,
+        "error_fraction": 0.0,
+        "success_rps": 6.654967418085454,
+        "completed_rps": 6.654967418085454,
+        "latency_seconds": {
+          "p50": 0.005501124993315898,
+          "p95": 0.006306625000433996,
+          "p99": 0.00645995800732635
+        },
+        "service_seconds": {
+          "p50": 0.0007838339952286333,
+          "p95": 0.0013479580084094778,
+          "p99": 0.0015100419986993074
+        }
+      },
+      "known_fallback": {
+        "scheduled": 20,
+        "completed": 20,
+        "successful": 20,
+        "omitted": 0,
+        "errors": 0,
+        "error_fraction": 0.0,
+        "success_rps": 6.654967418085454,
+        "completed_rps": 6.654967418085454,
+        "latency_seconds": {
+          "p50": 0.005343666998669505,
+          "p95": 0.006321708002360538,
+          "p99": 0.006358624988934025
+        },
+        "service_seconds": {
+          "p50": 0.0010780839947983623,
+          "p95": 0.0013969169958727434,
+          "p99": 0.0014077079977141693
+        }
+      },
+      "unknown": {
+        "scheduled": 20,
+        "completed": 20,
+        "successful": 20,
+        "omitted": 0,
+        "errors": 0,
+        "error_fraction": 0.0,
+        "success_rps": 6.654967418085454,
+        "completed_rps": 6.654967418085454,
+        "latency_seconds": {
+          "p50": 0.005348624996258877,
+          "p95": 0.006262708004214801,
+          "p99": 0.006291457990300842
+        },
+        "service_seconds": {
+          "p50": 0.00104750000173226,
+          "p95": 0.0013407920050667599,
+          "p99": 0.001408417010679841
+        }
+      }
+    }
+  },
+  "t8_closed": false,
+  "test_evaluated": false,
+  "host_tests": 204,
+  "physical_mac24_baseline_executed": false
+}

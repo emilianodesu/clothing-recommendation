@@ -31,6 +31,7 @@ ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {n
 DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'build.log', 'result.json', 'config.resolved.json'}
 
 def marker_for(run_id):
+    if run_id.startswith('benchmark-'): return '<!-- hmrec-benchmark-handoff-v1 -->'
     if run_id.startswith('portability-'): return '<!-- hmrec-portability-handoff-v1 -->'
     if run_id.startswith('pipeline-'): return '<!-- hmrec-pipeline-handoff-v1 -->'
     if run_id.startswith('events-'): return EVENTS_MARKER
@@ -38,7 +39,7 @@ def marker_for(run_id):
     return RELEASE_MARKER if run_id.startswith('release-') else QUALITY_MARKER if run_id.startswith('quality-') else DIAGNOSTIC_MARKER if run_id.startswith('diagnose-') else TRAIN_MARKER if run_id.startswith('train-') else DATA_MARKER if run_id.startswith('data-') else MARKER
 
 def tag_for(run_id):
-    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-', 'events-', 'pipeline-', 'portability-')):
+    if not isinstance(run_id, str) or not NAME.fullmatch(run_id) or not run_id.startswith(('bootstrap-', 'data-', 'train-', 'diagnose-', 'quality-', 'release-', 'serving-', 'events-', 'pipeline-', 'portability-', 'benchmark-')):
         raise ValueError('Run ID inválido; usa el identificador bootstrap-... o data-... del reporte')
     return 'handoff-' + run_id
 
@@ -54,7 +55,11 @@ def validate_archive(path, run_id=None):
     tag_for(report['run_id'])
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
-    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff') else ALLOWED
+    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff') else ALLOWED
+    if report['kind']=='benchmark-handoff':
+        allowed=allowed|{'resources.log'}
+    if report['run_id'].startswith('benchmark-') != (report['kind']=='benchmark-handoff'):
+        raise ValueError('Benchmark prefix and kind differ')
     if report['kind'] == 'training-handoff':
         allowed = allowed | {'tracking.log'}
     if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
@@ -256,7 +261,7 @@ def main():
             reports = []
             for release in client.releases():
                 tag = release.get('tag_name', '')
-                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-', 'handoff-diagnose-', 'handoff-quality-', 'handoff-release-', 'handoff-serving-', 'handoff-events-', 'handoff-pipeline-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
+                if tag.startswith(('handoff-bootstrap-', 'handoff-data-', 'handoff-train-', 'handoff-diagnose-', 'handoff-quality-', 'handoff-release-', 'handoff-serving-', 'handoff-events-', 'handoff-pipeline-', 'handoff-portability-', 'handoff-benchmark-')) and marker_for(tag[len('handoff-'):]) in (release.get('body') or ''):
                     run_id = tag[len('handoff-'):]
                     tag_for(run_id)
                     reports.append({'run_id': run_id, 'draft': release['draft'], 'url': release['html_url']})

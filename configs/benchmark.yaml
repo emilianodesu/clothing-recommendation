@@ -1,0 +1,15 @@
+{
+  "protocol": "load-baseline-v1",
+  "rate": 20,
+  "warmup_seconds": 120,
+  "measurement_seconds": 600,
+  "workers": 64,
+  "timeout_seconds": 2,
+  "max_dispatch_lag_seconds": 0.05,
+  "resource_interval_seconds": 10,
+  "customers_per_group": 32,
+  "seed": 42,
+  "p95_seconds_strict_max": 0.2,
+  "error_fraction_strict_max": 0.01,
+  "clock_discrepancy_seconds_max": 2
+}
