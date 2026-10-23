@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "stage": "T5",
+  "status": "reviewed_failed",
+  "stage_closed": false,
+  "reviewed_on": "2026-10-22",
+  "review_timezone": "America/Mexico_City",
+  "reviewer_machine": "primary",
+  "execution_machine": "mac24",
+  "received_commit": "838dee64050362f633b8afc411dcb86c139d2e48",
+  "received_evidence": "evidence/events-memory-mac24.json",
+  "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+  "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T184956Z-e167c9d2",
+  "archive_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+  "archive_bytes": 8211,
+  "report_package_id": "63fd1b7da548d5e09d4361ade6160ed273e84387e9d35be9328c140a77db2be6",
+  "closed_report_status": "failed",
+  "reader_exit_code": 1,
+  "report_protocol": "events-memory-v1",
+  "verified_locally": [
+    "Downloaded the closed ZIP and validated inventory, lengths, hashes, package identity and the failed-report contract without extracting or executing its contents.",
+    "Received result and environment equal the closed ZIP exactly. The received Git commit changes documentation/evidence only; source_clean is true in the closed report.",
+    "Recomputed scientific Python source, every runner Python file and uv.lock hashes from frozen commit 44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2; all match environment.json.",
+    "Validated the original T4-A source ZIP and matched archive hash, package identity, dataset, release ID and manifest hash. Original failed events-v1 ZIP still matches its audited hash and identity.",
+    "Recomputed all nine intervals from twelve snapshots; effective limits, same-generation counters and resource summaries agree. API changes generation only after its expected restart; UI/PostgreSQL stay stable within the closed run.",
+    "Reproduced the structured final failure in memory. Evaluated all 45 legacy validator require calls on the pre-validation envelope without changing measurements: only the PostgreSQL strict lifetime-peak predicate is false.",
+    "Separately verified remaining new observation gates: complete captures, fixed limits, zero recorded swap/OOM and expected generations. No other frozen gate fails in this report.",
+    "Computed differences between UTC timestamps and monotonic durations: a new timing limitation not rejected by the frozen validator. Did not reclassify the closed report.",
+    "No Docker job, service change, training, held-out evaluation or heavy test was executed on either machine as part of this primary audit."
+  ],
+  "environment": {
+    "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+    "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282",
+    "runner_tree_sha256": "467f3c753fd31dfeba8cf9bdec43d9d95cb3452d76966b80eef827c25a53ebeb"
+  },
+  "source": {
+    "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+    "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+    "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+    "dataset": "hm",
+    "report_package_id": "03c3d7c4b32cd198a4406537d3435e12867bc49771d5814da65427c401eafeb3",
+    "prior_audit": "evidence/releases-review-mac24.json"
+  },
+  "preserved_original": {
+    "run_id": "events-mac24-20261022T043907Z-ddcd2e42",
+    "archive_sha256": "c11222d32d7cf31a84e6e7659579b8f06265e8cd06aca97c4bef6f1a88e72c74",
+    "report_package_id": "0272c16ecadd5223658351305be72d886c89347459b3056bc390578bdbb71148",
+    "status": "failed",
+    "primary_audit": "evidence/events-review-mac24.json"
+  },
+  "summary": {
+    "diagnostics_complete": true,
+    "captures": 12,
+    "capture_errors": 0,
+    "intervals": 9,
+    "comparable_intervals": 8,
+    "failure": {
+      "component": "postgres",
+      "criterion": "peak_below_limit",
+      "observed": 537141248,
+      "expected": 536870912
+    },
+    "seed": {
+      "daily_rows": 972591,
+      "purchases": 1069693,
+      "first_day": "2020-08-12",
+      "last_day": "2020-09-08",
+      "data_as_of": "2020-09-09"
+    },
+    "checks": {
+      "initial_parity_requests": 4,
+      "new_events": 4,
+      "duplicate_status": 200,
+      "conflict_status": 409,
+      "purchase_changes_profile": true,
+      "views_clicks_not_purchases": true,
+      "late_event_order": true,
+      "refresh_idempotent": true,
+      "base_unchanged": true,
+      "profile_sha256": "8acd443e29d0d3263c3e86798bac32421e922f8eb36322812257e57614dfbd11",
+      "revision": 3,
+      "data_as_of": "2020-09-09",
+      "processed_events": 4
+    },
+    "host": {
+      "host": "127.0.0.1",
+      "api_port": 8000,
+      "ui_port": 8501,
+      "bindings_verified": true,
+      "ui_healthy": true
+    },
+    "restart_persistent": true,
+    "source_unchanged": true,
+    "new_stream_distinct_from_original": true,
+    "resources": {
+      "seed": {
+        "image_id": "sha256:c79e0e533aa5e93d7900549f1f5b1263e7d3042bbab0387da8b6548e38860506",
+        "memory_bytes": 3221225472,
+        "nano_cpus": 1000000000,
+        "cgroup_peak_bytes": 692932608,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "api": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "cgroup_peak_bytes": 800714752,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "ui": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "cgroup_peak_bytes": 67268608,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "postgres": {
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "cgroup_peak_bytes": 537141248,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      }
+    },
+    "resources_mib": {
+      "seed": {
+        "peak": 660.83203125,
+        "limit": 3072.0
+      },
+      "api": {
+        "peak": 763.62109375,
+        "limit": 4096.0
+      },
+      "ui": {
+        "peak": 64.15234375,
+        "limit": 512.0
+      },
+      "postgres": {
+        "peak": 512.2578125,
+        "limit": 512.0
+      }
+    },
+    "postgres_generation_stable_during_closed_run": true,
+    "postgres_peak_unchanged_from_original": true,
+    "postgres_new_max_events": 164089,
+    "postgres_pressure_delta_us": {
+      "some": 1679380,
+      "full": 1679363
+    },
+    "postgres_memory": [
+      {
+        "phase": "before_seed",
+        "current_bytes": 532631552,
+        "peak_bytes": 537141248,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 47782,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 14311424,
+          "file": 493948928,
+          "kernel": 24821760,
+          "shmem": 147144704
+        },
+        "pressure_us": {
+          "some": 661359,
+          "full": 661337
+        }
+      },
+      {
+        "phase": "after_seed",
+        "current_bytes": 514400256,
+        "peak_bytes": 537141248,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 62022,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 14323712,
+          "file": 478773248,
+          "kernel": 21692416,
+          "shmem": 147152896
+        },
+        "pressure_us": {
+          "some": 881679,
+          "full": 881657
+        }
+      },
+      {
+        "phase": "after_replay",
+        "current_bytes": 504782848,
+        "peak_bytes": 537141248,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 211871,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 14331904,
+          "file": 467914752,
+          "kernel": 22794240,
+          "shmem": 147169280
+        },
+        "pressure_us": {
+          "some": 2340739,
+          "full": 2340700
+        }
+      },
+      {
+        "phase": "after_restart",
+        "current_bytes": 505151488,
+        "peak_bytes": 537141248,
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 211871,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "stat": {
+          "anon": 14327808,
+          "file": 468111360,
+          "kernel": 22818816,
+          "shmem": 147169280
+        },
+        "pressure_us": {
+          "some": 2340739,
+          "full": 2340700
+        }
+      }
+    ],
+    "postgres_intervals": [
+      {
+        "service": "postgres",
+        "from_phase": "before_seed",
+        "to_phase": "after_seed",
+        "seconds": 1428.392678291013,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 14240,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 220320,
+          "full": 220320
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_seed",
+        "to_phase": "after_replay",
+        "seconds": 158.91120012500323,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 149849,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 1459060,
+          "full": 1459043
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_replay",
+        "to_phase": "after_restart",
+        "seconds": 4.515919458994176,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      }
+    ],
+    "legacy_predicates_evaluated": 45,
+    "legacy_failed_predicates": [
+      {
+        "passed": false,
+        "line": 45,
+        "expression": "count(r['cgroup_peak_bytes'], 1) and r['cgroup_peak_bytes'] < r['memory_bytes']"
+      }
+    ]
+  },
+  "clock_audit": {
+    "started_at": "2026-10-22T18:49:56.268490+00:00",
+    "finished_at": "2026-10-22T23:12:44.128825+00:00",
+    "utc_elapsed_seconds": 15767.860335,
+    "monotonic_duration_seconds": 1593.0425461659906,
+    "difference_seconds": 14174.817788834009,
+    "consecutive_snapshots": [
+      {
+        "from": "before_seed/api",
+        "to": "before_seed/ui",
+        "utc_seconds": 0.136804,
+        "monotonic_seconds": 0.13680554198799655,
+        "difference_seconds": -1.5419879965394845e-06
+      },
+      {
+        "from": "before_seed/ui",
+        "to": "before_seed/postgres",
+        "utc_seconds": 0.118916,
+        "monotonic_seconds": 0.11891604200354777,
+        "difference_seconds": -4.200354777883497e-08
+      },
+      {
+        "from": "before_seed/postgres",
+        "to": "after_seed/api",
+        "utc_seconds": 5537.820019,
+        "monotonic_seconds": 1427.912991707999,
+        "difference_seconds": 4109.907027292001
+      },
+      {
+        "from": "after_seed/api",
+        "to": "after_seed/ui",
+        "utc_seconds": 0.138522,
+        "monotonic_seconds": 0.13852025000960566,
+        "difference_seconds": 1.7499903943452022e-06
+      },
+      {
+        "from": "after_seed/ui",
+        "to": "after_seed/postgres",
+        "utc_seconds": 879.425498,
+        "monotonic_seconds": 0.3411663330043666,
+        "difference_seconds": 879.0843316669956
+      },
+      {
+        "from": "after_seed/postgres",
+        "to": "after_replay/api",
+        "utc_seconds": 9319.439231,
+        "monotonic_seconds": 158.5226502919977,
+        "difference_seconds": 9160.916580708003
+      },
+      {
+        "from": "after_replay/api",
+        "to": "after_replay/ui",
+        "utc_seconds": 0.197713,
+        "monotonic_seconds": 0.19771395801217295,
+        "difference_seconds": -9.580121729524382e-07
+      },
+      {
+        "from": "after_replay/ui",
+        "to": "after_replay/postgres",
+        "utc_seconds": 0.190836,
+        "monotonic_seconds": 0.19083587499335408,
+        "difference_seconds": 1.2500664592351995e-07
+      },
+      {
+        "from": "after_replay/postgres",
+        "to": "after_restart/api",
+        "utc_seconds": 29.12012,
+        "monotonic_seconds": 4.254002542002127,
+        "difference_seconds": 24.866117457997873
+      },
+      {
+        "from": "after_restart/api",
+        "to": "after_restart/ui",
+        "utc_seconds": 0.123018,
+        "monotonic_seconds": 0.12301808298798278,
+        "difference_seconds": -8.298798277739383e-08
+      },
+      {
+        "from": "after_restart/ui",
+        "to": "after_restart/postgres",
+        "utc_seconds": 0.138899,
+        "monotonic_seconds": 0.13889883400406688,
+        "difference_seconds": 1.6599593311017458e-07
+      }
+    ],
+    "performance_comparison_usable": false,
+    "cause_confirmed": false,
+    "interpretation": "UTC elapsed time is 15767.860335 s, whereas the host monotonic timer records 1593.042546 s. This is not CPU time or a proven uninterrupted wall duration. Host sleep, clock adjustment or VM timing effects require independent evidence; none is established by this ZIP.",
+    "frozen_validator_limit": "The frozen 7200 s check and subprocess budgets use host monotonic time. This audit does not retroactively redefine them, but cannot certify a 2 h uninterrupted wall-time bound.",
+    "strongest_same_phase_example": "after_seed/ui to after_seed/postgres: 879.425498 UTC seconds versus 0.341166333 monotonic seconds; the phase snapshots are not contemporaneous."
+  },
+  "findings": [
+    {
+      "id": "T5M-01",
+      "status": "open",
+      "title": "Historical PostgreSQL peak makes the unchanged acceptance predicate fail",
+      "evidence": "All four PostgreSQL observations record 537141248 bytes versus 536870912 configured, already present before seed and identical to the original failed report. New max events total 164089, with 1679380/1679363 microseconds some/full pressure and no captured swap/OOM.",
+      "interpretation": "The historical overshoot is isolated; adequate memory headroom is not established. memory.max may transiently overshoot and memory.peak is a lifetime maximum. File accounting dominates these snapshots and includes shared memory; it is not all private heap or necessarily reclaimable cache.",
+      "disposition": "Keep both failures intact. Review a versioned operational memory criterion before further acceptance runs; do not reset counters, increase memory or relax the existing validator to force a pass."
+    },
+    {
+      "id": "T5M-02",
+      "status": "open",
+      "title": "UTC and monotonic durations diverge by 14174.818 seconds",
+      "evidence": "The closed report spans 18:49:56.268490 to 23:12:44.128825 UTC on October 22. Consecutive observations show gaps even inside after_seed, while monotonic time advances only fractions of a second.",
+      "interpretation": "The 26.55-minute figure is the recorded monotonic duration, not total UTC elapsed time. The report does not establish the cause, uninterrupted execution, SQL latency or performance relative to the earlier 46.814-second run.",
+      "disposition": "Obtain narrowly scoped read-only clock/power evidence from mac24 and add explicit clock coherence, per-operation timing and awake-lifecycle controls to a new protocol before any performance comparison."
+    },
+    {
+      "id": "T5-02",
+      "status": "resolved_in_diagnostic_protocol",
+      "title": "Failure now identifies final-validation and the exact failed resource predicate",
+      "evidence": "events-memory-v1 records FinalValidationError, postgres/peak_below_limit and exact observed/expected values after successful restart persistence. The v1 report remains unchanged."
+    }
+  ],
+  "declared_by_mac24_not_independently_reproduced": {
+    "local_verification": {
+      "suite": "events",
+      "unit_passed": 62,
+      "serving_integration_passed": 28,
+      "publication_passed": 1,
+      "events_ui_passed": 10,
+      "host_passed": 112,
+      "total_passed": 213,
+      "failed": 0,
+      "build": "jobs only; active API/UI/PostgreSQL preserved during preparation",
+      "postgres_identity_unchanged_before_after_suite_and_run": true,
+      "postgres_started_at": "2026-10-20T00:46:17.675247553Z",
+      "preservation": {
+        "files_checked": 3086,
+        "all_unchanged": true,
+        "historical_reports_unchanged": true,
+        "ledger_unchanged": true,
+        "private_inventory_sha256": "816fdd370590db153400524b0177046257178f0b4423de0dc3d20b86093cdf46",
+        "scope": "processed data, features, checkpoints, Q1-Q4 work/ZIPs, T4-A packages, serving reports and original failed T5 report"
+      },
+      "colima": {
+        "memory_gib": 14,
+        "cpus": 4,
+        "profile": "hm-project"
+      },
+      "post_close_api_ready": true
+    },
+    "scope": "213 tests, preservation of 3086 private files and ledger, Colima capacity, pre/post-suite identity, jobs-only rebuild and post-close readiness are separate mac24 declarations. Their private inventories, raw logs and source data were not transferred. The closed ZIP does establish stable PostgreSQL identity during its own four observations."
+  },
+  "limits": [
+    "This primary audit verifies closed evidence and code; it does not query mac24 or recompute H&M private profiles.",
+    "Snapshots and cgroup deltas describe service activity between captures, including potential background work; they do not identify a SQL query as the cause or constitute isolated per-operation peaks.",
+    "Zero peak growth does not imply zero interval peaks. memory.stat shmem overlaps file accounting; do not add it as a disjoint category or equate file with fully reclaimable cache.",
+    "No CPU, disk-wait, SQL phase timing, sleep log or host clock implementation is present. Do not use the anomalous intervals as latency, pressure percentages or throughput benchmarks.",
+    "The replay checks four parity requests and four events; it is not exhaustive browser acceptance or sustained load. T8 remains pending.",
+    "Historical failed reports are not upgraded by this review or a future acceptance revision. T5/E4 and quality_accepted remain open/false."
+  ],
+  "next_step": {
+    "status": "proposal_not_executed",
+    "action": "Resolve timing evidence and design the next version of T5 operational acceptance before any new H&M run.",
+    "sequence": [
+      "Read-only mac24 follow-up: record Python/macOS versions and time.get_clock_info values; inspect only power/sleep/wake or clock-change evidence within the recorded UTC window. Keep raw logs local and publish a minimal aggregate, explicitly marking unavailable evidence. Preserve PostgreSQL and all originals; no rerun.",
+      "Implement and test clock metadata, UTC/monotonic phase measurements, coherence failure and an awake guard for a future one-shot run. Do not silently switch clocks or treat monotonic as CPU time; freeze elapsed-time policy before measuring.",
+      "Version the memory acceptance decision explicitly: retain effective limits, no swap/OOM, complete functional replay and expected generations; retain lifetime peak/max/pressure as diagnostics and resolve their acceptance role from kernel semantics, not an offset fitted to this result. Preserve both old protocols and failed ZIPs.",
+      "Only after the new contract/code and local checks are ready, issue one exact-commit mac24 prompt. Keep PostgreSQL at 512 MiB, all other resources/data/H fixed and no automatic retry. No execution is authorized by receipt of this evidence alone."
+    ]
+  },
+  "references": [
+    {
+      "title": "Linux cgroup v2 memory interface",
+      "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-interface-files"
+    },
+    {
+      "title": "Python clock semantics and introspection",
+      "url": "https://docs.python.org/3/library/time.html#time.monotonic"
+    }
+  ],
+  "t5_closed": false,
+  "e4_closed": false,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training_performed": false,
+  "t6_started": false
+}

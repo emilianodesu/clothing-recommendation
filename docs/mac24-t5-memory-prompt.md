@@ -1,5 +1,7 @@
 # Mac24: una corrida T5 con diagnóstico de memoria
 
+**Procedimiento histórico, ejecutado y revisado. No repetir.** La corrida `events-mac24-20261022T184956Z-e167c9d2` conserva `failed`; consulta [la auditoría principal](../evidence/events-memory-review-mac24.json) y [los hallazgos de memoria y tiempo](events-memory.md#revisión-en-la-mac-principal-2026-10-22). No hay un nuevo ensayo pendiente. Las instrucciones siguientes preservan el procedimiento original, no autorizan otra ejecución.
+
 Lee `AGENTS.md`, `docs/events-memory.md` y `evidence/events-review-mac24.json`. La tarea es obtener un reporte diagnóstico nuevo; el intento anterior conserva estado fallido. No repetir el prompt v1. No aumentar memoria, limpiar contadores, recrear PostgreSQL, borrar streams/volúmenes, entrenar, evaluar test ni iniciar T6. El usuario ya autorizó el intercambio privado de código y reportes por GitHub.
 
 1. Conserva cambios existentes, actualiza `main` por fast-forward al SHA completo recibido y comprueba clon limpio. Fija `T5_MEMORY_COMMIT` a ese SHA. No actualices código durante la ejecución. Usa siempre `SSL_CERT_FILE=/etc/ssl/cert.pem` y `DOCKER_CONTEXT=colima-hm-project`; Colima permanece 14 GiB/4 CPU. No copies credenciales ni generes otro `.env`.
