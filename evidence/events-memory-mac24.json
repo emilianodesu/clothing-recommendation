@@ -1,0 +1,912 @@
+{
+  "schema_version": 1,
+  "stage": "T5",
+  "machine_id": "mac24",
+  "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+  "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+  "protocol": "events-memory-v1",
+  "status": "failed",
+  "review_status": "pending_primary_review",
+  "archive_sha256": "98a6a063f6dad2bbda7d56bd8e1a4f8c11111d293407d7f9f7497abb77c31d05",
+  "archive_bytes": 8211,
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T184956Z-e167c9d2",
+  "reader_exit_code": 1,
+  "publication_download_verified": true,
+  "environment": {
+    "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+    "source_commit": "44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "uv_lock_sha256": "6c8fe64a63a48cb276acd65b5d7fd09e1c6b508a91717c995a0d4202b1d5d282",
+    "runner_tree_sha256": "467f3c753fd31dfeba8cf9bdec43d9d95cb3452d76966b80eef827c25a53ebeb"
+  },
+  "result": {
+    "stage": "T5",
+    "protocol": "events-memory-v1",
+    "status": "failed",
+    "source_tree_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+    "source": {
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "archive_sha256": "a109d6192f51ff9f08ffee83e74826e739fa5f13cab0c5a9376806e1cdb2fd24",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "manifest_sha256": "57a1101620172249ed18b4123b0ec29185e4ff42452f842e958e56760b8e7e08",
+      "dataset": "hm"
+    },
+    "stream_id": "033cd474-ce55-4f4c-a5d2-a52fdbbb9e5a",
+    "mode": "simulation",
+    "checks": {
+      "initial_parity_requests": 4,
+      "new_events": 4,
+      "duplicate_status": 200,
+      "conflict_status": 409,
+      "purchase_changes_profile": true,
+      "views_clicks_not_purchases": true,
+      "late_event_order": true,
+      "refresh_idempotent": true,
+      "base_unchanged": true,
+      "profile_sha256": "8acd443e29d0d3263c3e86798bac32421e922f8eb36322812257e57614dfbd11",
+      "revision": 3,
+      "data_as_of": "2020-09-09",
+      "processed_events": 4
+    },
+    "seed": {
+      "daily_rows": 972591,
+      "purchases": 1069693,
+      "first_day": "2020-08-12",
+      "last_day": "2020-09-08",
+      "data_as_of": "2020-09-09"
+    },
+    "resources": {
+      "seed": {
+        "image_id": "sha256:c79e0e533aa5e93d7900549f1f5b1263e7d3042bbab0387da8b6548e38860506",
+        "memory_bytes": 3221225472,
+        "nano_cpus": 1000000000,
+        "cgroup_peak_bytes": 692932608,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "api": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000,
+        "cgroup_peak_bytes": 800714752,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "ui": {
+        "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000,
+        "cgroup_peak_bytes": 67268608,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      },
+      "postgres": {
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0,
+        "cgroup_peak_bytes": 537141248,
+        "swap_peak_bytes": 0,
+        "oom_killed": false
+      }
+    },
+    "host": {
+      "host": "127.0.0.1",
+      "api_port": 8000,
+      "ui_port": 8501,
+      "bindings_verified": true,
+      "ui_healthy": true
+    },
+    "restart_persistent": true,
+    "source_unchanged": true,
+    "test_evaluated": false,
+    "training_performed": false,
+    "load_benchmark": false,
+    "duration_seconds": 1593.0425461659906,
+    "diagnostics": {
+      "schema_version": 1,
+      "complete": true,
+      "snapshots": [
+        {
+          "container_id": "81e05a8ad43e82a7b1ce7846659c290dce83642e51ad97939e5d9bfb31b421cd",
+          "started_at": "2026-10-22T04:39:51.126770096Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 4294967296,
+          "memory_swap_bytes": 8589934592,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "phase": "before_seed",
+          "service": "api",
+          "elapsed_seconds": 0.9334480410034303,
+          "captured_at": "2026-10-22T18:49:57.201946+00:00",
+          "sample_seconds": 0.09281591701437719,
+          "cgroup_inode": 15840,
+          "current_bytes": 576540672,
+          "peak_bytes": 800714752,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 4294967296,
+          "cgroup_swap_limit_bytes": 4294967296,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 512700416,
+            "file": 59518976,
+            "kernel": 4669440,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 41,
+            "full": 41
+          }
+        },
+        {
+          "container_id": "fa4f5769c546864cd5724f3e0ee86f1bd1632d37ac339c02ec66ec7682c08003",
+          "started_at": "2026-10-22T04:37:51.869618889Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 500000000,
+          "oom_killed": false,
+          "phase": "before_seed",
+          "service": "ui",
+          "elapsed_seconds": 1.0702535829914268,
+          "captured_at": "2026-10-22T18:49:57.338750+00:00",
+          "sample_seconds": 0.07842695800354704,
+          "cgroup_inode": 15003,
+          "current_bytes": 52719616,
+          "peak_bytes": 67235840,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 49664000,
+            "file": 131072,
+            "kernel": 3137536,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 1,
+            "full": 1
+          }
+        },
+        {
+          "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+          "started_at": "2026-10-20T00:46:17.675247553Z",
+          "restart_count": 0,
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 0,
+          "oom_killed": false,
+          "phase": "before_seed",
+          "service": "postgres",
+          "elapsed_seconds": 1.1891696249949746,
+          "captured_at": "2026-10-22T18:49:57.457666+00:00",
+          "sample_seconds": 0.06300062499940395,
+          "cgroup_inode": 5634,
+          "current_bytes": 532631552,
+          "peak_bytes": 537141248,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 47782,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 14311424,
+            "file": 493948928,
+            "kernel": 24821760,
+            "shmem": 147144704
+          },
+          "pressure_us": {
+            "some": 661359,
+            "full": 661337
+          }
+        },
+        {
+          "container_id": "81e05a8ad43e82a7b1ce7846659c290dce83642e51ad97939e5d9bfb31b421cd",
+          "started_at": "2026-10-22T04:39:51.126770096Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 4294967296,
+          "memory_swap_bytes": 8589934592,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "phase": "after_seed",
+          "service": "api",
+          "elapsed_seconds": 1429.102161332994,
+          "captured_at": "2026-10-22T20:22:15.277685+00:00",
+          "sample_seconds": 0.0750974580005277,
+          "cgroup_inode": 15840,
+          "current_bytes": 576835584,
+          "peak_bytes": 800714752,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 4294967296,
+          "cgroup_swap_limit_bytes": 4294967296,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 512704512,
+            "file": 59518976,
+            "kernel": 4689920,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 57,
+            "full": 57
+          }
+        },
+        {
+          "container_id": "fa4f5769c546864cd5724f3e0ee86f1bd1632d37ac339c02ec66ec7682c08003",
+          "started_at": "2026-10-22T04:37:51.869618889Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 500000000,
+          "oom_killed": false,
+          "phase": "after_seed",
+          "service": "ui",
+          "elapsed_seconds": 1429.2406815830036,
+          "captured_at": "2026-10-22T20:22:15.416207+00:00",
+          "sample_seconds": 0.07449400000041351,
+          "cgroup_inode": 15003,
+          "current_bytes": 52891648,
+          "peak_bytes": 67268608,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 49709056,
+            "file": 131072,
+            "kernel": 3301376,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 1,
+            "full": 1
+          }
+        },
+        {
+          "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+          "started_at": "2026-10-20T00:46:17.675247553Z",
+          "restart_count": 0,
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 0,
+          "oom_killed": false,
+          "phase": "after_seed",
+          "service": "postgres",
+          "elapsed_seconds": 1429.581847916008,
+          "captured_at": "2026-10-22T20:36:54.841705+00:00",
+          "sample_seconds": 0.10369370901025832,
+          "cgroup_inode": 5634,
+          "current_bytes": 514400256,
+          "peak_bytes": 537141248,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 62022,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 14323712,
+            "file": 478773248,
+            "kernel": 21692416,
+            "shmem": 147152896
+          },
+          "pressure_us": {
+            "some": 881679,
+            "full": 881657
+          }
+        },
+        {
+          "container_id": "81e05a8ad43e82a7b1ce7846659c290dce83642e51ad97939e5d9bfb31b421cd",
+          "started_at": "2026-10-22T04:39:51.126770096Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 4294967296,
+          "memory_swap_bytes": 8589934592,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "phase": "after_replay",
+          "service": "api",
+          "elapsed_seconds": 1588.1044982080057,
+          "captured_at": "2026-10-22T23:12:14.280936+00:00",
+          "sample_seconds": 0.1167474589892663,
+          "cgroup_inode": 15840,
+          "current_bytes": 604041216,
+          "peak_bytes": 800714752,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 4294967296,
+          "cgroup_swap_limit_bytes": 4294967296,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 539541504,
+            "file": 59518976,
+            "kernel": 4730880,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 57,
+            "full": 57
+          }
+        },
+        {
+          "container_id": "fa4f5769c546864cd5724f3e0ee86f1bd1632d37ac339c02ec66ec7682c08003",
+          "started_at": "2026-10-22T04:37:51.869618889Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 500000000,
+          "oom_killed": false,
+          "phase": "after_replay",
+          "service": "ui",
+          "elapsed_seconds": 1588.3022121660179,
+          "captured_at": "2026-10-22T23:12:14.478649+00:00",
+          "sample_seconds": 0.11035691600409336,
+          "cgroup_inode": 15003,
+          "current_bytes": 53166080,
+          "peak_bytes": 67268608,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 49713152,
+            "file": 131072,
+            "kernel": 3301376,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 1,
+            "full": 1
+          }
+        },
+        {
+          "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+          "started_at": "2026-10-20T00:46:17.675247553Z",
+          "restart_count": 0,
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 0,
+          "oom_killed": false,
+          "phase": "after_replay",
+          "service": "postgres",
+          "elapsed_seconds": 1588.4930480410112,
+          "captured_at": "2026-10-22T23:12:14.669485+00:00",
+          "sample_seconds": 0.09816041600424796,
+          "cgroup_inode": 5634,
+          "current_bytes": 504782848,
+          "peak_bytes": 537141248,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 211871,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 14331904,
+            "file": 467914752,
+            "kernel": 22794240,
+            "shmem": 147169280
+          },
+          "pressure_us": {
+            "some": 2340739,
+            "full": 2340700
+          }
+        },
+        {
+          "container_id": "81e05a8ad43e82a7b1ce7846659c290dce83642e51ad97939e5d9bfb31b421cd",
+          "started_at": "2026-10-22T23:12:15.625297153Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 4294967296,
+          "memory_swap_bytes": 8589934592,
+          "nano_cpus": 2000000000,
+          "oom_killed": false,
+          "phase": "after_restart",
+          "service": "api",
+          "elapsed_seconds": 1592.7470505830133,
+          "captured_at": "2026-10-22T23:12:43.789605+00:00",
+          "sample_seconds": 0.06715579199953936,
+          "cgroup_inode": 17070,
+          "current_bytes": 574898176,
+          "peak_bytes": 768389120,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 4294967296,
+          "cgroup_swap_limit_bytes": 4294967296,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 510681088,
+            "file": 59494400,
+            "kernel": 4706304,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 0,
+            "full": 0
+          }
+        },
+        {
+          "container_id": "fa4f5769c546864cd5724f3e0ee86f1bd1632d37ac339c02ec66ec7682c08003",
+          "started_at": "2026-10-22T04:37:51.869618889Z",
+          "restart_count": 0,
+          "image_id": "sha256:d142807c33bfed3c26f02c197f833a47851b695187a5303ec701fa9a66dd88c0",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 500000000,
+          "oom_killed": false,
+          "phase": "after_restart",
+          "service": "ui",
+          "elapsed_seconds": 1592.8700686660013,
+          "captured_at": "2026-10-22T23:12:43.912623+00:00",
+          "sample_seconds": 0.0668118330067955,
+          "cgroup_inode": 15003,
+          "current_bytes": 53260288,
+          "peak_bytes": 67268608,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 49717248,
+            "file": 131072,
+            "kernel": 3309568,
+            "shmem": 0
+          },
+          "pressure_us": {
+            "some": 1,
+            "full": 1
+          }
+        },
+        {
+          "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+          "started_at": "2026-10-20T00:46:17.675247553Z",
+          "restart_count": 0,
+          "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+          "memory_bytes": 536870912,
+          "memory_swap_bytes": 1073741824,
+          "nano_cpus": 0,
+          "oom_killed": false,
+          "phase": "after_restart",
+          "service": "postgres",
+          "elapsed_seconds": 1593.0089675000054,
+          "captured_at": "2026-10-22T23:12:44.051522+00:00",
+          "sample_seconds": 0.07520537500386126,
+          "cgroup_inode": 5634,
+          "current_bytes": 505151488,
+          "peak_bytes": 537141248,
+          "swap_current_bytes": 0,
+          "swap_peak_bytes": 0,
+          "cgroup_limit_bytes": 536870912,
+          "cgroup_swap_limit_bytes": 536870912,
+          "events": {
+            "low": 0,
+            "high": 0,
+            "max": 211871,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "stat": {
+            "anon": 14327808,
+            "file": 468111360,
+            "kernel": 22818816,
+            "shmem": 147169280
+          },
+          "pressure_us": {
+            "some": 2340739,
+            "full": 2340700
+          }
+        }
+      ],
+      "capture_errors": [],
+      "intervals": [
+        {
+          "service": "api",
+          "from_phase": "before_seed",
+          "to_phase": "after_seed",
+          "seconds": 1428.1687132919906,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": false,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 16,
+            "full": 16
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "ui",
+          "from_phase": "before_seed",
+          "to_phase": "after_seed",
+          "seconds": 1428.1704280000122,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": false,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 0,
+            "full": 0
+          },
+          "peak_growth_bytes": 32768,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "postgres",
+          "from_phase": "before_seed",
+          "to_phase": "after_seed",
+          "seconds": 1428.392678291013,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": true,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 14240,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 220320,
+            "full": 220320
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "api",
+          "from_phase": "after_seed",
+          "to_phase": "after_replay",
+          "seconds": 159.00233687501168,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": false,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 0,
+            "full": 0
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "ui",
+          "from_phase": "after_seed",
+          "to_phase": "after_replay",
+          "seconds": 159.06153058301425,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": false,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 0,
+            "full": 0
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "postgres",
+          "from_phase": "after_seed",
+          "to_phase": "after_replay",
+          "seconds": 158.91120012500323,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": true,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 149849,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 1459060,
+            "full": 1459043
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "api",
+          "from_phase": "after_replay",
+          "to_phase": "after_restart",
+          "seconds": 4.642552375007654,
+          "comparable": false,
+          "reason": "generation_changed",
+          "boundary_reached_before": false,
+          "events_delta": null,
+          "pressure_delta_us": null,
+          "peak_growth_bytes": null,
+          "swap_peak_growth_bytes": null
+        },
+        {
+          "service": "ui",
+          "from_phase": "after_replay",
+          "to_phase": "after_restart",
+          "seconds": 4.567856499983463,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": false,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 0,
+            "full": 0
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        },
+        {
+          "service": "postgres",
+          "from_phase": "after_replay",
+          "to_phase": "after_restart",
+          "seconds": 4.515919458994176,
+          "comparable": true,
+          "reason": "same_generation",
+          "boundary_reached_before": true,
+          "events_delta": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "pressure_delta_us": {
+            "some": 0,
+            "full": 0
+          },
+          "peak_growth_bytes": 0,
+          "swap_peak_growth_bytes": 0
+        }
+      ]
+    },
+    "phase": "final-validation",
+    "error_type": "FinalValidationError",
+    "failure": {
+      "component": "postgres",
+      "criterion": "peak_below_limit",
+      "observed": 537141248,
+      "expected": 536870912
+    }
+  },
+  "summary": {
+    "diagnostics_complete": true,
+    "captures": 12,
+    "capture_errors": 0,
+    "postgres_intervals": [
+      {
+        "service": "postgres",
+        "from_phase": "before_seed",
+        "to_phase": "after_seed",
+        "seconds": 1428.392678291013,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 14240,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 220320,
+          "full": 220320
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_seed",
+        "to_phase": "after_replay",
+        "seconds": 158.91120012500323,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 149849,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 1459060,
+          "full": 1459043
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      },
+      {
+        "service": "postgres",
+        "from_phase": "after_replay",
+        "to_phase": "after_restart",
+        "seconds": 4.515919458994176,
+        "comparable": true,
+        "reason": "same_generation",
+        "boundary_reached_before": true,
+        "events_delta": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "pressure_delta_us": {
+          "some": 0,
+          "full": 0
+        },
+        "peak_growth_bytes": 0,
+        "swap_peak_growth_bytes": 0
+      }
+    ],
+    "postgres_peak_unchanged": true,
+    "postgres_new_max_events": 164089,
+    "interpretation": "Historical peak already exceeded the limit before seed and did not grow. New max events and pressure occurred during seed/replay; zero peak growth is not an independent interval peak. No causal attribution of long SQL runtime established.",
+    "next_action": "Primary review of full phase diagnostics before any change to acceptance/resources/query implementation or new execution."
+  },
+  "local_verification": {
+    "suite": "events",
+    "unit_passed": 62,
+    "serving_integration_passed": 28,
+    "publication_passed": 1,
+    "events_ui_passed": 10,
+    "host_passed": 112,
+    "total_passed": 213,
+    "failed": 0,
+    "build": "jobs only; active API/UI/PostgreSQL preserved during preparation",
+    "postgres_identity_unchanged_before_after_suite_and_run": true,
+    "postgres_started_at": "2026-10-20T00:46:17.675247553Z",
+    "preservation": {
+      "files_checked": 3086,
+      "all_unchanged": true,
+      "historical_reports_unchanged": true,
+      "ledger_unchanged": true,
+      "private_inventory_sha256": "816fdd370590db153400524b0177046257178f0b4423de0dc3d20b86093cdf46",
+      "scope": "processed data, features, checkpoints, Q1-Q4 work/ZIPs, T4-A packages, serving reports and original failed T5 report"
+    },
+    "colima": {
+      "memory_gib": 14,
+      "cpus": 4,
+      "profile": "hm-project"
+    },
+    "post_close_api_ready": true
+  },
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "t5_closed": false,
+  "e4_closed": false,
+  "t6_started": false
+}
