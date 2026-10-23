@@ -1,8 +1,8 @@
 # Proyecto final de Datos Masivos
 
-**Continuación tras reinicio:** el lanzador verifica el arranque PostgreSQL auditado y los agregados T5, sin exportar clientes/credenciales. El protocolo v2 registra el cambio de generación; los ZIP anteriores permanecen intactos. [Detalles](docs/operations.md#reinicio-de-colima-antes-de-t6-23-de-octubre).
+**T6/E5 cerradas tras revisión:** [auditoría mac24](evidence/pipeline-review-mac24.json), protocolo `pipeline-v2`. Dos ciclos programados y recuperación del scheduler; frescura 30.465/276.191 s (<600 s), duración 327.475 s y 24 capturas sin swap/OOM capturados. H vigente se conserva. PostgreSQL registró 73,327 eventos `max` nuevos y pico 8 KiB superior a su límite: no acredita margen de memoria ni carga sostenida. [Operación y límites](docs/operations.md). El prompt T6 es histórico; no repetirlo. Siguen T7 (portabilidad/respaldo/restauración) y T8 (carga, test reservado e informe), sin iniciarlos automáticamente.
 
-**T6 listo para ensayo mac24:** Airflow local, construcción H manual, perfiles cada cinco minutos, reintentos transaccionales y métricas. Sigue [el procedimiento único](docs/mac24-t6-prompt.md); [operación y límites](docs/operations.md). La implementación y evidencia local no cierran T6/E5: falta la ejecución H&M y revisión principal. T7/T8 y test siguen reservados.
+Las notas anteriores de implementación conservadas abajo son históricas; prevalece este estado de cierre.
 
 **T5/E4 cerradas:** [auditoría operativa H&M](evidence/events-operational-review-mac24.json), corrida `events-mac24-20261023T030009Z-3f97f2a0`. Duró 24 min 42 s, con controles funcionales/persistencia correctos y relojes coherentes; cero swap/OOM capturados. Conserva pico/presión históricos PostgreSQL: no acredita margen de memoria ni carga T8. [Detalle](docs/events-operational.md#revisión-principal-de-mac24). No repetir el adaptador ni los prompts T5. Sigue T6 cuando se solicite continuar; T7/T8 y test pendientes. Las notas siguientes describen entregas históricas y no reabren T5.
 

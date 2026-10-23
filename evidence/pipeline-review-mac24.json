@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-23",
+  "run_id": "pipeline-mac24-20261023T193510Z-532c902f",
+  "source_commit": "13af71c012cc8f0142e2b6eba111357160fb6f69",
+  "status": "accepted_pipeline_v2",
+  "t6_closed": true,
+  "e5_closed": true,
+  "archive": {
+    "bytes": 6441,
+    "sha256": "99aeda54a172fbe1d5bfceea153ed0904f71e3a21c4d490abd7f88efd57b69ea",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-pipeline-mac24-20261023T193510Z-532c902f"
+  },
+  "verified": {
+    "archive_reader": "passed; inventory, sizes, hashes and protocol validated",
+    "remote_evidence_matches_archive": true,
+    "git_tree_hashes": {
+      "source_tree_sha256": "5e0ba69395ee17158d4b823d63776dadc072a5559204b3101df00b348765d442",
+      "runner_tree_sha256": "afaecc4ae6d208ecfd40d229d6b7cc65d5c7491c3f62e4d0533f67841fc69da5",
+      "dag_tree_sha256": "57ab4869806dbcfdf141828ac71fee19e64a2987be72ae470e26632e88a24ef2"
+    },
+    "source_t5_archive_and_previous_identity": true,
+    "postgres_transition_exact_approved_proof": true,
+    "resource_samples": 24,
+    "resource_limits_and_generations": true,
+    "zero_captured_swap_oom_oom_kill": true,
+    "build_provenance": "exact Airflow run/receipt verified by frozen collector; frozen T2/Q4 source hashes match",
+    "hm_build_activation": false,
+    "checks": {
+      "build_completed": true,
+      "scheduled_refresh": true,
+      "restart_pending": true,
+      "idempotent": true,
+      "base_unchanged": true,
+      "postgres_preserved": true,
+      "dags_paused": true
+    }
+  },
+  "observations": {
+    "duration_seconds": 327.47483570899976,
+    "freshness_seconds": [
+      30.465371,
+      276.191244
+    ],
+    "processed_events": 2,
+    "scheduled_runs": 2,
+    "resources": {
+      "airflow-api": {
+        "peak_bytes": 266915840,
+        "limit_bytes": 805306368,
+        "generations": 1
+      },
+      "airflow-dag-processor": {
+        "peak_bytes": 276750336,
+        "limit_bytes": 536870912,
+        "generations": 1
+      },
+      "airflow-scheduler": {
+        "peak_bytes": 2654199808,
+        "limit_bytes": 5368709120,
+        "generations": 2
+      },
+      "api": {
+        "peak_bytes": 882159616,
+        "limit_bytes": 4294967296,
+        "generations": 1
+      },
+      "postgres": {
+        "peak_bytes": 536879104,
+        "limit_bytes": 536870912,
+        "generations": 1
+      },
+      "ui": {
+        "peak_bytes": 90075136,
+        "limit_bytes": 536870912,
+        "generations": 1
+      }
+    },
+    "postgres_max_events_delta": 73327,
+    "postgres_peak_excess_bytes": 8192
+  },
+  "operator_claims_not_independently_reproduced": {
+    "verification_suite": "pipeline",
+    "verification_exit_code": 0,
+    "preservation": {
+      "files": 3380,
+      "inventory_sha256": "0d1a71b239032a9af5a1f6672f11b0d247ce33ad5b6b21001dcb82e90215dac7",
+      "unchanged": true
+    },
+    "engine": {
+      "cpus": 4,
+      "memory": 14624956416
+    }
+  },
+  "limitations": [
+    "Two simulated purchases on the H&M stream, not sustained load or general freshness guarantee.",
+    "PostgreSQL reached 536879104 bytes against 536870912; 73327 new max events. No memory headroom claim.",
+    "Colima restart before T6 changed the cgroup generation. Do not subtract T5 counters from T6 or reinterpret historical failures.",
+    "Recovery proves identity and aggregate continuity, not row-by-row equality.",
+    "Private package, Airflow database, inventory and raw data were not transferred or inspected on the primary Mac; build provenance is collector evidence.",
+    "API source equality enforced by collector; archive exports Airflow source/DAG hashes, not a separate API hash.",
+    "No training, held-out test, T7 or T8 execution. Original report retains t6_closed=false; closure belongs to this review."
+  ],
+  "next_stage": "T7 portability, backup and isolated restore, when requested; T8 remains reserved"
+}

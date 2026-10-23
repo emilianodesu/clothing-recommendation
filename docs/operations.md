@@ -49,13 +49,13 @@ Los trabajos de construcción/refresh escriben JSON agregados en `artifacts/pipe
 
 El contrato `pipeline-v1` exige frescura recepción→publicación menor de 600 s para ambos eventos; si se excede, conserva el fallo. Guarda un ZIP agregado con inventario/huellas, identidad del build exacto, fuente/corte/Q4 y comparación del código y DAG instalados en los tres servicios Airflow contra el clon. La suite y el inventario privado de originales se reportan por separado. Un corte abrupto puede dejar sólo carpeta/log: no interpretarlo como aprobado ni volver a lanzar. Un DAG pausado puede tener una tarea aún en ejecución; inspecciona el estado antes de detener procesos.
 
-En mac24 sigue [el procedimiento dedicado](mac24-t6-prompt.md). T6/E5 sólo se cierra después de revisión principal. T7, T8, evaluación final y carga siguen pendientes.
+El [procedimiento mac24](mac24-t6-prompt.md) ya se ejecutó y es histórico. T6/E5 están cerradas tras la revisión principal descrita abajo. T7, T8, evaluación final y carga siguen pendientes.
 
 ## Validación local del 23 de octubre
 
 [Reporte sintético](../evidence/pipeline-local.json): `pipeline-development-20261023T054340Z-360a4df3`, commit `9ec0d67b435dc75f5efa708949d0b06b2ba71d85`. Ensayo de 89.021 s, dos ciclos programados, frescura 3.611 s y 65.850 s, 24 capturas sin swap/OOM capturados. Se verificaron build exacto, código/DAG instalados, idempotencia, reinicio, PostgreSQL y `/recommend` inmutables, y pausa final. La fase de construcción/publicación sintética previa duró 4.832 s y está ligada en el ZIP. El pico del scheduler fue 502,562,816 bytes; no extrapolar estos valores a H&M.
 
-Pasaron las suites pipeline y bootstrap; después, 175 pruebas host y el ensayo congelado cubrieron las correcciones del lanzador. La evidencia separa commits y conjuntos de pruebas. Dos ensayos previos fallaron antes de sembrar por incompatibilidades del recolector y del helper HTTP; sus ZIP permanecen publicados, sin reinterpretarlos. La revisión estática resolvió las observaciones de generaciones, procedencia del build y código instalado. T6/E5 siguen pendientes de H&M.
+Pasaron las suites pipeline y bootstrap; después, 175 pruebas host y el ensayo congelado cubrieron las correcciones del lanzador. La evidencia separa commits y conjuntos de pruebas. Dos ensayos previos fallaron antes de sembrar por incompatibilidades del recolector y del helper HTTP; sus ZIP permanecen publicados, sin reinterpretarlos. La revisión estática resolvió las observaciones de generaciones, procedencia del build y código instalado. Esa evidencia local precede a la revisión H&M descrita abajo.
 
 ## Reinicio de Colima antes de T6 (23 de octubre)
 
@@ -66,3 +66,11 @@ La VM `hm-project` estaba detenida, conservando 14 GiB/4 CPU/100 GiB. El usuario
 El ZIP v2 conserva `postgres_transition` y usa las capturas nuevas como inicio del intervalo T6. No resta contadores entre generaciones ni transforma los ceros posteriores al reinicio en una conclusión sobre T5. Los ZIP v1/T5 permanecen intactos y legibles. Estos controles no certifican igualdad fila por fila. La prueba sintética anterior valida el flujo T6; las pruebas nuevas validan esta continuación, no una corrida H&M.
 
 Seguridad: consultas de sólo lectura con parámetros y timeout, salida limitada a agregados e identidades, sin credenciales ni clientes. La excepción sólo aplica al reinicio auditado; cambios distintos se rechazan.
+
+## Revisión principal H&M, 23 de octubre
+
+[Auditoría](../evidence/pipeline-review-mac24.json) de `pipeline-mac24-20261023T193510Z-532c902f`: ZIP verificado de 6,441 bytes, código/runner/DAG recalculados desde Git y fuente T5 comprobada. T6/E5 se aceptan bajo `pipeline-v2`. Dos compras simuladas, idempotencia, dos ciclos programados y recuperación de evento pendiente tras reiniciar scheduler; frescura 30.465/276.191 s, por debajo de 600 s. Ensayo de 327.475 s. Construcción H vinculada a ejecución/recibo y fuentes T2/Q4 congeladas, sin activar el paquete nuevo. H anterior y recomendaciones base conservados; ambos DAG pausados.
+
+Las 24 capturas conservan límites y generaciones; cero swap/OOM capturados. PostgreSQL registra 73,327 eventos `max` nuevos y pico 536,879,104 bytes (8 KiB sobre 512 MiB). Se acepta funcionamiento bajo el protocolo operativo, no margen de memoria ni carga sostenida. El cambio de generación previo de Colima se documenta por identidad y agregados; no se comparan contadores con T5. La recuperación no acredita igualdad fila por fila.
+
+La suite pipeline con salida cero, 3,380 archivos preservados y capacidad VM son declaraciones del adaptador mac24. Aquí se verificaron reportes, huellas y contratos; no se recibieron tablas privadas ni el paquete completo. La prueba de dos eventos no demuestra una garantía general de frescura. No repetir T6; siguen T7 y T8 a solicitud, manteniendo test reservado.

@@ -273,7 +273,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 6 · T6 — Orquestación, reintentos y observabilidad
 
-**Estado:** implementación disponible; ver [operación](../../operations.md), [evidencia local](../../../evidence/pipeline-local.json) y [ensayo mac24](../../mac24-t6-prompt.md). T6/E5 permanecen abiertas hasta revisión de H&M. La publicación H&M queda deshabilitada para conservar la versión/stream T5; la activación se prueba con sintéticos aislados.
+**Estado:** implementación disponible; ver [operación](../../operations.md), [evidencia local](../../../evidence/pipeline-local.json) y [ensayo mac24](../../mac24-t6-prompt.md). **T6/E5 cerradas** tras [auditoría H&M](../../../evidence/pipeline-review-mac24.json): dos ciclos, frescura 30.465/276.191 s, reinicio e idempotencia correctos. Se conserva presión PostgreSQL; no acredita carga sostenida. El prompt mac24 es histórico. La publicación H&M queda deshabilitada para conservar la versión/stream T5; la activación se prueba con sintéticos aislados.
 
 **Archivos:** crear `docker/airflow.Dockerfile`, `docker/airflow/requirements.in`, `docker/airflow/requirements.lock`, `dags/build_release.py`, `dags/refresh_profiles.py`, `tests/integration/test_pipeline.py`, `docs/operations.md`. Modificar `compose.yaml`, `docker/images.lock.json`, `cli.py`, `scripts/project.py` y `api/app.py`.
 
@@ -284,7 +284,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 - [x] Registrar duración, filas, reintentos, errores, versión y recursos. Añadir métricas de API para latencia, solicitudes, errores y uso de respaldo; no etiquetar métricas con ID de cliente ni registrar tokens. Exportar reportes de cada ejecución.
 - [x] Probar `test_retry_does_not_duplicate_partition`, `test_failed_build_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que la versión activa y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
 - [x] Ejecutar `python3 scripts/project.py verify --suite pipeline`, suite bootstrap y un DAG sintético completo. Ensayo `pipeline-development-20261023T054340Z-360a4df3`: dos ciclos, reinicio y 24 capturas; frescura 3.611/65.850 s. Ver evidencia local para commits y pruebas.
-- [ ] Ejecutar el flujo H&M con recursos medidos y demostrar frescura menor de diez minutos mientras el pipeline esté activo, o registrar el incumplimiento. Revisar ZIP mac24 antes de cerrar T6/E5.
+- [x] Flujo H&M auditado bajo pipeline-v2: 24 capturas, dos actualizaciones <600 s, H conservado. T6/E5 cerradas; límites de muestra y presión de memoria documentados.
 
 ## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 

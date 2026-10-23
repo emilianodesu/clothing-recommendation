@@ -1,3 +1,5 @@
+> **Histórico: ejecutado y revisado. No repetir.** T6/E5 cerradas mediante [auditoría principal](../evidence/pipeline-review-mac24.json). Conservar la reserva y los artefactos.
+
 # Mac24: preparar y ejecutar T6 una sola vez
 
 T5/E4 ya están cerradas. No repetir T5, sus adaptadores ni diagnósticos. Mantener H, PostgreSQL con su identidad histórica, datos, paquetes, streams, ledger y todos los ZIP. No entrenar ni usar test. Este paso aplica migraciones aditivas, sustituye únicamente API para incorporar métricas y añade Airflow; conserva UI/PostgreSQL. La VM sigue 14 GiB/4 CPU. Alimentación AC, tapa abierta y Terminal abierta.
