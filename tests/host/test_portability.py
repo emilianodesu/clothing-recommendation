@@ -25,3 +25,11 @@ class PortabilityHost(unittest.TestCase):
             self.assertFalse((p/'artifacts/serving').exists())
             self.assertFalse((p/'.git').exists())
             self.assertEqual((p/'.env').stat().st_mode&0o777,0o600)
+    def test_restored_source_can_prepare_another_installation(self):
+        m=self.module();root=Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as d:
+            a,b=Path(d)/'first',Path(d)/'second'
+            one=m.prepare_destination(root,a,18009)
+            two=m.prepare_destination(a,b,18010)
+            self.assertNotEqual(one['HM_APP_PASSWORD'],two['HM_APP_PASSWORD'])
+            self.assertEqual((a/'src/hm_recommender/portability.py').read_bytes(),(b/'src/hm_recommender/portability.py').read_bytes())

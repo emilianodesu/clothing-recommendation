@@ -67,7 +67,14 @@ def backup(output:Path,registry:Path,*,connection=connect):
         if sum(f['size'] for f in files.values())>BUDGET:raise ValueError('Backup exceeds budget')
         if json_value(state(c))!=before:raise ValueError('State changed during backup')
         migrations=c.execute('SELECT name,sha256 FROM schema_migrations ORDER BY name').fetchall() if 'schema_migrations' in schema else []
-        manifest=dict(protocol='hm-app-backup-v1',schema=schema,counts=counts,releases=releases,state=before,migrations=migrations,files=files)
+        from hm_recommender.api.recommend import load_state
+        from hm_recommender.api.schemas import RecommendationRequest
+        active=load_state(registry/before['pointer'][0][0]);parity=[]
+        for customer in ['unknown-portability-check',*sorted(active.customers)[:5]]:
+            request=RecommendationRequest(customer_id=customer,k=12)
+            response=active.recommend(request).model_dump(mode='json');response.pop('request_id')
+            parity.append(dict(request=request.model_dump(mode='json'),response=response))
+        manifest=dict(parity=parity,protocol='hm-app-backup-v1',schema=schema,counts=counts,releases=releases,state=before,migrations=migrations,files=files)
         atomic_json(root/'backup.json',manifest)
         # Copy and archive while locks are held. Context rolls back/releases on any failure.
         return pack(root,output)
@@ -82,7 +89,7 @@ def restore(archive:Path,registry:Path,*,connection=connect):
         p=root/'backup.json'
         if not p.is_file() or p.stat().st_size>1024*1024:raise ValueError('Missing or oversized backup manifest')
         m=json.loads(p.read_text())
-        if set(m)!={'protocol','schema','counts','releases','state','migrations','files'} or m['protocol']!='hm-app-backup-v1':raise ValueError('Unsupported backup')
+        if set(m)!={'protocol','schema','counts','releases','state','migrations','files','parity'} or m['protocol']!='hm-app-backup-v1':raise ValueError('Unsupported backup')
         if set(x.name for x in root.iterdir())!=set(m['files'])|{'backup.json'}:raise ValueError('Backup inventory differs')
         expected={t+'.csv' for t in m['schema']}
         if not set(m['schema'])<=set(TABLES):raise ValueError('Unexpected schema')

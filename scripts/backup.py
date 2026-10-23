@@ -37,7 +37,8 @@ def create(root):
                 time.sleep(2)
         raw=call('run','--rm','--no-deps','-T','jobs','hmrec','portability','backup','/artifacts/backups/'+name,'--registry','/artifacts/serving')
         result=json.loads(raw);path=folder/name
-        if hashlib.sha256(path.read_bytes()).hexdigest()!=result['archive_sha256']:raise ValueError('Backup transfer checksum differs')
+        from restore import checksum_file
+        if checksum_file(path)!=result['archive_sha256']:raise ValueError('Backup transfer checksum differs')
         print(json.dumps(dict(result,archive=str(path))))
         return path
     finally:
