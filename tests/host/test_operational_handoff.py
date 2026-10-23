@@ -170,6 +170,15 @@ class OperationalHandoffTests(unittest.TestCase):
             r['diagnostics']=events_memory.diagnostics(r['diagnostics']['snapshots'],[])
             with self.subTest(field=field),self.assertRaises(h.OperationalFailure):h.final_validation(report,r,env)
 
+    def test_api_restart_accepts_real_docker_nanosecond_timestamps_on_python39(self):
+        h=self.module();report,env=fixture();r=report['result']
+        import events_memory
+        for s in r['diagnostics']['snapshots']:
+            if s['service']=='api':
+                s['started_at']='2026-10-22T00:00:01.100210856Z' if s['phase']=='after_restart' else '2026-10-21T00:00:00.100210856Z'
+        r['diagnostics']=events_memory.diagnostics(r['diagnostics']['snapshots'],[])
+        h.final_validation(report,r,env)
+
     def test_interrupt_during_seed_cleanup_closes_interrupted_report_and_releases_guard(self):
         import operational_check
         from operational_timing import Monitor
