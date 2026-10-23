@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "run_id": "portability-mac24-20261023T203910Z-ed135689",
+  "source_commit": "f6bf4741a4951cc3b1fa9d00a985693c01f20e37",
+  "status": "failed",
+  "archive_bytes": 2855,
+  "archive_sha256": "9c62660615e4f98a9b6b3f2cf25822b5ad27131969e8be3edf90fd036cfe78be",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-portability-mac24-20261023T203910Z-ed135689",
+  "result": {
+    "stage": "T7",
+    "protocol": "portability-v1",
+    "status": "failed",
+    "checks": {
+      "source_preserved": false,
+      "source_parity": false,
+      "restored_parity": false,
+      "offline": false,
+      "fresh_credentials": false
+    },
+    "duration_seconds": 5.318774540999584,
+    "archive_bytes": 0,
+    "archive_sha256": null,
+    "parity_queries": 0,
+    "offline_queries": 0,
+    "source_state_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "source_run_id": "pipeline-mac24-20261023T193510Z-532c902f",
+    "source_archive_sha256": "99aeda54a172fbe1d5bfceea153ed0904f71e3a21c4d490abd7f88efd57b69ea",
+    "source_postgres": {
+      "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+      "started_at": "2026-10-23T19:15:26.34851292Z",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826"
+    },
+    "destination_postgres": null,
+    "images": {},
+    "error_type": "CalledProcessError",
+    "training_performed": false,
+    "test_evaluated": false,
+    "t7_closed": false
+  },
+  "operator_claims": {
+    "verification_suite": "portability",
+    "verification_exit_code": 0,
+    "preservation": {
+      "files": 3402,
+      "inventory_sha256": "cd22461ec1caef1cc18289fb9b96a9c8a624988e8265c81c177f2843723a3e99",
+      "unchanged": true
+    },
+    "engine": {
+      "cpus": 4,
+      "memory": 14624956416
+    }
+  },
+  "review_status": "pending_primary_review"
+}
