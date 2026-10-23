@@ -253,6 +253,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 5 · T5 — Interfaz, eventos y actualización de perfiles
 
+**Seguimiento preparado:** [diagnóstico de relojes/energía en lectura](../../clock-diagnostics.md) y [prompt mac24](../../mac24-t5-clock-prompt.md). Los controles de continuidad/reposo están probados por separado; no se conectaron al replay H&M ni se alteraron los criterios históricos. Recibir y revisar ese reporte precede a la siguiente integración de aceptación.
+
 **Estado de implementación y revisión del 22 de octubre:** código y pruebas locales disponibles; [guía](../../events.md). El [diagnóstico H&M fue auditado](../../../evidence/events-memory-review-mac24.json): doce capturas completas, comprobaciones funcionales y persistencia correctas; sigue fallando por pico histórico PostgreSQL de 512.258 MiB frente a 512 MiB, presente antes de semilla. Hay 164,089 eventos `max` nuevos y cero swap/OOM capturados. **T5/E4 siguen abiertas**. La diferencia entre 15,767.860 s UTC y 1,593.043 s monotónicos impide comparar rendimiento. Sigue resolver relojes/continuidad y definir un contrato operativo versionado antes de otro ensayo; [detalle](../../events-memory.md#revisión-en-la-mac-principal-2026-10-22). Ambos prompts T5 son históricos, sin repetición automática ni aumento de RAM. Los entornos operativos PostgreSQL están separados del paquete H; la demo usa reloj explícito y reconstrucción transaccional de conteos diarios. T6 no se activa automáticamente.
 
 **Decisión Q4 aplicada:** actualizar estado de H con ventanas 28/7 y reglas congeladas. No requiere refit neuronal ni reconstrucción de grafo; caducidad temporal, trazabilidad e intercambio conservan los contratos siguientes.

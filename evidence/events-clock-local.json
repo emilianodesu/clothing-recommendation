@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "stage": "T5-clock-followup",
+  "recorded_on": "2026-10-22",
+  "machine_id": "development",
+  "status": "local_verified_remote_pending",
+  "source_commit": "953cc0cca25e6ac94a8b226e54279ca796ebbd7b",
+  "run_id": "events-development-20261023T010933Z-caa374c1",
+  "protocol": "events-clock-v1",
+  "collection_status": "passed",
+  "archive_sha256": "acba60b35179108ce02692cc4ac723aa2a67939965b051bbd9c9d22b452a0e90",
+  "archive_bytes": 4955,
+  "package_id": "9277a385b268c1bf7987177d984fa928c55753a3568892a63ed46550acbb8956",
+  "release_url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261023T010933Z-caa374c1",
+  "publication_download_verified": true,
+  "source": {
+    "run_id": "events-development-20261022T050923Z-da5ae7f6",
+    "machine_id": "development",
+    "source_commit": "7332cea42df360fd6910b3100412b01948844ed5",
+    "archive_sha256": "1b0e0fe41a345e3415a16b83388c314674e59d9d602488701d8997ae159b54aa",
+    "package_id": "640f061674cba8c96ddff7abe919c8e8f922a7691f37a9fde7f855221ffc214b",
+    "status": "passed",
+    "protocol": "events-memory-v1"
+  },
+  "local_tests": {
+    "host_passed": 128,
+    "baseline_passed": 112,
+    "initial_sandbox_errors": {
+      "count": 5,
+      "module": "test_serving_host",
+      "reason": "Loopback bind denied; same suite passed with approved access."
+    },
+    "initial_helper_error": "sdd-workspace looped on denied mkdir; own process stopped, workspace created with approved access.",
+    "initial_cli_preflight": "Wrong expected SHA rejected before collection; exact verified SHA succeeded.",
+    "initial_publication": "HTTP 422 target_commitish invalid before branch was pushed; same ZIP publication resumed after pushing code."
+  },
+  "current_clock_metadata": {
+    "system": "Darwin",
+    "system_version": "26.7.1",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "clocks": {
+      "time": {
+        "implementation": "clock_gettime(CLOCK_REALTIME)",
+        "monotonic": false,
+        "adjustable": true,
+        "resolution": 1.0000000000000002e-06
+      },
+      "monotonic": {
+        "implementation": "mach_absolute_time()",
+        "monotonic": true,
+        "adjustable": false,
+        "resolution": 4.166666666666667e-08
+      },
+      "perf_counter": {
+        "implementation": "mach_absolute_time()",
+        "monotonic": true,
+        "adjustable": false,
+        "resolution": 4.166666666666667e-08
+      }
+    }
+  },
+  "power": {
+    "log_brackets_window": true,
+    "window_timestamped_rows": 0,
+    "unrecognized_window_rows": 0,
+    "malformed_timestamp_rows": 0,
+    "counts": {
+      "sleep": 0,
+      "wake": 0,
+      "darkwake": 0
+    },
+    "events": [],
+    "events_truncated": false,
+    "collection_status": "complete"
+  },
+  "original_utc_duration_seconds": 5.286179,
+  "original_monotonic_duration_seconds": 5.244869875000003,
+  "historical_compatibility": [
+    {
+      "run_id": "events-mac24-20261022T043907Z-ddcd2e42",
+      "status": "failed"
+    },
+    {
+      "run_id": "events-mac24-20261022T184956Z-e167c9d2",
+      "status": "failed"
+    },
+    {
+      "run_id": "release-mac24-20261021T190717Z-f0a2d073",
+      "status": "passed"
+    }
+  ],
+  "limits": [
+    "Local read-only follow-up refers to a primary synthetic report, not mac24 H&M.",
+    "No Docker commands, images, dependencies or data were changed. No H&M replay, training, test or T6.",
+    "Current host clock metadata cannot prove the interpreter used in the past.",
+    "Temporal controls are tested utilities only; events-check and legacy memory validators remain unchanged.",
+    "Complete log collection does not prove absence of sleep or establish causality."
+  ],
+  "future_policy": {
+    "clock_discrepancy_seconds": 2,
+    "budget_seconds": 7200,
+    "integrated_into_events_check": false,
+    "memory_acceptance": "proposal_only"
+  },
+  "review": "pending",
+  "t5_closed": false,
+  "e4_closed": false,
+  "quality_accepted": false,
+  "test_evaluated": false,
+  "training_performed": false,
+  "t6_started": false
+}

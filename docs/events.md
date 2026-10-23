@@ -2,6 +2,8 @@
 
 H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M fue revisado y conserva estado fallido por memoria PostgreSQL; T5/E4 siguen abiertas. No confundir la implementación local con cierre remoto o aceptación T8.
 
+Paso vigente: [seguimiento de relojes/energía en lectura](clock-diagnostics.md), sin repetir el flujo H&M. La medición temporal y el siguiente contrato operativo requieren cierre antes de otro ensayo de aceptación.
+
 ## Demo reproducible sin Kaggle
 
 Usa un clon limpio del repositorio con Docker/Compose preparado. No necesita credenciales Kaggle, pesos, Qdrant, MLflow ni paquetes Python científicos en el host. Usa Python 3.9+ y tus credenciales Git propias.

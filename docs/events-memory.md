@@ -174,3 +174,9 @@ sus logs/inventarios privados no se transfirieron. Esta revisión principal
 verificó reportes, fuentes y cálculos agregados; no ejecutó Docker ni recalculó
 perfiles H&M. **T5/E4 permanecen abiertas; T6, entrenamiento y test no se
 activan al recibir este reporte.**
+
+El primer paso de seguimiento ya está preparado: [recolección de relojes/energía
+en lectura](clock-diagnostics.md) y [prompt mac24](mac24-t5-clock-prompt.md).
+Los controles temporales se prueban como utilidades para la siguiente versión;
+el ensayo H&M y sus validadores vigentes no se modificaron. Recibir ese reporte
+será el siguiente punto de revisión antes de otra corrida.
