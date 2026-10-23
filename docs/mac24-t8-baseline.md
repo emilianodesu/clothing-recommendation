@@ -1,5 +1,13 @@
 # T8-A: carga baseline de H sin entrenamiento
 
+**Cerrado tras auditoría (23 de octubre):** [reporte revisado](../evidence/benchmark-review-mac24.json), corrida `benchmark-mac24-20261023T213836Z-a7a170b5` en `807f39074ddd1e1d192b530ece0aa4c0dbb98123`. No repetir los comandos de alineación, preflight o carga de esta guía; se conservan como procedimiento histórico.
+
+Medición de 600.002 s: 12,000 respuestas correctas, cero errores/omisiones; p50 7.790 ms, p95 14.099 ms y p99 15.417 ms. Los tres segmentos aportan 4,000 respuestas cada uno. Además pasaron 2,400 solicitudes de calentamiento y 96 consultas iniciales. Se verificaron inventario/huellas del ZIP, código, runner y configuración; se recalcularon tasas, deltas y controles de las 222 capturas (74 por servicio). Los percentiles y paridad proceden del generador auditado: no se recibieron muestras individuales ni cohortes privadas.
+
+API: máximo observado de memoria actual 526,839,808 bytes; pico histórico 817,324,032 sin aumento, límite 4 GiB. PostgreSQL: máximo observado 533,770,240 bytes, límite 536,870,912; pico histórico 536,879,104 sin aumento, dos eventos `max` nuevos y presión some/full de 37/24 µs. No hubo swap capturado ni nuevos OOM; identidades estables y PostgreSQL coincide con T7. Estos datos cumplen el protocolo congelado, que conserva y no prohíbe eventos max. No prueban ausencia de presión ni capacidad para un trabajo pesado concurrente.
+
+T8-A acredita únicamente esta carga HTTP local a 20 req/s con 96 casos repetidos. No acredita capacidad máxima, red externa, arranque frío ni test. Siguiente desarrollo: T8-B con presupuesto explícito y preservación de H; no iniciarlo automáticamente. T8 completo sigue abierto.
+
 T7/E6 están cerradas bajo el alcance autorizado; no crear otra cuenta ni ejecutar os_user_check. Este ensayo abre T8-A, no T8 completo. No evaluar test, entrenar, activar otra versión, reiniciar servicios o repetir T5–T7.
 
 ## Alineación previa de API confirmada el 23 de octubre
