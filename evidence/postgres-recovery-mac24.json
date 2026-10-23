@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-23",
+  "review_timezone": "America/Mexico_City",
+  "status": "approved_for_bounded_runtime_reverification",
+  "basis": {
+    "historical_identity": "verified from original T5 ZIP by primary",
+    "current_identity_and_aggregates": "user-provided SSH output; not a direct remote inspection by primary",
+    "vm": "user-reported existing Colima hm-project stopped then started with 14 GiB/4 CPU; no recreation requested",
+    "services": "user-reported healthy API/UI/PostgreSQL/MLflow; H ready at 2020-09-09"
+  },
+  "approved_transition": {
+    "protocol": "postgres-recovery-v1",
+    "source_run_id": "events-mac24-20261023T030009Z-3f97f2a0",
+    "source_archive_sha256": "f302f73d3a35772e0fb0dd44f784607ccff95737e185f63bffac0e0baa1ee7aa",
+    "previous_identity": {
+      "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+      "started_at": "2026-10-20T00:46:17.675247553Z"
+    },
+    "current_identity": {
+      "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+      "restart_count": 0,
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+      "started_at": "2026-10-23T19:15:26.34851292Z"
+    },
+    "aggregates": {
+      "stream_id": "2c9ada3d-8a02-407c-b386-b5ba84c08430",
+      "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+      "data_as_of": "2020-09-09",
+      "revision": 3,
+      "processed_events": 4,
+      "daily_rows": 972591,
+      "purchases": 1069693,
+      "first_day": "2020-08-12",
+      "last_day": "2020-09-08",
+      "stored_events": 4
+    },
+    "cross_generation_counters_comparable": false,
+    "assurance": "identity_and_aggregate_continuity_only"
+  },
+  "limitations": [
+    "Counts, dates, revision and identity establish aggregate continuity only, not row-by-row equality.",
+    "Old and new cgroup generations are not comparable; original peaks/pressure remain in the T5 ZIP.",
+    "No training, held-out test, seed replay or remote T6 execution performed by primary."
+  ],
+  "next_step": "Read-only runtime checks before T6 reservation, repeat before T6 events, export proof in pipeline-v2; stop on any mismatch.",
+  "local_validation": {
+    "runtime_queries_and_image_commit": "990281835a9fe3ee6aae3fd5d6d87cc18ec03378",
+    "pipeline_integration": {
+      "passed": 12,
+      "includes_real_read_only_recovery_query": true
+    },
+    "bootstrap_suite": {
+      "status": "passed",
+      "unit": 62,
+      "host": 180,
+      "bootstrap_integration": 8
+    },
+    "final_reader_commit": "f4a9d80eacf7b959a2ca6976dc936e148ad21eda",
+    "final_host": {
+      "passed": 181
+    },
+    "historical_archives": {
+      "T5_operational": "passed",
+      "T6_v1_failed_archives": 2,
+      "T6_v1_passed_archives": 1,
+      "states_preserved": true
+    },
+    "remote_T6_executed": false
+  }
+}

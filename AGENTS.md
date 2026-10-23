@@ -1,12 +1,18 @@
 # Instrucciones para agentes
 
+## Continuación T6 tras reinicio de Colima
+
+El 23 de octubre el usuario inició el perfil existente `hm-project`, que estaba detenido. Conserva PostgreSQL con el mismo contenedor/imagen y H activo; el nuevo arranque `2026-10-23T19:15:26.34851292Z` y los agregados aportados coinciden con la continuidad esperada de T5. Lee `evidence/postgres-recovery-mac24.json` y la sección de recuperación de `docs/operations.md`. Son observaciones del usuario, no inspección directa desde la Mac principal ni prueba fila por fila.
+
+El lanzador T6 actualizado verifica exclusivamente esta transición con consultas de sólo lectura antes de reservar el ensayo y antes de enviar eventos. Publica `pipeline-v2` con la transición; no compara contadores entre generaciones ni altera T5/v1. No desactives comprobaciones, borres reservas, reinicies otra vez la VM o uses el lanzador del commit anterior. Ante otro cambio/fallo, conserva evidencia y detente. El intento anterior falló durante preflight por socket Docker inexistente, antes de anunciar logs o reservar la corrida; la ausencia de reservas se vuelve a comprobar automáticamente. T6/E5 siguen pendientes de ejecución H&M y revisión principal.
+
 ## Paso vigente T6: implementación disponible; una ejecución mac24 pendiente
 
 T5/E4 están cerradas; no repetir sus adaptadores. T6 incorpora Airflow 3.3.2 LocalExecutor, construcción H manual y refresco programado de un stream explícito, sin entrenar ni usar test. Lee `docs/operations.md`, `docs/mac24-t6-prompt.md` y la evidencia local `evidence/pipeline-local.json`. T6/E5 requieren evidencia H&M y revisión principal; no iniciar T7/T8.
 
 Con main limpio y el SHA completo recibido, ejecutar **una sola vez** `scripts/mac24_t6.py --expected-commit SHA`. Mantener AC, tapa y Terminal abiertas. El lanzador comprueba T5 operativo, Q4, identidad PostgreSQL y H activo; conserva originales y aplica migraciones aditivas. Construye jobs/API/Airflow, ejecuta suite pipeline, sustituye sólo API para añadir métricas y añade tres servicios Airflow. No recrea UI/PostgreSQL ni cambia sus presupuestos; Colima sigue 14 GiB/4 CPU. Scheduler+tarea: 5 GiB/2 CPU; API Airflow 768 MiB/0.5 CPU; procesador DAG 512 MiB/0.5 CPU. Conservar `SSL_CERT_FILE=/etc/ssl/cert.pem` y contexto `colima-hm-project`.
 
-La construcción usa el dataset T2, Q4 original, corte 2020-09-09 y `activate=false`; conserva H activo y el stream T5. No vuelve a sembrar H&M. El ensayo `pipeline-v1` exige dos refrescos programados, compras idempotentes, recepción→publicación <600 s, recuperación de un evento pendiente al reiniciar scheduler, código/DAG instalados iguales al clon, build exacto y 24 capturas por fase/generación sin swap/OOM capturados. Conserva picos y presión históricos: no acredita margen de memoria ni carga T8.
+La construcción usa el dataset T2, Q4 original, corte 2020-09-09 y `activate=false`; conserva H activo y el stream T5. No vuelve a sembrar H&M. El ensayo `pipeline-v2` exige dos refrescos programados, compras idempotentes, recepción→publicación <600 s, recuperación de un evento pendiente al reiniciar scheduler, código/DAG instalados iguales al clon, build exacto y 24 capturas por fase/generación sin swap/OOM capturados. Conserva picos y presión históricos: no acredita margen de memoria ni carga T8.
 
 La reserva `.mac24-t6-once.json` no se borra para reintentar. Ante fallo, preservar logs/servicios y publicar sólo el ZIP cerrado válido, incluso `failed`. No cambiar límites/fechas/umbrales ni repetir automáticamente. Al terminar se pausan ambos DAG; una tarea ya iniciada puede seguir activa. Sólo agregados/huellas viajan por GitHub privado; no credenciales, clientes, modelos ni eventos. `evidence/pipeline-mac24.json` queda pendiente de auditoría, sin cerrar T6/E5. SSH desde Terminal está autorizado; no crear claves ni cambiar Sharing. Esta sección prevalece sobre instrucciones históricas siguientes.
 
