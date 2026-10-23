@@ -273,15 +273,18 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 6 · T6 — Orquestación, reintentos y observabilidad
 
+**Estado:** implementación disponible; ver [operación](../../operations.md), [evidencia local](../../../evidence/pipeline-local.json) y [ensayo mac24](../../mac24-t6-prompt.md). T6/E5 permanecen abiertas hasta revisión de H&M. La publicación H&M queda deshabilitada para conservar la versión/stream T5; la activación se prueba con sintéticos aislados.
+
 **Archivos:** crear `docker/airflow.Dockerfile`, `docker/airflow/requirements.in`, `docker/airflow/requirements.lock`, `dags/build_release.py`, `dags/refresh_profiles.py`, `tests/integration/test_pipeline.py`, `docs/operations.md`. Modificar `compose.yaml`, `docker/images.lock.json`, `cli.py`, `scripts/project.py` y `api/app.py`.
 
 **Interfaces:** el DAG de preparación/publicación llama a T2/T4 a través de la CLI instalada; transmite rutas de manifiestos, no DataFrames por XCom. Los entrenamientos T3 se mantienen como experimentos manuales separados. El DAG de perfiles llama `aggregate_events` de T5 cada cinco minutos. La CLI y Airflow ejecutan las mismas funciones.
 
-- [ ] Construir Airflow LocalExecutor con jobs CPU instalados y versiones resueltas separadamente del servicio web. Incluir los procesos requeridos por la versión elegida. No montar socket Docker ni añadir Celery o Redis. Limitar a un trabajo pesado concurrente.
-- [ ] Configurar publicación manual al inicio; automatizar una cadencia sólo tras medir su coste y validar el nuevo paquete, con `catchup` desactivado para construcciones pesadas. Reanudar perfiles con cursor de recepción e intervalos acotados después de suspensión, sin perder eventos ni disparar muchos trabajos vencidos.
-- [ ] Registrar duración, filas, reintentos, errores, versión y recursos. Añadir métricas de API para latencia, solicitudes, errores y uso de respaldo; no etiquetar métricas con ID de cliente ni registrar tokens. Exportar reportes de cada ejecución.
-- [ ] Probar `test_retry_does_not_duplicate_partition`, `test_failed_build_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que la versión activa y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
-- [ ] Ejecutar `python3 scripts/project.py verify --suite pipeline` y un DAG sintético completo. Ejecutar el flujo H&M con recursos medidos y demostrar frescura menor de diez minutos mientras el pipeline esté activo, o registrar el incumplimiento. Guardar commit de E5.
+- [x] Construir Airflow LocalExecutor con jobs CPU instalados y versiones resueltas separadamente del servicio web. Incluir los procesos requeridos por la versión elegida. No montar socket Docker ni añadir Celery o Redis. Limitar a un trabajo pesado concurrente.
+- [x] Configurar publicación manual al inicio; automatizar una cadencia sólo tras medir su coste y validar el nuevo paquete, con `catchup` desactivado para construcciones pesadas. Reanudar perfiles con cursor de recepción e intervalos acotados después de suspensión, sin perder eventos ni disparar muchos trabajos vencidos.
+- [x] Registrar duración, filas, reintentos, errores, versión y recursos. Añadir métricas de API para latencia, solicitudes, errores y uso de respaldo; no etiquetar métricas con ID de cliente ni registrar tokens. Exportar reportes de cada ejecución.
+- [x] Probar `test_retry_does_not_duplicate_partition`, `test_failed_build_does_not_publish` y `test_restart_processes_pending_events`: fallar una etapa, reiniciar y verificar que la versión activa y los originales permanecen intactos; procesar exactamente una vez el efecto de eventos pendientes.
+- [x] Ejecutar `python3 scripts/project.py verify --suite pipeline`, suite bootstrap y un DAG sintético completo. Ensayo `pipeline-development-20261023T054340Z-360a4df3`: dos ciclos, reinicio y 24 capturas; frescura 3.611/65.850 s. Ver evidencia local para commits y pruebas.
+- [ ] Ejecutar el flujo H&M con recursos medidos y demostrar frescura menor de diez minutos mientras el pipeline esté activo, o registrar el incumplimiento. Revisar ZIP mac24 antes de cerrar T6/E5.
 
 ## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 

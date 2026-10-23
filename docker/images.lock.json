@@ -25,5 +25,16 @@
       "version": "1.19.1",
       "digest": "sha256:12364fe851b9f17356fc88189fc06d1b521262e04659ec7345975b00c9246a10"
     }
+  },
+  "derived_images": {
+    "airflow": {
+      "reference": "hmrec-airflow:0.1.0",
+      "base": "hmrec-jobs:0.1.0",
+      "runtime_version": "3.3.2",
+      "provider_standard_version": "1.19.0",
+      "requirements_lock": "docker/airflow/requirements.lock",
+      "requirements_sha256": "db566c1ea237da3acbcd74ea14f90a7a7d79f415cc58ea50427d61777286ebea",
+      "constraints": "docker/airflow/constraints-3.12.txt"
+    }
   }
 }

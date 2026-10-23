@@ -50,3 +50,9 @@ Los trabajos de construcción/refresh escriben JSON agregados en `artifacts/pipe
 El contrato `pipeline-v1` exige frescura recepción→publicación menor de 600 s para ambos eventos; si se excede, conserva el fallo. Guarda un ZIP agregado con inventario/huellas, identidad del build exacto, fuente/corte/Q4 y comparación del código y DAG instalados en los tres servicios Airflow contra el clon. La suite y el inventario privado de originales se reportan por separado. Un corte abrupto puede dejar sólo carpeta/log: no interpretarlo como aprobado ni volver a lanzar. Un DAG pausado puede tener una tarea aún en ejecución; inspecciona el estado antes de detener procesos.
 
 En mac24 sigue [el procedimiento dedicado](mac24-t6-prompt.md). T6/E5 sólo se cierra después de revisión principal. T7, T8, evaluación final y carga siguen pendientes.
+
+## Validación local del 23 de octubre
+
+[Reporte sintético](../evidence/pipeline-local.json): `pipeline-development-20261023T054340Z-360a4df3`, commit `9ec0d67b435dc75f5efa708949d0b06b2ba71d85`. Ensayo de 89.021 s, dos ciclos programados, frescura 3.611 s y 65.850 s, 24 capturas sin swap/OOM capturados. Se verificaron build exacto, código/DAG instalados, idempotencia, reinicio, PostgreSQL y `/recommend` inmutables, y pausa final. La fase de construcción/publicación sintética previa duró 4.832 s y está ligada en el ZIP. El pico del scheduler fue 502,562,816 bytes; no extrapolar estos valores a H&M.
+
+Pasaron las suites pipeline y bootstrap; después, 175 pruebas host y el ensayo congelado cubrieron las correcciones del lanzador. La evidencia separa commits y conjuntos de pruebas. Dos ensayos previos fallaron antes de sembrar por incompatibilidades del recolector y del helper HTTP; sus ZIP permanecen publicados, sin reinterpretarlos. La revisión estática resolvió las observaciones de generaciones, procedencia del build y código instalado. T6/E5 siguen pendientes de H&M.
