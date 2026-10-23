@@ -1,5 +1,15 @@
 # T8-B: carga con construcción H dentro del scheduler existente
 
+## Diagnóstico vigente antes del ensayo
+
+mac24 se detuvo en de2a8ec con ValueError tras el primer anuncio de comprobaciones. No hay ZIP anunciado ni evidencia de carga. El mensaje anterior no identificaba qué requisito falló; la causa sigue pendiente. El siguiente comando autorizado es **sólo diagnóstico** con el SHA entregado:
+
+```bash
+python3 scripts/mac24_t8_concurrent.py --preflight-only --expected-commit SHA_COMPLETO
+```
+
+Imprime OK/FALLO por etapa, sin contenido de excepciones ni secretos. Revisa reservas existentes, huellas, configuración de destino, hardware/energía, inventario y salud por servicio, presupuesto, Airflow, código, H y cohorte; ejecuta pruebas host guardando logs privados si llega a esa etapa. Termina antes de reservar o detener auxiliares. Si falla, devolver la etapa; no ejecutar carga, borrar reservas ni reiniciar servicios. Los comandos de ejecución de abajo se conservan hasta resolver el diagnóstico.
+
 Protocolo `scheduler-concurrency-v1`. T8-A y su ZIP permanecen cerrados; no repetirlos. La revisión capacity-v1 rechazó un constructor **adicional** de4GiB, no el trabajo dentro de la cuota existente de Airflow.
 
 ## Alcance y presupuesto

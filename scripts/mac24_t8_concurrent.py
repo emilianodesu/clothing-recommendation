@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """One T8-B build in existing scheduler with exact auxiliary recovery."""
 import argparse
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
@@ -32,6 +33,16 @@ OLD='5e0ba69395ee17158d4b823d63776dadc072a5559204b3101df00b348765d442'
 NEW='b1f69269be9960d1df0f2693e0f13b53ce0cbaabcd98ea1f6ad68703f5a3a7b3'
 
 
+@contextmanager
+def stage(name):
+    print('T8-B preflight: '+name,flush=True)
+    try:yield
+    except Exception as error:
+        print('FALLO: '+name+' ('+type(error).__name__+')',flush=True)
+        raise
+    print('OK: '+name,flush=True)
+
+
 def state_hash(v):
     program="""import hashlib,json
 from hm_recommender.database import connect
@@ -47,7 +58,7 @@ with connect() as c:
 
 
 def load_context(commit):
-    checkout_commit(ROOT,commit)
+    with stage('checkout'):checkout_commit(ROOT,commit)
     v=read_configuration(ROOT/'.env');art=Path(v['ARTIFACTS_DIR'])
     if not art.is_absolute():art=ROOT/art
     baseline=json.loads((ROOT/'evidence/benchmark-review-mac24.json').read_text())
@@ -55,11 +66,13 @@ def load_context(commit):
     t7=json.loads((ROOT/'evidence/portability-review-mac24.json').read_text())
     for audit in (baseline,capacity,t7):
         p=art/'handoff'/(audit['run_id']+'.zip')
-        require(hashlib.sha256(p.read_bytes()).hexdigest()==audit['archive']['sha256'])
-        require(read_report(p)['status']=='passed')
-    aux=targets(capacity,t7)
-    restored=read_configuration(ROOT/'.runtime/T7 restored installation airflow followup/.env')
-    require(hashlib.sha256(restored['COMPOSE_PROJECT_NAME'].encode()).hexdigest()==aux[0]['project_sha256'])
+        with stage('archive_'+audit['run_id'].split('-')[0]):
+            require(hashlib.sha256(p.read_bytes()).hexdigest()==audit['archive']['sha256'])
+            require(read_report(p)['status']=='passed')
+    with stage('auxiliary_targets'):aux=targets(capacity,t7)
+    with stage('restored_configuration'):
+        restored=read_configuration(ROOT/'.runtime/T7 restored installation airflow followup/.env')
+        require(hashlib.sha256(restored['COMPOSE_PROJECT_NAME'].encode()).hexdigest()==aux[0]['project_sha256'])
     return v,art,baseline,capacity,aux
 
 
@@ -83,38 +96,60 @@ def recovery(commit):
     print('Auxiliares recuperados; no repetir carga. Conservar evidencia para revisión.',flush=True)
 
 
-def run(commit):
-    generator_cpu_start=time.process_time()
+def preflight(commit):
     print('T8-B: verificar antecedentes, imágenes y ausencia de trabajos',flush=True)
     v,art,baseline,capacity,aux=load_context(commit)
-    require(not STATE.exists() and not list((art/'handoff').glob('concurrency-mac24-*')))
-    require(command(['uname','-m'])=='arm64' and command(['sysctl','-n','hw.memsize'])==str(24*2**30))
-    require('AC Power' in command(['pmset','-g','batt']))
+    with stage('no_prior_attempt'):
+        require(not STATE.exists() and not list((art/'handoff').glob('concurrency-mac24-*')))
+    with stage('hardware'):
+        require(command(['uname','-m'])=='arm64' and command(['sysctl','-n','hw.memsize'])==str(24*2**30))
+    with stage('power'):require('AC Power' in command(['pmset','-g','batt']))
     rows_expected=capacity['result']['containers']
-    require(set(command(['docker','ps','--no-trunc','--format','{{.ID}}']).splitlines())=={c['container_id'] for c in rows_expected})
+    with stage('running_inventory'):
+        require(set(command(['docker','ps','--no-trunc','--format','{{.ID}}']).splitlines())=={c['container_id'] for c in rows_expected})
     for row in rows_expected:
-        current=inspect(row['container_id']);verify(row,current)
-        require(current['running'] and current['health'] in ('healthy','none'))
+        with stage('container_'+row['scope']+'_'+row['service']):
+            current=inspect(row['container_id']);verify(row,current)
+            print('Salud: '+current['health'],flush=True)
+            require(current['running'] and current['health'] in ('healthy','none'))
     engine=json.loads(command(['docker','info','--format','{"cpus":{{.NCPU}},"memory":{{.MemTotal}}}']))
-    require(engine['cpus']==4 and 13*2**30<=engine['memory']<=14*2**30)
-    require(sum(c['memory_bytes'] for c in rows_expected if c not in aux)+2**30<=engine['memory'])
+    with stage('engine_capacity'):
+        require(engine['cpus']==4 and 13*2**30<=engine['memory']<=14*2**30)
+        require(sum(c['memory_bytes'] for c in rows_expected if c not in aux)+2**30<=engine['memory'])
     print('T8-B: comprobar Airflow pausado y sin ejecuciones',flush=True)
-    check_airflow(ROOT,v)
+    with stage('airflow_paused'):
+        check_airflow(ROOT,v)
     idle="from hm_recommender.database import connect\nwith connect('airflow') as c:print(c.execute(\"SELECT count(*) FROM dag_run WHERE state IN ('running','queued')\").fetchone()[0])"
-    require(compose(ROOT,v,'exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',idle,capture=True,timeout=30).strip()=='0')
+    with stage('airflow_idle'):
+        require(compose(ROOT,v,'exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',idle,capture=True,timeout=30).strip()=='0')
     print('T8-B: comprobar fuentes, H activo y cohorte privada',flush=True)
     code="from hm_recommender.api.runtime import source_digest;print(source_digest())"
-    require(compose(ROOT,v,'exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',code,capture=True,timeout=30).strip()==OLD)
+    with stage('scheduler_code'):
+        require(compose(ROOT,v,'exec','-T','airflow-scheduler','/opt/hmrec/.venv/bin/python','-c',code,capture=True,timeout=30).strip()==OLD)
     port=int(v['API_PORT']);http=lambda path:request_json(port,v['HM_APP_PASSWORD'],path)
-    require(http('/health/live')['source_tree_sha256']==NEW)
-    ready=http('/health/ready');require(ready['release_id']==RELEASE)
+    with stage('api_code'):
+        require(http('/health/live')['source_tree_sha256']==NEW)
+    with stage('active_release'):
+        ready=http('/health/ready');require(ready['release_id']==RELEASE)
     cases_file=art/'benchmark-private'/baseline['run_id']/'cases.json'
-    require(hashlib.sha256(cases_file.read_bytes()).hexdigest()==baseline['environment']['cases_sha256'])
-    cases=json.loads(cases_file.read_text())['cases'];require(len(cases)==96)
+    with stage('private_cases_checksum'):
+        require(hashlib.sha256(cases_file.read_bytes()).hexdigest()==baseline['environment']['cases_sha256'])
+    with stage('private_cases_shape'):
+        cases=json.loads(cases_file.read_text())['cases'];require(len(cases)==96)
     logs=ROOT/'.runtime'/('t8-concurrency-preflight-'+uuid.uuid4().hex);logs.mkdir(parents=True)
     print('T8-B: suite host; logs privados: '+str(logs),flush=True)
-    command([sys.executable,'-m','unittest','discover','-s','tests/host','-q'],log=logs/'host-tests.log',timeout=180)
-    before={s:service(v,s) for s in (*LIMITS,'airflow-api','airflow-dag-processor')}
+    with stage('host_tests'):
+        command([sys.executable,'-m','unittest','discover','-s','tests/host','-q'],log=logs/'host-tests.log',timeout=180)
+    with stage('source_services'):
+        before={s:service(v,s) for s in (*LIMITS,'airflow-api','airflow-dag-processor')}
+    return dict(v=v,art=art,baseline=baseline,capacity=capacity,aux=aux,before=before,cases=cases,port=port,http=http,ready=ready,rows_expected=rows_expected)
+
+
+def run(commit):
+    generator_cpu_start=time.process_time()
+    ctx=preflight(commit)
+    v=ctx['v'];art=ctx['art'];baseline=ctx['baseline'];capacity=ctx['capacity'];aux=ctx['aux']
+    before=ctx['before'];cases=ctx['cases'];port=ctx['port'];http=ctx['http'];ready=ctx['ready'];rows_expected=ctx['rows_expected']
     rid='concurrency-mac24-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
     private=art/'concurrency-private'/rid;folder=art/'handoff'/rid
     STATE.mkdir(parents=True);private.mkdir(parents=True);folder.mkdir()
@@ -213,11 +248,20 @@ def run(commit):
     return 0 if r['status']=='passed' else 1
 
 
-if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True);p.add_argument('--restore-only',action='store_true')
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
+    mode=p.add_mutually_exclusive_group();mode.add_argument('--restore-only',action='store_true');mode.add_argument('--preflight-only',action='store_true')
     os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT='colima-hm-project');os.umask(0o077)
-    try:
-        a=p.parse_args();sys.exit(recovery(a.expected_commit) if a.restore_only else run(a.expected_commit))
+    a=p.parse_args()
+    if a.preflight_only:
+        preflight(a.expected_commit)
+        print('Preflight OK; no se reservó, detuvo ni inició ningún servicio/carga.',flush=True)
+        return 0
+    return recovery(a.expected_commit) if a.restore_only else run(a.expected_commit)
+
+
+if __name__=='__main__':
+    try:sys.exit(main())
     except BaseException as error:
         if isinstance(error,SystemExit):raise
         print('DETENIDO: '+type(error).__name__+'. Conservar logs/reserva; no repetir carga.',file=sys.stderr);sys.exit(1)
