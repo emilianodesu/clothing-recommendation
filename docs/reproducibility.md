@@ -52,3 +52,7 @@ La segunda ruta en una misma Mac **no equivale a otro equipo ni a otro usuario d
 Sólo un ZIP agregado `portability-v1` viaja por GitHub. Código, imagen, fuente T6, respaldo, estado y consultas se registran mediante huellas/conteos; ni clientes ni eventos individuales salen por ese canal. El respaldo real permanece privado. [Procedimiento mac24](mac24-t7-prompt.md).
 
 La validación ampliada local de bootstrap usa `HMREC_TEST_EXPLICIT_NETWORKS=1` cuando la VM acumuló redes históricas y agotó los pools predeterminados; el indicador afecta exclusivamente a proyectos temporales de esa suite. No limpia ni modifica redes originales.
+
+## Revisión H&M mac24
+
+La [auditoría](../evidence/portability-review-mac24.json) acepta el ensayo portability-v1 del 23 de octubre: 96.531 s, 918,506,419 bytes de respaldo, seis consultas iguales tras restaurar y seis sin red externa. Se verificaron huellas de ZIP/código/runner y controles agregados; el respaldo privado no se descargó aquí. El reporte fallido anterior permanece intacto. La reproducción del flujo ya ocurrió físicamente en mac24, con otra ruta y nuevas credenciales de base de datos. Falta ejecutar bajo otro usuario de SO para completar el criterio original T7/E6. No repetir los adaptadores ni iniciar T8 automáticamente.

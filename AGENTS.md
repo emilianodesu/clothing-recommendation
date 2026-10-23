@@ -1,5 +1,7 @@
 # Instrucciones para agentes
 
+**Revisión T7 mac24:** recuperación `portability-mac24-20261023T204855Z-579f1842` aceptada bajo portability-v1; ver `evidence/portability-review-mac24.json`. Duración 96.531 s, respaldo privado 918,506,419 bytes, seis consultas de paridad y seis sin red externa. Se verificaron ZIP, código/runner y estado/identidad original reportados. Conservación de 3,410 archivos y suite son declaraciones remotas separadas. T7/E6 permanecen abiertas únicamente por la prueba explícita con otro usuario de SO del plan; nueva ruta y credenciales PostgreSQL no la sustituyen. No repetir el ensayo ni borrar reservas/destinos. No iniciar T8/test. Este estado prevalece sobre los prompts históricos siguientes.
+
 ## Paso vigente: un seguimiento T7 por corrección Airflow
 
 El usuario confirmó conexión Airflow OK y ambos DAG pausados tras el fallo. Está preparado `scripts/mac24_t7.py --airflow-followup --expected-commit SHA_COMPLETO`: seguir `docs/mac24-t7-airflow-followup.md`. Verifica la huella exacta del ZIP fallido y conserva su reserva, carpeta y evidencia; sólo permite ese antecedente. Usa reserva/destino/evidencia separados, mismo protocolo portability-v1 y criterios. No ejecutar el comando histórico sin la opción. Ante fallo, publicar reporte cerrado y detenerse, sin borrar reservas ni reintentar. T7/E6 requieren revisión principal; T8/test siguen reservados. Esta sección prevalece sobre el seguimiento histórico siguiente.

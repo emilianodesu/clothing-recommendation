@@ -288,6 +288,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 7 · T7 — Instalación independiente, transferencia y recuperación
 
+**Revisión 23 de octubre:** [recuperación H&M mac24 aceptada](../../../evidence/portability-review-mac24.json), 96.531 s, respaldo de 918,506,419 bytes y paridad/offline 6+6. Implementación y recuperación comprobadas en las dos Macs; falta el requisito de otro usuario de SO. T7/E6 siguen abiertas por ese alcance, sin repetir el ensayo ni abrir T8. El estado de implementación siguiente es histórico.
+
 **Implementación disponible:** [guía](../../reproducibility.md), [evidencia local](../../../evidence/portability-local.json) y [ensayo mac24 pendiente](../../mac24-t7-prompt.md). T7/E6 abiertas. Se implementó dump lógico COPY de tablas de aplicación y paquetes registrados (sin roles/SQL ejecutable), restauración en proyecto nuevo, huellas de código y paridad. La prueba local usa otra ruta con espacios/credenciales, no otro usuario de SO; no se marca reproducción física hasta auditar mac24.
 
 **Archivos:** crear `scripts/backup.py`, `scripts/restore.py`, `docs/reproducibility.md`, `tests/integration/test_release_transfer.py`, `tests/integration/test_backup_restore.py`, `tests/integration/test_offline.py`. Modificar `releases/package.py`, `scripts/project.py`, `.gitignore`, `README.md`, `docs/setup.md` y `docs/operations.md`.
@@ -298,7 +300,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 - [x] Respaldar PostgreSQL de forma lógica y artefactos con manifiestos. Durante la copia, pausar nuevas ejecuciones y escrituras de eventos, esperar a que terminen los trabajos activos y capturar versión y cursor estables; servir recomendaciones puede continuar. Reanudar las escrituras y programación al terminar o ante error. Restaurar en proyecto Compose nuevo con credenciales propias; comprobar perfil, eventos, versión y recomendaciones antes de declararlo utilizable.
 - [x] Probar `test_corrupt_or_unsafe_release_is_rejected`, `test_import_without_original_mlflow`, `test_restore_into_empty_volumes` y funcionamiento sin salida a Internet después de precargar recursos. Mantener intactos los volúmenes originales durante la prueba.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite portability` en una instalación limpia, otra ruta con espacios y otro usuario. Repetir en un segundo equipo cuando esté disponible, registrando arquitectura y SO. Transferir imágenes con `docker save/load` si se necesita instalación sin registro; conservar manifiesto de plataforma y digests.
-- [ ] Comparar IDs, orden y motivos de consultas fijas de la misma versión importada: igualdad exacta, excluyendo request_id. Para reentrenamientos experimentales, comparar métricas con tolerancias fijadas antes de la prueba; no exigir pesos idénticos entre arquitecturas. Guardar evidencia, límites de soporte y commit de E6.
+- [x] Comparar IDs, orden y motivos de consultas fijas de la misma versión importada: igualdad exacta, excluyendo request_id. Para reentrenamientos experimentales, comparar métricas con tolerancias fijadas antes de la prueba; no exigir pesos idénticos entre arquitecturas. Guardar evidencia, límites de soporte y commit de E6.
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 

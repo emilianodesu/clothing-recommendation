@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Revisión T7 mac24:** recuperación `portability-mac24-20261023T204855Z-579f1842` aceptada bajo portability-v1; ver [auditoría](evidence/portability-review-mac24.json). Duración 96.531 s, respaldo privado 918,506,419 bytes, seis consultas de paridad y seis sin red externa. Se verificaron ZIP, código/runner y estado/identidad original reportados. Conservación de 3,410 archivos y suite son declaraciones remotas separadas. T7/E6 permanecen abiertas únicamente por la prueba explícita con otro usuario de SO del plan; nueva ruta y credenciales PostgreSQL no la sustituyen. No repetir el ensayo ni borrar reservas/destinos. No iniciar T8/test. Este estado prevalece sobre los prompts históricos siguientes.
+
 **T7 implementada, pendiente de ensayo H&M:** exportación/importación de paquetes, respaldo lógico, restauración en instalación nueva y paridad offline. [Guía reproducible](docs/reproducibility.md) y [procedimiento mac24](docs/mac24-t7-prompt.md). No repetir T6; T8/test siguen reservados.
 
 **Seguridad de recuperación:** se rechazan rutas/enlaces e inventarios inválidos, se verifican huellas y código instalado y se generan credenciales nuevas. Los respaldos con perfiles permanecen privados; GitHub recibe sólo reportes agregados.
