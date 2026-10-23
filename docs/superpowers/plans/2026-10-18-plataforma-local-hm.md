@@ -304,6 +304,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
+**T8-B implementado, ejecución pendiente:** [protocolo de concurrencia](../../mac24-t8-concurrent.md). Constructor en scheduler existente, transición/recuperación exacta de auxiliares, agregados globales y de solapamiento; no se acredita rendimiento hasta revisión mac24.
+
 **Capacidad T8-B auditada:** límites activos16.75GiB frente a VM13.621GiB; no admitir constructor adicional4GiB+margen1GiB. [Revisión](../../../evidence/capacity-review-mac24.json). Preparar ensayo dentro del scheduler existente y transición explícita de auxiliares, o mantenimiento secuencial; no se ejecutó concurrencia ni se cierra T8-B.
 
 **T8-B preparado (histórico):** [inventario de capacidad](../../mac24-t8-capacity.md), previo a decidir concurrencia/política secuencial. No medir ni admitir trabajos automáticamente; contar auxiliares y restauración T7.

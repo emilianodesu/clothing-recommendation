@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "protocol": "scheduler-concurrency-v1",
+  "status": "local_host_checks_passed",
+  "host_tests": 220,
+  "mac24_executed": false,
+  "load_started": false,
+  "test_evaluated": false,
+  "checks": [
+    "Overlap counts scheduled arrivals including omissions",
+    "Timing trace preserves default baseline report shape",
+    "Wrong auxiliary identity rejected before stop",
+    "Recovery starts restored database before API and MLflow",
+    "Worker timeout terminates child and records completion",
+    "Failed report closes and validates via GitHub handoff",
+    "Private result fields rejected"
+  ],
+  "limitations": [
+    "No physical concurrent H&M run performed locally",
+    "No claim of scheduler memory/latency acceptance until mac24 report review",
+    "Auxiliary restart and live Docker recovery still require the controlled mac24 run"
+  ]
+}

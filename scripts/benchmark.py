@@ -23,17 +23,22 @@ def summarize(samples,scheduled,seconds):
         service_seconds=quantiles([s['service'] for s in samples]))
 
 
-def phase(cases,*,rate,seconds,workers,request,max_lag):
+def phase(cases,*,rate,seconds,workers,request,max_lag,trace=None,on_start=None):
     if not cases or rate<=0 or seconds<=0 or workers<1:raise ValueError('Invalid load')
     scheduled=round(rate*seconds);samples=[];lock=threading.Lock();slots=threading.BoundedSemaphore(workers)
     by_group={c['group']:0 for c in cases};started=time.monotonic();wall=time.time()
+    if trace is not None:trace.update(started=started,scheduled=scheduled,rate=rate,samples=[])
+    if on_start is not None:on_start()
     def work(case,due):
         begin=time.monotonic();ok=False
         try:ok=request(case) is True
         except Exception:pass
         finally:
             end=time.monotonic()
-            with lock:samples.append(dict(group=case['group'],ok=ok,latency=end-due,service=end-begin))
+            with lock:
+                item=dict(group=case['group'],ok=ok,latency=end-due,service=end-begin)
+                samples.append(item)
+                if trace is not None:trace['samples'].append(dict(item,due=due,finished=end))
             slots.release()
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for index in range(scheduled):

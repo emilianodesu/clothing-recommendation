@@ -15,16 +15,16 @@ def sample(containers,started):
     return rows
 
 
-def accepted(rows):
-    if {r['memory']['service'] for r in rows}!={'api','postgres','ui'}:return False
-    for service in ('api','postgres','ui'):
+def accepted(rows,limits=None):
+    limits=limits or {'api':(4*2**30,2_000_000_000),'postgres':(512*2**20,0),'ui':(512*2**20,500_000_000)}
+    if {r['memory']['service'] for r in rows}!=set(limits):return False
+    for service in limits:
         group=[r for r in rows if r['memory']['service']==service]
         if len(group)<60:return False
         stamps=[r['memory']['elapsed_seconds'] for r in group]
         if stamps[-1]-stamps[0]<720 or any(not 0<b-a<=35 for a,b in zip(stamps,stamps[1:])):return False
         first=group[0]['memory'];last=group[-1]['memory']
-        expected={'api':4*2**30,'postgres':512*2**20,'ui':512*2**20}[service]
-        expected_cpu={'api':2_000_000_000,'postgres':0,'ui':500_000_000}[service]
+        expected,expected_cpu=limits[service]
         if first['memory_bytes']!=expected or first['nano_cpus']!=expected_cpu:return False
         for a,b in zip(group,group[1:]):
             if b['cpu_usage_usec']<a['cpu_usage_usec']:return False
