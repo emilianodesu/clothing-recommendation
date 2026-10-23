@@ -1,0 +1,44 @@
+{
+  "status": "prepared_for_mac24_not_executed",
+  "protocol": "final-hp-v1",
+  "real_test_read": false,
+  "mac24_executed": false,
+  "tests": {
+    "host_passed": 230,
+    "docker_components_passed": 108,
+    "docker_integration_skipped": 56,
+    "reason_skipped": "Require isolated PostgreSQL/MLflow services not started for this component change",
+    "bootstrap_host_previous_passed": 3,
+    "bootstrap_host_previous_skipped": 5
+  },
+  "synthetic_docker_smoke": {
+    "status": "passed",
+    "source_mode": "existing_jobs_image_with_current_source_read_only_bind",
+    "dataset": "synthetic_only",
+    "supervisor_child_exit_code": 0,
+    "memory_limit_bytes": 5368709120,
+    "cpu_limit": 2,
+    "samples": 3,
+    "peak_bytes": 115462144,
+    "duration_seconds": 0.6255883929989068,
+    "network": "none",
+    "root_read_only": true,
+    "resource_validator_passed": true,
+    "aggregate_validator_passed": true
+  },
+  "checks": [
+    "exclusive durable reservation rejects reuse",
+    "recovery refuses live child without completion",
+    "restoration starts scheduler last and preserves IDs",
+    "closed failed report validates through GitHub allowlist",
+    "timeout terminates and kills child before completion",
+    "unexpected supervisor error reaps child before completion",
+    "installed source identity required before real test"
+  ],
+  "limits": [
+    "Actual H&M memory and time not measured yet",
+    "Full mac24 maintenance transition not executed locally",
+    "Synthetic smoke binds source; mac24 must build and verify installed image",
+    "T8-B remains failed; sustained concurrency not accredited"
+  ]
+}

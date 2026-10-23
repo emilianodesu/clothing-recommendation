@@ -304,6 +304,8 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 ## Task 8 · T8 — Rendimiento, cobertura académica y entrega
 
+**T8-C preparado:** [evaluación única H/P](../../final-evaluation.md), con mantenimiento secuencial, reserva global, supervisor limitado y reporte agregado. Test real pendiente. T8-B conserva failed y no acredita concurrencia sostenida; no repetir ni alterar mínimos.
+
 **T8-B revisado:** [failed por solapamiento insuficiente](../../../evidence/concurrency-review-mac24.json). Construcción4.064s/worker5.061s,101 llegadas frente a mínimos10s/200. La API cumple latencia/errores y los recursos capturados cumplen; auxiliares recuperados. No repetir ni cambiar umbrales. Concurrencia sostenida no acreditada; T8-B sigue abierto y test reservado.
 
 **T8-B implementado, ejecución pendiente:** [protocolo de concurrencia](../../mac24-t8-concurrent.md). Constructor en scheduler existente, transición/recuperación exacta de auxiliares, agregados globales y de solapamiento; no se acredita rendimiento hasta revisión mac24.

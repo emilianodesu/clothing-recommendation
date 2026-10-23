@@ -158,6 +158,9 @@ def summary(report):
     if report.get('kind') == 'pipeline-handoff':
         lines[0]='# Ensayo de orquestación T6'
         lines[-2]='T6: revisar DAG, recuperación, recursos y frescura. Requiere auditoría principal; no acredita T8.'
+    if report.get('kind') == 'final-handoff':
+        lines[0] = '# Evaluación final H/P T8-C'
+        lines[-2] = 'Evaluación única; passed es operativo y requiere auditoría. No selecciona otro modelo ni cierra T8.'
     if report.get('kind') == 'concurrency-handoff':
         lines[0] = '# Carga concurrente T8-B'
         lines[-2] = 'Construcción H en scheduler con auxiliares recuperados; requiere revisión, test reservado.'
@@ -289,7 +292,7 @@ def package_report(run, report):
         path.chmod(0o600)
         files.append({'path': name, 'bytes': size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     report['files'] = files
-    if report.get('kind') in ('training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff'):
+    if report.get('kind') in ('training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff', 'final-handoff'):
         report.pop('package_id', None)
         report['package_id'] = hashlib.sha256(json.dumps(report, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     write_json(run / 'manifest.json', report)
@@ -336,7 +339,7 @@ def read_report(archive):
                        and report['result'].get('protocol')=='events-operational-v1')
         if not operational and bundle.getinfo('manifest.json').file_size > 128 * 1024:
             raise ValueError('Falta un manifiesto válido')
-        if (not isinstance(report, dict) or report.get('schema_version') != 1 or report.get('kind') not in ('bootstrap-handoff', 'data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff')
+        if (not isinstance(report, dict) or report.get('schema_version') != 1 or report.get('kind') not in ('bootstrap-handoff', 'data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff', 'final-handoff')
                 or report.get('status') not in ('passed', 'failed', 'interrupted')):
             raise ValueError('Versión o estado de reporte no admitido')
         if report.get('kind') in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff') and report.get('status') == 'passed':
@@ -356,11 +359,17 @@ def read_report(archive):
                 raise ValueError('Comparación requerida incompleta')
             if (result.get('diagnostic_protocol') == 'recent-history' or environment.get('diagnostic_protocol') == 'recent-history') and not history_complete(result):
                 raise ValueError('Validación de historial requerida incompleta')
-        if report.get('kind') in ('training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff'):
+        if report.get('kind') in ('training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff', 'benchmark-handoff', 'capacity-handoff', 'concurrency-handoff', 'final-handoff'):
             identity = dict(report)
             package_id = identity.pop('package_id', None)
             if hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(',', ':')).encode()).hexdigest() != package_id:
                 raise ValueError('Identidad de paquete T3 inválida')
+        if report.get('kind') == 'final-handoff':
+            from final_handoff import validate,require
+            require(set(names)=={'manifest.json','summary.md','environment.json','commit.txt','result.json','job.log','resources.log'})
+            result=json.loads(bundle.read('result.json'));require(result==report.get('result'))
+            validate(report,result,json.loads(bundle.read('environment.json')),json.loads(bundle.read('resources.log')))
+            require(bundle.read('job.log').decode()=='final T8-C\nstatus: '+report['status']+'\n')
         if report.get('kind') == 'concurrency-handoff':
             from concurrency_handoff import validate,require
             require(set(names)=={'manifest.json','summary.md','environment.json','commit.txt','result.json','job.log','resources.log'})

@@ -147,4 +147,4 @@ Ya existen versiones bloqueadas, `.env.example`, Dockerfiles, Compose y scripts 
 
 Los datos reales, tokens y credenciales permanecen fuera del código versionado. La documentación distingue la infraestructura disponible de las funcionalidades de recomendación pendientes.
 
-Evaluación final T8-C: [componente, protocolo y pasos operativos pendientes](docs/final-evaluation.md). Test real aún reservado; no ejecutar sobre H&M.
+Evaluación final T8-C: [lanzador único, mantenimiento y recuperación](docs/final-evaluation.md). Preparado para mac24 con SHA fijado; test real todavía no ejecutado.

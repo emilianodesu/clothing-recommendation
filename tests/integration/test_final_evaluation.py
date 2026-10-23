@@ -85,3 +85,40 @@ def test_final_h_preserves_history_order_and_p_popularity_order(tmp_path):
         ranking=rank_baseline(snapshot,['new','old','recent'],method,tmp_path/method,artifact_type=FinalRanking)
         assert frame(ranking,'ranking')['article_id'].to_list()==['A','B']*2+(['B','A'] if method=='H' else ['A','B'])
     assert frame(snapshot,'histories')['customer_id'].to_list()==['inactive','recent','recent']
+
+
+def test_supervisor_closes_once_with_private_synthetic_child(tmp_path):
+    import json
+    from hm_recommender.data.io import sha256
+    from hm_recommender.quality.final_worker import supervise
+    ds=fixture(tmp_path/'input');root=tmp_path/'worker';root.mkdir()
+    (root/'config.json').write_text(json.dumps(dict(dataset_dir=str(ds._root),source_sha256=ds.source_sha256,dataset_manifest_sha256=sha256(ds._root/'manifest.json'))))
+    (root/'go.json').write_text('{}')
+    result=supervise(root,timeout=30)
+    assert result['exit_code']==0 and result['error_type'] is None
+    assert json.loads((root/'evaluation-result.json').read_text())['selected_method']=='H'
+    assert (root/'complete.json').exists()
+
+
+def test_supervisor_timeout_keeps_completion_and_kills_child(tmp_path):
+    from unittest.mock import patch,Mock
+    import subprocess
+    from hm_recommender.quality.final_worker import supervise
+    (tmp_path/'go.json').write_text('{}')
+    child=Mock();child.wait.side_effect=[subprocess.TimeoutExpired('child',1),subprocess.TimeoutExpired('child',10),-9];child.returncode=-9
+    with patch('hm_recommender.quality.final_worker.subprocess.Popen',return_value=child):
+        result=supervise(tmp_path,timeout=1)
+    child.terminate.assert_called_once();child.kill.assert_called_once()
+    assert result['exit_code']==-9 and result['error_type']=='TimeoutError'
+    assert (tmp_path/'complete.json').exists()
+
+
+def test_supervisor_never_marks_complete_with_live_child_after_error(tmp_path):
+    from unittest.mock import patch,Mock
+    from hm_recommender.quality.final_worker import supervise
+    (tmp_path/'go.json').write_text('{}')
+    child=Mock();child.wait.side_effect=[RuntimeError('observer interrupted'),0];child.poll.return_value=None
+    with patch('hm_recommender.quality.final_worker.subprocess.Popen',return_value=child):
+        result=supervise(tmp_path,timeout=1)
+    child.terminate.assert_called_once()
+    assert result['error_type']=='RuntimeError'
