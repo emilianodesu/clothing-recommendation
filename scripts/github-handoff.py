@@ -31,6 +31,7 @@ ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log'} | {n
 DATA_ALLOWED = {'summary.md', 'environment.json', 'commit.txt', 'preflight.log', 'job.log', 'build.log', 'result.json', 'config.resolved.json'}
 
 def marker_for(run_id):
+    if run_id.startswith('portability-'): return '<!-- hmrec-portability-handoff-v1 -->'
     if run_id.startswith('pipeline-'): return '<!-- hmrec-pipeline-handoff-v1 -->'
     if run_id.startswith('events-'): return EVENTS_MARKER
     if run_id.startswith('serving-'): return SERVING_MARKER
@@ -53,7 +54,7 @@ def validate_archive(path, run_id=None):
     tag_for(report['run_id'])
     if run_id is not None and report['run_id'] != run_id:
         raise ValueError('El paquete no corresponde a la ejecución solicitada')
-    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff') else ALLOWED
+    allowed = DATA_ALLOWED if report['kind'] in ('data-handoff', 'training-handoff', 'diagnostic-handoff', 'quality-handoff', 'release-handoff', 'serving-handoff', 'events-handoff', 'pipeline-handoff', 'portability-handoff') else ALLOWED
     if report['kind'] == 'training-handoff':
         allowed = allowed | {'tracking.log'}
     if report['run_id'].startswith('data-') != (report['kind'] == 'data-handoff'):
@@ -64,6 +65,8 @@ def validate_archive(path, run_id=None):
         raise ValueError('Release prefix and report kind differ')
     if report['run_id'].startswith('serving-') != (report['kind']=='serving-handoff'):
         raise ValueError('Serving prefix and report kind differ')
+    if report['run_id'].startswith('portability-') != (report['kind']=='portability-handoff'):
+        raise ValueError('Identidad de reporte T7 inválida')
     if report['run_id'].startswith('pipeline-') != (report['kind']=='pipeline-handoff'):
         raise ValueError('Pipeline prefix and kind differ')
     if report['run_id'].startswith('events-') != (report['kind']=='events-handoff'):

@@ -67,6 +67,26 @@ def prepare_destination(source,destination,port):
     return values
 
 
+def reserve_networks(values):
+    # Explicit /24s avoid exhausting Docker's default /16 address pools across rehearsals.
+    import ipaddress
+    ids=subprocess.check_output(['docker','network','ls','-q'],text=True).split()
+    networks=json.loads(subprocess.check_output(['docker','network','inspect',*ids],text=True)) if ids else []
+    used=[ipaddress.ip_network(c['Subnet']) for n in networks for c in n.get('IPAM',{}).get('Config',[]) if c.get('Subnet')]
+    chosen={}
+    for role in ('backend','api-publication'):
+        candidate=next((ipaddress.ip_network('10.253.'+str(i)+'.0/24') for i in range(1,255)
+            if not any(ipaddress.ip_network('10.253.'+str(i)+'.0/24').overlaps(n) for n in used if n.version==4)),None)
+        if candidate is None:raise ValueError('No free recovery subnet; inspect Docker networks')
+        command=['docker','network','create','--subnet',str(candidate),'--label','com.docker.compose.project='+values['COMPOSE_PROJECT_NAME'],
+                 '--label','com.docker.compose.network='+role]
+        if role=='backend':command+=['--internal']
+        command += [values['COMPOSE_PROJECT_NAME']+'_'+role]
+        subprocess.run(command,check=True,capture_output=True)
+        used.append(candidate);chosen[role]=str(candidate)
+    return chosen
+
+
 def restore_into(source,archive,destination,checksum,port):
     source=Path(source).resolve();archive=Path(archive).resolve();destination=Path(destination)
     h=hashlib.sha256()
@@ -80,6 +100,8 @@ def restore_into(source,archive,destination,checksum,port):
         if subprocess.check_output(command,text=True).strip():raise ValueError('Destination already owns Docker resources')
     images=verify_images(source)
     v=prepare_destination(source,destination,port)
+    networks=reserve_networks(v)
+    (destination/'artifacts/restore-networks.json').write_text(json.dumps(networks))
     incoming=destination/'artifacts'/'restore-input.zip';shutil.copyfile(archive,incoming);os.chmod(incoming,0o600)
     def call(*args):return compose(destination,v,*args,capture=True,timeout=2100)
     # No build/pull: provision caches explicitly beforehand, credentials freshly generated.
@@ -110,7 +132,7 @@ def restore_into(source,archive,destination,checksum,port):
         checked+=1
     for image,identity in images.items():
         if subprocess.check_output(['docker','image','inspect',image,'--format','{{.Id}}'],text=True).strip()!=identity:raise ValueError('Image tag changed during restore')
-    result=dict(restored,images=images,parity_queries=checked,project=v['COMPOSE_PROJECT_NAME'],ready=ready,automatic_scheduling=False)
+    result=dict(restored,networks=networks,images=images,parity_queries=checked,project=v['COMPOSE_PROJECT_NAME'],ready=ready,automatic_scheduling=False)
     (destination/'artifacts'/'restore-result.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result));return result
 
