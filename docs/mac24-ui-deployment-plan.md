@@ -1,6 +1,6 @@
 # Siguiente paso: actualizar exclusivamente UI en mac24
 
-Estado: **lanzador implementado y verificado localmente; ejecución mac24 pendiente**. Véanse [instrucciones de ejecución](mac24-ui-deploy.md) y [evidencia local](../evidence/ui-deployment-local.json). La [preparación de recuperación](../evidence/ui-recovery-review-mac24.json) quedó aceptada con el alcance indicado abajo. Los adaptadores `mac24_ui_recovery.py` ya terminaron: no volver a ejecutarlos ni usar `--restore-only`.
+Estado: **despliegue operativo mac24 ejecutado y aceptado**, `ui-deploy-f37f5b3b0443`; [auditoría](../evidence/ui-deployment-review-mac24.json). Inspección visual en navegador no realizada. El plan siguiente documenta la ventana ya cerrada; no repetir sus comandos. Véanse [instrucciones de ejecución](mac24-ui-deploy.md) y [evidencia local](../evidence/ui-deployment-local.json). La [preparación de recuperación](../evidence/ui-recovery-review-mac24.json) quedó aceptada con el alcance indicado abajo. Los adaptadores `mac24_ui_recovery.py` ya terminaron: no volver a ejecutarlos ni usar `--restore-only`.
 
 ## Identidades fijadas
 
@@ -32,6 +32,6 @@ Si falla la nueva UI, aplicar el override histórico con las mismas restriccione
 
 El lanzador comprueba UI desde localhost, identidad del archivo y render de la UI instalada mediante Streamlit AppTest contra la API real, sin pulsar botones. La cabecera se contrasta con los metadatos actuales del stream. Este render no equivale a una inspección visual en navegador: el reporte conserva `visible_browser_verified=false`. La revisión visual posterior sigue separada. Cualquier demostración con escritura necesitará un stream sintético explícito, separado de los originales. Conservar el override activo y documentar su uso en operaciones futuras: ejecutar Compose sin él podría seleccionar la imagen antigua del tag compartido.
 
-## Cierre esperado
+## Alcance del cierre
 
-Un nuevo reporte deberá distinguir preparación de candidata, aplicación, rollback si ocurrió, recuperación de auxiliares y verificación visible. Se publicarán sólo agregados y huellas; logs y configuración seguirán privados. T8-B permanece failed y la entrega académica no cambia. La implementación local no acredita despliegue en mac24 ni autoriza repetir los comandos históricos de recuperación. Una recuperación exitosa después de un fallo conserva el resultado de despliegue `failed`. La salud y generación de la UI se vuelven a comprobar antes y después de restaurar auxiliares; un fallo tardío también activa rollback.
+Un nuevo reporte deberá distinguir preparación de candidata, aplicación, rollback si ocurrió, recuperación de auxiliares y verificación visible. Se publicarán sólo agregados y huellas; logs y configuración seguirán privados. T8-B permanece failed y la entrega académica no cambia. La implementación local por sí sola no acredita despliegue; el cierre mac24 está en el reporte remoto auditado enlazado al inicio. No repetir los comandos históricos de despliegue ni recuperación. Una recuperación exitosa después de un fallo conserva el resultado de despliegue `failed`. La salud y generación de la UI se vuelven a comprobar antes y después de restaurar auxiliares; un fallo tardío también activa rollback.

@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-10-24T20:04:48.391212+00:00",
+  "decision": "accepted_ui_deployment_operational_scope",
+  "run_id": "ui-deploy-f37f5b3b0443",
+  "source_report": "evidence/ui-deployment-mac24.json",
+  "source_report_commit": "d28323596ace37c3445bd2630f53151b833f2f3b",
+  "source_report_sha256": "f27d1a084c6310b27260f4a78b2cff8625b0ee169ccf9aafa6d9fbea832f0b3c",
+  "source_report_bytes": 3382,
+  "procedure_commit": "8f1f0c5a8098ce2f6a87a7c3d365499f0ca9436d",
+  "verified_here": {
+    "source_files_sha256": {
+      "scripts/mac24_ui_deploy.py": "9326d81a99d91a132327dd3b1ff79bcdf3090860526e265a5966771efab2db17",
+      "scripts/ui_deploy_control.py": "81a51e28a8028c05cc89ad32bf6d07cb6cc18b84089cceb1893d461c61b04254",
+      "scripts/mac24_ui_recovery.py": "ddbb51dfaff5025eb371e289b6a4ac38e9590e44c6493a49f564f9de8126f081",
+      "scripts/ui_recovery_control.py": "a7770fa98bbac54534db063f2434071843a44caf8820cc505d0e425877e52967",
+      "scripts/ui_recovery_public.py": "0303f6d0c6f8f9cab2ca43a4a4c0682f6fc1db6a9325372458ee379960380419",
+      "scripts/mac24_ui_inventory.py": "657eb4d9717b83da698427bfe9f882bf1910707c88fbf2be55a149958d92c4d6",
+      "src/hm_recommender/ui/app.py": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+      "src/hm_recommender/portability.py": "03bb6df3bdc4f9af5eba7df0c7cf252297db1d0af746b6026000c0ae11e12ec9",
+      "tests/integration/test_ui_metadata.py": "1e4a17e169a7f0f5e0d774eb695c9ea55e84d647271fe2829d5ee8072faa6a1f"
+    },
+    "operator_output_matches_published_json": true,
+    "report_only_commit": true,
+    "local_code_identity_verified": true,
+    "recovery_antecedent_verified": true,
+    "declared_results_consistent": true,
+    "declared_limits_match_protocol": true,
+    "resource_arithmetic_consistent": true,
+    "dependency_versions_match_lock": true
+  },
+  "remote_declarations": {
+    "candidate_image": "sha256:a30a7676cd8aa3d51ecfbb47f5c375954a6dc692996ccc257e705b88cd1374e4",
+    "candidate_ui_sha256": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+    "historical_image": "sha256:38b8937c7c16245f3198e5a1e1561a9dae75d5857d78cc4bfdcfcdb211fc4fe1",
+    "source_run_id": "ui-recovery-5f15b3471c1a",
+    "source_report_sha256": "c5d758bfe2e750a6b2f3a9db7cbad5a5594794e4b52644365e818621d232dd35",
+    "source_state_sha256": "84edce0f03b7c5ded30a33aecfacf48447d30f56d80e979edbcb7178fb24e7d6",
+    "engine": {
+      "memory": 14624956416,
+      "cpus": 4,
+      "architecture": "aarch64"
+    },
+    "builder_limits": {
+      "memory": 2147483648,
+      "swap": 2147483648,
+      "period": 100000,
+      "quota": 100000
+    },
+    "probe_limits": {
+      "memory": 536870912,
+      "swap": 536870912,
+      "nano_cpus": 500000000,
+      "network": "none",
+      "readonly": true,
+      "ports": {}
+    },
+    "regression_limits": {
+      "Memory": 536870912,
+      "MemorySwap": 536870912,
+      "NanoCpus": 500000000,
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "PortBindings": {}
+    },
+    "probe_checks": {
+      "health": "ok",
+      "python": "3.12.15",
+      "streamlit": "1.66.0",
+      "httpx": "0.28.1",
+      "ui_sha256": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da"
+    },
+    "regression": {
+      "protocol": "ui-regression-v1",
+      "passed": true,
+      "tests": 1,
+      "skipped": 0
+    },
+    "deployment_verified": true,
+    "ui_http_health": true,
+    "ui_live_render": {
+      "protocol": "ui-live-render-v1",
+      "rendered": true,
+      "metadata_matches_api": true,
+      "streams_present": true,
+      "writes_performed": false
+    },
+    "original_api_postgres_preserved": true,
+    "state_preserved": true,
+    "ready_preserved": true,
+    "restoration": [
+      {
+        "role": "postgres",
+        "restored": true
+      },
+      {
+        "role": "api",
+        "restored": true
+      },
+      {
+        "role": "mlflow",
+        "restored": true
+      },
+      {
+        "role": "airflow-api",
+        "restored": true
+      },
+      {
+        "role": "airflow-dag-processor",
+        "restored": true
+      },
+      {
+        "role": "airflow-scheduler",
+        "restored": true
+      }
+    ],
+    "auxiliaries_restored": true,
+    "final_joint_health_verified": true,
+    "temporary_stopped": true,
+    "temporary_cleanup_complete": true,
+    "recovery_complete": true,
+    "rollback_started": false,
+    "visible_browser_verified": false
+  },
+  "reviewed_runner_controls": {
+    "apply_scope": "Compose up targets UI only, with no dependencies, build or pull; resolved override must change only services.ui.image.",
+    "runtime_contract": "UI image ID, source hash, user, environment, command, healthcheck, mounts, networks, port binding, 512 MiB/0.5 CPU and read-only setting compared against the saved original.",
+    "regression": "One synthetic Streamlit AppTest test, no skips; selects second stream and checks publication/cursor/revision changes through 4 and 5 without network or real tables.",
+    "live_render": "AppTest renders the installed UI against the real API without clicking; compares current stream revision, publication and cursor. This is not a visible browser inspection.",
+    "preservation": "Exact final API/PostgreSQL inventory records; auxiliary records allow changed start times only. All auxiliary health is checked together in the final inventory.",
+    "aggregate_state": "Read-only repeatable-read SQL: eleven table counts plus serving pointer, stream metadata and pipeline targets; before/after digest equality. Not a row-by-row data comparison.",
+    "recovery": "Candidate generation and health rechecked before and after auxiliary restoration. Report indicates no rollback was needed; this run does not exercise physical rollback."
+  },
+  "capacity": {
+    "engine_gib": 13.620552062988281,
+    "serving_limits_gib": 5,
+    "builder_gib": 2,
+    "margin_gib": 1,
+    "planned_build_gib": 8.0,
+    "probe_or_regression_gib": 0.5,
+    "planned_probe_or_regression_gib": 6.5,
+    "basis": "configured limits, not observed peak memory; auxiliary restoration returns the historical inventory without accrediting sustained concurrent capacity"
+  },
+  "limits": [
+    "The private state, inventories, SQL digests, container layers and full logs were not downloaded; remote execution and preservation remain declarations of the audited runner.",
+    "The source_state_sha256 identifies the remote antecedent state; its private bytes were not independently rehashed here.",
+    "Source and protocol consistency were checked here; no direct SSH inspection or local reproduction of this deployment was performed.",
+    "No visible browser inspection/capture is supplied for this deployment; visible_browser_verified remains false.",
+    "Rollback image availability was checked, but rollback was not executed in this successful deployment.",
+    "No new training, test evaluation, load, latency, OOM/swap or acceptance campaign occurred; no new performance claim follows.",
+    "The academic tag, historical failures and T8-B failed result remain unchanged."
+  ],
+  "ui_deployment_operationally_closed": true,
+  "visible_browser_review": "not_performed",
+  "new_remote_actions_performed_here": false,
+  "preserve": [
+    ".runtime/ui-deploy-v1 and its active-override.json",
+    "Both UI images by ID, stopped builders, cache and worktrees",
+    "Private logs/configuration and all earlier reports/reservations",
+    "API/PostgreSQL, volumes, H release, stream data and academic tag"
+  ],
+  "next_step": "Use the deployed UI for a separate read-only visual review or presentation. Do not rerun deployment, recovery preparation, restore-only, T8 or training."
+}

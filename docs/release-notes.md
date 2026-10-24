@@ -24,8 +24,13 @@ No es necesario repetir campañas para presentar esta entrega. Cualquier ampliac
 
 Se corrigió en código la cabecera desactualizada: el selector ahora conserva únicamente el ID del stream y obtiene revisión, corte, versión y fechas de la respuesta actual. [Regresión](../evidence/ui-metadata-fix-local.json) con Streamlit real y HTTP simulado: falló antes y pasó después, preservando selección en dos actualizaciones. Suite host: 245 aprobadas y una omitida. La prueba se incorpora a events/acceptance para futuras imágenes.
 
-Esta corrección es posterior al tag de entrega y no altera sus capturas. En la fase de corrección no se desplegó; el despliegue local posterior se describe abajo. Mac24 permanece sin actualizar. La aceptación completa de 60 casos corresponde al commit anterior; no se atribuye automáticamente a este cambio.
+Esta corrección es posterior al tag de entrega y no altera sus capturas. En la fase de corrección no se desplegó; el despliegue local posterior se describe abajo. En ese momento mac24 permanecía sin actualizar; su despliegue posterior está documentado al final. La aceptación completa de 60 casos corresponde al commit anterior; no se atribuye automáticamente a este cambio.
 
 ## Despliegue posterior verificado
 
-La corrección `e478f71` ya está [desplegada en la UI sintética local](ui-metadata-deployment.md). Navegador real confirmó revisión 4→5 y fechas nuevas; API/PostgreSQL intactos. Mac24 no se actualizó y el tag de entrega conserva la evidencia histórica original.
+La corrección `e478f71` ya está [desplegada en la UI sintética local](ui-metadata-deployment.md). Navegador real confirmó revisión 4→5 y fechas nuevas; API/PostgreSQL intactos. Ese despliegue local no tocó mac24 y el tag de entrega conserva la evidencia histórica original.
+
+
+## Despliegue posterior en mac24
+
+`ui-deploy-f37f5b3b0443`, ejecutado en `8f1f0c5`, quedó aceptado en su [alcance operativo](../evidence/ui-deployment-review-mac24.json). La UI corregida está activa; pasaron la regresión específica de metadatos y el render AppTest de la UI instalada contra la API. El reporte acredita recuperación conjunta de seis auxiliares y conservación de API/PostgreSQL, H y estado agregado; no se necesitó rollback. No hay nueva inspección visual en navegador ni evaluación/carga T8. Conservar el override privado y ambas imágenes; no repetir los lanzadores históricos. El tag académico permanece intacto.

@@ -1,6 +1,6 @@
 # Corrección UI en mac24: inventario previo
 
-La corrección de metadatos está implementada y verificada en la demo local (`e478f71`); todavía no se ha desplegado en mac24. El inventario y la [preparación de imagen histórica](../evidence/ui-recovery-review-mac24.json) ya se revisaron. Sigue [preparar candidata y actualización exclusiva de UI](mac24-ui-deployment-plan.md). El procedimiento de inventario de abajo es histórico y no se repite. No repetir campañas, test final, carga ni los lanzadores T8 históricos.
+La corrección de metadatos (`e478f71`) ya se desplegó en mac24 mediante `ui-deploy-f37f5b3b0443`; [auditoría operativa](../evidence/ui-deployment-review-mac24.json). La verificación visual en navegador corresponde sólo a la demo local. El inventario y la [preparación de imagen histórica](../evidence/ui-recovery-review-mac24.json) ya se revisaron. La [preparación y actualización exclusiva de UI](mac24-ui-deployment-plan.md) también quedó ejecutada; no repetirla. El procedimiento de inventario de abajo es histórico y no se repite. No repetir campañas, test final, carga ni los lanzadores T8 históricos.
 
 ## Comando del agente de mac24
 
