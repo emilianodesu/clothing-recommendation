@@ -1,5 +1,7 @@
 # T7: paquetes portables y recuperación local
 
+> Estado actual: para el nuevo servidor Linux con HTTPS usar [server-deployment.md](server-deployment.md). Las referencias a futuros T5–T8 o test reservado en esta guía describen etapas históricas ya superadas; no reabren campañas. El repositorio puede ser público, los datos y respaldos no.
+
 **E6/T7 cerradas tras auditar el ensayo H&M mac24 y ajustar el alcance con el usuario.** La prueba con otra cuenta de SO fue omitida por decisión explícita; no está verificada ni es requisito de cierre. T8 y test siguen reservados. No se necesita Kaggle, MLflow original, nube ni reentrenamiento para servir un paquete ya exportado. El dataset y experimentos históricos permanecen en su instalación original.
 
 ## Exportar/importar un paquete

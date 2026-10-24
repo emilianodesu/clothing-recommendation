@@ -12,6 +12,22 @@ from bootstrap import PASSWORD_KEYS, prepare_configuration, project_name, read_c
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def image_override(root):
+    """Optional server-only immutable image lock; never accepts other overrides."""
+    import re
+    path = root / '.runtime/server-images.json'
+    if not path.exists():
+        return []
+    body = json.loads(path.read_text())
+    allowed = {'api', 'ui', 'app-check', 'jobs', 'events-job', 'serving-probe'}
+    if not isinstance(body, dict) or set(body) != {'services'} or not isinstance(body['services'], dict) or not body['services']:
+        raise ValueError('Invalid server image lock')
+    for service, config in body['services'].items():
+        if service not in allowed or not isinstance(config, dict) or set(config) != {'image'} or not isinstance(config['image'], str) or not re.fullmatch(r'sha256:[a-f0-9]{64}', config['image']):
+            raise ValueError('Server image lock only accepts immutable image IDs')
+    return ['--file', str(path)]
+
+
 def compose(root, values, *args, capture=False, log_path=None, timeout=None):
     environment = dict(os.environ)
     environment.pop("COMPOSE_FILE", None)
@@ -19,7 +35,7 @@ def compose(root, values, *args, capture=False, log_path=None, timeout=None):
     environment.update(values)
     command = ["docker", "compose", "--project-directory", str(root), "--env-file",
         str(root / ".env"), "--file", str(root / "compose.yaml"), "--project-name",
-        values["COMPOSE_PROJECT_NAME"], *args]
+        values["COMPOSE_PROJECT_NAME"], *image_override(root), *args]
     if log_path is not None:
         from handoff import execute
         code, _ = execute(command, root, environment, log_path)

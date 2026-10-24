@@ -28,3 +28,8 @@ y p95 8.909 ms. Cumplió el protocolo con tres auxiliares pausados y recuperados
 no prueba concurrencia sostenida ni capacidad máxima y no cambia la selección H.
 
 Conservar datos y eventos privados; sólo agregados por GitHub. Cambiar ventanas, reglas o candidato requiere una campaña futura predefinida y nuevos datos de evaluación: el test actual está consumido. Artefactos y comprobaciones: [selección](model-selection.md), [paquetes](releases.md), [auditoría final](../evidence/final-review-mac24.json).
+
+La preparación posterior del [servidor del equipo](server-deployment.md) protege
+la UI mediante cuentas individuales en un gateway HTTPS. No cambia el motor,
+los datos de evaluación ni añade autorización por comprador; la validación del
+hardware y sitio público destino se registra aparte.

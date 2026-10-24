@@ -1,0 +1,43 @@
+# Independent project: cannot recreate API, UI, PostgreSQL or historical services.
+services:
+  gateway:
+    image: caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
+    command: [caddy, run, --config, /etc/caddy/Caddyfile, --adapter, caddyfile]
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - type: bind
+        source: ./.runtime/server
+        target: /etc/caddy
+        read_only: true
+        bind:
+          create_host_path: false
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 256m
+    cpus: 1
+    pids_limit: 128
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:2019/config/]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks: [application]
+networks:
+  application:
+    external: true
+    name: ${HMREC_APP_PROJECT:?Use scripts/server.py}_api-publication
+volumes:
+  caddy_data:
+  caddy_config:

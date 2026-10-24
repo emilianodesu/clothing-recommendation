@@ -13,7 +13,7 @@ import mac24_h_cycle as h
 class PublicationContinuation(unittest.TestCase):
     def fixture(self,root):
         def git(*args):
-            return subprocess.check_output(['git','-c','commit.gpgsign=false','-c','core.hooksPath=/dev/null',*args],cwd=root,text=True,stderr=subprocess.DEVNULL).strip()
+            return subprocess.check_output(['git','-c','commit.gpgsign=false',*args],cwd=root,text=True,stderr=subprocess.DEVNULL).strip()
         git('init','-q');git('config','user.email','fixture@example.invalid');git('config','user.name','Fixture')
         (root/'.gitignore').write_text('.runtime/\nartifacts/\n')
         git('add','.gitignore');git('commit','-qm','original runner');old=git('rev-parse','HEAD')

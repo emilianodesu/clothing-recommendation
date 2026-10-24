@@ -68,3 +68,21 @@ Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito 
 No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
 
 Preparación UI mac24 aceptada: `ui-recovery-5f15b3471c1a`; [auditoría y límites](../evidence/ui-recovery-review-mac24.json). La imagen histórica se reconstruyó y pasó imports/hash/health aislados; seis auxiliares recuperados y servicios originales conservados según el reporte remoto. Se conservan `blocked_capacity` y los dos intentos failed. La actualización posterior `ui-deploy-f37f5b3b0443` también quedó aceptada en su alcance operativo; ver [guía](mac24-ui-deploy.md). No repetir preparación, despliegue ni `--restore-only`.
+
+## Traspaso al servidor del equipo (posterior a entrega académica)
+
+El usuario dispone de otro servidor y delegó descubrir sus recursos al agente del
+compañero. Acceso elegido: Internet, dominio/HTTPS y cuentas individuales para el
+equipo. Se prepararon [guía de despliegue](server-deployment.md),
+[operación](server-operations.md), [traspaso](handoff.md),
+[hallazgos](findings.md) y [referencias](references.md), además de
+`scripts/server.py` y gateway Caddy independiente. README/AGENTS ahora presentan el
+estado vigente; su historia se preserva en `docs/history/`.
+
+[Verificación de preparación](../evidence/server-handoff-local.json): tests host,
+configuración Compose y proxy sintético. No equivale a una instalación física
+Linux. Siguen como entradas del receptor: acceso/recursos del servidor, dominio y
+DNS, respaldo lógico privado con huella (o plan separado de reconstrucción) y
+contraseñas web nuevas. El ZIP de imágenes es opcional. La aceptación del destino
+incluye restauración, TLS público y navegador desde otra red. No se reabren
+campañas/test ni se modifica el tag académico; T8-B sigue failed.

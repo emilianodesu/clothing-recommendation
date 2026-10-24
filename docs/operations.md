@@ -1,5 +1,7 @@
 # Operación local T6
 
+> Estado actual: para el nuevo servidor Linux con HTTPS usar [server-deployment.md](server-deployment.md). Las referencias a futuros T5–T8 o test reservado en esta guía describen etapas históricas ya superadas; no reabren campañas. El repositorio puede ser público, los datos y respaldos no.
+
 T6 añade Airflow 3.3.2 con LocalExecutor: API, scheduler y procesador de DAG. No instala Celery/Redis, no monta el socket Docker y no entrena. El runtime de Airflow vive en `/opt/airflow-env`; las tareas usan `/opt/hmrec/.venv/bin/hmrec`, el mismo paquete y lock del motor. Constraints oficiales y hashes de ambas resoluciones quedan en Git. [Arquitectura oficial](https://airflow.apache.org/docs/apache-airflow/3.3.2/core-concepts/executor/local.html).
 
 ## Preparación explícita

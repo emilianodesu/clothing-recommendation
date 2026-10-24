@@ -1,5 +1,7 @@
 # Preparación local de Docker
 
+> Estado actual: para el nuevo servidor Linux con HTTPS usar [server-deployment.md](server-deployment.md). Las referencias a futuros T5–T8 o test reservado en esta guía describen etapas históricas ya superadas; no reabren campañas. El repositorio puede ser público, los datos y respaldos no.
+
 Esta guía prepara el motor de contenedores y comprueba su funcionamiento. Después, la [primera entrega del proyecto](bootstrap.md) permite construir sus imágenes y preparar PostgreSQL y Qdrant. El modelo personalizado y su API siguen pendientes. La configuración de `docker/smoke/` es exclusivamente una prueba del motor Docker.
 
 ## macOS

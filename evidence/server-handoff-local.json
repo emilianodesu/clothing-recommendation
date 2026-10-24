@@ -1,0 +1,104 @@
+{
+  "protocol": "server-handoff-preparation-v1",
+  "status": "passed",
+  "prepared_at": "2026-10-24T21:33:02.952414+00:00",
+  "base_commit": "c21004b25bd525c68892b5e6d5dbcc0e6d7e45d0",
+  "scope": "Repository preparation for a separate Linux server; no deployment to that server was performed",
+  "host_tests": {
+    "run": 334,
+    "passed": 333,
+    "skipped": 1,
+    "seconds": 13.924,
+    "skip_reason": "Existing explicit Docker inspect fixture not enabled",
+    "existing_warning": "HTTPError 302 fixture ResourceWarning"
+  },
+  "server_host_tests": {
+    "run": 19,
+    "passed": 19,
+    "docker_daemon_required": false
+  },
+  "compose": {
+    "base_rendered": true,
+    "gateway_rendered": true,
+    "gateway_external_application_network_verified": true,
+    "public_gateway_ports": [
+      80,
+      443
+    ],
+    "api_ui_loopback": true,
+    "postgres_no_host_ports": true,
+    "containers_started": false
+  },
+  "native_proxy_probe": {
+    "status": "passed",
+    "tls_verified_with_ephemeral_ca": true,
+    "unauthorized_paths": 4,
+    "wrong_password_rejected": true,
+    "authenticated_http": true,
+    "authenticated_websocket_101": true,
+    "authorization_removed_upstream": true,
+    "http_redirect_308": true,
+    "native_proxy_only": true,
+    "public_dns_acme_tested": false,
+    "docker_deployment_tested": false
+  },
+  "native_proxy": {
+    "version": "2.11.7",
+    "platform": "macOS ARM64",
+    "release_archive_sha256": "cda3030e5d5b13eb9f0b6fb541037f633bddd958c070c5f561d7a5cccb581665",
+    "official_sha512_verified": true,
+    "system_trust_modified": false
+  },
+  "registry_platforms_verified": {
+    "caddy": [
+      "linux/amd64",
+      "linux/arm64"
+    ],
+    "buildkit": [
+      "linux/amd64",
+      "linux/arm64"
+    ]
+  },
+  "reviews": {
+    "design": "No additional user questions; resource phases, immutable image lock and host routes clarified",
+    "implementation": "No remaining priority findings after fixes; independent reviewer confirmed 18 tests before final Compose regression test"
+  },
+  "resolved_during_verification": [
+    "Containers with null labels handled by diagnostic",
+    "Docker storage and destination filesystem checked separately",
+    "Unique build logs preserve failed attempts",
+    "Gateway health uses explicit GET",
+    "Compose gateway name cannot replace application network identity",
+    "Synthetic HTTPS fixture uses explicit public test port without redefining the internal default"
+  ],
+  "preserved": {
+    "academic_results": true,
+    "final_test_not_repeated": true,
+    "mac24_untouched": true,
+    "existing_local_docker_services_untouched": true,
+    "public_repository_allowed": true,
+    "historical_instructions_archived": true
+  },
+  "not_run": [
+    "Physical Linux ARM64/AMD64 build and backup restoration",
+    "Public DNS and ACME issuance",
+    "External browser acceptance on teammate server",
+    "New performance benchmark or sustained concurrency"
+  ],
+  "recipient_inputs": [
+    "Server access and diagnosed resources",
+    "Owned domain, DNS and 80/443 reachability",
+    "Authorized private logical backup plus source SHA-256",
+    "New individual web passwords",
+    "Optional own Kaggle ZIP for photographs"
+  ],
+  "source_sha256": {
+    "scripts/server.py": "50076e95064eff8a50a7ad1eb08e735a445c8053c77ba5757c8e45252c3fcedf",
+    "scripts/server_support.py": "df8a002d91a7440e698cc5f8adc41526c6883d1f3854bd605ab2b0ff8bb37fa9",
+    "scripts/server_gateway.py": "7984ea7736d93bb38cf2b111a2c26f238c048054ebcd138d7bb414a8b995712c",
+    "scripts/project.py": "1febdf5ec4718cf1b815c5f02197a79704425e255c031011353ec4276c71c557",
+    "scripts/restore.py": "6dae63cd838886c2458ab8191258d757a1c6badd4f5365985c7b5323c69c48e2",
+    "deploy/compose.gateway.yaml": "f36f5102e45ea890c533116be1ca6d3124181951c3833d3e7a3b19e3c4e3f322",
+    "tests/manual/server_gateway_probe.py": "733e98a811b1f9bf99300809ebdac1d7d68aeddeae52e7a18ce535b925985f8d"
+  }
+}

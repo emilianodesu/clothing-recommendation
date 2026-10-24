@@ -92,7 +92,7 @@ def reserve_networks(values):
     return chosen
 
 
-def restore_into(source,archive,destination,checksum,port):
+def restore_into(source,archive,destination,checksum,port,*,pin_images=False):
     source=Path(source).resolve();archive=Path(archive).resolve();destination=Path(destination)
     h=hashlib.sha256()
     with archive.open('rb') as f:
@@ -107,6 +107,11 @@ def restore_into(source,archive,destination,checksum,port):
     if shutil.disk_usage(destination.parent).free<3*archive.stat().st_size+2**30:raise ValueError('Insufficient destination disk space')
     images=verify_images(source)
     v=prepare_destination(source,destination,port)
+    if pin_images:
+        from server_support import write_private
+        write_private(destination/'.runtime/server-images.json', {'services': {
+            service: {'image': images['hmrec-app:0.1.0' if service in ('api','ui','app-check') else 'hmrec-jobs:0.1.0']}
+            for service in ('api','ui','app-check','jobs','events-job','serving-probe')}})
     networks=reserve_networks(v)
     (destination/'artifacts/restore-networks.json').write_text(json.dumps(networks))
     incoming=destination/'artifacts'/'restore-input.zip';copy_verified(archive,incoming,checksum)

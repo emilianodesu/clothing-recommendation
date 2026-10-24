@@ -102,3 +102,13 @@ La [matriz del curso](course-coverage.md) cubre recomendación 4.1–4.5, PageRa
 Bibliografía de base proporcionada por la asignatura: Aggarwal (2015), *Data Mining*; Hastie, Tibshirani y Friedman (2008), *The Elements of Statistical Learning*; Han, Kamber y Pei (2012), *Data Mining*; Leskovec, Rajaraman y Ullman (2016), *Mining of Massive Datasets*. Sustentan recomendación, grafos, evaluación y minería; los resultados numéricos de este informe proceden exclusivamente de las auditorías del repositorio.
 
 Netflix se usa como contraste conceptual: predecir calificaciones explícitas no es la misma tarea que ordenar artículos a partir de compras implícitas. Aquí se evalúan rankings temporales con MAP/NDCG/Recall, no se reproduce el desafío Netflix ni se comparan directamente sus puntuaciones. Las referencias técnicas enlazadas y las decisiones originales están en el [diseño](superpowers/specs/2026-10-18-despliegue-local-reproducible-design.md); las versiones ejecutadas se fijan mediante locks, digests y reportes, no por la versión más reciente de cada producto.
+
+## Preparación posterior para servidor del equipo
+
+Se añadió una ruta de instalación Linux reproducible con diagnóstico, imágenes
+fijadas, restauración lógica y Caddy para HTTPS/autenticación del equipo. El
+[traspaso](handoff.md) reúne entregables, hallazgos, planes y entradas privadas;
+la [guía del receptor](server-deployment.md) define la aceptación física pendiente.
+Este cambio no altera H, la selección ni los resultados. La nueva puerta de
+acceso no implementa permisos por comprador ni convierte la demo en un SaaS;
+todos los usuarios autenticados son operadores de confianza.
