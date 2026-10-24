@@ -1,5 +1,7 @@
 # Plataforma local de recomendaciones H&M — Implementation Plan
 
+**Actualización 2026-10-24:** T8-C cerrado tras [auditoría final](../../../evidence/final-review-mac24.json); test consumido, no repetir. T8-A cerrado; T8-B mantiene failed por solapamiento insuficiente, con operación secuencial y sin acreditar concurrencia sostenida. Pendiente T8-D: consolidar informe, ficha, cobertura, demostración e inventario de entrega; T8 global no cerrado. Las notas anteriores de test reservado son históricas.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Entregar el mejor recomendador personalizado entre los candidatos evaluados con H&M, operado localmente y reproducible desde una instalación limpia, con evidencia de calidad, latencia y recuperación; conservar los experimentos del curso y explicar la selección.
@@ -324,7 +326,7 @@ Se divide en dos entregables independientes después de Q4. T4-A empaqueta H y n
 
 - [ ] Implementar carga con tasa de llegada controlada: 20 solicitudes/s, dos minutos de calentamiento y diez de medición. Registrar p50, p95, p99, tasa efectiva y errores; no ocultar solicitudes omitidas por saturación del generador. Objetivos: p95 < 200 ms y errores < 1%. Separar peticiones frías, uso de fallback y ranking con historial.
 - [ ] Medir CPU y RAM de servicios y generador, hardware, tamaños del catálogo y perfiles, versión y estado del entrenamiento. Primero servir con entrenamiento pausado; después medir la degradación con trabajo pesado concurrente. Si no cabe todo, documentar el procedimiento secuencial y su impacto en frescura.
-- [ ] Evaluar una única vez el procedimiento H congelado y P en test [2020-09-16, 2020-09-23), con estado reconstruido sólo desde datos anteriores al 2020-09-16; H coincide con elegido/referencia y no se duplica. Conservar población y métricas completas, sin retuning ni cambio de ganador a partir del resultado. Mantener T3 como evidencia histórica; no repetirlo por esta prueba. No sustituir test por una demo sintética ni prometer mejora sin medir.
+- [x] Evaluar una única vez el procedimiento H congelado y P en test [2020-09-16, 2020-09-23), con estado reconstruido sólo desde datos anteriores al 2020-09-16; H coincide con elegido/referencia y no se duplica. Conservar población y métricas completas, sin retuning ni cambio de ganador a partir del resultado. Mantener T3 como evidencia histórica; no repetirlo por esta prueba. No sustituir test por una demo sintética ni prometer mejora sin medir.
 - [ ] Ejecutar `python3 scripts/project.py verify --suite acceptance` y `python3 scripts/project.py benchmark --config configs/benchmark.yaml`. Guardar `evidence/acceptance.json`, `evidence/benchmark.json`, `evidence/reproducibility.md` y un inventario de versiones y pruebas; sólo marcar cumplidas las metas observadas.
 - [ ] Entregar informe, guía de instalación, manual de operación, ficha del motor y experimentos, mapa de subtemas y guion de demo. Añadir capturas o video corto de instalación, recomendación, evento, actualización y recuperación; etiquetar la versión Git entregada. Guardar commit de E7/E8.
 

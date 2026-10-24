@@ -1,0 +1,395 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-24",
+  "run_id": "final-mac24-20261024T065353Z-bad40a67",
+  "source_commit": "9bd5a97a8a7271db5ba09223017908ea3ac04d42",
+  "status": "accepted_final_evaluation",
+  "t8_c_closed": true,
+  "t8_closed": false,
+  "t8_b_sustained_concurrency_accredited": false,
+  "archive": {
+    "bytes": 7940,
+    "sha256": "e2cd21fee59925b46a49317a8f4316332ae3b31ba17e16a4a225ab4e5e02e25c",
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-final-mac24-20261024T065353Z-bad40a67"
+  },
+  "verified": {
+    "envelope_inventory_checksums": true,
+    "runner_digest": true,
+    "worker_source_digest": true,
+    "antecedent_archives": true,
+    "aggregate_metric_consistency": true,
+    "recovery_ids_images_limits_match_capacity": true,
+    "state_before_after_equal": true
+  },
+  "environment": {
+    "source_commit": "9bd5a97a8a7271db5ba09223017908ea3ac04d42",
+    "runner_tree_sha256": "fecbc53f1a63310fd3b2efd2a9eebd78613fe891ab35235d1ffb3f1cb250e67e",
+    "worker_source_sha256": "fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1",
+    "image_sha256": "a01150fb4b72aff1601648373b4343a193a47bd446df7b2480f4bebf10168621",
+    "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+    "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+    "selection_archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+    "baseline_archive_sha256": "c30c903d50692e9e0a3cbfa7e58812e2e9122c11bd7c1285eaa614f6eb23722a",
+    "concurrency_archive_sha256": "2a9637f993272985427c70cfa368e7d271a441491a624badc66bc482cc97b810",
+    "state_before_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "state_after_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "reservation_parent_sha256": "7aacd18d90feed2871652c2f80db9f0976621dfdea62ea61b4b000836bb8a22b",
+    "startup_archive_sha256": "0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493"
+  },
+  "result": {
+    "protocol": "final-hp-v1",
+    "status": "passed",
+    "evaluation": {
+      "evaluations": {
+        "H": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.9634611965826888,
+            "out_of_catalog_relevant_items": 8334,
+            "relevant_items": 213728
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.16999422410473625,
+              "distinct_items": 17659,
+              "effective_items": 55.07794496064474,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.07996298658626155,
+                "10": 0.7300195214349221,
+                "5": 0.39073070083884187,
+                "50": 0.8390592987745951
+              },
+              "unique_ordered_lists": 28274,
+              "unique_sets": 28108
+            },
+            "200": {
+              "coverage": 0.17815748941085868,
+              "distinct_items": 18507,
+              "effective_items": 218.91045038915678,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 28274,
+              "unique_sets": 26615
+            }
+          },
+          "fold": {
+            "cutoff": "2020-09-16",
+            "fold_id": "TEST",
+            "label_end": "2020-09-23"
+          },
+          "method": "H",
+          "metrics": {
+            "map_at_12": 0.026284513575717667,
+            "ndcg_at_12": 0.038095671567879866,
+            "recall_at_200": 0.2046353569387929
+          },
+          "population": {
+            "catalog_size": 103880,
+            "users": 68984
+          },
+          "schema_version": 1,
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.009099007284123288,
+                "ndcg_at_12": 0.01606186031665602,
+                "recall_at_200": 0.1793432013474726
+              },
+              "users": 19422
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.007877974233786032,
+                "ndcg_at_12": 0.0142335967658529,
+                "recall_at_200": 0.16649975093175534
+              },
+              "users": 5572
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.007679268476140145,
+                "ndcg_at_12": 0.01504987805181658,
+                "recall_at_200": 0.18639682048598952
+              },
+              "users": 12895
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.04803247228186468,
+                "ndcg_at_12": 0.06569096567650826,
+                "recall_at_200": 0.23482997890775045
+              },
+              "users": 31095
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.006156193805605598,
+                "ndcg_at_12": 0.012141597418758967,
+                "recall_at_200": 0.17627233566882447
+              },
+              "relevant_items": 205291,
+              "users": 67076
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.3253198524310118,
+                "ndcg_at_12": 0.3859109706058373,
+                "recall_at_200": 0.6742177158296807
+              },
+              "relevant_items": 8437,
+              "users": 6703
+            }
+          }
+        },
+        "P": {
+          "denominators": {
+            "mean_available_recall_ceiling": 0.9634611965826888,
+            "out_of_catalog_relevant_items": 8334,
+            "relevant_items": 213728
+          },
+          "exposure": {
+            "12": {
+              "coverage": 0.00011551790527531768,
+              "distinct_items": 12,
+              "effective_items": 12.000000000000005,
+              "k": 12,
+              "top_exposure_share": {
+                "1": 0.08333333333333333,
+                "10": 0.8333333333333334,
+                "5": 0.4166666666666667,
+                "50": 1.0
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            },
+            "200": {
+              "coverage": 0.0019252984212552945,
+              "distinct_items": 200,
+              "effective_items": 200.0000000000001,
+              "k": 200,
+              "top_exposure_share": {
+                "1": 0.005,
+                "10": 0.05,
+                "5": 0.025,
+                "50": 0.25
+              },
+              "unique_ordered_lists": 1,
+              "unique_sets": 1
+            }
+          },
+          "fold": {
+            "cutoff": "2020-09-16",
+            "fold_id": "TEST",
+            "label_end": "2020-09-23"
+          },
+          "method": "P",
+          "metrics": {
+            "map_at_12": 0.008747681312782597,
+            "ndcg_at_12": 0.01575737581052502,
+            "recall_at_200": 0.18077113790855182
+          },
+          "population": {
+            "catalog_size": 103880,
+            "users": 68984
+          },
+          "schema_version": 1,
+          "segments": {
+            "history29_90d": {
+              "metrics": {
+                "map_at_12": 0.009099007284123288,
+                "ndcg_at_12": 0.01606186031665602,
+                "recall_at_200": 0.1793432013474726
+              },
+              "users": 19422
+            },
+            "no_history": {
+              "metrics": {
+                "map_at_12": 0.007877974233786032,
+                "ndcg_at_12": 0.0142335967658529,
+                "recall_at_200": 0.16649975093175534
+              },
+              "users": 5572
+            },
+            "older_history": {
+              "metrics": {
+                "map_at_12": 0.007679268476140145,
+                "ndcg_at_12": 0.01504987805181658,
+                "recall_at_200": 0.18639682048598952
+              },
+              "users": 12895
+            },
+            "recent28d": {
+              "metrics": {
+                "map_at_12": 0.009127155130351157,
+                "ndcg_at_12": 0.01613364152389957,
+                "recall_at_200": 0.18188740661052744
+              },
+              "users": 31095
+            }
+          },
+          "targets": {
+            "discovery": {
+              "metrics": {
+                "map_at_12": 0.008721578865185996,
+                "ndcg_at_12": 0.015593960010793745,
+                "recall_at_200": 0.17725221543304717
+              },
+              "relevant_items": 205291,
+              "users": 67076
+            },
+            "repeat": {
+              "metrics": {
+                "map_at_12": 0.00769697644231435,
+                "ndcg_at_12": 0.013133412434211107,
+                "recall_at_200": 0.244238361712978
+              },
+              "relevant_items": 8437,
+              "users": 6703
+            }
+          }
+        }
+      },
+      "metric_deltas_h_minus_p": {
+        "map_at_12": 0.017536832262935072,
+        "ndcg_at_12": 0.022338295757354847,
+        "recall_at_200": 0.02386421903024108
+      },
+      "protocol": "final-hp-v1",
+      "selected_method": "H",
+      "snapshot_counts": {
+        "catalog": 103880,
+        "histories": 939710,
+        "popularity": 103880,
+        "profiles": 1356709
+      },
+      "window": {
+        "cutoff": "2020-09-16",
+        "fold_id": "TEST",
+        "label_end": "2020-09-23"
+      }
+    },
+    "exit_code": 0,
+    "duration_seconds": 30.557599126997957,
+    "clock_discrepancy_seconds": 3.993805876234546e-06,
+    "error_type": null,
+    "resources_ok": true,
+    "source_preserved": true,
+    "auxiliaries_restored": true,
+    "transitions": [
+      {
+        "scope": "other",
+        "service": "postgres",
+        "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "running": true,
+        "started_at": "2026-10-24T06:54:52.567409087Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0
+      },
+      {
+        "scope": "other",
+        "service": "api",
+        "container_id": "ad4d5b814dffc547f3f5b976fd552ce68e6b6bfcfc4a84d0fd0b68d443a06ee7",
+        "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+        "running": true,
+        "started_at": "2026-10-24T06:54:58.870473889Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000
+      },
+      {
+        "scope": "original",
+        "service": "mlflow",
+        "container_id": "adff71cf5beedd35a1aa805fe9de496159a9d8dc19c5320a49a9e1846d33001a",
+        "image_id": "sha256:c571c0b6f8aaeb5054ebb2eac825289f0cdd36ebe746d3cf271db2a1a68a0312",
+        "running": true,
+        "started_at": "2026-10-24T06:55:05.198369115Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 1073741824,
+        "nano_cpus": 1000000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-api",
+        "container_id": "fc006354bcf43bcd6e5e156892d5db8b7ed9f0f3b4fa0535f27bcf79204d403b",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:55:17.608634313Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 805306368,
+        "nano_cpus": 500000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-dag-processor",
+        "container_id": "3214a818fd082fcf790670935c685fc1646fc412e37421f22be4e9202da611db",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:55:30.028764197Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-scheduler",
+        "container_id": "f3f72e958b84b7052d48d76510039f2b10b02c8d49145c0eb9fc4866b437d7ed",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:55:44.447049918Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 5368709120,
+        "nano_cpus": 2000000000
+      }
+    ],
+    "test_started": true,
+    "training_performed": false,
+    "t8_closed": false
+  },
+  "resource_review": {
+    "samples": 8,
+    "coverage_seconds": 30.674972707998677,
+    "max_gap_seconds": 5.108506000000489,
+    "peak_bytes": 2759602176,
+    "limit_bytes": 5368709120,
+    "event_deltas": {
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "swap_peak_bytes": 0,
+    "resources_recomputed": true
+  },
+  "relative_improvements_percent": {
+    "map_at_12": 200.47406433644625,
+    "ndcg_at_12": 141.76406037377208,
+    "recall_at_200": 13.201343591869996
+  },
+  "limitations": [
+    "Metrics checked as aggregates and against source; private labels, rankings and per-buyer scores were not transferred or recomputed here.",
+    "Parent reservation immutability and private before/after dataset verification are remote checks enforced by reviewed launcher; parent file not transferred.",
+    "No confidence intervals or significance inference for this final descriptive comparison.",
+    "Resources cover final worker, not entire VM, image build or maintenance.",
+    "H improves overall and repeat-purchase metrics but discovery metrics are lower than P; non-recent segments equal P.",
+    "T8-B remains failed for insufficient overlap. No sustained concurrent-load capacity claim.",
+    "Serving H remains at 2020-09-09; final test snapshot was not activated."
+  ],
+  "next_step": "T8-D: final report, model card, academic coverage, demo and delivery inventory. Do not repeat test or tune using it."
+}

@@ -1,5 +1,26 @@
 # T8-C: evaluación final H/P
 
+## Cierre tras revisión principal — 2026-10-24
+
+La [auditoría](../evidence/final-review-mac24.json) acepta `final-mac24-20261024T065353Z-bad40a67`, commit `9bd5a97a8a7271db5ba09223017908ea3ac04d42`. Se verificaron inventario y SHA-256 del ZIP, fuentes de runner/worker, cuatro archivos antecedentes, coherencia de agregados, ocho capturas de recursos y los seis IDs/imágenes/límites recuperados contra el inventario de capacidad. Los comandos que siguen son históricos: **no repetir evaluación ni recuperación**.
+
+Test temporal [2020-09-16, 2020-09-23), 68,984 compradores con compras en esa ventana, 213,728 pares relevantes y catálogo de 103,880 artículos. Estado preparado con 1,356,709 perfiles y 939,710 filas de historial, usando sólo pasado. Los 8,334 relevantes fuera de catálogo permanecen en el denominador.
+
+| Métrica | H: historial28d + popularidad7d | P: popularidad7d | Cambio relativo |
+| --- | ---: | ---: | ---: |
+| MAP@12 | 0.02628451 | 0.00874768 | +200.47% |
+| NDCG@12 | 0.03809567 | 0.01575738 | +141.76% |
+| Recall@200 | 0.20463536 | 0.18077114 | +13.20% |
+
+La mejora viene del segmento reciente (31,095 compradores); los otros tres segmentos coinciden con P por el fallback. En recompra, MAP@12 es 0.32532 frente a 0.00770. En descubrimiento baja a 0.00616 frente a 0.00872; también bajan NDCG y Recall de ese objetivo. H no domina todas las tareas. Cobertura de catálogo top12: 17.00% frente a 0.01155%, aunque diez artículos concentran todavía el 73.00% de exposiciones H. La selección sigue siendo la decisión anterior Q4; este test describe generalización, sin nuevo ganador ni intervalos de significancia.
+
+Worker: 30.5576 s; pico cgroup 2,759,602,176 bytes (2.570 GiB) sobre 5 GiB, 2 CPU; ocho capturas cubren 30.675 s, hueco máximo 5.109 s, sin swap ni incrementos max/OOM. Discrepancia de relojes 0.000004 s. Estas cifras no son duración de todo el mantenimiento ni consumo de toda la VM. Seis auxiliares reportan healthy; IDs, imágenes y límites coinciden con antecedentes. Huella de estado agregado antes/después idéntica. H servido conserva corte 2020-09-09; no se activó el estado del test.
+
+Aquí se auditaron agregados, huellas y código; no se recibieron etiquetas/rankings privados ni se recalcularon métricas por comprador. La comprobación de reserva original intacta y fuentes privadas antes/después fue ejecutada por el lanzador remoto revisado. Los dos fallos de preparación/startup conservan su estado failed y sus reservas.
+
+**T8-C cerrado; T8 global pendiente.** T8-B sigue failed por solapamiento insuficiente; no acredita concurrencia sostenida. Continúa T8-D con informe, ficha del motor, mapa de temario y guion de demostración/entrega, sin más entrenamiento o evaluación de test.
+
+
 Estado: lanzador operativo preparado y validado localmente con datos sintéticos. La siguiente ejecución mac24 usa `scripts/mac24_t8_final.py --expected-commit SHA_COMPLETO`. **Todavía no se ha leído el test H&M.** No usar directamente el componente ni los prompts históricos. Una salida `passed` requiere revisión principal; no cambia la selección Q4 ni cierra todo T8.
 
 ## Continuación vigente de la reserva no ejecutada
