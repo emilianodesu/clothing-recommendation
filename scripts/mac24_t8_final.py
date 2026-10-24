@@ -22,12 +22,16 @@ from mac24_t7 import check_airflow
 from pipeline_check import request_json
 from project import compose
 from concurrency_transition import inspect,verify,stop
-from final_control import reserve,recovery_allowed,maintenance_targets,restore_maintenance
+from final_control import reserve,recovery_allowed,maintenance_targets,restore_maintenance,unstarted_preparation
 from final_handoff import empty_result,validate,resources_ok,require,WINDOW
 from events_memory import capture
 
 ROOT=Path(__file__).resolve().parents[1]
-STATE=ROOT/'.runtime/t8-final-maintenance'
+ORIGINAL_STATE=ROOT/'.runtime/t8-final-maintenance'
+STATE=ORIGINAL_STATE
+FOLLOWUP=False
+PREPARATION_RUN='final-mac24-20261024T061640Z-94b97146'
+PREPARATION_SHA='127d43d24b2117f050ded59e36ed0953a51258a5c4117db8907b8535b6e05329'
 
 @contextmanager
 def stage(name):
@@ -59,7 +63,23 @@ def context(commit):
 
 def no_attempt(ctx):
     require(not STATE.exists() and not (ctx['art']/'.final-test-once.json').exists())
-    require(not list((ctx['art']/'handoff').glob('final-mac24-*')) and not list((ctx['art']/'final-private').glob('final-mac24-*')))
+    if FOLLOWUP:
+        archive=ctx['art']/'handoff'/(PREPARATION_RUN+'.zip')
+        require(sha(archive)==PREPARATION_SHA)
+        previous=read_report(archive);result=previous['result']
+        require(previous['source_commit']=='c92321ed4082c36291123ef5f23859781aa5f790' and previous['status']=='failed')
+        require(result['test_started'] is False and result['evaluation'] is None and result['auxiliaries_restored'] is True and result['source_preserved'] is True)
+        saved=json.loads((ORIGINAL_STATE/'state.json').read_text())
+        private=ctx['art']/'final-private'/PREPARATION_RUN
+        require(saved['run_id']==PREPARATION_RUN and saved['source_commit']==previous['source_commit'] and saved['aux']==ctx['aux'])
+        require(Path(saved['private']).resolve()==private.resolve() and private.is_dir() and not private.is_symlink())
+        require((ORIGINAL_STATE/'recovery.json').is_file())
+        unstarted_preparation(private)
+        require({p.name for p in (ctx['art']/'handoff').glob('final-mac24-*')}=={PREPARATION_RUN,PREPARATION_RUN+'.zip'})
+        require({p.name for p in (ctx['art']/'final-private').glob('final-mac24-*')}=={PREPARATION_RUN})
+    else:
+        require(not list((ctx['art']/'handoff').glob('final-mac24-*')) and not list((ctx['art']/'final-private').glob('final-mac24-*')))
+
 
 
 def preflight(commit):
@@ -93,9 +113,10 @@ def preflight(commit):
     return ctx
 
 
-def container_args(name,image):
+def container_args(name,image,*,synthetic=False):
+    temporary="/tmp:rw,nosuid,size="+("1g" if synthetic else "512m")
     return ['docker','run','--name',name,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges',
-        '--memory','5g','--memory-swap','5g','--cpus','2','--pids-limit','256','--tmpfs','/tmp:rw,nosuid,size=512m',
+        '--memory','5g','--memory-swap','5g','--cpus','2','--pids-limit','256','--tmpfs',temporary,
         '--user',str(os.getuid())+':'+str(os.getgid()),'-e','POLARS_MAX_THREADS=2','-e','OMP_NUM_THREADS=2','-e','MKL_NUM_THREADS=2',
         '--entrypoint','python']
 
@@ -141,7 +162,7 @@ def run(commit):
         rid='final-mac24-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
         private=art/'final-private'/rid;private.mkdir(parents=True)
         STATE.mkdir(parents=True)
-        saved=dict(source_commit=commit,aux=ctx['aux'],aux_before={r['container_id']:inspect(r['container_id']) for r in ctx['aux']},before=ctx['before'],worker_name='hmrec-'+rid,image_id=None,private=str(private),run_id=rid)
+        saved=dict(preparation_followup=FOLLOWUP,source_commit=commit,aux=ctx['aux'],aux_before={r['container_id']:inspect(r['container_id']) for r in ctx['aux']},before=ctx['before'],worker_name='hmrec-'+rid,image_id=None,private=str(private),run_id=rid)
         write_json(STATE/'state.json',saved)
         r=empty_result();samples=[];started_at=now()
         env=dict(source_commit=commit,runner_tree_sha256=runner_digest(ROOT),worker_source_sha256='0'*64,image_sha256='0'*64,
@@ -162,10 +183,10 @@ def run(commit):
                 for path in sorted(source_root.rglob('*.py')):
                     digest.update(str(path.relative_to(source_root)).encode()+b'\0'+path.read_bytes()+b'\0')
                 expected=digest.hexdigest()
-                actual=command(container_args(saved['worker_name']+'-synthetic',image)+['--rm',image,'-c','from hm_recommender.api.runtime import source_digest;print(source_digest())'])
+                actual=command(container_args(saved['worker_name']+'-synthetic',image,synthetic=True)+['--rm',image,'-c','from hm_recommender.api.runtime import source_digest;print(source_digest())'])
                 require(actual==expected);env['worker_source_sha256']=actual
             with stage('synthetic_tests_in_frozen_image'):
-                args=container_args(saved['worker_name']+'-synthetic',image)
+                args=container_args(saved['worker_name']+'-synthetic',image,synthetic=True)
                 command(args+['--rm',image,'-m','pytest','-q','-p','no:cacheprovider','tests/integration/test_final_evaluation.py','tests/integration/test_quality_folds.py'],log=private/'synthetic-private.log',timeout=600)
             awake.check();require('AC Power' in command(['pmset','-g','batt']))
             require(shutil.disk_usage(art).free>=20*2**30)
@@ -225,9 +246,13 @@ def run(commit):
 
 
 def main():
+    global STATE,FOLLOWUP
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
+    p.add_argument('--preparation-followup',action='store_true')
     modes=p.add_mutually_exclusive_group();modes.add_argument('--preflight-only',action='store_true');modes.add_argument('--restore-only',action='store_true')
     a=p.parse_args();os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT='colima-hm-project');os.umask(0o077)
+    FOLLOWUP=a.preparation_followup
+    STATE=ROOT/'.runtime/t8-final-preparation-followup' if FOLLOWUP else ORIGINAL_STATE
     if a.restore_only:return restore_only(a.expected_commit)
     if a.preflight_only:
         preflight(a.expected_commit);print('Preflight OK; no se detuvo ningún servicio ni se reservó test.',flush=True);return 0

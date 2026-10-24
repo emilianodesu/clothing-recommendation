@@ -2,7 +2,7 @@
   "run_id": "final-mac24-20261024T061640Z-94b97146",
   "source_commit": "c92321ed4082c36291123ef5f23859781aa5f790",
   "status": "failed",
-  "review_status": "awaiting_private_synthetic_log",
+  "review_status": "diagnosed_synthetic_tmpfs_capacity",
   "archive": {
     "sha256": "127d43d24b2117f050ded59e36ed0953a51258a5c4117db8907b8535b6e05329",
     "bytes": 4190
@@ -122,11 +122,27 @@
     "test_started=false and evaluation=null; real test not evaluated by this run",
     "Six auxiliary identities and limits match audited capacity inventory; recovery reported healthy",
     "resource samples absent because evaluator not launched; resources_ok=false is not measured memory failure",
-    "Root cause unknown: ZIP deliberately excludes synthetic-private.log",
     "Do not repeat evaluation or remove maintenance state; do not run restore-only because recovery succeeded"
   ],
   "limits": [
-    "Remote logs and filesystem not inspected",
+    "Inspected operator-provided tail of synthetic log; remote filesystem and full private logs not inspected",
     "State preservation based on aggregate hashes and reviewed code, not row-by-row database comparison"
-  ]
+  ],
+  "root_cause": {
+    "operator_log_sha256": "bf019013015b3161af69aea37e4b6d0399e74e5e85954ade718933f47fa21d1f",
+    "cause": "Synthetic pytest tmp_path resides on a 512 MiB tmpfs; ingest requires at least 512 MiB free after initial files.",
+    "local_reproduction": {
+      "tmpfs_512_mib": {
+        "failed": 5,
+        "passed": 3
+      },
+      "synthetic_tmpfs_1_gib": {
+        "failed": 0,
+        "passed": 8
+      }
+    },
+    "correction": "Only synthetic tmpfs becomes 1 GiB; memory stays 5 GiB, real worker tmpfs stays 512 MiB, ingestion guard unchanged.",
+    "host_tests_passed": 234,
+    "followup": "Explicit --preparation-followup; preserve original attempt and require no global test reservation or real-worker files."
+  }
 }

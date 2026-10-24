@@ -40,3 +40,10 @@ def restore_maintenance(rows):
             time.sleep(2)
         output.append(dict(scope=row['scope'],service=row['service'],**current))
     return output
+
+
+def unstarted_preparation(private):
+    """A preparation failure is not permission to repeat any actual evaluation."""
+    for name in ('config.json','go.json','ready.json','complete.json','evaluation-result.json','evaluation'):
+        if (private/name).exists() or (private/name).is_symlink():
+            raise ValueError('Real worker evidence exists; no preparation follow-up')

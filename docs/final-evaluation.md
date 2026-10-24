@@ -2,6 +2,21 @@
 
 Estado: lanzador operativo preparado y validado localmente con datos sintéticos. La siguiente ejecución mac24 usa `scripts/mac24_t8_final.py --expected-commit SHA_COMPLETO`. **Todavía no se ha leído el test H&M.** No usar directamente el componente ni los prompts históricos. Una salida `passed` requiere revisión principal; no cambia la selección Q4 ni cierra todo T8.
 
+## Seguimiento vigente por fallo de preparación
+
+El intento `final-mac24-20261024T061640Z-94b97146` conserva **failed**. El log recibido identifica cinco fallos de ingestión sintética: `/tmp` tenía un techo de 512 MiB y la ingestión exige 512 MiB **libres**, después de escribir archivos iniciales. Se reprodujo localmente (5 fallos/3 aprobadas). Se corrige exclusivamente el tmpfs de contenedores sintéticos a 1 GiB; las ocho pruebas pasan con las opciones reales de aislamiento. No se reduce el control de espacio ni se cambia el modelo, los umbrales, la RAM de 5 GiB o el tmpfs de 512 MiB del evaluador real.
+
+Usar ahora **`--preparation-followup`** junto con el SHA completo nuevo:
+
+```bash
+python3 scripts/mac24_t8_final.py --preparation-followup --expected-commit SHA_COMPLETO
+```
+
+El seguimiento exige el ZIP histórico exacto SHA256 `127d43d24b2117f050ded59e36ed0953a51258a5c4117db8907b8535b6e05329`, estado failed, test_started=false, evaluación ausente y recuperación correcta. Comprueba que no exista reserva global ni config/go/ready/complete/evaluación del worker real. Sólo admite ese intento previo en los directorios de reportes y trabajo; cualquier intento adicional bloquea el flujo. Conserva `.runtime/t8-final-maintenance` y crea `.runtime/t8-final-preparation-followup`; no borra ni reutiliza directorios anteriores. Después aplica el mismo protocolo de una evaluación real. No es un reintento de test consumido.
+
+Los modos de comprobación y recuperación del seguimiento también deben incluir `--preparation-followup`, por ejemplo `--preparation-followup --restore-only`. No ejecutar recuperación sobre el intento original: sus auxiliares ya se recuperaron. Ante cualquier fallo nuevo, conservar evidencia y detenerse sin otro reintento.
+
+
 ## Alcance cerrado antes de test
 
 Protocolo `final-hp-v1`. H continúa seleccionado por Q4; P es la referencia. No se entrenan modelos, ajustan ventanas ni seleccionan métodos a partir del resultado final. Preparar estado con todas las transacciones estrictamente anteriores a 2020-09-16. Evaluar compras de `[2020-09-16, 2020-09-23)`, sin muestrear compradores. Historial28d y popularidad7d conservan orden, desempates, deduplicación y respaldo existentes.
