@@ -1,5 +1,10 @@
 # Validación de un ciclo real de H — h-cycle-v1
 
+**Cerrada tras revisión principal (24 de octubre):** [auditoría](../evidence/h-cycle-review-mac24.json).
+`h-cycle-mac24-20261024T204022Z-10bcd520` aceptado para un único ciclo breve.
+No volver a ejecutar carga, `--publish-only` ni `--restore-only`. Los comandos
+de preparación y publicación siguientes se conservan como antecedentes.
+
 La solicitud «continua con la validacion» autoriza implementar y ejecutar una
 nueva observación del ciclo real de H con la API bajo carga. No vuelve a ejecutar
 el lanzador T8-B ni sustituye su resultado: `scheduler-concurrency-v1` permanece
@@ -93,8 +98,9 @@ limitación de concurrencia sostenida permanecen intactos en los tres casos.
 El operador reportó `h-cycle-mac24-20261024T204022Z-10bcd520` como passed en
 `a3858fd56fb945f78f8893e181d3b8cd2b8782e7`. Falló después de cerrar el ZIP,
 al comprobar que el repositorio fuera privado. El usuario cambió el repositorio
-a público y autorizó continuar sin esa restricción. No se ha descargado ni
-auditado aún este ZIP en la Mac principal.
+a público y autorizó continuar sin esa restricción. La publicación posterior
+terminó y el ZIP ya se descargó y auditó en la Mac principal; esta sección
+conserva el procedimiento histórico que resolvió el bloqueo.
 
 Actualizar al commit de la corrección y ejecutar **sólo**:
 
@@ -110,5 +116,40 @@ ni modifica la reserva. Admite repositorios públicos y privados; conserva la
 comprobación del repositorio de destino y las verificaciones de integridad.
 
 Si existe una subida parcial, comprueba los adjuntos presentes y sube únicamente
-los faltantes. No borra ni reemplaza adjuntos. Después se descarga el reporte
-para revisión principal; el mensaje passed del lanzador no sustituye esa revisión.
+los faltantes. No borra ni reemplaza adjuntos. El mensaje passed del lanzador
+no sustituye la revisión principal, completada a continuación.
+
+## Resultado revisado
+
+El ZIP de 395,998 bytes, SHA-256
+`89cf1092e45bb0d14f385159469440103ca0a193b408dce79d1cfb65a5e783f8`,
+coincide con el checksum y los metadatos de GitHub. El tag apunta al commit
+original `a3858fd`, aunque la publicación se completó con la corrección posterior.
+La huella del runner y la configuración de construcción se recalcularon desde Git.
+
+| Medida | Resultado |
+| --- | --- |
+| Ventana principal | 600 s a 20 solicitudes/s, 12,000/12,000 correctas |
+| Errores / omisiones | 0 / 0 |
+| p95 / p99 global | 14.151 / 15.203 ms |
+| Construcción interna | 6.821 s; envoltura instrumentada 6.823 s |
+| Intervalo conservador | 6.580 s, 132 solicitudes correctas, 44 por segmento |
+| p95 conservador | 8.909 ms |
+| Intervalo posible | 7.065 s, 141 solicitudes correctas |
+| Incertidumbre de calibración | 242.535 ms |
+| Capturas de recursos | 296: 74 por API, PostgreSQL, UI y scheduler |
+| Pico scheduler | 2.451 GiB de 5 GiB; incluye Airflow y constructor |
+| Swap / nuevos OOM / nuevos eventos max | 0 observados / 0 / 0 |
+
+Se recalcularon cuentas, cuantiles y segmentos desde las 12,000 filas de la
+traza, además de los intervalos de reloj y contadores. El pico histórico de
+PostgreSQL, 536,879,104 bytes frente a 536,870,912, permanece sin crecimiento:
+no se declara margen de memoria. Los hashes agregados antes/después coinciden.
+El runner reporta recuperación saludable de PostgreSQL/API restaurados y MLflow;
+sus identidades completas y las tablas privadas no se exportaron. La conservación
+de reservas y paridad de respuestas privadas son declaraciones del runner.
+
+Se acepta el ciclo breve observado. No se activó el nuevo paquete H, no hubo
+entrenamiento ni evaluación test. **T8-B histórico conserva failed y la
+concurrencia sostenida sigue sin acreditarse.** No se infiere que construir H
+mejore la latencia: las ventanas comparadas tienen duraciones y muestras distintas.

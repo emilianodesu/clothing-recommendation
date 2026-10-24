@@ -1,6 +1,6 @@
 # Proyecto final de Datos Masivos
 
-**H-cycle terminado según el reporte de mac24; publicación pendiente:** `h-cycle-mac24-20261024T204022Z-10bcd520` reportó passed. El bloqueo de publicación por privacidad está corregido: el repositorio puede ser público o privado. Continuar sólo con `--publish-only` para subir el ZIP existente; falta revisión principal. [Procedimiento](docs/mac24-h-cycle.md). T8-B histórico conserva failed.
+**H-cycle aceptado tras revisión:** [auditoría](evidence/h-cycle-review-mac24.json). Una construcción H de 6.821 s con API activa: 12,000 respuestas correctas, p95 global 14.151 ms; 132 llegadas en intervalo conservador 6.580 s, p95 8.909ms. Es evidencia de un ciclo breve, no de concurrencia sostenida; T8-B histórico conserva failed. Publicación completada, sin otra ejecución pendiente. [Protocolo y límites](docs/mac24-h-cycle.md).
 
 **UI de mac24 actualizada y aceptada:** `ui-deploy-f37f5b3b0443`, sin rollback. Regresión de revisión 4→5 y render contra API correctos; originales conservados y seis auxiliares saludables según el reporte auditado. [Resultado y límites](evidence/ui-deployment-review-mac24.json). La [revisión visual en Chrome](evidence/ui-visual-review-mac24.json) también quedó cerrada: cabecera, imágenes y catálogo correctos, sin acciones de escritura.
 

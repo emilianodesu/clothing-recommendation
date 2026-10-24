@@ -2,11 +2,11 @@
 
 Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
-Por solicitud posterior del usuario se prepara [h-cycle-v1](mac24-h-cycle.md): una
-observación del ciclo real breve de H con API bajo carga. El operador reportó
-`h-cycle-mac24-20261024T204022Z-10bcd520` como passed; falta publicar y auditar
-el ZIP. El bloqueo por repositorio público está corregido y sólo se reanuda
-la publicación. No modifica T8-B histórico ni constituye una nueva evaluación test.
+La validación adicional [h-cycle-v1](mac24-h-cycle.md) quedó aceptada tras
+[revisión principal](../evidence/h-cycle-review-mac24.json): construcción 6.821 s,
+12,000 respuestas correctas, p95 global 14.151 ms y 132 llegadas solapadas con
+p95 8.909ms. Publicación completada. Acredita un ciclo breve, conserva T8-B
+histórico failed y no constituye una nueva evaluación test.
 
 El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](../evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la [revisión visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) también quedó aceptada, en lectura. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
 
@@ -35,6 +35,7 @@ El tag `entrega-academica-2026-10-24` conserva la instantánea académica origin
 | T8-A | `benchmark-review-mac24.json` | Baseline aceptada |
 | T8-B | `capacity-review-mac24.json`, `concurrency-review-mac24.json` | Inventario aceptado; ensayo concurrente failed válido |
 | T8-C | `final-review-mac24.json` | Test único cerrado; no repetir |
+| H-cycle posterior | `h-cycle-review-mac24.json` | Ciclo breve real aceptado; no sustituye T8-B |
 
 Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuentes, revisión y alcance. Las pruebas locales no se atribuyen a mac24. Los ZIP agregados no contienen datos suficientes para recalcular métricas por comprador. Los logs privados, paquetes, datos y checkpoints siguen siendo necesarios para una reproducción científica autorizada.
 
@@ -52,7 +53,7 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 | Tag académico | `entrega-academica-2026-10-24`; conserva la entrega original y sus limitaciones. |
 | Corrección posterior de UI | [Regresión](../evidence/ui-metadata-fix-local.json) y [despliegue local verificado](ui-metadata-deployment.md); API/PostgreSQL conservados. |
 | UI de mac24 | Despliegue operativo aceptado, sin rollback; regresión sintética y render contra API correctos, seis auxiliares saludables. [Auditoría](../evidence/ui-deployment-review-mac24.json). [Revisión visual en Chrome](../evidence/ui-visual-review-mac24.json) aceptada en lectura. |
-| Concurrencia sostenida | No acreditada: T8-B permanece failed. Operación secuencial documentada; cualquier nueva validación necesita un protocolo separado. |
+| Concurrencia sostenida | No acreditada: T8-B permanece failed. H-cycle acredita sólo una construcción breve con tres auxiliares pausados; conservar la política de admisión de recursos. |
 
 ## Cómo continuar
 

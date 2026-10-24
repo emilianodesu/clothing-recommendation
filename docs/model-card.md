@@ -22,4 +22,9 @@ El dataset histórico no prueba vigencia comercial actual. La simulación de eve
 
 Capacidad observada: 20 solicitudes/s en localhost, p95 14.099 ms en T8-A. La concurrencia sostenida no fue acreditada. Operar trabajos pesados en mantenimiento secuencial con el protocolo revisado. API local de un operador, sin autorización por comprador para exposición pública.
 
+Validación posterior [h-cycle-v1](mac24-h-cycle.md): un ciclo real de construcción
+H de 6.821 s con la API activa, 132 llegadas en un intervalo conservador de 6.580 s
+y p95 8.909 ms. Cumplió el protocolo con tres auxiliares pausados y recuperados;
+no prueba concurrencia sostenida ni capacidad máxima y no cambia la selección H.
+
 Conservar datos y eventos privados; sólo agregados por GitHub. Cambiar ventanas, reglas o candidato requiere una campaña futura predefinida y nuevos datos de evaluación: el test actual está consumido. Artefactos y comprobaciones: [selección](model-selection.md), [paquetes](releases.md), [auditoría final](../evidence/final-review-mac24.json).

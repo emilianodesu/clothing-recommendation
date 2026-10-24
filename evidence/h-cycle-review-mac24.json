@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-24",
+  "protocol": "h-cycle-v1",
+  "run_id": "h-cycle-mac24-20261024T204022Z-10bcd520",
+  "source_commit": "a3858fd56fb945f78f8893e181d3b8cd2b8782e7",
+  "decision": "accepted_single_observed_real_cycle",
+  "original_status": "passed",
+  "h_cycle_closed": true,
+  "historical_t8_b_status": "failed",
+  "t8_b_closed": false,
+  "t8_global_closed": false,
+  "sustained_concurrency_proven": false,
+  "archive": {
+    "bytes": 395998,
+    "sha256": "89cf1092e45bb0d14f385159469440103ca0a193b408dce79d1cfb65a5e783f8",
+    "members": {
+      "report.json": {
+        "bytes": 12388,
+        "sha256": "ab9449371de783078b72771e15119c77ebd4b604c10f090622ec36e1ece8088e"
+      },
+      "resources.json": {
+        "bytes": 369755,
+        "sha256": "b1d2406fc2b0be5c2a3964815964d3532ed7af4149456d5bd53901a125e8589c"
+      },
+      "trace.json": {
+        "bytes": 2446105,
+        "sha256": "6dc7649f4120c2cad673c7360d239ca915913207d7d0d1cc46cf025e42676b2b"
+      },
+      "worker.json": {
+        "bytes": 1367,
+        "sha256": "16ddecf011c98755fdbea15023a813db176389bbbbcc9358b26ad1762da704f4"
+      }
+    },
+    "url": "https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-h-cycle-mac24-20261024T204022Z-10bcd520"
+  },
+  "release": {
+    "published_at": "2026-10-24T21:01:38Z",
+    "target_commit": "a3858fd56fb945f78f8893e181d3b8cd2b8782e7",
+    "git_ref": {
+      "ref": "refs/tags/handoff-h-cycle-mac24-20261024T204022Z-10bcd520",
+      "sha": "a3858fd56fb945f78f8893e181d3b8cd2b8782e7",
+      "type": "commit"
+    }
+  },
+  "verified_here": {
+    "runner_tree_sha256": "1053c2ac81bd19d7a80149710c62ca71ac20e3ebaf053040ec8804b3617d36b4",
+    "runner_python_files": 72,
+    "build_config_sha256": "2f3aba00a00d17faaee302a53f38f6fe1527991467c40b3968930c69c827175f",
+    "source_references": true,
+    "measurement_recomputed_from_12000_rows": true,
+    "segment_metrics_recomputed": true,
+    "clock_bounds_recomputed": true,
+    "overlap_metrics_recomputed": true,
+    "resource_acceptance_recomputed": true,
+    "source_state_hashes_match": true,
+    "original_tag_targets_run_commit": true
+  },
+  "measurements": {
+    "build_seconds": 6.821338754001772,
+    "instrumented_build_seconds": 6.822679377000895,
+    "worker_child_seconds": 7.896085210995807,
+    "host_worker_seconds": 8.294849792000605,
+    "measurement": {
+      "scheduled": 12000,
+      "completed": 12000,
+      "successful": 12000,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 19.99982448904013,
+      "completed_rps": 19.99982448904013,
+      "latency_seconds": {
+        "p50": 0.007841459002520423,
+        "p95": 0.014150750001135748,
+        "p99": 0.01520295899535995
+      },
+      "service_seconds": {
+        "p50": 0.003899999996065162,
+        "p95": 0.009373832996061537,
+        "p99": 0.01046904199756682
+      },
+      "offered_rps": 20,
+      "window_seconds": 600,
+      "elapsed_seconds": 600.0052653750026,
+      "clock_discrepancy_seconds": 0.004006723538623191,
+      "groups": {
+        "history": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666608163013377,
+          "completed_rps": 6.666608163013377,
+          "latency_seconds": {
+            "p50": 0.007855875002860557,
+            "p95": 0.014148667003610171,
+            "p99": 0.015251208998961374
+          },
+          "service_seconds": {
+            "p50": 0.003902167001797352,
+            "p95": 0.009287791996030137,
+            "p99": 0.010437625001941342
+          }
+        },
+        "known_fallback": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666608163013377,
+          "completed_rps": 6.666608163013377,
+          "latency_seconds": {
+            "p50": 0.007799999999406282,
+            "p95": 0.014130625000689179,
+            "p99": 0.015355667004769202
+          },
+          "service_seconds": {
+            "p50": 0.0038275409970083274,
+            "p95": 0.009389499995450024,
+            "p99": 0.010482417004823219
+          }
+        },
+        "unknown": {
+          "scheduled": 4000,
+          "completed": 4000,
+          "successful": 4000,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.666608163013377,
+          "completed_rps": 6.666608163013377,
+          "latency_seconds": {
+            "p50": 0.007864875005907379,
+            "p95": 0.014175292002619244,
+            "p99": 0.0150758340023458
+          },
+          "service_seconds": {
+            "p50": 0.00396766700578155,
+            "p95": 0.009412540995981544,
+            "p99": 0.010380250001617242
+          }
+        }
+      }
+    },
+    "conservative_overlap": {
+      "scheduled": 132,
+      "completed": 132,
+      "successful": 132,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 20.060348970249578,
+      "completed_rps": 20.060348970249578,
+      "latency_seconds": {
+        "p50": 0.00694258400471881,
+        "p95": 0.008908750001864973,
+        "p99": 0.012578624999150634
+      },
+      "service_seconds": {
+        "p50": 0.0024428750039078295,
+        "p95": 0.004313708996050991,
+        "p99": 0.007496040998375975
+      },
+      "groups": {
+        "history": {
+          "scheduled": 44,
+          "completed": 44,
+          "successful": 44,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.686782990083193,
+          "completed_rps": 6.686782990083193,
+          "latency_seconds": {
+            "p50": 0.007208916998934001,
+            "p95": 0.008969750000687782,
+            "p99": 0.009931334003340453
+          },
+          "service_seconds": {
+            "p50": 0.002486833000148181,
+            "p95": 0.004430375003721565,
+            "p99": 0.005080249997263309
+          }
+        },
+        "known_fallback": {
+          "scheduled": 44,
+          "completed": 44,
+          "successful": 44,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.686782990083193,
+          "completed_rps": 6.686782990083193,
+          "latency_seconds": {
+            "p50": 0.006921667001734022,
+            "p95": 0.00857983400055673,
+            "p99": 0.012578624999150634
+          },
+          "service_seconds": {
+            "p50": 0.002457540998875629,
+            "p95": 0.0036397919975570403,
+            "p99": 0.007496040998375975
+          }
+        },
+        "unknown": {
+          "scheduled": 44,
+          "completed": 44,
+          "successful": 44,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.686782990083193,
+          "completed_rps": 6.686782990083193,
+          "latency_seconds": {
+            "p50": 0.006574291997822002,
+            "p95": 0.008521833995473571,
+            "p99": 0.019907333997252863
+          },
+          "service_seconds": {
+            "p50": 0.0023708329972578213,
+            "p95": 0.003818666998995468,
+            "p99": 0.014796333998674527
+          }
+        }
+      }
+    },
+    "possible_overlap": {
+      "scheduled": 141,
+      "completed": 141,
+      "successful": 141,
+      "omitted": 0,
+      "errors": 0,
+      "error_fraction": 0.0,
+      "success_rps": 19.95693265061375,
+      "completed_rps": 19.95693265061375,
+      "latency_seconds": {
+        "p50": 0.00694258400471881,
+        "p95": 0.00873045899788849,
+        "p99": 0.012578624999150634
+      },
+      "service_seconds": {
+        "p50": 0.002432834000501316,
+        "p95": 0.0041785830035223626,
+        "p99": 0.007496040998375975
+      },
+      "groups": {
+        "history": {
+          "scheduled": 47,
+          "completed": 47,
+          "successful": 47,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.652310883537917,
+          "completed_rps": 6.652310883537917,
+          "latency_seconds": {
+            "p50": 0.007208916998934001,
+            "p95": 0.008969750000687782,
+            "p99": 0.009931334003340453
+          },
+          "service_seconds": {
+            "p50": 0.0024734170001465827,
+            "p95": 0.004430375003721565,
+            "p99": 0.005080249997263309
+          }
+        },
+        "known_fallback": {
+          "scheduled": 47,
+          "completed": 47,
+          "successful": 47,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.652310883537917,
+          "completed_rps": 6.652310883537917,
+          "latency_seconds": {
+            "p50": 0.00694258400471881,
+            "p95": 0.00857983400055673,
+            "p99": 0.012578624999150634
+          },
+          "service_seconds": {
+            "p50": 0.0024564170016674325,
+            "p95": 0.0036397919975570403,
+            "p99": 0.007496040998375975
+          }
+        },
+        "unknown": {
+          "scheduled": 47,
+          "completed": 47,
+          "successful": 47,
+          "omitted": 0,
+          "errors": 0,
+          "error_fraction": 0.0,
+          "success_rps": 6.652310883537917,
+          "completed_rps": 6.652310883537917,
+          "latency_seconds": {
+            "p50": 0.006574291997822002,
+            "p95": 0.008521833995473571,
+            "p99": 0.019907333997252863
+          },
+          "service_seconds": {
+            "p50": 0.002391499998338986,
+            "p95": 0.003868375002639368,
+            "p99": 0.014796333998674527
+          }
+        }
+      }
+    },
+    "conservative_interval_seconds": 6.580144752006163,
+    "possible_interval_seconds": 7.065214001995628,
+    "calibration_uncertainty_seconds": 0.24253462499473244,
+    "calibration_midpoint_drift_seconds": 0.0013896789969294332,
+    "build_wall_monotonic_discrepancy_seconds": 1.4265242498368025e-07,
+    "reference_best_rtt_seconds": {
+      "before": 0.04253462499764282,
+      "after": 0.038444208999862894
+    },
+    "run_wall_seconds": 770.170772
+  },
+  "resources": {
+    "api": {
+      "samples": 74,
+      "container_id": "5dae9d2413fd45c42a7b4f2a649745755e2a71fbccd074a2ed060d71a0964e81",
+      "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+      "started_at": "2026-10-23T21:35:19.854763335Z",
+      "window_seconds": 720.9327586670042,
+      "max_gap_seconds": 10.509978583002521,
+      "limit_bytes": 4294967296,
+      "nano_cpus": 2000000000,
+      "max_sampled_current_bytes": 572239872,
+      "peak_before_bytes": 817324032,
+      "peak_after_bytes": 817324032,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_growth_bytes": 0,
+      "cpu_usage_delta_usec": 70803229,
+      "pressure_delta_us": {
+        "some": 0,
+        "full": 0
+      }
+    },
+    "postgres": {
+      "samples": 74,
+      "container_id": "c3ba8850be4b2302d6ed00c8a0fa92feec78dd03911a2510ef0a56286af97a64",
+      "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+      "started_at": "2026-10-23T19:15:26.34851292Z",
+      "window_seconds": 720.9298954170008,
+      "max_gap_seconds": 10.538663459003146,
+      "limit_bytes": 536870912,
+      "nano_cpus": 0,
+      "max_sampled_current_bytes": 528199680,
+      "peak_before_bytes": 536879104,
+      "peak_after_bytes": 536879104,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_growth_bytes": 0,
+      "cpu_usage_delta_usec": 13268346,
+      "pressure_delta_us": {
+        "some": 0,
+        "full": 0
+      }
+    },
+    "ui": {
+      "samples": 74,
+      "container_id": "2a42b079bd180b04d5a4571397f93aa1de6731b79b2e46b12ec7a4cff12cd72f",
+      "image_id": "sha256:a30a7676cd8aa3d51ecfbb47f5c375954a6dc692996ccc257e705b88cd1374e4",
+      "started_at": "2026-10-24T19:59:34.029090341Z",
+      "window_seconds": 720.9156258750008,
+      "max_gap_seconds": 10.553495542000746,
+      "limit_bytes": 536870912,
+      "nano_cpus": 500000000,
+      "max_sampled_current_bytes": 131813376,
+      "peak_before_bytes": 159125504,
+      "peak_after_bytes": 159125504,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_growth_bytes": 0,
+      "cpu_usage_delta_usec": 25210129,
+      "pressure_delta_us": {
+        "some": 0,
+        "full": 0
+      }
+    },
+    "airflow-scheduler": {
+      "samples": 74,
+      "container_id": "f3f72e958b84b7052d48d76510039f2b10b02c8d49145c0eb9fc4866b437d7ed",
+      "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+      "started_at": "2026-10-24T20:00:57.077282666Z",
+      "window_seconds": 720.8566733749976,
+      "max_gap_seconds": 10.502606415997434,
+      "limit_bytes": 5368709120,
+      "nano_cpus": 2000000000,
+      "max_sampled_current_bytes": 397242368,
+      "peak_before_bytes": 460464128,
+      "peak_after_bytes": 2631467008,
+      "events_delta": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "swap_current_max_bytes": 0,
+      "swap_peak_growth_bytes": 0,
+      "cpu_usage_delta_usec": 123408065,
+      "pressure_delta_us": {
+        "some": 25,
+        "full": 25
+      }
+    }
+  },
+  "worker_cgroup": {
+    "peak_before_bytes": 460464128,
+    "peak_after_bytes": 2631467008,
+    "limit_bytes": 5368709120,
+    "events_delta": {
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "cpu_delta": {
+      "usage_usec": 11337397,
+      "user_usec": 5151335,
+      "system_usec": 6186062,
+      "core_sched.force_idle_usec": 0,
+      "nr_periods": 68,
+      "nr_throttled": 22,
+      "throttled_usec": 130564,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    }
+  },
+  "state_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+  "built_release_id": "h-d47a9d65c7780ec3f5e705e399a8556d84c0e6ec8a0640fdcf69d25617b8b5e3",
+  "built_release_activated": false,
+  "methods": [
+    "Verified GitHub asset digest/size, local ZIP/sidecar, CRC/member inventory and lightweight Git tag source commit.",
+    "Recomputed runner tree from all Python scripts at source commit and reconstructed the exact build configuration bytes.",
+    "Checked all 12000 relative scheduled times for 20 req/s, uniqueness, segment rotation and latency=finished-due.",
+    "Recalculated nearest-rank p50/p95/p99, successes, errors, omissions, rates and per-segment totals from exported trace.",
+    "Recomputed host/VM clock brackets from lowest RTT before/after with 100 ms padding on each side; derived conservative and possible arrival windows.",
+    "Validated 74 observations per service, interval coverage/cadence, generations, quotas, cumulative peaks, CPU/events/pressure counters and swap.",
+    "Independent reviewer reproduced the main latency/count/resource conclusions; no outstanding inconsistency."
+  ],
+  "remote_declarations": [
+    "Original HTTP response equality against frozen private expectations; raw customer requests/responses were not exported.",
+    "Warmup latency statistics: summary present and counts consistent, but raw warmup trace not exported.",
+    "Preservation of application aggregates, readiness H, .env/Compose/UI override and final-test reservation; no private tables/reservation bytes received.",
+    "Three exact auxiliary IDs recovered healthy and final inventory checked by runner; public report exports roles/booleans, not detailed before/after auxiliary identities.",
+    "Host hardware, VM capacity, source code of installed services, absence of other workloads and paused Airflow were checked by the remote runner."
+  ],
+  "limits": [
+    "One observed brief construction under 20 requests/s on mac24 localhost; not sustained concurrency, maximum capacity or a statistical population tail guarantee.",
+    "Conservative interval uses a bounded clock-drift assumption (100 ms padding per side); calibration uncertainty is 242.535 ms.",
+    "Arrival-based overlap measures full response latency; not every response must finish before the build ends.",
+    "Four measured container cgroups do not represent total host/VM memory; scheduler memory includes Airflow and builder.",
+    "PostgreSQL lifetime peak 536879104 bytes exceeds its 536870912-byte quota and was unchanged; no new max/OOM observed. This does not prove memory headroom.",
+    "The 10-second resource polling misses short sampled-current peaks; the cumulative cgroup peak and worker boundary captures retain the scheduler high-water mark.",
+    "No causal latency improvement inferred by comparing the brief overlap to the full window or historical runs."
+  ],
+  "execution_during_review": {
+    "docker": false,
+    "ssh": false,
+    "load": false,
+    "training": false,
+    "test_evaluation": false
+  },
+  "retained": [
+    "Historical T8-B failed, its thresholds, archives and reservations.",
+    "Academic delivery tag and previous evidence files.",
+    "Original H remains selected; new constructed package was not activated."
+  ],
+  "next_action": "No additional h-cycle run, publish-only, restore-only, training or test required; preserve evidence and prepare presentation separately."
+}

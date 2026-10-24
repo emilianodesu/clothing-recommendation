@@ -78,9 +78,16 @@ El despliegue es de un operador local: API/UI enlazadas a localhost, PostgreSQL 
 | T7 | Respaldo de 918,506,419 bytes; ensayo de respaldo/restauración en 96.531 s, con seis consultas de paridad y seis offline | Otro proyecto/ruta en mac24; no otra cuenta ni traslado físico del respaldo |
 | T8-A | 12,000 respuestas correctas a 20 solicitudes/s durante 600 s; p95 14.099 ms, p99 15.417 ms | Localhost, carga concreta, no capacidad máxima |
 | T8-B | 12,000 respuestas correctas; construcción concurrente de 4.064 s | **Failed:** solapamiento 5.061 s/101 llegadas, inferior a 10 s/200; concurrencia sostenida no acreditada |
+| H-cycle posterior | 12,000 respuestas correctas; construcción 6.821 s; 132 llegadas en intervalo conservador de 6.580 s, p95 8.909 ms; p95 global 14.151 ms | [Ciclo breve aceptado](../evidence/h-cycle-review-mac24.json) bajo protocolo propio; no reemplaza T8-B ni prueba concurrencia sostenida |
 | T8-C | H/P final, 30.558 s, pico worker 2.570 GiB/5 GiB, ocho capturas sin swap/nuevos OOM | No incluye construcción de imagen ni consumo total de VM |
 
 La VM mac24 tiene 4 CPU y 13.621 GiB efectivos. Los límites de nueve contenedores suman 16.75 GiB: son cuotas, no consumo observado, pero impiden admitir otro trabajo pesado por simple suma. Se adopta mantenimiento secuencial con transiciones explícitas y recuperación por identidad. No aumentar recursos ni reiniciar contadores para ocultar un fallo. El servicio mantiene H con corte 2020-09-09; no se activó el snapshot del test.
+
+El ensayo adicional [h-cycle-v1](mac24-h-cycle.md) permitió observar una construcción
+H dentro del scheduler mientras la API seguía atendiendo, pausando únicamente
+MLflow y la instalación restaurada T7. Cumplió sus criterios acotados y recuperó
+esos tres auxiliares según el runner. No autoriza ejecutar todos los servicios y
+trabajos pesados simultáneamente ni elimina la política de admisión de recursos.
 
 ## Reproducibilidad y entrega
 
