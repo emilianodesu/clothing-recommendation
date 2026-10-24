@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Siguiente paso operativo:** [inventario UI de mac24](docs/mac24-ui-update.md) mediante `scripts/mac24_ui_inventory.py --expected-commit SHA_COMPLETO`. Sólo consulta Docker y escribe su reporte privado; no construye ni despliega. Devolver el resumen agregado para preparar actualización/recuperación según las imágenes y recursos reales. No ejecutar lanzadores históricos T8.
+
 ## Estado vigente y lectura de antecedentes
 
 El [inventario consolidado](docs/delivery-status.md) contiene los entregables completos y límites actuales. T8-D entregado, T8-A/T8-C cerradas y T8-B failed; no declarar T8/E8 globalmente aprobados. El tag académico existe. La corrección UI posterior está desplegada sólo localmente, no en mac24. No hay otra campaña ni evaluación test pendiente para presentar el trabajo.

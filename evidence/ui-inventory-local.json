@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "scope": "local host verification only; mac24 inventory not executed",
+  "host_suite": {
+    "tests": 250,
+    "passed": 249,
+    "skipped": 1,
+    "seconds": 12.419
+  },
+  "initial_sandbox_attempt": {
+    "errors": 11,
+    "cause": "localhost socket PermissionError; rerun with permission passed"
+  },
+  "red_green": {
+    "new_tests": 4,
+    "observed_failure_before_implementation": true,
+    "passed_after": true
+  },
+  "docker_template": "validated against one existing local container without mutation",
+  "sources": {
+    "scripts/mac24_ui_inventory.py": "657eb4d9717b83da698427bfe9f882bf1910707c88fbf2be55a149958d92c4d6",
+    "tests/host/test_ui_inventory.py": "0f3808224cac3a83258770f73da663be374024862ca61e94651ae8a69c9435a8"
+  },
+  "deployment_started": false
+}
