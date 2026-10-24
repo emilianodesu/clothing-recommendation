@@ -143,7 +143,23 @@ def followup_inventory(before, original):
     return dict(prior_run_id=state['run_id'],prior_state_sha256=sha(previous/'state.json'))
 
 
-def preflight(commit, values, *, public_followup=False):
+def plugin_followup_inventory(before, antecedent):
+    previous=ROOT/'.runtime/ui-recovery-public-v1'
+    report=ROOT/'evidence/ui-recovery-public-mac24.json'
+    require(sha(report)==public.PLUGIN_REPORT_SHA,'Published plugin mismatch antecedent changed')
+    state=json.loads((previous/'state.json').read_text())
+    unexpected=any((previous/name).exists() for name in ('builder-create.log','builder-bootstrap.log',
+        'build.log','probe-create.log','public-buildkit-pull.log','public-manifest-0.log'))
+    public.verify_plugin_attempt(state,json.loads(report.read_text()),
+        (previous/'failure.log').read_text(errors='replace'),unexpected)
+    require(all(state.get(k)==v for k,v in antecedent.items()),'Prior chain of evidence changed')
+    verify_stable(state['before'],before)
+    require(named(state['builder_container']) is None and named(state['probe_name']) is None,
+            'Unexpected container from plugin mismatch attempt')
+    return dict(plugin_source_run_id=state['run_id'],plugin_source_state_sha256=sha(previous/'state.json'))
+
+
+def preflight(commit, values, *, public_followup=False, buildx_followup=False):
     checkout_commit(ROOT,commit)
     require(run_command(['git','branch','--show-current'])=='main','Expected main')
     require(not STATE.exists(),'Preparation already recorded; use restore-only if needed')
@@ -159,6 +175,7 @@ def preflight(commit, values, *, public_followup=False):
     require(prior['status']=='passed' and prior['source_commit']=='7fe23502cfa52134ed77565149f0af97e816fbfb','Inventory origin differs')
     before=snapshot()
     antecedent=followup_inventory(before,prior['before']) if public_followup else {}
+    if buildx_followup:antecedent.update(plugin_followup_inventory(before,antecedent))
     if not public_followup:verify_stable(prior['before'],before)
     review=json.loads((ROOT/'evidence/portability-review-mac24.json').read_text())
     aux=select_targets(before,values['COMPOSE_PROJECT_NAME'],review['result']['destination_postgres']['container_id'])
@@ -182,28 +199,27 @@ def build_docker(state, *args, **kwargs):
     if not state.get('public_followup'):return docker(*args,**kwargs)
     config=STATE/'docker-public'
     public.verify_config(config)
+    public.verify_plugin(config,state['buildx_plugin_sha256'])
     return run_command(['docker','--config',str(config),'--context',CONTEXT,*args],
                        env=public.environment(config),**kwargs)
 
 
 def prepare_public_registry(state):
     config=STATE/'docker-public'
-    plugin=shutil.which('docker-buildx')
-    if not plugin:
-        candidates=[Path.home()/'.docker/cli-plugins/docker-buildx',
-                    Path('/opt/homebrew/lib/docker/cli-plugins/docker-buildx'),
-                    Path('/usr/local/lib/docker/cli-plugins/docker-buildx')]
-        plugin=next((str(p) for p in candidates if p.is_file() and os.access(p,os.X_OK)),None)
-    require(bool(plugin),'Buildx executable missing')
+    plugin=public.selected_buildx(json.loads(query('info','--format','{{json .ClientInfo.Plugins}}')))
+    state.update(buildx_plugin_path=str(plugin),buildx_plugin_sha256=sha(plugin),buildx_identity_verified=False)
+    save(state)
     endpoint=query('context','inspect',CONTEXT,'--format','{{.Endpoints.docker.Host}}')
     public.verify_endpoint(endpoint,Path.home())
     original_engine=query('info','--format','{{.ID}}')
     require(bool(original_engine),'Missing engine identity')
-    public.create_config(config,Path(plugin))
+    public.create_config(config,plugin)
     run_command(['docker','--config',str(config),'context','create',CONTEXT,'--docker','host='+endpoint],
                 env=public.environment(config),log=STATE/'public-context.log')
     require(build_docker(state,'info','--format','{{.ID}}')==original_engine,'Private context engine differs')
-    require(build_docker(state,'buildx','version')==state['buildx'],'Private Buildx version differs')
+    state['private_buildx']=build_docker(state,'buildx','version');save(state)
+    require(state['private_buildx']==state['buildx'],'Private Buildx version differs')
+    state['buildx_identity_verified']=True;save(state)
     source=run_command(['git','show',HISTORY+':docker/app.Dockerfile'])
     refs=re.findall(r'(?:^FROM |COPY --from=)(\S+)',source,re.MULTILINE)
     require(len(refs)==2 and all(re.fullmatch(r'(?:python|astral/uv):[^\s@]+@sha256:[0-9a-f]{64}',r) for r in refs),
@@ -338,14 +354,17 @@ def summary(state):
         'original_services_preserved','recovery_complete','temporary_stopped','deployment_started','error_type',
         'failure_stage','recovery_error_type','probe_log_error','temporary_cleanup_complete','cleanup_errors',
         'public_followup','prior_run_id','prior_state_sha256','public_registry_checked','public_images',
-        'public_buildkit_image_id','maintenance_started') if k in state}
+        'public_buildkit_image_id','maintenance_started','buildx_followup','plugin_source_run_id',
+        'plugin_source_state_sha256','buildx_plugin_sha256','private_buildx','buildx_identity_verified') if k in state}
 
 
 def publish(state):
     checkout_commit(ROOT,state['procedure_commit'])
     repository=json.loads(run_command(['gh','repo','view','--json','nameWithOwner,isPrivate']))
     require(repository==dict(nameWithOwner='emilianodesu/clothing-recommendation',isPrivate=True),'Expected private project repository')
-    destination=ROOT/('evidence/ui-recovery-public-mac24.json' if state.get('public_followup') else 'evidence/ui-recovery-maintenance-mac24.json')
+    filename=('ui-recovery-buildx-mac24.json' if state.get('buildx_followup') else
+              'ui-recovery-public-mac24.json' if state.get('public_followup') else 'ui-recovery-maintenance-mac24.json')
+    destination=ROOT/'evidence'/filename
     require(not destination.exists(),'Aggregate already exists; preserve and review it')
     write_json(destination,summary(state))
     run_command(['git','add',str(destination)])
@@ -396,8 +415,12 @@ def main():
     global STATE
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
     p.add_argument('--restore-only',action='store_true');p.add_argument('--publish',action='store_true')
-    p.add_argument('--public-registry-followup',action='store_true');a=p.parse_args()
-    if a.public_registry_followup:STATE=ROOT/'.runtime/ui-recovery-public-v1'
+    modes=p.add_mutually_exclusive_group()
+    modes.add_argument('--public-registry-followup',action='store_true')
+    modes.add_argument('--buildx-followup',action='store_true');a=p.parse_args()
+    public_followup=a.public_registry_followup or a.buildx_followup
+    if a.buildx_followup:STATE=ROOT/'.runtime/ui-recovery-buildx-v1'
+    elif a.public_registry_followup:STATE=ROOT/'.runtime/ui-recovery-public-v1'
     os.umask(0o077);os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT=CONTEXT,GIT_TERMINAL_PROMPT='0')
     values=read_configuration(ROOT/'.env')
     artifacts=Path(values['ARTIFACTS_DIR']);artifacts=artifacts if artifacts.is_absolute() else ROOT/artifacts
@@ -418,11 +441,11 @@ def main():
             if a.publish:publish(state)
             return 0
         emit('UI recovery: comprobaciones previas; sin pausas todavía')
-        ctx=preflight(a.expected_commit,values,public_followup=a.public_registry_followup)
+        ctx=preflight(a.expected_commit,values,public_followup=public_followup,buildx_followup=a.buildx_followup)
         STATE.mkdir(mode=0o700)
         rid='ui-recovery-'+uuid.uuid4().hex[:12]
         state=dict(ctx,run_id=rid,procedure_commit=a.expected_commit,created_at=now(),historical_commit=HISTORY,
-            public_followup=a.public_registry_followup,
+            public_followup=public_followup,buildx_followup=a.buildx_followup,
             builder=rid,builder_container='buildx_buildkit_'+rid+'0',probe_name=rid+'-probe',
             image_tag='hmrec-ui-recovery:'+rid,status='failed',stage='reserved',image_verified=False,
             deployment_started=False,build_started=False,probe_started=False,recovery_complete=False,auxiliaries_restored=False,
@@ -431,7 +454,7 @@ def main():
         execute_prepared(state,values,guard)
         if a.publish and state['recovery_complete']:publish(state)
         elif not state['recovery_complete']:
-            mode='--public-registry-followup ' if a.public_registry_followup else ''
+            mode='--buildx-followup ' if a.buildx_followup else '--public-registry-followup ' if a.public_registry_followup else ''
             emit('Recuperación/verificación pendiente: usar únicamente '+mode+'--restore-only con el mismo SHA.')
         return 0 if state['status']=='passed' else 1
 

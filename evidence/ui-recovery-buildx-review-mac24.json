@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-24",
+  "run_id": "ui-recovery-926496b63278",
+  "source_report": "evidence/ui-recovery-public-mac24.json",
+  "source_report_sha256": "8d61f49575fd8b02fe6e6daad9035c42c0a95b4d872ebfce7caa97b639a5f4d2",
+  "source_commit": "82fcb4bd4c3324e47d8c20c617a95e96aab96713",
+  "report_commit": "318354487cec1c865d3ef9d89de46630d49f091f",
+  "status_retained": "failed",
+  "failure_stage": "public_registry_preflight",
+  "operator_trace": {
+    "file": "scripts/mac24_ui_recovery.py",
+    "line": 206,
+    "message": "ValueError: Private Buildx version differs"
+  },
+  "diagnosis": "The adapter selected docker-buildx through PATH or fixed fallback directories, independently of the plugin selected by Docker. This mechanism can select a different executable and was reproduced locally with Docker and synthetic plugins.",
+  "remote_evidence_limits": [
+    "Remote trace proves the version comparison failed; the private version string and executable paths were not provided.",
+    "Remote state and failure log will be checked on mac24 by the explicit continuation."
+  ],
+  "remote_report_declarations": {
+    "maintenance_started": false,
+    "build_started": false,
+    "probe_started": false,
+    "deployment_started": false,
+    "original_services_preserved": true,
+    "recovery_complete": true
+  },
+  "interpretation": "No stop/start recovery was performed in this attempt. The runner verified the unchanged inventory after failing before maintenance.",
+  "source_code_control_flow": "Failure occurs before public_images is populated, manifest queries or BuildKit pull.",
+  "next_step": "One --buildx-followup: use Docker-reported ClientInfo.Plugins Path, verify executable SHA and exact version, validate both prior attempts, preserve original state/reports.",
+  "no_remote_actions_performed_here": true,
+  "historical_image_verified": false,
+  "mac24_ui_updated": false
+}

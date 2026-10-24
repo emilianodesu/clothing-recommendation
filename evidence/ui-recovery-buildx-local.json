@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-24",
+  "base_commit": "318354487cec1c865d3ef9d89de46630d49f091f",
+  "scope": "Local verification of Buildx selection and explicit continuation guards; no mac24 execution",
+  "host_suite": {
+    "tests": 277,
+    "passed": 276,
+    "skipped": 1,
+    "duration_seconds": 12.679,
+    "skip_reason": "explicit synthetic Docker fixture required by existing inspect-health test"
+  },
+  "focused_ui_recovery_tests": 27,
+  "regression": {
+    "before_fix": "prepare_public_registry chose the PATH executable instead of the Docker-reported executable; test failed",
+    "after_fix": "select Docker-reported Path and keep exact version/hash verification; test passed"
+  },
+  "docker_cli_verification": {
+    "docker": "29.6.1",
+    "synthetic_docker_selected_version": "github.com/docker/buildx v9.1.0-fixture fixture",
+    "synthetic_path_version": "github.com/docker/buildx v8.1.0-fixture fixture",
+    "prior_mismatch_reproduced": true,
+    "corrected_selection_matches": true,
+    "fixture_commands": "plugin metadata and version only",
+    "installed_plugin_version": "github.com/docker/buildx v0.35.0 Homebrew",
+    "installed_plugin_sha256": "8d50dd2ab46d37b57f6cb41f31ee64ebdfd20ea402e3ffbe26b7c1ff42d3ca7e",
+    "actual_private_version_matches": true,
+    "private_config_valid": true,
+    "inventory_ids_unchanged": true,
+    "build_pull_or_container_lifecycle_operations": false
+  },
+  "guards_covered": [
+    "No fallback when Docker reports missing, invalid or ambiguous Buildx",
+    "Changed plugin hash blocks Docker execution",
+    "Version mismatch still blocks before registry access",
+    "Exact unstarted plugin-mismatch antecedent required",
+    "Full inventory and evidence chain preserved",
+    "Both follow-up restore modes are read-only if no maintenance began"
+  ],
+  "review": {
+    "independent_review_performed": true,
+    "remaining_P1_P2": 0,
+    "scope": "static review; no remote actions"
+  },
+  "sources": {
+    "scripts/mac24_ui_recovery.py": "ddbb51dfaff5025eb371e289b6a4ac38e9590e44c6493a49f564f9de8126f081",
+    "scripts/ui_recovery_public.py": "0303f6d0c6f8f9cab2ca43a4a4c0682f6fc1db6a9325372458ee379960380419",
+    "tests/host/test_ui_recovery_public.py": "690cd90325ebcd521f0792b57cbf4e89add8c13ea3b87943cf5732e5c0109841"
+  },
+  "mac24_execution": false,
+  "maintenance_executed_here": false,
+  "historical_image_verified": false,
+  "deployment_started": false,
+  "remaining_validation": "BuildKit bootstrap, historical build, isolated Streamlit probe and service recovery on mac24, then principal review."
+}

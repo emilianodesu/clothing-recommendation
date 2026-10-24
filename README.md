@@ -1,6 +1,6 @@
 # Proyecto final de Datos Masivos
 
-**Seguimiento UI por SSH:** la preparación falló por acceso al llavero al iniciar BuildKit; auxiliares recuperados, sin construcción ni despliegue. Está preparada la [continuación con imágenes públicas y configuración aislada](docs/mac24-ui-public-registry-followup.md), con comprobación de acceso antes de la pausa autorizada. Conserva el intento fallido y publica un reporte separado. La imagen recuperable aún no está acreditada en mac24.
+**Seguimiento UI por SSH:** el último intento se detuvo por discrepancia de versión Buildx antes de descargas o mantenimiento. Está preparada la [continuación que usa el plugin seleccionado por Docker](docs/mac24-ui-buildx-followup.md), con configuración anónima aislada y controles de huella/versión. Conserva ambos intentos fallidos y publica un reporte separado. La imagen recuperable y la actualización UI aún no están acreditadas en mac24.
 
 **Siguiente paso operativo:** [preparar recuperación UI en mac24](docs/mac24-ui-recovery.md). El inventario recibido pasó, pero la imagen UI no tiene metadatos disponibles; la huella coincide con código histórico. Admitir recursos y validar una imagen aislada antes de desplegar. No detener servicios ni ejecutar T8. [Alcance de la revisión](evidence/ui-inventory-review-mac24.json).
 

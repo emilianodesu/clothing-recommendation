@@ -1,5 +1,7 @@
 # Continuación de recuperación UI sin llavero personal
 
+**Estado posterior:** este seguimiento se ejecutó como `ui-recovery-926496b63278` y falló por discrepancia de versión Buildx antes de descargas o pausa. Conservarlo; los comandos de esta página son históricos. La [continuación vigente](mac24-ui-buildx-followup.md) corrige la selección del plugin sin retirar la comparación de versiones.
+
 El intento `ui-recovery-22fc4a3dcc96` conserva **failed**. El reporte publicado y la traza entregada por el operador identifican un fallo al iniciar BuildKit: Docker intentó obtener credenciales de macOS Keychain desde SSH. No empezó la construcción histórica ni el probe. Los seis auxiliares se recuperaron y los servicios originales quedaron preservados según ese reporte. No ejecutar de nuevo el modo original ni borrar su estado.
 
 La continuación `--public-registry-followup` mantiene el [mantenimiento autorizado](mac24-ui-maintenance-plan.md): pausa únicamente los mismos seis auxiliares, constructor de 2 GiB/1 CPU, probe de 512 MiB/0.5 CPU y recuperación obligatoria. API/PostgreSQL/UI originales permanecen activos. Se prepara una imagen histórica recuperable; la actualización de UI se revisará después.
