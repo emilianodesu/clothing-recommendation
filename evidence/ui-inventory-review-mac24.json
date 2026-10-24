@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-24",
+  "source": "operator-pasted aggregate summary; private report not downloaded",
+  "source_commit": "7fe23502cfa52134ed77565149f0af97e816fbfb",
+  "reported_status": "passed",
+  "reported_inventory_unchanged": true,
+  "reported_engine": {
+    "architecture": "aarch64",
+    "cpus": 4,
+    "memory_bytes": 14624956416
+  },
+  "reported_ui_image_metadata_available": false,
+  "reported_running_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+  "reported_checkout_ui_sha256": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+  "independently_checked": {
+    "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+    "file": "src/hm_recommender/ui/app.py",
+    "sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+    "matches_reported_running_file": true
+  },
+  "conclusions": {
+    "ui_update_pending": true,
+    "rollback_image_execution_verified": false,
+    "build_capacity_admitted": false,
+    "missing_image_metadata_does_not_identify_missing_layers": true,
+    "deployment_started": false
+  }
+}

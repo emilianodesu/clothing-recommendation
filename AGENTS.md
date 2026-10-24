@@ -1,6 +1,6 @@
 # Instrucciones para agentes
 
-**Siguiente paso operativo:** [inventario UI de mac24](docs/mac24-ui-update.md) mediante `scripts/mac24_ui_inventory.py --expected-commit SHA_COMPLETO`. Sólo consulta Docker y escribe su reporte privado; no construye ni despliega. Devolver el resumen agregado para preparar actualización/recuperación según las imágenes y recursos reales. No ejecutar lanzadores históricos T8.
+**Siguiente paso operativo:** [preparar recuperación UI en mac24](docs/mac24-ui-recovery.md). El inventario recibido pasó, pero la imagen UI no tiene metadatos disponibles; la huella coincide con código histórico. Admitir recursos y validar una imagen aislada antes de desplegar. No detener servicios ni ejecutar T8. [Alcance de la revisión](evidence/ui-inventory-review-mac24.json).
 
 ## Estado vigente y lectura de antecedentes
 

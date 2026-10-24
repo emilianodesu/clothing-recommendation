@@ -52,7 +52,7 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 
 Para presentar el proyecto, seguir [el recorrido del evaluador](demo.md): informe, selección de H, cobertura del temario, evaluación final, operación y demo sintética. No se necesita otra campaña de entrenamiento, evaluación test ni carga para presentar la evidencia existente.
 
-Para actualizar la UI de mac24, ejecutar primero el [inventario de sólo lectura](mac24-ui-update.md) y devolver su resumen. Después preparar un procedimiento específico que identifique imagen y proyecto activos, conserve una imagen de recuperación válida y verifique compatibilidad antes de recrear únicamente UI. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
+Para actualizar la UI de mac24, seguir la [preparación de recuperación](mac24-ui-recovery.md), basada en el inventario ya recibido. Después preparar un procedimiento específico que identifique imagen y proyecto activos, conserve una imagen de recuperación válida y verifique compatibilidad antes de recrear únicamente UI. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
 
 Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito retirado por el usuario), servicio público multiusuario, alta disponibilidad e impacto comercial online. No son resultados demostrados por las pruebas existentes.
 
