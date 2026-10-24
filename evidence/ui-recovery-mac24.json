@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "protocol": "ui-recovery-preparation-v1",
+  "created_at": "2026-10-24T07:47:55.063710+00:00",
+  "status": "blocked_capacity",
+  "stage": "capacity_admission",
+  "source_commit": "9b2dbf5b1cd8a84fed5f2c16d956f59841c3305c",
+  "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+  "context": "colima-hm-project",
+  "deployment_started": false,
+  "build_started": false,
+  "probe_started": false,
+  "recovered_image_digest": null,
+  "api_integration_verified": false,
+  "temporary_resources_created": false,
+  "historical_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+  "inventory_matches_previous": true,
+  "original_services_healthy": true,
+  "running_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+  "ac_connected": true,
+  "lid_open": true,
+  "heavy_job_roles": [],
+  "airflow": {
+    "paused": {
+      "hm_refresh_profiles": true,
+      "hm_build_release": true
+    },
+    "active_runs": 0
+  },
+  "engine": {
+    "memory_bytes": 14624956416,
+    "cpus": 4,
+    "architecture": "aarch64"
+  },
+  "capacity": {
+    "active_memory_limits_bytes": 17985175552,
+    "active_cpu_limits": 8.5,
+    "unbounded_memory_roles": [],
+    "builder_bytes": 2147483648,
+    "builder_cpus": 1,
+    "probe_bytes": 536870912,
+    "probe_cpus": 0.5,
+    "margin_bytes": 1073741824,
+    "required_build_bytes": 21206401024,
+    "missing_build_bytes": 6581444608,
+    "missing_probe_bytes": 4970831872,
+    "host_disk_free_bytes": 172934758400,
+    "disk_minimum_bytes": 10737418240,
+    "vm_disk_free_bytes": 68892913664,
+    "host_disk_missing_bytes": 0,
+    "vm_disk_missing_bytes": 0
+  },
+  "build_capacity_admitted": false,
+  "cause": "Insufficient VM memory admission margin",
+  "services_preserved": true,
+  "machine_id": "mac24",
+  "evidence_scope": "Aggregate of local read-only preparation checks; private inventory and logs retained on mac24, not published",
+  "private_report_sha256": "c27a980c3488185601a5459a446017cead48ac9eafe98c5905331d24bc0b958d",
+  "next_action": "Review and explicitly authorize a bounded maintenance procedure before another preparation; do not stop services or expand Colima automatically",
+  "streamlit_checks": "not_run_capacity_blocked",
+  "active_roles": [
+    {
+      "project_scope": "original",
+      "role": "api",
+      "memory_bytes": 4294967296,
+      "nano_cpus": 2000000000
+    },
+    {
+      "project_scope": "restored_t7",
+      "role": "api",
+      "memory_bytes": 4294967296,
+      "nano_cpus": 2000000000
+    },
+    {
+      "project_scope": "restored_t7",
+      "role": "postgres",
+      "memory_bytes": 536870912,
+      "nano_cpus": 0
+    },
+    {
+      "project_scope": "original",
+      "role": "airflow-dag-processor",
+      "memory_bytes": 536870912,
+      "nano_cpus": 500000000
+    },
+    {
+      "project_scope": "original",
+      "role": "airflow-api",
+      "memory_bytes": 805306368,
+      "nano_cpus": 500000000
+    },
+    {
+      "project_scope": "original",
+      "role": "airflow-scheduler",
+      "memory_bytes": 5368709120,
+      "nano_cpus": 2000000000
+    },
+    {
+      "project_scope": "original",
+      "role": "ui",
+      "memory_bytes": 536870912,
+      "nano_cpus": 500000000
+    },
+    {
+      "project_scope": "original",
+      "role": "mlflow",
+      "memory_bytes": 1073741824,
+      "nano_cpus": 1000000000
+    },
+    {
+      "project_scope": "original",
+      "role": "postgres",
+      "memory_bytes": 536870912,
+      "nano_cpus": 0
+    }
+  ]
+}

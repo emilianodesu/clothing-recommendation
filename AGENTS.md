@@ -1,6 +1,6 @@
 # Instrucciones para agentes
 
-**Siguiente paso operativo:** [preparar recuperación UI en mac24](docs/mac24-ui-recovery.md). El inventario recibido pasó, pero la imagen UI no tiene metadatos disponibles; la huella coincide con código histórico. Admitir recursos y validar una imagen aislada antes de desplegar. No detener servicios ni ejecutar T8. [Alcance de la revisión](evidence/ui-inventory-review-mac24.json).
+**Recuperación UI mac24 bloqueada por capacidad (2026-10-24):** preparación en `9b2dbf5b1cd8a84fed5f2c16d956f59841c3305c`, estado `blocked_capacity`; [evidencia agregada](evidence/ui-recovery-mac24.json). VM efectiva 13.621 GiB, límites activos 16.75 GiB; constructor+margen requieren 3 GiB adicionales y faltan 6.129 GiB. Servicios conservados; no se construyó ni probó imagen, no hubo despliegue. Siguiente paso: revisar y autorizar un procedimiento de mantenimiento acotado antes de otra preparación. No detener servicios, ampliar Colima, repetir preparación automáticamente ni ejecutar T8. [Procedimiento de referencia](docs/mac24-ui-recovery.md).
 
 ## Estado vigente y lectura de antecedentes
 

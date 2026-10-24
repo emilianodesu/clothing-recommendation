@@ -1,5 +1,17 @@
 # Preparar recuperación de UI en mac24, sin despliegue
 
+## Resultado mac24 y siguiente decisión (2026-10-24)
+
+La preparación en `9b2dbf5b1cd8a84fed5f2c16d956f59841c3305c` terminó en **`blocked_capacity`**, etapa `capacity_admission`. Ver [evidencia agregada](../evidence/ui-recovery-mac24.json); el reporte completo y las instantáneas permanecen privados en mac24. Su huella SHA-256 está en la evidencia para correlacionarlos; este resumen no sustituye una auditoría independiente del reporte privado.
+
+La VM dispone de 14,624,956,416 bytes (13.621 GiB) y 4 CPU. Los nueve contenedores activos suman 17,985,175,552 bytes (16.75 GiB) de límites de RAM y 8.5 CPU de cuotas; no son consumo instantáneo. La admisión exige 21,206,401,024 bytes, incluidos constructor de 2 GiB y margen de 1 GiB: faltan **6,581,444,608 bytes (6.129 GiB)**. Ningún contenedor activo tiene memoria sin límite. Disco libre: host 161.058 GiB y VM 64.162 GiB; ambos superan los 10 GiB requeridos.
+
+Se verificaron AC, tapa abierta, ausencia de contenedores de jobs pesados, ambos DAG pausados y cero ejecuciones Airflow activas. El inventario coincide con el anterior y permaneció idéntico durante las consultas; API/PostgreSQL/UI saludables. La huella UI coincide con la revisión histórica indicada abajo.
+
+No se creó constructor, worktree ni contenedor probe; no hay imagen recuperada ni comprobaciones de imports/health de Streamlit. No se modificaron servicios, límites ni tags; `deployment_started=false`. El guard de reposo temporal terminó al cerrar la preparación.
+
+**Decisión pendiente:** diseñar y autorizar un mantenimiento secuencial con auxiliares identificados, capacidad recalculada y recuperación explícita, conservando API/PostgreSQL/UI originales. Esta evidencia no autoriza detener servicios, ampliar Colima, desplegar ni repetir automáticamente la preparación. Los pasos siguientes son el procedimiento de referencia, detenido antes de construir.
+
 ## Objetivo y antecedente
 
 Preparar una imagen ejecutable de recuperación antes de reemplazar UI. El [resumen recibido](../evidence/ui-inventory-review-mac24.json) declara inventario estable, pero Docker no reconoce los metadatos de la imagen UI. No se ha descargado el reporte privado: no atribuir a esta revisión inspección directa de IDs, límites o capas.
