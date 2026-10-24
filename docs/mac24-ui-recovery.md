@@ -63,3 +63,7 @@ Guardar JSON privado y devolver sólo agregados/huellas:
 - ruta local del reporte para el operador, nunca `.env`, tokens, clientes, predicciones o contenido de bases.
 
 No llamar `github-handoff.py` con este JSON: no es uno de sus protocolos ZIP. El operador puede devolver el resumen por el canal de conversación existente. El siguiente paso, tras revisión, será preparar la candidata y el cambio exclusivo de UI. No declarar que la recuperación o el despliegue ya se ejecutaron por existir esta guía.
+
+## Propuesta tras revisión principal
+
+Se recalcularon las sumas del reporte agregado: coinciden con el bloqueo. Se preparó un [plan de mantenimiento de seis auxiliares](mac24-ui-maintenance-plan.md), pendiente de autorización del usuario. Mantiene API/PostgreSQL/UI originales y permite construir con 8 GiB de presupuesto total, incluido margen. No ejecutarlo sin autorización; no modifica el resultado `blocked_capacity` ni acredita una imagen recuperada.
