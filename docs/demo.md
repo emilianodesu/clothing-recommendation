@@ -1,5 +1,7 @@
 # Guía del evaluador y demostración
 
+**Aceptación ejecutada (2026-10-24):** [60 pruebas sintéticas aprobadas](../evidence/acceptance-local.json), sin omisiones, en la Mac principal; entorno original restaurado. Las notas anteriores de ejecución pendiente son históricas. Quedan capturas de demo y revisión/tag de entrega.
+
 **Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
 
 ## Recorrido sin ejecutar trabajos (10–15 minutos)

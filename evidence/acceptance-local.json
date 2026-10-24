@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-24",
+  "machine": "principal-mac-arm64-16g",
+  "protocol": "synthetic-acceptance-v1",
+  "status": "passed",
+  "report": {
+    "protocol": "synthetic-acceptance-v1",
+    "status": "passed",
+    "source_commit": "8c8b730feed982f2c45a6118933d36cb3096294a",
+    "source_clean": true,
+    "image_id": "sha256:b4a8b4e40d1c070d097f02e6ba777cbe4407a9834e306dcc007b612b965c4092",
+    "postgres_image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+    "source_sha256": "fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1",
+    "fixtures_sha256": "6490c4fa245045790e66c492bd616ddfc3e7687623f8c8ca67e993ddd36042ed",
+    "test_files": [
+      "tests/integration/test_recommendations.py",
+      "tests/integration/test_release_activation.py",
+      "tests/integration/test_serving_http.py",
+      "tests/integration/test_events.py",
+      "tests/integration/test_demo.py",
+      "tests/integration/test_ui.py",
+      "tests/integration/test_pipeline.py",
+      "tests/integration/test_release_transfer.py",
+      "tests/integration/test_backup_restore.py"
+    ],
+    "tests": {
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cleanup_ok": true,
+    "real_data_mounted": false,
+    "test_evaluated": false,
+    "training_performed": false,
+    "duration_seconds": 19.89356054199743
+  },
+  "checks": {
+    "junit_cases_recounted": 60,
+    "junit_sha256": "edbbeeeee13b1a2049a58112753f26447d69f247605cb70504ef909da0ebfa02",
+    "report_sha256": "ae0a203c87f04a3ff147389d0ef93a8eee590a2373bc4ebb75104b89c8cfa89f"
+  },
+  "environment": {
+    "profile": "hm-acceptance",
+    "configured_memory_gib": 8,
+    "configured_cpus": 4,
+    "effective_memory_bytes": 8307101696,
+    "worker_memory_gib": 5,
+    "postgres_memory_mib": 512
+  },
+  "limitations": [
+    "Synthetic fixtures only; not a new H&M evaluation or benchmark.",
+    "No peak RAM measurement or external host HTTP publication test in this suite.",
+    "UI tested by AppTest/HTTP, not a recorded browser demo."
+  ],
+  "t8_closed": false,
+  "restoration": {
+    "profile": "default",
+    "containers": 22,
+    "same_ids_and_images": true,
+    "running": 22,
+    "healthy": 22,
+    "receipt_sha256": "5b94fc09e61ad9d9c74ebbf463ba490db9e2f49696534b5a8b4fd1df2656b71f",
+    "acceptance_profile_stopped": true,
+    "mac24_touched": false
+  }
+}

@@ -27,6 +27,12 @@ La salida indica `.runtime/hmrec-acceptance-.../report.json`; JUnit y log quedan
 
 Este reporte no es un ZIP del protocolo `github-handoff`: no enviarlo a ese lector/publicador. La integración de transporte y el ensayo remoto requieren un paso posterior revisado. Un rechazo de preflight (motor ocupado, recursos o imagen incompatible) no crea reporte ni recursos; se imprime el motivo.
 
-## Validación actual
+## Validación ejecutada — 24 de octubre de 2026
 
-Cinco pruebas host verifican rechazo de motor ocupado/capacidad insuficiente, JUnit sin omisiones ausencia de montajes reales en el comando y conservación del log ante timeout. Suite host: 246 pruebas, 245 aprobadas y una opcional omitida. Se ejecutó el comando contra el motor local ocupado: rechazó correctamente antes de crear recursos. **La suite Docker completa de aceptación aún no se ha ejecutado**, tampoco bootstrap nuevo en esta entrega. T8/E8 permanecen abiertos. No pedir a mac24 una corrida antes de preparar un motor dedicado y revisar capacidad.
+[Aceptación local](../evidence/acceptance-local.json) en checkout limpio `8c8b730feed982f2c45a6118933d36cb3096294a`: **60 pruebas, cero fallos, errores u omisiones**, 19.894 s incluyendo preparación y limpieza de los recursos de la prueba (no construcción de imagen/VM). Se recontaron los casos del JUnit y se registraron sus huellas. Se ejecutó en la Mac principal ARM64 de 16 GiB, no en mac24.
+
+Con autorización del usuario, se pausó `default`, se preparó `hm-acceptance` con 8 GiB/4 CPU (8,307,101,696 bytes efectivos) y se construyó jobs desde el checkout con `uv.lock` y CA local. PostgreSQL se descargó por digest. Tras el ensayo se detuvo `hm-acceptance` y se restauró `default`: los 22 contenedores originales conservaron ID/imagen y quedaron activos y healthy. No se modificó mac24 ni se montaron datos H&M. El perfil de aceptación y sus imágenes quedan conservados, detenidos.
+
+La suite host previa tiene 246 pruebas: 245 aprobadas y una opcional omitida. La aceptación Docker de 60 casos es una comprobación distinta, sin omisiones. No representa un benchmark, una medición de pico de memoria ni una grabación de navegador. La suite usa AppTest/HTTP para UI y componentes de pipeline; no reproduce un scheduler Airflow completo ni el ensayo H&M.
+
+La aceptación sintética ya está comprobada. Siguen pendientes capturas/video de demo y revisión/tag de entrega; T8/E8 todavía no se declaran cerrados. No repetir test, carga ni esta suite para fabricar evidencia visual.

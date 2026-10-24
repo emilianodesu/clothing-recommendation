@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Aceptación sintética cerrada en Mac principal:** [evidencia](evidence/acceptance-local.json), 60 pruebas aprobadas sin omisiones en 19.894 s, checkout `8c8b730`. Perfil aislado detenido y 22 contenedores originales restaurados con mismo ID/imagen y healthy; mac24 intacta. No repetir aceptación/test/carga. Próximo paso: capturas de demo sintética y revisión/tag de entrega. T8/E8 siguen abiertos hasta completar esos entregables. Esta nota prevalece sobre los pendientes históricos siguientes.
+
 **Aceptación sintética preparada:** `verify --suite acceptance` implementado; leer [guía](docs/acceptance.md). Exige motor Docker vacío y al menos 7 GiB/2 CPU; no detiene servicios ni monta datos reales. Pruebas host aprobadas y rechazo de motor ocupado comprobado; ensayo Docker completo pendiente. No ejecutarlo en mac24 operativo ni crear otra VM sin revisar capacidad. No repetir test, carga o entrenamiento.
 
 **T8-D documental preparado:** leer [informe](docs/final-report.md), [ficha H](docs/model-card.md), [cobertura](docs/course-coverage.md), [demo](docs/demo.md) e [inventario](docs/delivery-status.md). No ejecutar campañas/test ni restauraciones históricas. Siguen pendientes aceptación final sintética (CLI aún no implementada), capturas y tag de entrega; T8/E8 no cerrados. Esta nota prevalece sobre los comandos históricos.
