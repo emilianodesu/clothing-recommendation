@@ -1,0 +1,42 @@
+{
+  "run_id": "final-mac24-20261024T062636Z-a62a3010",
+  "status": "failed",
+  "review_status": "recovery_pending_requires_private_logs",
+  "archive_sha256": "0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493",
+  "result": {
+    "protocol": "final-hp-v1",
+    "status": "failed",
+    "evaluation": null,
+    "exit_code": null,
+    "duration_seconds": 0.0,
+    "clock_discrepancy_seconds": 0.0,
+    "error_type": "ValueError",
+    "resources_ok": false,
+    "source_preserved": false,
+    "auxiliaries_restored": false,
+    "transitions": [],
+    "test_started": false,
+    "training_performed": false,
+    "t8_closed": false
+  },
+  "environment": {
+    "source_commit": "fbcfca350fe865eec5c51220d22f0db2244029b6",
+    "runner_tree_sha256": "e5e017b144a88e5b4d81744ffb5c98a5951a12580e9ade3ee7e7bc012263ac57",
+    "worker_source_sha256": "fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1",
+    "image_sha256": "b145d091a7c4ec3280a0a8e876d2fed82fe7650fb7de553a75700f1bcd3c2e00",
+    "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+    "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+    "selection_archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+    "baseline_archive_sha256": "c30c903d50692e9e0a3cbfa7e58812e2e9122c11bd7c1285eaa614f6eb23722a",
+    "concurrency_archive_sha256": "2a9637f993272985427c70cfa368e7d271a441491a624badc66bc482cc97b810",
+    "state_before_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "state_after_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "observations": [
+    "Operator transcript reached real-test reservation, not evaluate_H_and_P_once",
+    "Report test_started=false; evaluation absent; reservation must be preserved",
+    "Recovery failed; absence of transitions does not establish which auxiliaries remain stopped",
+    "source_preserved=false is an uncompleted verification, not proof of data loss",
+    "Do not rerun evaluation, delete reservation, or update checkout before recovery diagnosis"
+  ]
+}
