@@ -150,3 +150,5 @@ Los datos reales, tokens y credenciales permanecen fuera del código versionado.
 Evaluación final T8-C: [lanzador único, mantenimiento y recuperación](docs/final-evaluation.md). Preparado para mac24 con SHA fijado; test real todavía no ejecutado.
 
 T8-C: seguimiento explícito `--preparation-followup` por espacio temporal de pruebas sintéticas; [instrucciones](docs/final-evaluation.md).
+
+T8-C: auxiliares recuperados según salida del operador; [continuación única de la reserva sin evaluación](docs/final-evaluation.md) mediante `--reserved-continuation`, con comprobación remota de estado y código inmutable.

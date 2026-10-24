@@ -60,7 +60,9 @@ def validate(report,r,env,rows):
     require(number(r['duration_seconds'],0,100000) and number(r['clock_discrepancy_seconds'],0,100000))
     require(r['error_type'] is None or re.fullmatch('[A-Za-z][A-Za-z0-9_]{0,63}',r['error_type']))
     if r['evaluation'] is not None:validate_evaluation(r['evaluation'])
-    require(set(env)=={'source_commit','runner_tree_sha256','worker_source_sha256','image_sha256','dataset_manifest_sha256','source_sha256','selection_archive_sha256','baseline_archive_sha256','concurrency_archive_sha256','state_before_sha256','state_after_sha256'})
+    base_env={'source_commit','runner_tree_sha256','worker_source_sha256','image_sha256','dataset_manifest_sha256','source_sha256','selection_archive_sha256','baseline_archive_sha256','concurrency_archive_sha256','state_before_sha256','state_after_sha256'}
+    require(set(env) in (base_env,base_env|{'reservation_parent_sha256','startup_archive_sha256'}))
+    if 'startup_archive_sha256' in env:require(env['startup_archive_sha256']=='0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493')
     require(env['source_commit']==report['source_commit'] and re.fullmatch('[a-f0-9]{40}',env['source_commit']))
     for k,v in env.items():
         if k!='source_commit':require(re.fullmatch('[a-f0-9]{64}',v))

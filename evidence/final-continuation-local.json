@@ -1,0 +1,30 @@
+{
+  "status": "prepared_not_executed_on_mac24",
+  "host_tests": {
+    "passed": 240,
+    "skipped": 1
+  },
+  "synthetic_docker": {
+    "passed": true,
+    "inspection_without_healthcheck": true,
+    "samples": 3,
+    "duration_seconds": 0.6253074139967794,
+    "peak_bytes": 114155520,
+    "memory_limit_bytes": 5368709120,
+    "source_mode": "existing_image_with_current_source_mounted_read_only",
+    "real_data_mounted": false
+  },
+  "worker_source_sha256": "fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1",
+  "checks": [
+    "worker stopped and no go/complete/evaluation markers",
+    "original reservation byte preservation",
+    "exclusive companion reservation",
+    "changed parent reservation blocks continuation",
+    "report requires both parent hashes and exact startup ZIP"
+  ],
+  "limitations": [
+    "No real H&M evaluation performed here",
+    "Recovery success is operator-reported; launcher rechecks remote state",
+    "T8-B sustained concurrency still not accredited"
+  ]
+}

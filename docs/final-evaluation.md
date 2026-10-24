@@ -2,6 +2,25 @@
 
 Estado: lanzador operativo preparado y validado localmente con datos sintéticos. La siguiente ejecución mac24 usa `scripts/mac24_t8_final.py --expected-commit SHA_COMPLETO`. **Todavía no se ha leído el test H&M.** No usar directamente el componente ni los prompts históricos. Una salida `passed` requiere revisión principal; no cambia la selección Q4 ni cierra todo T8.
 
+## Continuación vigente de la reserva no ejecutada
+
+El operador confirmó que `--preparation-followup --restore-only` terminó con «Servicios recuperados». Es una declaración de ejecución remota; el siguiente comando vuelve a comprobar contenedores y archivos en mac24 antes de autorizar trabajo.
+
+Usar el nuevo SHA entregado, con AC, tapa y Terminal abiertas:
+
+```bash
+python3 scripts/mac24_t8_final.py --reserved-continuation --expected-commit SHA_COMPLETO
+```
+
+Este modo sólo admite los dos ZIP históricos exactos y sus directorios. Verifica la reserva original de fbcfca3, H, fechas, fuente/dataset, 5GiB/2CPU/2hilos/5400s y la huella de código `fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1`. Exige el worker antiguo por nombre/imagen, **detenido**, sin go.json, complete.json, resultados ni directorio de evaluación. Verifica las seis identidades/límites recuperadas tanto en recovery.json como en Docker. No elimina archivos para satisfacer estas condiciones.
+
+La reserva `artifacts/.final-test-once.json` permanece byte por byte intacta. La continuación tiene un registro exclusivo adicional `artifacts/.final-test-continuation.json`, ligado al SHA256 de la reserva original y al ZIP fallido de arranque. Usa estado nuevo `.runtime/t8-final-reserved-continuation` y salida privada nueva. La presencia del estado, registro adicional o un intento desconocido impide otra ejecución. Un fallo durante preparación tampoco autoriza reintentar automáticamente.
+
+Tras los preflight se repite la ventana de mantenimiento ya descrita, construcción sólo jobs, comprobación del código instalado y suite sintética. El código de evaluación debe seguir siendo idéntico al de la reserva; no se permiten cambios de modelos, cortes, recursos o métricas. El informe agregado incluye `reservation_parent_sha256` y `startup_archive_sha256` para auditar la continuidad. No activa ningún paquete en el servicio.
+
+Si se interrumpe, conservar todo y pedir revisión. Para recuperar exclusivamente los servicios de **esta** continuación se usa el mismo SHA con `--reserved-continuation --restore-only`; no utilizar el modo de evaluación de nuevo. Los ZIP anteriores siguen failed; un resultado nuevo requiere revisión principal.
+
+
 ## Recuperación vigente tras fallo de inspección
 
 `final-mac24-20261024T062636Z-a62a3010` conserva failed y su reserva global. La traza de arranque y recuperación apunta a docker inspect. Se reprodujo localmente el error exacto `map has no entry for key "Health"`: el worker no tiene healthcheck. La plantilla usa ahora `index` para consultar la clave opcional y devolver `none`. La prueba Docker real falló antes y pasó después.

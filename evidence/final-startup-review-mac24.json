@@ -45,5 +45,12 @@
     "correction": "Use with index .State \"Health\"; absent key yields health none",
     "local_real_docker_regression": "failed before correction; passed after correction",
     "recovery_scope": "Only restore-only with preparation-followup; exact failed ZIP and reservation from fbcfca3, no go/evaluation; reservation remains intact"
+  },
+  "operator_recovery": {
+    "reported_success": true,
+    "source_commit": "8e13522a4bffd947ab564f9ab5c06bcbaeec70e9",
+    "test_executed_by_recovery": false,
+    "independent_remote_files_inspection": false,
+    "next_step": "Guarded reserved-continuation verifies recovery and unstarted worker locally on mac24 before evaluation"
   }
 }

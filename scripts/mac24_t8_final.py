@@ -30,6 +30,7 @@ ROOT=Path(__file__).resolve().parents[1]
 ORIGINAL_STATE=ROOT/'.runtime/t8-final-maintenance'
 STATE=ORIGINAL_STATE
 FOLLOWUP=False
+CONTINUATION=False
 PREPARATION_RUN='final-mac24-20261024T061640Z-94b97146'
 PREPARATION_SHA='127d43d24b2117f050ded59e36ed0953a51258a5c4117db8907b8535b6e05329'
 
@@ -62,7 +63,12 @@ def context(commit):
 
 
 def no_attempt(ctx):
-    require(not STATE.exists() and not (ctx['art']/'.final-test-once.json').exists())
+    require(not STATE.exists())
+    if CONTINUATION:
+        from final_continuation import check
+        ctx['continuation']=check(ROOT,ctx)
+        return
+    require(not (ctx['art']/'.final-test-once.json').exists())
     if FOLLOWUP:
         archive=ctx['art']/'handoff'/(PREPARATION_RUN+'.zip')
         require(sha(archive)==PREPARATION_SHA)
@@ -173,13 +179,14 @@ def run(commit):
         rid='final-mac24-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8]
         private=art/'final-private'/rid;private.mkdir(parents=True)
         STATE.mkdir(parents=True)
-        saved=dict(preparation_followup=FOLLOWUP,source_commit=commit,aux=ctx['aux'],aux_before={r['container_id']:inspect(r['container_id']) for r in ctx['aux']},before=ctx['before'],worker_name='hmrec-'+rid,image_id=None,private=str(private),run_id=rid)
+        saved=dict(reserved_continuation=CONTINUATION,preparation_followup=FOLLOWUP,source_commit=commit,aux=ctx['aux'],aux_before={r['container_id']:inspect(r['container_id']) for r in ctx['aux']},before=ctx['before'],worker_name='hmrec-'+rid,image_id=None,private=str(private),run_id=rid)
         write_json(STATE/'state.json',saved)
         r=empty_result();samples=[];started_at=now()
         env=dict(source_commit=commit,runner_tree_sha256=runner_digest(ROOT),worker_source_sha256='0'*64,image_sha256='0'*64,
             dataset_manifest_sha256=selection['dataset_manifest_sha256'],source_sha256=selection['source_sha256'],
             selection_archive_sha256=selection['selection']['archive_sha256'],baseline_archive_sha256=ctx['base']['archive']['sha256'],
             concurrency_archive_sha256=ctx['concurrency']['archive']['sha256'],state_before_sha256='0'*64,state_after_sha256='0'*64)
+        if CONTINUATION:env.update(ctx['continuation'])
         try:
             env['state_before_sha256']=state_hash(v)
             with stage('maintenance_stop_six_auxiliaries'):stop(ctx['aux'])
@@ -196,6 +203,9 @@ def run(commit):
                 expected=digest.hexdigest()
                 actual=command(container_args(saved['worker_name']+'-synthetic',image,synthetic=True)+['--rm',image,'-c','from hm_recommender.api.runtime import source_digest;print(source_digest())'])
                 require(actual==expected);env['worker_source_sha256']=actual
+                if CONTINUATION:
+                    from final_continuation import WORKER_SOURCE
+                    require(actual==WORKER_SOURCE)
             with stage('synthetic_tests_in_frozen_image'):
                 args=container_args(saved['worker_name']+'-synthetic',image,synthetic=True)
                 command(args+['--rm',image,'-m','pytest','-q','-p','no:cacheprovider','tests/integration/test_final_evaluation.py','tests/integration/test_quality_folds.py'],log=private/'synthetic-private.log',timeout=600)
@@ -203,7 +213,11 @@ def run(commit):
             require(shutil.disk_usage(art).free>=20*2**30)
             checkout_commit(ROOT,commit)
             with stage('reserve_real_test_once'):
-                reserve(art/'.final-test-once.json',dict(run_id=rid,protocol='final-hp-v1',selected_method='H',window=WINDOW,limits=dict(memory_bytes=5*2**30,cpus=2,threads=2,max_seconds=5400),**env))
+                receipt=dict(run_id=rid,protocol='final-hp-v1',selected_method='H',window=WINDOW,limits=dict(memory_bytes=5*2**30,cpus=2,threads=2,max_seconds=5400),**env)
+                if CONTINUATION:
+                    from final_continuation import reserve_continuation
+                    reserve_continuation(art,env['reservation_parent_sha256'],receipt)
+                else:reserve(art/'.final-test-once.json',receipt)
             config=dict(dataset_dir='/dataset',source_sha256=selection['source_sha256'],dataset_manifest_sha256=selection['dataset_manifest_sha256'])
             write_json(private/'config.json',config)
             args=container_args(saved['worker_name'],image)
@@ -234,6 +248,7 @@ def run(commit):
             try:
                 with stage('recover_auxiliaries'):
                     r['transitions']=recover(ctx,saved);r['auxiliaries_restored']=True
+                if CONTINUATION:require(sha(art/'.final-test-once.json')==env['reservation_parent_sha256'])
                 env['state_after_sha256']=state_hash(v)
                 r['source_preserved']=env['state_after_sha256']==env['state_before_sha256']!='0'*64
             except BaseException as error:
@@ -257,13 +272,15 @@ def run(commit):
 
 
 def main():
-    global STATE,FOLLOWUP
+    global STATE,FOLLOWUP,CONTINUATION
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
-    p.add_argument('--preparation-followup',action='store_true')
+    origin=p.add_mutually_exclusive_group()
+    origin.add_argument('--preparation-followup',action='store_true');origin.add_argument('--reserved-continuation',action='store_true')
     modes=p.add_mutually_exclusive_group();modes.add_argument('--preflight-only',action='store_true');modes.add_argument('--restore-only',action='store_true')
     a=p.parse_args();os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT='colima-hm-project');os.umask(0o077)
-    FOLLOWUP=a.preparation_followup
+    FOLLOWUP=a.preparation_followup;CONTINUATION=a.reserved_continuation
     STATE=ROOT/'.runtime/t8-final-preparation-followup' if FOLLOWUP else ORIGINAL_STATE
+    if CONTINUATION:STATE=ROOT/'.runtime/t8-final-reserved-continuation'
     if a.restore_only:return restore_only(a.expected_commit)
     if a.preflight_only:
         preflight(a.expected_commit);print('Preflight OK; no se detuvo ningún servicio ni se reservó test.',flush=True);return 0
