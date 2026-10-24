@@ -1,0 +1,132 @@
+{
+  "run_id": "final-mac24-20261024T061640Z-94b97146",
+  "source_commit": "c92321ed4082c36291123ef5f23859781aa5f790",
+  "status": "failed",
+  "review_status": "awaiting_private_synthetic_log",
+  "archive": {
+    "sha256": "127d43d24b2117f050ded59e36ed0953a51258a5c4117db8907b8535b6e05329",
+    "bytes": 4190
+  },
+  "verified": {
+    "package_reader": true,
+    "runner_hash": true,
+    "worker_source_hash": true,
+    "auxiliary_identities_and_limits": true,
+    "six_auxiliaries_reported_healthy": true,
+    "state_aggregate_hash_equal": true
+  },
+  "result": {
+    "protocol": "final-hp-v1",
+    "status": "failed",
+    "evaluation": null,
+    "exit_code": null,
+    "duration_seconds": 0.0,
+    "clock_discrepancy_seconds": 0.0,
+    "error_type": "ValueError",
+    "resources_ok": false,
+    "source_preserved": true,
+    "auxiliaries_restored": true,
+    "transitions": [
+      {
+        "scope": "other",
+        "service": "postgres",
+        "container_id": "b13f4a2bb982b88aa5f8b7ec2a845c1cbb2c67ef229e76838eff23fc50471cfc",
+        "image_id": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+        "running": true,
+        "started_at": "2026-10-24T06:16:51.570015309Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 536870912,
+        "nano_cpus": 0
+      },
+      {
+        "scope": "other",
+        "service": "api",
+        "container_id": "ad4d5b814dffc547f3f5b976fd552ce68e6b6bfcfc4a84d0fd0b68d443a06ee7",
+        "image_id": "sha256:cee107828eeb5cdf4e7895d259749a7839f81e7f076162f89e4902d6358a99cf",
+        "running": true,
+        "started_at": "2026-10-24T06:16:57.843484903Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 4294967296,
+        "nano_cpus": 2000000000
+      },
+      {
+        "scope": "original",
+        "service": "mlflow",
+        "container_id": "adff71cf5beedd35a1aa805fe9de496159a9d8dc19c5320a49a9e1846d33001a",
+        "image_id": "sha256:c571c0b6f8aaeb5054ebb2eac825289f0cdd36ebe746d3cf271db2a1a68a0312",
+        "running": true,
+        "started_at": "2026-10-24T06:17:04.158681716Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 1073741824,
+        "nano_cpus": 1000000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-api",
+        "container_id": "fc006354bcf43bcd6e5e156892d5db8b7ed9f0f3b4fa0535f27bcf79204d403b",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:17:16.539288646Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 805306368,
+        "nano_cpus": 500000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-dag-processor",
+        "container_id": "3214a818fd082fcf790670935c685fc1646fc412e37421f22be4e9202da611db",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:17:28.926520496Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 536870912,
+        "nano_cpus": 500000000
+      },
+      {
+        "scope": "original",
+        "service": "airflow-scheduler",
+        "container_id": "f3f72e958b84b7052d48d76510039f2b10b02c8d49145c0eb9fc4866b437d7ed",
+        "image_id": "sha256:20abd69459bed09941296e268089768ce87765df00162cf8635697b91ad4c7ec",
+        "running": true,
+        "started_at": "2026-10-24T06:17:41.286567492Z",
+        "restart_count": 0,
+        "health": "healthy",
+        "memory_bytes": 5368709120,
+        "nano_cpus": 2000000000
+      }
+    ],
+    "test_started": false,
+    "training_performed": false,
+    "t8_closed": false
+  },
+  "environment": {
+    "source_commit": "c92321ed4082c36291123ef5f23859781aa5f790",
+    "runner_tree_sha256": "1a0a071b65a0b0c725dfcdb91b237037841ef03e7fd3749cae0e868877262935",
+    "worker_source_sha256": "fc2ab313ffaa4f708c62f54bd322eeae9d8a41d1dba585a27cb661242a9902d1",
+    "image_sha256": "e8a37018c850be58cd67e01c6d3a7b38665cb2905c8e4f7bc5856f114cda3385",
+    "dataset_manifest_sha256": "e04454c8ee54078fb495c4a0765d102b57d4438c3cd2839849b5603d303311a7",
+    "source_sha256": "e4695ac063fd621a29ba83523aa97be4041a91c45fba331162784f55771fbe9c",
+    "selection_archive_sha256": "e2da33963ca1c19b8315d043ff7c0d3ca184d33b8106f5f64f0c11a35b9b6aca",
+    "baseline_archive_sha256": "c30c903d50692e9e0a3cbfa7e58812e2e9122c11bd7c1285eaa614f6eb23722a",
+    "concurrency_archive_sha256": "2a9637f993272985427c70cfa368e7d271a441491a624badc66bc482cc97b810",
+    "state_before_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44",
+    "state_after_sha256": "ecb12eeda5cd1d02ccbc3d696c4a9d01498ef2596ec04382baed905d81f97a44"
+  },
+  "conclusions": [
+    "Stopped at synthetic tests per operator transcript, before reserve_real_test_once in reviewed source",
+    "test_started=false and evaluation=null; real test not evaluated by this run",
+    "Six auxiliary identities and limits match audited capacity inventory; recovery reported healthy",
+    "resource samples absent because evaluator not launched; resources_ok=false is not measured memory failure",
+    "Root cause unknown: ZIP deliberately excludes synthetic-private.log",
+    "Do not repeat evaluation or remove maintenance state; do not run restore-only because recovery succeeded"
+  ],
+  "limits": [
+    "Remote logs and filesystem not inspected",
+    "State preservation based on aggregate hashes and reviewed code, not row-by-row database comparison"
+  ]
+}
