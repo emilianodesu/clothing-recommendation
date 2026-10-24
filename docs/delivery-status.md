@@ -2,6 +2,11 @@
 
 Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
+Por solicitud posterior del usuario se prepara [h-cycle-v1](mac24-h-cycle.md): una
+observación del ciclo real breve de H con API bajo carga. Es una validación
+adicional con reserva y criterios propios; todavía no ejecutada en mac24. No
+modifica el resultado histórico T8-B ni constituye una nueva evaluación test.
+
 El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](../evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la [revisión visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) también quedó aceptada, en lectura. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
 
 ## Documentación disponible

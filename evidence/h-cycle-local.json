@@ -1,0 +1,47 @@
+{
+  "protocol": "h-cycle-local-preparation-v1",
+  "date": "2026-10-24",
+  "status": "local_checks_passed",
+  "base_commit": "e2b8dfebe910ceecde5ba3636666adc06c5e593f",
+  "script_sha256": {
+    "scripts/h_cycle.py": "02e691bd57cf8024c3ad045a1081174dc8575aff61837580686321949bec6e83",
+    "scripts/h_cycle_worker.py": "0c4e1a4ad3433d4e35b4cb4e9ca4a0f3a394f0a6aac28ff1fbd432f930c0677b",
+    "scripts/mac24_h_cycle.py": "b1a4cbfb9422d0d904be9f12860c5464c40fbf3f2700503f1a920effd7610e2d"
+  },
+  "focused_tests": {
+    "run": 22,
+    "passed": 22,
+    "failed": 0
+  },
+  "host_suite": {
+    "run": 312,
+    "passed": 311,
+    "skipped": 1,
+    "seconds": 13.278,
+    "exit_code": 0,
+    "skip": "test_inspect_health requires explicit synthetic Docker fixture",
+    "notes": [
+      "First sandbox run blocked localhost socket fixtures; full suite passed with permitted localhost access.",
+      "Existing HTTP fixture emitted a ResourceWarning; no test failures."
+    ]
+  },
+  "review": {
+    "design": "no blocking ambiguity",
+    "independent_code_review": "findings addressed: partial GitHub publication and sampling cadence",
+    "additional_regression": "aggregate state verified again after auxiliary recovery"
+  },
+  "ssh_direct_attempt": {
+    "host": "mac24",
+    "outcome": "No route to host"
+  },
+  "docker_run_performed": false,
+  "h_m_cycle_run_performed": false,
+  "training_performed": false,
+  "test_evaluated": false,
+  "historical_t8_b_status": "failed",
+  "sustained_concurrency_proven": false,
+  "pending": [
+    "Execute new h-cycle-v1 once on mac24 through authorized Terminal SSH.",
+    "Download and independently audit the closed aggregate ZIP."
+  ]
+}

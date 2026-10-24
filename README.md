@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Validación adicional en preparación:** [ciclo real de H bajo carga](docs/mac24-h-cycle.md), autorizado por el usuario. Lanzador separado, una construcción sin activar y recuperación de tres auxiliares. Código y pruebas locales disponibles; ejecución mac24 y revisión pendientes. T8-B histórico conserva failed; no se reabre la evaluación test ni se acredita concurrencia sostenida.
+
 **UI de mac24 actualizada y aceptada:** `ui-deploy-f37f5b3b0443`, sin rollback. Regresión de revisión 4→5 y render contra API correctos; originales conservados y seis auxiliares saludables según el reporte auditado. [Resultado y límites](evidence/ui-deployment-review-mac24.json). La [revisión visual en Chrome](evidence/ui-visual-review-mac24.json) también quedó cerrada: cabecera, imágenes y catálogo correctos, sin acciones de escritura.
 
 **Operación vigente:** conservar el override privado `.runtime/ui-deploy-v1/active-override.json` y ambas imágenes por ID. No repetir despliegue, preparación ni `--restore-only`: esta ventana quedó cerrada. [Guía y resultado](docs/mac24-ui-deploy.md). La entrega académica y T8-B permanecen sin cambios.
