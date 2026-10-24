@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-24",
+  "status": "demonstrated",
+  "environment": "existing local synthetic Streamlit demo",
+  "catalog_articles": 24,
+  "customer": "demo-entrega-20261024",
+  "article": "0000000011",
+  "interaction_day": "2020-09-08",
+  "cutoff": "2020-09-09",
+  "observed_before": {
+    "strategy": "popularidad7d",
+    "article_rank": 12
+  },
+  "observed_after": {
+    "strategy": "historial28d+popularidad7d",
+    "article_rank": 1,
+    "reason": "Compra reciente"
+  },
+  "purchase_confirmed": true,
+  "refresh_clicked_once": true,
+  "release_id": "h-252b1cf16604da560e2ea8fbc8e937bafb225ddbd542cffcda68117919af2d4f",
+  "ui_image": "sha256:06ea65009dd74535e9f5dcf27da00dbe1d55427dec754e30df2056ee3dfdf732",
+  "api_source_sha256": "5245bef2ceaa76e065dc8d649d51a5c8735853bcb0bab5c3643c82d0b6b19464",
+  "deployed_source_commit": null,
+  "files": {
+    "docs/images/demo/01-fallback.jpg": {
+      "bytes": 65810,
+      "sha256": "c46739b762e12313d5f24aca4c07efdf5da044c367fea06b3668aa0c0d2f000b"
+    },
+    "docs/images/demo/02-evento-confirmado.jpg": {
+      "bytes": 60408,
+      "sha256": "fecc2331c214edadb8f6a60ff10f547ddad5a894a1a0e1ba52d46cf513fea7bf"
+    },
+    "docs/images/demo/03-recomendacion-actualizada.jpg": {
+      "bytes": 50102,
+      "sha256": "6d4a600e6ece433f4e41ffadaae1c955593e81c94ac731d19d5361cb38e303e2"
+    },
+    "docs/images/demo/04-primer-articulo.jpg": {
+      "bytes": 58734,
+      "sha256": "bc0fbdc2d0d57a052df530f440eaeda446b8c7c4e8003315eb0c0d89e91c660d"
+    }
+  },
+  "limitations": [
+    "Existing historical demo image; not a deployment of current HEAD. Image/source identity recorded; commit env unavailable.",
+    "Header revision remained 3 after ranking refresh; screenshots prove observed ranking change, not header metadata freshness.",
+    "No fresh installation/restore recording; those are covered by prior audited evidence.",
+    "No H&M data or mac24 operations; one synthetic purchase persisted intentionally."
+  ]
+}

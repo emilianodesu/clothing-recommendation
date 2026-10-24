@@ -1,5 +1,7 @@
 # Instrucciones para agentes
 
+**Entrega académica preparada (2026-10-24):** [notas de entrega](docs/release-notes.md) y [galería sintética](docs/demo-gallery.md). T8-D documental/visual entregado; aceptación sintética 60/60 y T8-C cerradas. T8-B conserva failed y no se declara cumplimiento global T8. No repetir campañas, test o aceptación. La demo histórica muestra cambio de ranking; su cabecera de revisión quedó desactualizada y no acredita despliegue del último commit. Esta nota prevalece sobre los pendientes históricos.
+
 **Aceptación sintética cerrada en Mac principal:** [evidencia](evidence/acceptance-local.json), 60 pruebas aprobadas sin omisiones en 19.894 s, checkout `8c8b730`. Perfil aislado detenido y 22 contenedores originales restaurados con mismo ID/imagen y healthy; mac24 intacta. No repetir aceptación/test/carga. Próximo paso: capturas de demo sintética y revisión/tag de entrega. T8/E8 siguen abiertos hasta completar esos entregables. Esta nota prevalece sobre los pendientes históricos siguientes.
 
 **Aceptación sintética preparada:** `verify --suite acceptance` implementado; leer [guía](docs/acceptance.md). Exige motor Docker vacío y al menos 7 GiB/2 CPU; no detiene servicios ni monta datos reales. Pruebas host aprobadas y rechazo de motor ocupado comprobado; ensayo Docker completo pendiente. No ejecutarlo en mac24 operativo ni crear otra VM sin revisar capacidad. No repetir test, carga o entrenamiento.

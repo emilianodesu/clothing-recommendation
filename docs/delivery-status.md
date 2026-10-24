@@ -1,5 +1,7 @@
 # Inventario de entrega T8-D
 
+**Entrega 2026-10-24:** [galería sintética disponible](demo-gallery.md) y [notas de versión](release-notes.md). Las referencias posteriores a capturas pendientes son históricas. T8-D entregado; T8-B conserva failed y no se declara aprobación global T8.
+
 **Aceptación ejecutada (2026-10-24):** [60 pruebas sintéticas aprobadas](../evidence/acceptance-local.json), sin omisiones, en la Mac principal; entorno original restaurado. Las notas anteriores de ejecución pendiente son históricas. Quedan capturas de demo y revisión/tag de entrega.
 
 **Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
