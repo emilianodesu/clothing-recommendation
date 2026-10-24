@@ -22,7 +22,7 @@ from mac24_t7 import check_airflow
 from pipeline_check import request_json
 from project import compose
 from concurrency_transition import inspect,verify,stop
-from final_control import reserve,recovery_allowed,maintenance_targets,restore_maintenance,unstarted_preparation
+from final_control import reserve,recovery_allowed,maintenance_targets,restore_maintenance,unstarted_preparation,verify_startup_recovery
 from final_handoff import empty_result,validate,resources_ok,require,WINDOW
 from events_memory import capture
 
@@ -149,7 +149,18 @@ def restore_only(commit):
     with (ctx['art']/'.heavy-launch.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         saved=json.loads((STATE/'state.json').read_text())
-        require(saved['source_commit']==commit and saved['aux']==ctx['aux'])
+        require(saved['aux']==ctx['aux'])
+        if saved['source_commit']!=commit:
+            # Narrow recovery-only exception for the audited missing Health key.
+            require(FOLLOWUP)
+            archive=ctx['art']/'handoff'/'final-mac24-20261024T062636Z-a62a3010.zip'
+            require(sha(archive)=='0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493')
+            reservation=json.loads((ctx['art']/'.final-test-once.json').read_text())
+            verify_startup_recovery(saved,reservation,read_report(archive))
+            private=ctx['art']/'final-private'/saved['run_id']
+            require(Path(saved['private']).resolve()==private.resolve())
+            require(not (private/'go.json').exists() and not (private/'evaluation').exists())
+
         recover(ctx,saved)
     print('Servicios recuperados. Conservar reserva; no repetir test.',flush=True)
 

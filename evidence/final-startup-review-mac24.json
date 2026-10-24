@@ -1,7 +1,7 @@
 {
   "run_id": "final-mac24-20261024T062636Z-a62a3010",
   "status": "failed",
-  "review_status": "recovery_pending_requires_private_logs",
+  "review_status": "diagnosed_recovery_only_patch_prepared",
   "archive_sha256": "0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493",
   "result": {
     "protocol": "final-hp-v1",
@@ -38,5 +38,12 @@
     "Recovery failed; absence of transitions does not establish which auxiliaries remain stopped",
     "source_preserved=false is an uncompleted verification, not proof of data loss",
     "Do not rerun evaluation, delete reservation, or update checkout before recovery diagnosis"
-  ]
+  ],
+  "diagnosis": {
+    "cause": "docker inspect Go template dereferences absent .State.Health on worker without healthcheck",
+    "reproduced_error": "map has no entry for key \"Health\"",
+    "correction": "Use with index .State \"Health\"; absent key yields health none",
+    "local_real_docker_regression": "failed before correction; passed after correction",
+    "recovery_scope": "Only restore-only with preparation-followup; exact failed ZIP and reservation from fbcfca3, no go/evaluation; reservation remains intact"
+  }
 }

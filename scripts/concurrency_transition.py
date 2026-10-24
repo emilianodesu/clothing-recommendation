@@ -5,7 +5,7 @@ from mac24_terminal import command
 
 
 def inspect(cid):
-    template='{"container_id":{{json .Id}},"image_id":{{json .Image}},"running":{{.State.Running}},"started_at":{{json .State.StartedAt}},"restart_count":{{.RestartCount}},"health":{{if .State.Health}}{{json .State.Health.Status}}{{else}}"none"{{end}},"memory_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+    template='{"container_id":{{json .Id}},"image_id":{{json .Image}},"running":{{.State.Running}},"started_at":{{json .State.StartedAt}},"restart_count":{{.RestartCount}},"health":{{with index .State "Health"}}{{json .Status}}{{else}}"none"{{end}},"memory_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
     return json.loads(command(['docker','inspect',cid,'--format',template]))
 
 

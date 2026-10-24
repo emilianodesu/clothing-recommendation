@@ -2,6 +2,19 @@
 
 Estado: lanzador operativo preparado y validado localmente con datos sintéticos. La siguiente ejecución mac24 usa `scripts/mac24_t8_final.py --expected-commit SHA_COMPLETO`. **Todavía no se ha leído el test H&M.** No usar directamente el componente ni los prompts históricos. Una salida `passed` requiere revisión principal; no cambia la selección Q4 ni cierra todo T8.
 
+## Recuperación vigente tras fallo de inspección
+
+`final-mac24-20261024T062636Z-a62a3010` conserva failed y su reserva global. La traza de arranque y recuperación apunta a docker inspect. Se reprodujo localmente el error exacto `map has no entry for key "Health"`: el worker no tiene healthcheck. La plantilla usa ahora `index` para consultar la clave opcional y devolver `none`. La prueba Docker real falló antes y pasó después.
+
+Con el **nuevo SHA entregado**, ejecutar sólo:
+
+```bash
+python3 scripts/mac24_t8_final.py --preparation-followup --restore-only --expected-commit SHA_COMPLETO
+```
+
+El cambio de commit para recuperación se admite exclusivamente contra el ZIP SHA256 `0f9ebe74b916eb51a7ae82cde4bc847b83a610236093d64489b7f48c346e6493`, el run_id/commit original fbcfca3 y la reserva de imagen coincidente. Exige ausencia de go.json y evaluación. Comprueba el worker por identidad; si está esperando sin autorización, lo detiene; si ya salió, lo conserva detenido. Recupera los seis auxiliares con los mismos IDs, comprueba salud, H y generaciones originales, y guarda recovery.json separado. No ejecuta pruebas, construcción, entrenamiento ni evaluación. No borra la reserva ni reescribe el ZIP failed. Si hay otro error, conservar salida y pedir revisión; no ejecutar el modo normal.
+
+
 ## Seguimiento vigente por fallo de preparación
 
 El intento `final-mac24-20261024T061640Z-94b97146` conserva **failed**. El log recibido identifica cinco fallos de ingestión sintética: `/tmp` tenía un techo de 512 MiB y la ingestión exige 512 MiB **libres**, después de escribir archivos iniciales. Se reprodujo localmente (5 fallos/3 aprobadas). Se corrige exclusivamente el tmpfs de contenedores sintéticos a 1 GiB; las ocho pruebas pasan con las opciones reales de aislamiento. No se reduce el control de espacio ni se cambia el modelo, los umbrales, la RAM de 5 GiB o el tmpfs de 512 MiB del evaluador real.

@@ -47,3 +47,15 @@ def unstarted_preparation(private):
     for name in ('config.json','go.json','ready.json','complete.json','evaluation-result.json','evaluation'):
         if (private/name).exists() or (private/name).is_symlink():
             raise ValueError('Real worker evidence exists; no preparation follow-up')
+
+
+def verify_startup_recovery(saved,reservation,report):
+    commit='fbcfca350fe865eec5c51220d22f0db2244029b6'
+    run='final-mac24-20261024T062636Z-a62a3010'
+    if any(v['source_commit']!=commit or v['run_id']!=run for v in (saved,reservation,report)):
+        raise ValueError('Unrecognized startup recovery origin')
+    if saved['image_id']!='sha256:'+reservation['image_sha256']:
+        raise ValueError('Reserved image differs')
+    r=report['result']
+    if report['status']!='failed' or r['test_started'] is not False or r['evaluation'] is not None or r['auxiliaries_restored'] is not False:
+        raise ValueError('Not the unstarted failed recovery')
