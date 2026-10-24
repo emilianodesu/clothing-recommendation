@@ -1,5 +1,7 @@
 # Selección del motor y explicación académica
 
+**Estado al 24 de octubre de 2026:** T4–T7, T8-A y T8-C cerradas tras revisión; el test ya se ejecutó y no debe repetirse. T8-B conserva failed por solapamiento insuficiente. [Informe consolidado](final-report.md) e [inventario de pendientes T8-D](delivery-status.md). Las referencias a pasos futuros o test reservado en la narración histórica de abajo no reabren esas campañas.
+
 ## Criterio confirmado por el usuario
 
 El 20 de octubre de 2026 el usuario confirmó que importa obtener el mejor resultado posible, independientemente del framework. Los experimentos relacionados con el temario pueden permanecer como evidencia académica aunque no formen parte del motor que se despliegue. La explicación debe distinguir por qué se seleccionó un método de las hipótesis sobre sus resultados.

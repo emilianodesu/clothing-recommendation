@@ -1,5 +1,7 @@
 # Servicio local H (T4-B)
 
+**Estado al 24 de octubre de 2026:** T4–T7, T8-A y T8-C cerradas tras revisión; el test ya se ejecutó y no debe repetirse. T8-B conserva failed por solapamiento insuficiente. [Informe consolidado](final-report.md) e [inventario de pendientes T8-D](delivery-status.md). Las referencias a pasos futuros o test reservado en la narración histórica de abajo no reabren esas campañas.
+
 La API sirve el motor H seleccionado en Q4. Consume el paquete schema2 aprobado
 en T4-A; no entrena, consulta Qdrant ni necesita MLflow. PostgreSQL guarda las
 versiones preparadas y el puntero activo/anterior. La imagen conserva las

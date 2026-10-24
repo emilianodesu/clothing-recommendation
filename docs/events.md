@@ -1,8 +1,10 @@
 # T5: interfaz, eventos y perfiles operativos
 
-H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M fue revisado y conserva estado fallido por memoria PostgreSQL; T5/E4 siguen abiertas. No confundir la implementación local con cierre remoto o aceptación T8.
+**Estado al 24 de octubre de 2026:** T4–T7, T8-A y T8-C cerradas tras revisión; el test ya se ejecutó y no debe repetirse. T8-B conserva failed por solapamiento insuficiente. [Informe consolidado](final-report.md) e [inventario de pendientes T8-D](delivery-status.md). Las referencias a pasos futuros o test reservado en la narración histórica de abajo no reabren esas campañas.
 
-Paso vigente: integrar y comprobar continuidad temporal y el siguiente contrato operativo. El [seguimiento de relojes/energía](clock-diagnostics.md) ya fue auditado como captura incompleta; no se repite ni hay otro ensayo H&M pendiente. La causa histórica sigue desconocida y el nuevo protocolo debe verificarse antes de otra aceptación.
+H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M histórico conserva estado fallido por memoria PostgreSQL; el protocolo operativo posterior fue auditado y cerró T5/E4. Véase [auditoría operativa](../evidence/events-operational-review-mac24.json). No confundir ese cierre con aceptación completa T8.
+
+Paso histórico, ya superado por el cierre operativo: integrar y comprobar continuidad temporal y el siguiente contrato operativo. El [seguimiento de relojes/energía](clock-diagnostics.md) ya fue auditado como captura incompleta; no se repite ni hay otro ensayo H&M pendiente. La causa histórica sigue desconocida y el nuevo protocolo debe verificarse antes de otra aceptación.
 
 ## Demo reproducible sin Kaggle
 

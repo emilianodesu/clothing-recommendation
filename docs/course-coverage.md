@@ -1,6 +1,6 @@
 # Cobertura del temario y límites de la entrega
 
-La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está cerrada y H seleccionado tras la [auditoría](../evidence/quality-decision-mac24.json); API, publicación de artefactos, recuperación y prueba de carga corresponden a T4–T8.
+La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está cerrada y H seleccionado tras la [auditoría](../evidence/quality-decision-mac24.json); API, publicación y recuperación fueron auditadas en T4–T7; T8-A y T8-C están cerradas. T8-B conserva su limitación y la entrega final sigue pendiente.
 
 | Subtema | Implementación y evidencia | Alcance real |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ La evidencia describe una red comercial comprador–artículo y una proyección 
 | 4.2 Basada en contenido | Torre de artículos PyTorch y afinidades de atributos en LightGBM | Componentes de contenido; sin benchmark separado de recomendador exclusivamente por contenido |
 | 4.3 Filtrado colaborativo | Interacciones comprador–artículo y recuperación por coocurrencia G | Grafo de co-compra; no user-kNN como experimento separado |
 | 4.4 Factor latente | Dos torres PyTorch, embeddings y producto escalar T3 | Representaciones latentes; no afirmar que se ejecutó ALS/SVD/NMF |
-| 4.5 Evaluación | Cortes temporales, MAP/NDCG@12, Recall@200, segmentos, exposición, ablaciones y bootstrap Q4 | Test reservado para T8; selección offline no equivale a impacto online |
+| 4.5 Evaluación | Cortes temporales, MAP/NDCG@12, Recall@200, segmentos, exposición, ablaciones y bootstrap Q4 | Test único T8-C cerrado; selección offline no equivale a impacto online |
 | 4.6 Desafío Netflix | No reproducido | Contexto teórico, dataset y evaluación distintos |
 | 5.1 Redes como grafos | Grafo comercial Q2, nodos/aristas/poda/aislados | Transferencia de representación; no relaciones sociales observadas |
 | 5.2–5.4 Agrupamiento y comunidades (incluidas traslapadas) | No implementados | No inferir comunidades a partir de vecinos recuperados |
@@ -32,4 +32,4 @@ La cobertura se concentra en 3.1, 3.3, caminatas de 3.4, sistemas de recomendaci
 - [Selección](model-selection.md) y [Q4](quality-summary.md): criterios predefinidos, incertidumbre pareada y preferencia por coste entre resultados equivalentes.
 - [T3 y tres épocas](three-epochs.md): el modelo latente no superó las referencias temporales recientes. Más épocas no mejoraron MAP; conservar el resultado negativo y evitar atribuirlo sólo a PyTorch.
 
-Las implementaciones de baja latencia y actualización reproducible se evaluarán después. El objetivo del proyecto combina calidad comprobada y operación local portable; Docker/Parquet/contratos/reportes ya sustentan la reproducibilidad, mientras que la API aún está pendiente.
+API, eventos, programación y recuperación fueron auditados en T4–T7. T8-A acreditó 20 solicitudes/s y p95 14.099 ms en localhost; T8-C cerró test. T8-B conserva failed por solapamiento insuficiente: no se acredita concurrencia sostenida. Véanse [informe final](final-report.md) e [inventario de entrega](delivery-status.md).

@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**T8-D documental preparado:** leer [informe](docs/final-report.md), [ficha H](docs/model-card.md), [cobertura](docs/course-coverage.md), [demo](docs/demo.md) e [inventario](docs/delivery-status.md). No ejecutar campañas/test ni restauraciones históricas. Siguen pendientes aceptación final sintética (CLI aún no implementada), capturas y tag de entrega; T8/E8 no cerrados. Esta nota prevalece sobre los comandos históricos.
+
 **Estado vigente: T8-C cerrado tras revisión principal (24 de octubre).** `final-mac24-20261024T065353Z-bad40a67` aceptado; ver [auditoría](evidence/final-review-mac24.json). Test H/P ejecutado una vez: 68,984 compradores, MAP@12 H=0.02628451/P=0.00874768, Recall@200 H=0.20463536/P=0.18077114. H mejora agregados/recompra, pero pierde en descubrimiento; no cambiar selección mirando test. Ocho capturas, pico worker 2.570 GiB/5 GiB, cero swap/nuevos OOM, seis auxiliares recuperados. Conservar reservas y todos los intentos históricos; NO ejecutar otra vez ningún lanzador T8-C ni restore-only. T8-B conserva failed y concurrencia sostenida no acreditada; T8 completo sigue abierto. Próximo paso T8-D: informe, ficha del motor, cobertura académica y entrega/demo. Esta sección prevalece sobre todas las instrucciones históricas siguientes.
 
 

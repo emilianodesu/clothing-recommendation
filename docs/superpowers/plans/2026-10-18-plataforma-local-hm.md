@@ -1,5 +1,7 @@
 # Plataforma local de recomendaciones H&M — Implementation Plan
 
+**Entrega documental T8-D (2026-10-24):** disponibles [informe](../../final-report.md), [ficha](../../model-card.md), [cobertura](../../course-coverage.md), [guion](../../demo.md) e [inventario](../../delivery-status.md). Falta aceptación sintética final, capturas y tag; no marcar E8 completo. La interfaz `verify --suite acceptance` del plan aún no existe. No ejecutar otra carga ni test para satisfacer la casilla histórica: T8-A/C ya tienen evidencia auditada.
+
 **Actualización 2026-10-24:** T8-C cerrado tras [auditoría final](../../../evidence/final-review-mac24.json); test consumido, no repetir. T8-A cerrado; T8-B mantiene failed por solapamiento insuficiente, con operación secuencial y sin acreditar concurrencia sostenida. Pendiente T8-D: consolidar informe, ficha, cobertura, demostración e inventario de entrega; T8 global no cerrado. Las notas anteriores de test reservado son históricas.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

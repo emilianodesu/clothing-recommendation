@@ -1,5 +1,7 @@
 # Entrenamiento y evaluación T3
 
+**Estado al 24 de octubre de 2026:** T4–T7, T8-A y T8-C cerradas tras revisión; el test ya se ejecutó y no debe repetirse. T8-B conserva failed por solapamiento insuficiente. [Informe consolidado](final-report.md) e [inventario de pendientes T8-D](delivery-status.md). Las referencias a pasos futuros o test reservado en la narración histórica de abajo no reabren esas campañas.
+
 **Actualización del 20 de octubre:** este documento conserva el contrato y evidencia T3. La campaña nueva [Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md), con [Q1–Q4 cerradas y H seleccionado](quality-summary.md), añade tres cortes y otros métodos con [protocolo propio](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). No reutilizar el checkpoint entrenado hasta septiembre 9 en cortes anteriores; no reentrenar T3 por esta actualización. Test sigue reservado.
 
 ## Qué ejecuta
