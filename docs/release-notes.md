@@ -7,7 +7,7 @@ Tag de entrega: `entrega-academica-2026-10-24`. Es una instantánea del código,
 - [Informe final](final-report.md), [ficha H](model-card.md) y [mapa del curso](course-coverage.md).
 - [Instalación](setup.md), [operación](operations.md), [restauración](reproducibility.md) y [guion](demo.md).
 - [Galería de demo sintética](demo-gallery.md), con identidad de imagen, fuentes y huellas.
-- [Aceptación sintética](acceptance.md): 60 pruebas aprobadas, cero omisiones; código probado en `8c8b730`, posteriores cambios de entrega sólo documentales.
+- [Aceptación sintética](acceptance.md): 60 pruebas aprobadas, cero omisiones; código probado en `8c8b730`, los cambios hasta el tag fueron documentales; la corrección UI posterior tiene comprobaciones separadas.
 - Evaluación final H/P y campañas cerradas conservadas en `evidence/`, con ZIP originales referenciados en las auditorías.
 
 ## Límites que acompañan la entrega
@@ -24,7 +24,7 @@ No es necesario repetir campañas para presentar esta entrega. Cualquier ampliac
 
 Se corrigió en código la cabecera desactualizada: el selector ahora conserva únicamente el ID del stream y obtiene revisión, corte, versión y fechas de la respuesta actual. [Regresión](../evidence/ui-metadata-fix-local.json) con Streamlit real y HTTP simulado: falló antes y pasó después, preservando selección en dos actualizaciones. Suite host: 245 aprobadas y una omitida. La prueba se incorpora a events/acceptance para futuras imágenes.
 
-Esta corrección es posterior al tag de entrega y no altera sus capturas. No se reconstruyó ni recreó la UI existente y no se tocó mac24. La aceptación completa de 60 casos corresponde al commit anterior; no se atribuye automáticamente a este cambio.
+Esta corrección es posterior al tag de entrega y no altera sus capturas. En la fase de corrección no se desplegó; el despliegue local posterior se describe abajo. Mac24 permanece sin actualizar. La aceptación completa de 60 casos corresponde al commit anterior; no se atribuye automáticamente a este cambio.
 
 ## Despliegue posterior verificado
 

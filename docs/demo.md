@@ -1,10 +1,6 @@
 # Guía del evaluador y demostración
 
-**Entrega 2026-10-24:** [galería sintética disponible](demo-gallery.md) y [notas de versión](release-notes.md). Las referencias posteriores a capturas pendientes son históricas. T8-D entregado; T8-B conserva failed y no se declara aprobación global T8.
-
-**Aceptación ejecutada (2026-10-24):** [60 pruebas sintéticas aprobadas](../evidence/acceptance-local.json), sin omisiones, en la Mac principal; entorno original restaurado. Las notas anteriores de ejecución pendiente son históricas. Quedan capturas de demo y revisión/tag de entrega.
-
-**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
+Entrega documental y visual disponible: [inventario vigente](delivery-status.md), [galería](demo-gallery.md) y [notas de versión](release-notes.md). La aceptación sintética aprobó 60 pruebas en `8c8b730`; la corrección posterior de UI tiene [verificación propia](ui-metadata-deployment.md). T8-B conserva failed; no se declara aprobación global T8.
 
 ## Recorrido sin ejecutar trabajos (10–15 minutos)
 
@@ -47,10 +43,10 @@ Una vez anunciado el éxito, abrir la dirección UI de esa instalación (por def
 
 La idempotencia y conflicto se acreditan mediante el ensayo HTTP y pruebas, no pulsando dos compras nuevas: dos UUID distintos son eventos diferentes. No simular corrupción, caída o rollback sobre H&M durante una presentación. Usar la evidencia T4/T7 para explicar recuperación; cualquier nueva demostración de restore debe usar otro destino y presupuesto explícito.
 
-## Capturas o video pendientes
+## Material visual disponible
 
-Grabar sólo la demo sintética: arranque confirmado, recomendaciones, evento confirmado y actualización. Para recuperación puede mostrarse el reporte auditado, etiquetado «evidencia histórica», sin fingir una restauración en vivo. Evitar terminales con tokens, `.env`, identificadores reales de clientes y rutas privadas. Registrar commit, fecha, entorno y qué acciones se ejecutaron. Las capturas todavía no existen como entregable final de T8-D.
+La [galería sintética](demo-gallery.md) muestra recomendaciones, evento confirmado y actualización con identidad y huellas. La [captura posterior de la corrección](ui-metadata-deployment.md) acredita revisión 4→5 y fechas actualizadas en la demo local. Las capturas históricas no se editaron. No hay video de instalación ni restauración nueva; para recuperación se presenta el reporte T7 como evidencia histórica.
 
 ## Comandos que no forman parte de esta demo
 
-No ejecutar `mac24_t8_final.py`, reentrenamientos Q1–Q4, benchmarks históricos, `prune`, `down -v` ni limpieza de reservas. El CLI ofrece `verify --suite acceptance` para un motor dedicado; su ensayo integral está pendiente. No ofrece `project.py benchmark`; usar los reportes auditados de carga, sin repetirlos. La demo no sustituye esa aceptación final.
+No ejecutar `mac24_t8_final.py`, reentrenamientos Q1–Q4, benchmarks históricos, `prune`, `down -v` ni limpieza de reservas. El CLI ofrece `verify --suite acceptance` para un motor dedicado; su ensayo integral ya se ejecutó en un motor dedicado y está auditado; no repetirlo como parte de la presentación. No ofrece `project.py benchmark`; usar los reportes auditados de carga, sin repetirlos. La demo no sustituye esa aceptación final.

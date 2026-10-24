@@ -1,5 +1,13 @@
 # Proyecto final de Datos Masivos
 
+## Estado vigente y lectura de antecedentes
+
+El [inventario consolidado](docs/delivery-status.md) contiene los entregables completos y límites actuales. T8-D entregado, T8-A/T8-C cerradas y T8-B failed; no declarar T8/E8 globalmente aprobados. El tag académico existe. La corrección UI posterior está desplegada sólo localmente, no en mac24. No hay otra campaña ni evaluación test pendiente para presentar el trabajo.
+
+Las notas cronológicas siguientes conservan decisiones anteriores: expresiones como «próximo paso», «test reservado» o «capturas pendientes» no son órdenes vigentes. No ejecutar prompts históricos por aparecer en esta página. Para continuar, usar el inventario y la solicitud actual del usuario; conservar resultados, reservas y datos.
+
+## Antecedentes cronológicos conservados
+
 **UI local corregida y desplegada:** [procedimiento/evidencia](docs/ui-metadata-deployment.md), navegador confirmó revisión 4→5 y fechas actuales. Sólo UI sintética recreada; API/PostgreSQL conservaron identidad/generación, mac24 intacta. Conservar override local de imagen y rollback reconstruido; no usar comandos históricos para recrear otros servicios. El tag académico previo no se modifica.
 
 **Corrección posterior a entrega:** cabecera UI actualizada desde metadatos vigentes por ID de stream; [evidencia de regresión](evidence/ui-metadata-fix-local.json). Prueba Streamlit sintética RED→GREEN y 245 host aprobadas/una omitida. Código corregido, UI histórica y mac24 aún no desplegadas; no atribuirles la corrección ni repetir campañas/test. Tag y capturas de entrega intactos.

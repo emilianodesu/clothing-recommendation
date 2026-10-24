@@ -1,12 +1,8 @@
 # Inventario de entrega T8-D
 
-**Entrega 2026-10-24:** [galería sintética disponible](demo-gallery.md) y [notas de versión](release-notes.md). Las referencias posteriores a capturas pendientes son históricas. T8-D entregado; T8-B conserva failed y no se declara aprobación global T8.
+Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
-**Aceptación ejecutada (2026-10-24):** [60 pruebas sintéticas aprobadas](../evidence/acceptance-local.json), sin omisiones, en la Mac principal; entorno original restaurado. Las notas anteriores de ejecución pendiente son históricas. Quedan capturas de demo y revisión/tag de entrega.
-
-**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
-
-Fecha: 2026-10-24. Base auditada: `eb66c5a` (cierre T8-C); este cambio añade documentación, sin ejecutar H&M ni modificar servicios. T8 global permanece abierto.
+El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada y verificada sólo en la demo local. Mac24 aún conserva su UI anterior. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
 
 ## Documentación disponible
 
@@ -40,15 +36,26 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 
 `uv.lock` fija dependencias Python; `pyproject.toml` declara el proyecto; `compose.yaml` y Dockerfiles fijan imágenes/configuración; `configs/resources/` contiene presupuestos de jobs. Los reportes registran identidad efectiva de imagen, fuente y ejecución. No hay una sola imagen histórica común a todas las campañas: no construir sobre tags mutables y afirmar que eso reproduce sus bytes. El informe distingue el commit de cada evidencia de la revisión documental de entrega.
 
-## Pendientes antes de declarar E8 completo
+## Entregables completados y límites pendientes
 
-1. **Completado:** aceptación sintética integral en motor dedicado, 60 pruebas aprobadas; [evidencia](../evidence/acceptance-local.json).
-2. **Completado:** fuente/imagen/JUnit registrados, recursos temporales limpiados y servicios originales restaurados. Esta evidencia no reabre H&M ni test.
-3. Capturar la demo sintética según el guion, con versión y entorno. No publicar datos reales ni credenciales.
-4. Revisar los artefactos finales y crear un tag de entrega sobre el commit validado. No se creó todavía un tag final ni se declaró E7/E8 completos.
+| Elemento | Estado y evidencia |
+| --- | --- |
+| Aceptación sintética | 60 pruebas aprobadas, sin omisiones, en `8c8b730`; [reporte](../evidence/acceptance-local.json). No se atribuye esa ejecución a cambios posteriores. |
+| Limpieza y recuperación local | Recursos temporales retirados y 22 contenedores originales restaurados; misma evidencia de aceptación. |
+| Capturas de demo | [Galería](demo-gallery.md), con identidad y alcance; son capturas sintéticas, no una nueva instalación o restauración. |
+| Tag académico | `entrega-academica-2026-10-24`; conserva la entrega original y sus limitaciones. |
+| Corrección posterior de UI | [Regresión](../evidence/ui-metadata-fix-local.json) y [despliegue local verificado](ui-metadata-deployment.md); API/PostgreSQL conservados. |
+| UI de mac24 | La corrección posterior aún no está desplegada allí. Actualizar Git por sí solo no actualiza el contenedor. No es necesario para revisar la entrega documental. |
+| Concurrencia sostenida | No acreditada: T8-B permanece failed. Operación secuencial documentada; cualquier nueva validación necesita un protocolo separado. |
 
-T8-B no se convertirá a passed: la limitación de concurrencia sostenida debe figurar en la entrega. La política secuencial queda documentada, sin prometer frescura o rendimiento mientras se ejecutan trabajos pesados.
+## Cómo continuar
 
-## Decisiones de esta entrega documental
+Para presentar el proyecto, seguir [el recorrido del evaluador](demo.md): informe, selección de H, cobertura del temario, evaluación final, operación y demo sintética. No se necesita otra campaña de entrenamiento, evaluación test ni carga para presentar la evidencia existente.
 
-Se mantiene el checkout compartido autorizado y se conservan todos los experimentos. Se usan documentos Markdown versionados para que mac24 y el evaluador los lean sin herramientas adicionales. No se reejecuta `benchmark` como sugería el plan histórico: T8-A ya está auditado y T8-C consumió test. Los comandos de aceptación aún inexistentes se dejan explícitamente pendientes, evitando que un agente intente usarlos o interprete esta documentación como permiso para repetir campañas.
+Si se desea actualizar la UI de mac24, preparar primero un procedimiento específico que identifique imagen y proyecto activos, conserve una imagen de recuperación válida y verifique compatibilidad antes de recrear únicamente UI. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
+
+Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito retirado por el usuario), servicio público multiusuario, alta disponibilidad e impacto comercial online. No son resultados demostrados por las pruebas existentes.
+
+## Conservación de resultados
+
+No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
