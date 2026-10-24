@@ -1,5 +1,7 @@
 # Mantenimiento autorizado para recuperar la imagen UI
 
+**Estado vigente:** el intento `ui-recovery-22fc4a3dcc96` terminó failed por acceso al llavero durante bootstrap BuildKit; no comenzó build/probe y recuperó los seis auxiliares. Los comandos originales de esta página son históricos. Seguir exclusivamente la [continuación con configuración anónima aislada](mac24-ui-public-registry-followup.md); conservar la carpeta y el reporte originales.
+
 Estado: autorizado por el usuario el 2026-10-24 al responder «Continua» a la solicitud explícita de esta ventana. La autorización cubre una preparación con pausa y recuperación de los seis auxiliares indicados; no autoriza despliegue ni campañas. Base: `evidence/ui-recovery-mac24.json`, publicado por mac24 en `ddc8501`; aquí se recalcularon las sumas, sin inspeccionar el inventario privado.
 
 ## Alcance de la ventana
@@ -32,7 +34,7 @@ Las cuotas CPU de API/UI suman 2.5 y el constructor añade 1. PostgreSQL no tien
 5. Verificar mismos IDs/imágenes/límites de los auxiliares y sus nuevas generaciones esperadas; API/PostgreSQL/UI originales deben conservar también StartedAt y RestartCount. Registrar cualquier fallo de recuperación y no repetir la construcción. Conservar una ruta de recuperación por IDs para una interrupción de SSH.
 6. Devolver resumen con capacidad, digest, checks del probe, preservación de originales y recuperación de los seis auxiliares. No considerar terminada la ventana si queda algún auxiliar sin recuperar. La vuelta al inventario inicial restaura también su sobreasignación histórica; no acredita capacidad para nuevos jobs simultáneos.
 
-La autorización concedida cubre únicamente esta preparación con mantenimiento y recuperación. Actualizar la UI activa será un paso separado después de revisar la imagen recuperable. No se ha ejecutado esta ventana.
+La autorización concedida cubre únicamente esta preparación con mantenimiento y recuperación. Actualizar la UI activa será un paso separado después de revisar la imagen recuperable. La primera ventana se ejecutó con el fallo y recuperación descritos al inicio.
 
 ## Entrega del resultado
 

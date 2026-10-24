@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-24",
+  "scope": "Local verification of explicit public-registry follow-up; no mac24 execution",
+  "host_suite": {
+    "tests": 271,
+    "passed": 270,
+    "skipped": 1,
+    "duration_seconds": 12.673
+  },
+  "focused_ui_recovery_tests": 21,
+  "registry_verification": {
+    "docker": "29.6.1",
+    "buildx": "v0.35.0 Homebrew",
+    "remote_reported_buildx": "v0.38.1",
+    "test_credential_helper": "isolated fictitious osxkeychain executable; no personal keychain access",
+    "empty_auths": {
+      "exit_code": 1,
+      "helper_invoked": true
+    },
+    "explicit_anonymous_hub_entry": {
+      "manifest_queries": 3,
+      "all_exit_codes_zero": true,
+      "helper_invoked": false
+    },
+    "images": [
+      "moby/buildkit@sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea",
+      "python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+      "astral/uv:0.13.1@sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef30279f7d64048519ab901ada336"
+    ],
+    "container_operations": false,
+    "image_build_or_pull_here": false
+  },
+  "context_verification": {
+    "same_local_engine_id": true,
+    "container_ids_unchanged": true,
+    "total_containers_including_stopped": 64,
+    "personal_docker_config_unchanged": true,
+    "private_config_valid_after_context_creation": true,
+    "scope": "metadata-only queries against existing colima context; no service lifecycle operation",
+    "initial_default_context_unavailable": true
+  },
+  "review": {
+    "independent_review_performed": true,
+    "important_findings_fixed": [
+      "Reject auxiliary RestartCount changes; permit only StartedAt after prior authorized maintenance",
+      "Use read-only verification in restore-only when maintenance never began",
+      "Recovery instruction identifies the public follow-up state"
+    ],
+    "remaining_P1_P2": 0
+  },
+  "sources": {
+    "scripts/mac24_ui_recovery.py": "0736bea217c0120ba27a9f359f30672f77693ddfa003b2c5c1b0fa931dad1ca4",
+    "scripts/ui_recovery_public.py": "6b6ac681552ab281a8f43d3a8e39a515efe3e74d7b67a851c821db83df282b9a",
+    "tests/host/test_ui_recovery_public.py": "722609a54d606cc94c35f80f204e3e960aa5cf584a98a20104aeb92a433c640f"
+  },
+  "mac24_execution": false,
+  "maintenance_executed_here": false,
+  "historical_image_verified": false,
+  "deployment_started": false,
+  "limits": [
+    "Local Buildx version differs from mac24; remote runner checks its effective version and public access before pause.",
+    "BuildKit bootstrap, historical build, isolated probe and recovery still require mac24 execution and review."
+  ]
+}

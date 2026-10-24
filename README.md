@@ -1,6 +1,6 @@
 # Proyecto final de Datos Masivos
 
-**Preparación UI por SSH:** [adaptador e instrucciones](docs/mac24-ui-maintenance-plan.md#ejecución-desde-terminal-por-ssh), con pausa autorizada de seis auxiliares y recuperación obligatoria. No hace falta otro agente; el resultado agregado se publica con `--publish`. La preparación remota y el despliegue aún no están acreditados.
+**Seguimiento UI por SSH:** la preparación falló por acceso al llavero al iniciar BuildKit; auxiliares recuperados, sin construcción ni despliegue. Está preparada la [continuación con imágenes públicas y configuración aislada](docs/mac24-ui-public-registry-followup.md), con comprobación de acceso antes de la pausa autorizada. Conserva el intento fallido y publica un reporte separado. La imagen recuperable aún no está acreditada en mac24.
 
 **Siguiente paso operativo:** [preparar recuperación UI en mac24](docs/mac24-ui-recovery.md). El inventario recibido pasó, pero la imagen UI no tiene metadatos disponibles; la huella coincide con código histórico. Admitir recursos y validar una imagen aislada antes de desplegar. No detener servicios ni ejecutar T8. [Alcance de la revisión](evidence/ui-inventory-review-mac24.json).
 

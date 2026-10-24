@@ -26,6 +26,7 @@ from mac24_t7 import check_airflow
 from pipeline_check import request_json
 from project import compose
 from ui_recovery_control import require, identity, select_targets, admit, restored_services, G
+import ui_recovery_public as public
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTEXT = 'colima-hm-project'
@@ -57,14 +58,14 @@ def emit(message):
     except (BrokenPipeError,OSError):pass
 
 
-def run_command(args, *, log=None, timeout=60):
+def run_command(args, *, log=None, timeout=60, env=None):
     # Long-running output stays private; progress is emitted every 20 seconds.
     if log is None:
-        result=subprocess.run(args,cwd=ROOT,text=True,capture_output=True,timeout=timeout)
+        result=subprocess.run(args,cwd=ROOT,text=True,capture_output=True,timeout=timeout,env=env)
         require(result.returncode==0,'Command failed; see private logs')
         return result.stdout.strip()
     with log.open('w') as output:
-        process=subprocess.Popen(args,cwd=ROOT,stdout=output,stderr=subprocess.STDOUT,start_new_session=True)
+        process=subprocess.Popen(args,cwd=ROOT,stdout=output,stderr=subprocess.STDOUT,start_new_session=True,env=env)
         end=time.monotonic()+timeout
         try:
             while True:
@@ -123,7 +124,26 @@ def disk_free(text):
     return int(text.splitlines()[-1].split()[3])*1024
 
 
-def preflight(commit, values):
+def followup_inventory(before, original):
+    previous=ROOT/'.runtime/ui-recovery-terminal-v1'
+    report=ROOT/'evidence/ui-recovery-maintenance-mac24.json'
+    require(sha(report)==public.REPORT_SHA,'Published antecedent changed')
+    state=json.loads((previous/'state.json').read_text())
+    verify_stable(original,state['before'])
+    public.verify_attempt(state,json.loads(report.read_text()),
+        (previous/'builder-bootstrap.log').read_text(errors='replace'),
+        (previous/'build.log').exists(),(previous/'probe-create.log').exists())
+    comparable=dict(before)
+    prior_builder=named(state['builder_container'])
+    if prior_builder and prior_builder not in state['before']:
+        require(not comparable[prior_builder]['running'],'Prior builder still active')
+        comparable.pop(prior_builder)
+    require(named(state['probe_name']) is None,'Unexpected prior probe')
+    public.verify_recovered_inventory(state['before'],comparable,state['aux'])
+    return dict(prior_run_id=state['run_id'],prior_state_sha256=sha(previous/'state.json'))
+
+
+def preflight(commit, values, *, public_followup=False):
     checkout_commit(ROOT,commit)
     require(run_command(['git','branch','--show-current'])=='main','Expected main')
     require(not STATE.exists(),'Preparation already recorded; use restore-only if needed')
@@ -137,7 +157,9 @@ def preflight(commit, values):
     require(bool(matches),'Missing private capacity report matching published hash')
     prior=json.loads(INVENTORY.read_text())
     require(prior['status']=='passed' and prior['source_commit']=='7fe23502cfa52134ed77565149f0af97e816fbfb','Inventory origin differs')
-    before=snapshot();verify_stable(prior['before'],before)
+    before=snapshot()
+    antecedent=followup_inventory(before,prior['before']) if public_followup else {}
+    if not public_followup:verify_stable(prior['before'],before)
     review=json.loads((ROOT/'evidence/portability-review-mac24.json').read_text())
     aux=select_targets(before,values['COMPOSE_PROJECT_NAME'],review['result']['destination_postgres']['container_id'])
     kept={cid:r for cid,r in before.items() if r['running'] and cid not in {x['container_id'] for x in aux}}
@@ -153,7 +175,47 @@ def preflight(commit, values):
     run_command(['git','cat-file','-e',HISTORY+'^{commit}'])
     buildx=query('buildx','version')
     verify_stable(before,snapshot())
-    return dict(before=before,aux=aux,kept=kept,engine=engine,ready=initial_ready,planned_build_bytes=planned,vm_disk_free_bytes=vm_free,buildx=buildx)
+    return dict(before=before,aux=aux,kept=kept,engine=engine,ready=initial_ready,planned_build_bytes=planned,vm_disk_free_bytes=vm_free,buildx=buildx,**antecedent)
+
+
+def build_docker(state, *args, **kwargs):
+    if not state.get('public_followup'):return docker(*args,**kwargs)
+    config=STATE/'docker-public'
+    public.verify_config(config)
+    return run_command(['docker','--config',str(config),'--context',CONTEXT,*args],
+                       env=public.environment(config),**kwargs)
+
+
+def prepare_public_registry(state):
+    config=STATE/'docker-public'
+    plugin=shutil.which('docker-buildx')
+    if not plugin:
+        candidates=[Path.home()/'.docker/cli-plugins/docker-buildx',
+                    Path('/opt/homebrew/lib/docker/cli-plugins/docker-buildx'),
+                    Path('/usr/local/lib/docker/cli-plugins/docker-buildx')]
+        plugin=next((str(p) for p in candidates if p.is_file() and os.access(p,os.X_OK)),None)
+    require(bool(plugin),'Buildx executable missing')
+    endpoint=query('context','inspect',CONTEXT,'--format','{{.Endpoints.docker.Host}}')
+    public.verify_endpoint(endpoint,Path.home())
+    original_engine=query('info','--format','{{.ID}}')
+    require(bool(original_engine),'Missing engine identity')
+    public.create_config(config,Path(plugin))
+    run_command(['docker','--config',str(config),'context','create',CONTEXT,'--docker','host='+endpoint],
+                env=public.environment(config),log=STATE/'public-context.log')
+    require(build_docker(state,'info','--format','{{.ID}}')==original_engine,'Private context engine differs')
+    require(build_docker(state,'buildx','version')==state['buildx'],'Private Buildx version differs')
+    source=run_command(['git','show',HISTORY+':docker/app.Dockerfile'])
+    refs=re.findall(r'(?:^FROM |COPY --from=)(\S+)',source,re.MULTILINE)
+    require(len(refs)==2 and all(re.fullmatch(r'(?:python|astral/uv):[^\s@]+@sha256:[0-9a-f]{64}',r) for r in refs),
+            'Unexpected historical public base images')
+    state['public_images']=[public.BUILDKIT,*refs];save(state)
+    for index,ref in enumerate(state['public_images']):
+        build_docker(state,'buildx','imagetools','inspect',ref,log=STATE/f'public-manifest-{index}.log',timeout=120)
+    # Download only the bounded builder image before any service pause. No
+    # container is created here; a registry/rate-limit error leaves services up.
+    build_docker(state,'pull','--platform','linux/arm64',public.BUILDKIT,log=STATE/'public-buildkit-pull.log',timeout=300)
+    state['public_buildkit_image_id']=query('image','inspect','--format','{{.Id}}',public.BUILDKIT)
+    state['public_registry_checked']=True;save(state)
 
 
 def save(state):write_json(STATE/'state.json',state)
@@ -209,6 +271,17 @@ def recover(state,values):
     state['recovery_complete']=True;save(state)
 
 
+def recover_or_verify(state,values):
+    if state.get('maintenance_started',True):return recover(state,values)
+    # A failed public registry check never authorizes starting a service that
+    # somebody else stopped. This branch is also used by restore-only.
+    verify_stable(state['before'],snapshot())
+    require(ready(values)==state['ready'],'Original release changed')
+    state.update(original_services_preserved=True,auxiliaries_restored=True,
+                 recovery_complete=True,temporary_stopped=True,temporary_cleanup_complete=True)
+    save(state)
+
+
 def construct(state):
     source=STATE/'source'
     previous=os.umask(0o022)
@@ -219,17 +292,21 @@ def construct(state):
     certs=ssl.create_default_context().get_ca_certs(binary_form=True)
     require(bool(certs),'Missing trusted local CA')
     ca=STATE/'build-ca.pem';ca.write_text(''.join(ssl.DER_cert_to_PEM_cert(c) for c in certs))
-    docker('buildx','create','--name',state['builder'],'--driver','docker-container',
-        '--driver-opt','memory=2g,memory-swap=2g,cpu-period=100000,cpu-quota=100000,restart-policy=no',
+    options='memory=2g,memory-swap=2g,cpu-period=100000,cpu-quota=100000,restart-policy=no'
+    if state.get('public_followup'):options+=',image='+public.BUILDKIT
+    build_docker(state,'buildx','create','--name',state['builder'],'--driver','docker-container',
+        '--driver-opt',options,
         CONTEXT,log=STATE/'builder-create.log')
-    docker('buildx','inspect',state['builder'],'--bootstrap',log=STATE/'builder-bootstrap.log',timeout=300)
+    build_docker(state,'buildx','inspect',state['builder'],'--bootstrap',log=STATE/'builder-bootstrap.log',timeout=300)
     cid=named(state['builder_container']);require(bool(cid),'Builder container not found')
     state['builder_id']=cid;save(state)
     limits=json.loads(query('inspect','--format','{"memory":{{.HostConfig.Memory}},"swap":{{.HostConfig.MemorySwap}},"period":{{.HostConfig.CpuPeriod}},"quota":{{.HostConfig.CpuQuota}}}',cid))
     require(limits==dict(memory=2*G,swap=2*G,period=100000,quota=100000),'Builder limits differ')
     state['builder_limits']=limits;state['buildkit_image']=inspect(cid)['image_id'];save(state)
+    if state.get('public_followup'):
+        require(state['buildkit_image']==state['public_buildkit_image_id'],'Builder image differs from public preflight')
     state['build_started']=True;save(state)
-    docker('buildx','build','--builder',state['builder'],'--platform','linux/arm64','--load',
+    build_docker(state,'buildx','build','--builder',state['builder'],'--platform','linux/arm64','--load',
         '-f',str(source/'docker/app.Dockerfile'),'--secret','id=build_ca,src='+str(ca),
         '-t',state['image_tag'],str(source),log=STATE/'build.log',timeout=1800)
     state['image_id']=query('image','inspect','--format','{{.Id}}',state['image_tag']);save(state)
@@ -259,14 +336,16 @@ def summary(state):
         'image_id','image_verified','build_started','probe_started','engine','planned_build_bytes','vm_disk_free_bytes','buildx','buildkit_image',
         'builder_limits','probe_limits','probe_checks','restoration','auxiliaries_restored',
         'original_services_preserved','recovery_complete','temporary_stopped','deployment_started','error_type',
-        'failure_stage','recovery_error_type','probe_log_error','temporary_cleanup_complete','cleanup_errors') if k in state}
+        'failure_stage','recovery_error_type','probe_log_error','temporary_cleanup_complete','cleanup_errors',
+        'public_followup','prior_run_id','prior_state_sha256','public_registry_checked','public_images',
+        'public_buildkit_image_id','maintenance_started') if k in state}
 
 
 def publish(state):
     checkout_commit(ROOT,state['procedure_commit'])
     repository=json.loads(run_command(['gh','repo','view','--json','nameWithOwner,isPrivate']))
     require(repository==dict(nameWithOwner='emilianodesu/clothing-recommendation',isPrivate=True),'Expected private project repository')
-    destination=ROOT/'evidence/ui-recovery-maintenance-mac24.json'
+    destination=ROOT/('evidence/ui-recovery-public-mac24.json' if state.get('public_followup') else 'evidence/ui-recovery-maintenance-mac24.json')
     require(not destination.exists(),'Aggregate already exists; preserve and review it')
     write_json(destination,summary(state))
     run_command(['git','add',str(destination)])
@@ -276,8 +355,18 @@ def publish(state):
 
 
 def execute_prepared(state,values,guard):
+    state['maintenance_started']=False
     try:
+        if state.get('public_followup'):
+            state['stage']='public_registry_preflight';save(state)
+            emit('UI recovery: verificar imágenes públicas sin llavero; servicios activos')
+            prepare_public_registry(state);guard.check()
+            verify_stable(state['before'],snapshot())
+            airflow(values);require(ready(values)==state['ready'],'Original release changed')
+            require(shutil.disk_usage(ROOT).free>=10*G,'Host disk <10 GiB after pull')
+            require(disk_free(run_command(['colima','ssh','--profile','hm-project','--','sudo','-n','df','-Pk','/var/lib/docker']))>=10*G,'VM disk <10 GiB after pull')
         state['stage']='stop_six_auxiliaries';save(state)
+        state['maintenance_started']=True;save(state)
         emit('UI recovery: detener los seis auxiliares autorizados')
         for row in state['aux']:
             current=inspect(row['container_id']);identity(row,current)
@@ -294,8 +383,8 @@ def execute_prepared(state,values,guard):
         (STATE/'failure.log').write_text(traceback.format_exc())
     finally:
         state['stage']='recover_auxiliaries';save(state)
-        emit('UI recovery: recuperar auxiliares')
-        try:recover(state,values)
+        emit('UI recovery: recuperar auxiliares' if state['maintenance_started'] else 'UI recovery: verificar servicios sin pausa')
+        try:recover_or_verify(state,values)
         except BaseException as error:
             state['recovery_error_type']=type(error).__name__;state['recovery_complete']=False
             (STATE/'recovery-failure.log').write_text(traceback.format_exc())
@@ -304,8 +393,11 @@ def execute_prepared(state,values,guard):
         write_json(STATE/'summary.json',summary(state));emit(json.dumps(summary(state),sort_keys=True))
 
 def main():
+    global STATE
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected-commit',required=True)
-    p.add_argument('--restore-only',action='store_true');p.add_argument('--publish',action='store_true');a=p.parse_args()
+    p.add_argument('--restore-only',action='store_true');p.add_argument('--publish',action='store_true')
+    p.add_argument('--public-registry-followup',action='store_true');a=p.parse_args()
+    if a.public_registry_followup:STATE=ROOT/'.runtime/ui-recovery-public-v1'
     os.umask(0o077);os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT=CONTEXT,GIT_TERMINAL_PROMPT='0')
     values=read_configuration(ROOT/'.env')
     artifacts=Path(values['ARTIFACTS_DIR']);artifacts=artifacts if artifacts.is_absolute() else ROOT/artifacts
@@ -318,17 +410,19 @@ def main():
             state=json.loads((STATE/'state.json').read_text())
             require(state['procedure_commit']==a.expected_commit,'Recovery commit differs')
             for name,digest in state['runner_files'].items():require(sha(ROOT/name)==digest,'Recovery code differs')
-            recover(state,values)
+            recover_or_verify(state,values)
             state['stage']='complete';save(state)
             write_json(STATE/'summary.json',summary(state));emit(json.dumps(summary(state),sort_keys=True))
-            emit('Auxiliares recuperados; no se repitió construcción.')
+            emit('Auxiliares recuperados; no se repitió construcción.' if state.get('maintenance_started',True)
+                 else 'Servicios verificados sin pausa ni arranque; no se repitió preparación.')
             if a.publish:publish(state)
             return 0
         emit('UI recovery: comprobaciones previas; sin pausas todavía')
-        ctx=preflight(a.expected_commit,values)
+        ctx=preflight(a.expected_commit,values,public_followup=a.public_registry_followup)
         STATE.mkdir(mode=0o700)
         rid='ui-recovery-'+uuid.uuid4().hex[:12]
         state=dict(ctx,run_id=rid,procedure_commit=a.expected_commit,created_at=now(),historical_commit=HISTORY,
+            public_followup=a.public_registry_followup,
             builder=rid,builder_container='buildx_buildkit_'+rid+'0',probe_name=rid+'-probe',
             image_tag='hmrec-ui-recovery:'+rid,status='failed',stage='reserved',image_verified=False,
             deployment_started=False,build_started=False,probe_started=False,recovery_complete=False,auxiliaries_restored=False,
@@ -336,7 +430,9 @@ def main():
         save(state);emit('Logs privados: '+str(STATE))
         execute_prepared(state,values,guard)
         if a.publish and state['recovery_complete']:publish(state)
-        elif not state['recovery_complete']:emit('Recuperación pendiente: usar únicamente --restore-only con el mismo SHA.')
+        elif not state['recovery_complete']:
+            mode='--public-registry-followup ' if a.public_registry_followup else ''
+            emit('Recuperación/verificación pendiente: usar únicamente '+mode+'--restore-only con el mismo SHA.')
         return 0 if state['status']=='passed' else 1
 
 

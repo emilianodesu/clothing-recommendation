@@ -60,4 +60,4 @@ Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito 
 
 No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
 
-Preparación UI mac24: `blocked_capacity` según el reporte recibido; [ventana de mantenimiento propuesta](mac24-ui-maintenance-plan.md), autorizada por el usuario el 2026-10-24, aún sin ejecución reportada. No hay todavía imagen de recuperación validada.
+Preparación UI mac24: el antecedente `blocked_capacity` se conserva. La [ventana autorizada](mac24-ui-maintenance-plan.md) se ejecutó y recuperó los seis auxiliares, pero falló por acceso al llavero antes de construir. Se preparó una [continuación con configuración Docker aislada](mac24-ui-public-registry-followup.md), pendiente de ejecución y revisión remotas. No hay todavía imagen de recuperación validada ni actualización UI en mac24.

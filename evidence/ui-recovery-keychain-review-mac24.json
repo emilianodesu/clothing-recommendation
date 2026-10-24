@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-24",
+  "run_id": "ui-recovery-22fc4a3dcc96",
+  "source_report": "evidence/ui-recovery-maintenance-mac24.json",
+  "source_report_sha256": "a82413d581d654b0c900fc6359f4e54a653407bd1afb21ffad11de8e2f7a3ebd",
+  "source_commit": "9e9b9205aa86120cec902fba4a3829e58e939916",
+  "report_commit": "2de0b89",
+  "status_retained": "failed",
+  "failure_stage": "Buildx bootstrap before historical image build",
+  "diagnosis": "Docker credential helper attempted macOS Keychain access in a noninteractive SSH session.",
+  "diagnostic_basis": {
+    "operator_supplied_logs": [
+      "failure.log",
+      "worktree.log",
+      "builder-create.log",
+      "builder-bootstrap.log"
+    ],
+    "direct_remote_log_inspection": false,
+    "reported_bootstrap_error": "keychain cannot be accessed because the current session does not allow user interaction"
+  },
+  "remote_report_declarations": {
+    "build_started": false,
+    "probe_started": false,
+    "deployment_started": false,
+    "six_auxiliaries_restored": true,
+    "original_services_preserved": true,
+    "temporary_cleanup_complete": true
+  },
+  "next_step": "One explicit --public-registry-followup with isolated anonymous Docker configuration, antecedent guards, public-image checks before maintenance, and separate state/report.",
+  "preserve": [
+    ".runtime/ui-recovery-terminal-v1",
+    "evidence/ui-recovery-maintenance-mac24.json",
+    "prior worktree and builder metadata",
+    "academic tag and all campaign results"
+  ],
+  "image_recovery_verified": false,
+  "mac24_ui_updated": false
+}
