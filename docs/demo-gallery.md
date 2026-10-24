@@ -27,3 +27,5 @@ El artículo comprado pasó al puesto 1 con razón «Compra reciente». Las imá
 ![Artículo comprado en primer lugar](images/demo/04-primer-articulo.jpg)
 
 La cabecera de esta interfaz histórica conservó revisión 3 tras actualizar el ranking; no usarla como prueba de frescura de metadatos. La secuencia acredita la interacción y el cambio visible, no latencia, persistencia tras fallo o recuperación. Instalación, reinicio y restauración se explican con las evidencias T1/T4/T7; no se simularon ni repitieron aquí. No se tocó mac24 ni el test final.
+
+La limitación de cabecera observada en estas capturas históricas fue [corregida y comprobada en el despliegue local posterior](ui-metadata-deployment.md). Las imágenes de esta galería permanecen intactas.

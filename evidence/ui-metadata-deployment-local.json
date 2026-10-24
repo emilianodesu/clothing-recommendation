@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-24",
+  "status": "passed",
+  "source_commit": "e478f71891818295895ebef96ea8f72b9bc95807",
+  "scope": "local synthetic UI only",
+  "image": "sha256:d4d2c928390e9382e996c9a39510f2855ec419fcad480828854967715d11098d",
+  "rollback": {
+    "image": "sha256:568f10e4dd56f61a612c10b4ca0ab315c7999e6db80a52c5f9a87b0072169439",
+    "source_commit": "6130943641e599121119660693ed276cf3b3fbca",
+    "reconstructed": true,
+    "exact_original_image_bytes": false,
+    "reason": "Docker commit failed: missing historical layer; rebuilt from clean historical checkout"
+  },
+  "source_verification": {
+    "old_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+    "rebuilt_rollback_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+    "new_ui_sha256": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+    "rollback_image_byte_identity": false
+  },
+  "api_postgres_identity_generation_unchanged": true,
+  "identities_sha256": "13e2a5ca43bea6b81441b9f72808ab72be7e858a664d0960e9d9159e4777976a",
+  "ui_health": "healthy",
+  "browser": {
+    "stream": "synthetic",
+    "customer": "demo-ui-fix-20261024",
+    "purchase_clicks": 1,
+    "refresh_clicks": 1,
+    "before_revision": 4,
+    "after_revision": 5,
+    "after_published_at": "2026-10-24T07:27:21.296613+00:00",
+    "after_received_before": "2026-10-24T07:27:21.290874+00:00",
+    "screenshot": "docs/images/ui-fix/metadata-actualizada.jpg",
+    "screenshot_sha256": "dc3116cdfafc0b82091706dbaaf54dfcd51cf1b8c4f359dea89ee934a8649c26"
+  },
+  "mac24_changed": false,
+  "training_or_test_repeated": false
+}
