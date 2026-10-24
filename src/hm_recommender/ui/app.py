@@ -48,8 +48,17 @@ def main():
         streams=call('GET','/streams')['items']
         if not streams:
             st.info('El servicio está listo. Prepara un entorno de demostración para comenzar.');return
-        chosen=st.selectbox('Entorno',streams,format_func=lambda s:f"{s['mode']} · {s['stream_id'][:8]}",key='stream')
-        stream=chosen['stream_id'];release=chosen['release_id']
+        # Persist identity only: widget state must not retain an old metadata dict.
+        current_streams={item['stream_id']:item for item in streams}
+        saved=st.session_state.get('stream')
+        if isinstance(saved,dict):
+            saved=saved.get('stream_id')
+            st.session_state['stream']=saved
+        if saved is not None and saved not in current_streams:
+            del st.session_state['stream']
+        stream=st.selectbox('Entorno',list(current_streams),
+            format_func=lambda sid:f"{current_streams[sid]['mode']} · {sid[:8]}",key='stream')
+        chosen=current_streams[stream];release=chosen['release_id']
         cutoff=date.fromisoformat(chosen['data_as_of'])
         st.caption(f"Versión {release} · Corte {cutoff} · Revisión {chosen['revision']}")
         st.caption(f"Última actualización {chosen['published_at']} · Datos recibidos hasta {chosen['received_before']}")

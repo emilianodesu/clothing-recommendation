@@ -269,7 +269,7 @@ def main():
                     cwd=ROOT, env=dict(os.environ, HMREC_DOCKER_TESTS='1'), check=True)
             if args.suite in ('events','pipeline'):
                 compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs',
-                    'python','-m','pytest','tests/integration/test_events.py','tests/integration/test_demo.py','tests/integration/test_ui.py','-q')
+                    'python','-m','pytest','tests/integration/test_events.py','tests/integration/test_demo.py','tests/integration/test_ui.py','tests/integration/test_ui_metadata.py','-q')
             if args.suite=='portability':
                 verification_postgres(ROOT,values,existing_only=args.existing_services)
                 compose(ROOT,values,'run','--rm','--no-deps','-T','-e','HMREC_SERVING_TESTS=1','jobs','python','-m','pytest','tests/integration/test_release_transfer.py','tests/integration/test_backup_restore.py','-q')

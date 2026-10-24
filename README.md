@@ -1,5 +1,7 @@
 # Proyecto final de Datos Masivos
 
+**Corrección posterior a entrega:** cabecera UI actualizada desde metadatos vigentes por ID de stream; [evidencia de regresión](evidence/ui-metadata-fix-local.json). Prueba Streamlit sintética RED→GREEN y 245 host aprobadas/una omitida. Código corregido, UI histórica y mac24 aún no desplegadas; no atribuirles la corrección ni repetir campañas/test. Tag y capturas de entrega intactos.
+
 **Entrega académica preparada (2026-10-24):** [notas de entrega](docs/release-notes.md) y [galería sintética](docs/demo-gallery.md). T8-D documental/visual entregado; aceptación sintética 60/60 y T8-C cerradas. T8-B conserva failed y no se declara cumplimiento global T8. No repetir campañas, test o aceptación. La demo histórica muestra cambio de ranking; su cabecera de revisión quedó desactualizada y no acredita despliegue del último commit. Esta nota prevalece sobre los pendientes históricos.
 
 **Aceptación sintética cerrada en Mac principal:** [evidencia](evidence/acceptance-local.json), 60 pruebas aprobadas sin omisiones en 19.894 s, checkout `8c8b730`. Perfil aislado detenido y 22 contenedores originales restaurados con mismo ID/imagen y healthy; mac24 intacta. No repetir aceptación/test/carga. Próximo paso: capturas de demo sintética y revisión/tag de entrega. T8/E8 siguen abiertos hasta completar esos entregables. Esta nota prevalece sobre los pendientes históricos siguientes.

@@ -11,7 +11,7 @@ import uuid
 import xml.etree.ElementTree as ET
 
 PG='postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826'
-TESTS=['tests/integration/'+n+'.py' for n in ('test_recommendations','test_release_activation','test_serving_http','test_events','test_demo','test_ui','test_pipeline','test_release_transfer','test_backup_restore')]
+TESTS=['tests/integration/'+n+'.py' for n in ('test_recommendations','test_release_activation','test_serving_http','test_events','test_demo','test_ui','test_ui_metadata','test_pipeline','test_release_transfer','test_backup_restore')]
 
 
 def admit(running,memory,cpus):

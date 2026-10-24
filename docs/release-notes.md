@@ -19,3 +19,9 @@ La galería usa la demo histórica en ejecución; no es un despliegue del tag ac
 Linux/AMD64, otra cuenta de SO, servicio público multiusuario, alta disponibilidad y impacto comercial online no están acreditados. No se vuelve a abrir el test para mejorar resultados. Los datos, respaldos, secretos y checkpoints privados no forman parte de este tag; reproducir H&M requiere acceso propio autorizado o artefactos privados válidos.
 
 No es necesario repetir campañas para presentar esta entrega. Cualquier ampliación debe definir objetivo y evidencia nueva, conservando estos resultados.
+
+## Corrección posterior al tag: metadatos de interfaz
+
+Se corrigió en código la cabecera desactualizada: el selector ahora conserva únicamente el ID del stream y obtiene revisión, corte, versión y fechas de la respuesta actual. [Regresión](../evidence/ui-metadata-fix-local.json) con Streamlit real y HTTP simulado: falló antes y pasó después, preservando selección en dos actualizaciones. Suite host: 245 aprobadas y una omitida. La prueba se incorpora a events/acceptance para futuras imágenes.
+
+Esta corrección es posterior al tag de entrega y no altera sus capturas. No se reconstruyó ni recreó la UI existente y no se tocó mac24. La aceptación completa de 60 casos corresponde al commit anterior; no se atribuye automáticamente a este cambio.

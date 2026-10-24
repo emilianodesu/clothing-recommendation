@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-24",
+  "status": "fixed_in_source",
+  "issue": "Streamlit selectbox persisted old stream metadata dictionaries across reruns",
+  "fix": "Persist stream ID and resolve metadata from each current /streams response; preserve legacy selection identity",
+  "verification": {
+    "regression_before": "FAILED: expected revision 4, rendered revision 3",
+    "regression_after": "PASSED: revisions 4 and 5, publication/cursor/release updated, second stream preserved",
+    "host_tests": 246,
+    "host_passed": 245,
+    "host_skipped": 1,
+    "real_streamlit": true,
+    "http": "MockTransport synthetic responses",
+    "network": "none",
+    "memory_mib": 512,
+    "cpu": 1,
+    "runtime_image": "sha256:b9900a1e29718411cec3c7ddb55a09c92bc9f35b76f4741367405317fffbb1df",
+    "source_and_test_readonly_mounted": true
+  },
+  "sha256": {
+    "src/hm_recommender/ui/app.py": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+    "tests/integration/test_ui_metadata.py": "1e4a17e169a7f0f5e0d774eb695c9ea55e84d647271fe2829d5ee8072faa6a1f"
+  },
+  "deployed_to_existing_ui": false,
+  "mac24_changed": false,
+  "real_test_repeated": false,
+  "limitations": [
+    "Focused regression, not a new full acceptance run.",
+    "Existing browser demo still uses historical image until explicit image deployment.",
+    "Academic delivery tag and screenshots remain unchanged."
+  ]
+}
