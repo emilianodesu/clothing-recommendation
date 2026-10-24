@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-24",
+  "decision": "accepted_historical_image_preparation_only",
+  "run_id": "ui-recovery-5f15b3471c1a",
+  "source_report": "evidence/ui-recovery-buildx-mac24.json",
+  "source_report_commit": "4ce192da6b00e1d58c31b170f22c1c696d013ef1",
+  "source_report_sha256": "c5d758bfe2e750a6b2f3a9db7cbad5a5594794e4b52644365e818621d232dd35",
+  "source_report_bytes": 2970,
+  "procedure_commit": "f4cd8a7184d896d7a72f3b29c4c951d99953734f",
+  "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+  "image_id": "sha256:38b8937c7c16245f3198e5a1e1561a9dae75d5857d78cc4bfdcfcdb211fc4fe1",
+  "historical_ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8",
+  "candidate_ui_sha256": "fb1cce631c29550e7e138628c2cbbcbb6b86639bd775b9c9e7c5bd99219234da",
+  "verified_here": {
+    "operator_output_matches_published_json": true,
+    "historical_ui_hash_matches_git": true,
+    "source_commit_and_script_hashes_checked": {
+      "scripts/mac24_ui_recovery.py": "ddbb51dfaff5025eb371e289b6a4ac38e9590e44c6493a49f564f9de8126f081",
+      "scripts/ui_recovery_public.py": "0303f6d0c6f8f9cab2ca43a4a4c0682f6fc1db6a9325372458ee379960380419",
+      "scripts/ui_recovery_control.py": "a7770fa98bbac54534db063f2434071843a44caf8820cc505d0e425877e52967"
+    },
+    "public_image_refs_match_historical_dockerfile": true,
+    "buildx_versions_match": true,
+    "builder_image_matches_preflight": true,
+    "declared_limits_match_protocol": true,
+    "resource_arithmetic_consistent": true,
+    "both_failed_antecedents_referenced": true,
+    "prior_state_hash_matches_previous_public_report": true,
+    "dependency_files_unchanged_between_history_and_procedure": [
+      "docker/app.Dockerfile",
+      "pyproject.toml",
+      "uv.lock"
+    ],
+    "reported_streamlit_and_httpx_match_historical_lock": true
+  },
+  "remote_declarations": {
+    "engine": {
+      "memory": 14624956416,
+      "cpus": 4,
+      "architecture": "aarch64"
+    },
+    "planned_build_bytes": 8589934592,
+    "builder_limits": {
+      "memory": 2147483648,
+      "swap": 2147483648,
+      "period": 100000,
+      "quota": 100000
+    },
+    "probe_limits": {
+      "memory": 536870912,
+      "swap": 536870912,
+      "nano_cpus": 500000000,
+      "network": "none",
+      "readonly": true,
+      "ports": {}
+    },
+    "probe_checks": {
+      "health": "ok",
+      "python": "3.12.15",
+      "streamlit": "1.66.0",
+      "httpx": "0.28.1",
+      "ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8"
+    },
+    "restoration": [
+      {
+        "role": "postgres",
+        "restored": true
+      },
+      {
+        "role": "api",
+        "restored": true
+      },
+      {
+        "role": "mlflow",
+        "restored": true
+      },
+      {
+        "role": "airflow-api",
+        "restored": true
+      },
+      {
+        "role": "airflow-dag-processor",
+        "restored": true
+      },
+      {
+        "role": "airflow-scheduler",
+        "restored": true
+      }
+    ],
+    "original_services_preserved": true,
+    "auxiliaries_restored": true,
+    "temporary_stopped": true,
+    "temporary_cleanup_complete": true,
+    "recovery_complete": true,
+    "deployment_started": false,
+    "auxiliary_health_scope": "Each auxiliary checked healthy after its own start; no joint final auxiliary health check in the runner."
+  },
+  "capacity": {
+    "engine_gib": 13.620552062988281,
+    "serving_limits_gib": 5,
+    "builder_gib": 2,
+    "margin_gib": 1,
+    "planned_build_gib": 8,
+    "probe_gib": 0.5,
+    "planned_probe_gib": 6.5,
+    "type": "sum of configured limits; not measured peak RAM"
+  },
+  "limits": [
+    "Private inventories, state, layers and full build/probe logs were not downloaded; preservation and remote execution are declarations of the audited runner.",
+    "No Streamlit session was opened by the probe: library imports, file hash and server health do not verify app.py rendering.",
+    "Recovery checks each auxiliary individually after start. The final snapshot is not used to revalidate all auxiliaries together; joint final health is not independently established.",
+    "Probe checks imports, source hash and Streamlit health without network. It does not prove integration with the real API, browser behavior or rollback under deployment.",
+    "This reconstructs historical code and pinned dependencies; it is not a byte-for-byte snapshot of the unavailable original image.",
+    "No new load, training, final test, memory/OOM campaign or global T8 acceptance was performed.",
+    "Current mac24 UI remains historical; updated UI is not deployed."
+  ],
+  "preserve": [
+    "Both failed recovery attempts and the earlier capacity-blocked record",
+    "All private recovery folders, image, stopped builders, cache and historical worktrees",
+    "Existing API/PostgreSQL/UI, volumes, H release and event state",
+    "Academic tag, campaigns and final evaluation reservations"
+  ],
+  "next_step": "Prepare candidate image and bounded UI-only deployment with rollback; no rerun of recovery adapters.",
+  "recovery_preparation_closed": true,
+  "ui_deployment_complete": false,
+  "additional_maintenance_performed_here": false,
+  "review": {
+    "independent_static_review_performed": true,
+    "report_consistency_findings": 0,
+    "scope_limits_recorded": true
+  }
+}

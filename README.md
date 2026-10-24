@@ -1,8 +1,8 @@
 # Proyecto final de Datos Masivos
 
-**Seguimiento UI por SSH:** el último intento se detuvo por discrepancia de versión Buildx antes de descargas o mantenimiento. Está preparada la [continuación que usa el plugin seleccionado por Docker](docs/mac24-ui-buildx-followup.md), con configuración anónima aislada y controles de huella/versión. Conserva ambos intentos fallidos y publica un reporte separado. La imagen recuperable y la actualización UI aún no están acreditadas en mac24.
+**Recuperación UI en mac24 aceptada:** se reconstruyó la imagen histórica y arrancó Streamlit en una prueba aislada; seis auxiliares recuperados y originales conservados según el reporte auditado. [Resultado y límites](evidence/ui-recovery-review-mac24.json). La UI corregida aún no está desplegada. Sigue [preparar la candidata y actualizar sólo UI](docs/mac24-ui-deployment-plan.md); no repetir los adaptadores de recuperación.
 
-**Siguiente paso operativo:** [preparar recuperación UI en mac24](docs/mac24-ui-recovery.md). El inventario recibido pasó, pero la imagen UI no tiene metadatos disponibles; la huella coincide con código histórico. Admitir recursos y validar una imagen aislada antes de desplegar. No detener servicios ni ejecutar T8. [Alcance de la revisión](evidence/ui-inventory-review-mac24.json).
+**Siguiente desarrollo:** implementar el lanzador de actualización UI con candidata verificada, override exclusivo, rollback y recuperación de auxiliares, según el plan enlazado. La recepción del reporte no ejecuta despliegue, nuevas pausas ni T8.
 
 ## Estado vigente y lectura de antecedentes
 

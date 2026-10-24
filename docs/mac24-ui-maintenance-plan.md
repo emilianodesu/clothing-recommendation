@@ -1,6 +1,6 @@
 # Mantenimiento autorizado para recuperar la imagen UI
 
-**Estado vigente:** el intento `ui-recovery-22fc4a3dcc96` terminó failed por acceso al llavero durante bootstrap BuildKit; recuperó los seis auxiliares. El seguimiento `ui-recovery-926496b63278` falló por discrepancia Buildx antes de pausar. Los comandos de esta página son históricos. Seguir exclusivamente la [continuación con el plugin seleccionado por Docker](mac24-ui-buildx-followup.md); conservar todas las carpetas y reportes anteriores.
+**Estado vigente:** preparación cerrada con `ui-recovery-5f15b3471c1a` aceptado; [auditoría](../evidence/ui-recovery-review-mac24.json). Se verificó la imagen histórica y se recuperaron los seis auxiliares. Conservar todos los estados y fallos anteriores. Los comandos de esta página y de sus seguimientos son históricos y no se repiten. Siguiente desarrollo: [actualización exclusiva de UI](mac24-ui-deployment-plan.md).
 
 Estado: autorizado por el usuario el 2026-10-24 al responder «Continua» a la solicitud explícita de esta ventana. La autorización cubre una preparación con pausa y recuperación de los seis auxiliares indicados; no autoriza despliegue ni campañas. Base: `evidence/ui-recovery-mac24.json`, publicado por mac24 en `ddc8501`; aquí se recalcularon las sumas, sin inspeccionar el inventario privado.
 

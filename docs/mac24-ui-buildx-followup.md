@@ -1,5 +1,7 @@
 # Continuación UI con el plugin Buildx seleccionado por Docker
 
+**Cerrada tras revisión:** `ui-recovery-5f15b3471c1a` pasó y su preparación fue aceptada; ver [auditoría](../evidence/ui-recovery-review-mac24.json). Imagen histórica verificada en aislamiento y seis auxiliares recuperados. Los comandos de esta página son históricos: no repetir ni usar recuperación. Sigue [preparar candidata y despliegue exclusivo de UI](mac24-ui-deployment-plan.md).
+
 El intento `ui-recovery-926496b63278` conserva **failed**. La traza del operador ubica el fallo en `Private Buildx version differs`, antes de consultar manifiestos, descargar BuildKit o pausar servicios. `maintenance_started=false`: no hubo recuperación mediante arranques; se verificó que el inventario permanecía intacto. No repetir el modo `--public-registry-followup` ni usar su recuperación.
 
 El adaptador anterior buscaba primero `docker-buildx` en `PATH`. Docker selecciona plugins mediante su configuración y directorios de plugins; ambos mecanismos pueden elegir ejecutables distintos. La discrepancia se reprodujo localmente con dos plugins sintéticos y Docker real. Se corrigió la selección consultando `docker info --format '{{json .ClientInfo.Plugins}}'`, usando exclusivamente el `Path` del plugin válido llamado `buildx`. Véase el [código oficial de selección](https://github.com/docker/cli/blob/master/cli-plugins/manager/manager.go).

@@ -1,5 +1,7 @@
 # Preparar recuperación de UI en mac24, sin despliegue
 
+**Preparación cerrada:** la [revisión de `ui-recovery-5f15b3471c1a`](../evidence/ui-recovery-review-mac24.json) acepta la imagen histórica reconstruida y el probe aislado. Los seis auxiliares quedaron recuperados según el reporte. Conservar todos los antecedentes; no ejecutar los procedimientos históricos siguientes. Sigue [preparar y desplegar la candidata de UI](mac24-ui-deployment-plan.md), todavía pendiente de implementación y ejecución.
+
 **Seguimiento autorizado:** aplicar la [ventana de seis auxiliares](mac24-ui-maintenance-plan.md) aprobada por el usuario el 2026-10-24. Esa guía sustituye la prohibición de detener auxiliares exclusivamente durante esta preparación y obliga a recuperarlos. Conservar el intento blocked_capacity; no desplegar UI.
 
 ## Resultado mac24 y siguiente decisión (2026-10-24)
