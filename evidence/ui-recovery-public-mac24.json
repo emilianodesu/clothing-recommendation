@@ -1,0 +1,31 @@
+{
+  "run_id": "ui-recovery-926496b63278",
+  "procedure_commit": "82fcb4bd4c3324e47d8c20c617a95e96aab96713",
+  "status": "failed",
+  "stage": "complete",
+  "created_at": "2026-10-24T18:37:48.673616+00:00",
+  "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+  "image_verified": false,
+  "build_started": false,
+  "probe_started": false,
+  "engine": {
+    "memory": 14624956416,
+    "cpus": 4,
+    "architecture": "aarch64"
+  },
+  "planned_build_bytes": 8589934592,
+  "vm_disk_free_bytes": 68891402240,
+  "buildx": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5",
+  "auxiliaries_restored": true,
+  "original_services_preserved": true,
+  "recovery_complete": true,
+  "temporary_stopped": true,
+  "deployment_started": false,
+  "error_type": "ValueError",
+  "failure_stage": "public_registry_preflight",
+  "temporary_cleanup_complete": true,
+  "public_followup": true,
+  "prior_run_id": "ui-recovery-22fc4a3dcc96",
+  "prior_state_sha256": "7f9f19e3876033fdd3224a9a27e1a171fbf343bf4243e035f66b9a94ef93ab07",
+  "maintenance_started": false
+}
