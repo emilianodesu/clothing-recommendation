@@ -1,10 +1,8 @@
 # Plataforma local reproducible de recomendaciones H&M
 
-**Entrega 2026-10-24:** [galería sintética disponible](demo-gallery.md) y [notas de versión](release-notes.md). Las referencias posteriores a capturas pendientes son históricas. T8-D entregado; T8-B conserva failed y no se declara aprobación global T8.
+**Entrega 2026-10-24:** documentación, [galería sintética](demo-gallery.md) y tag `entrega-academica-2026-10-24` disponibles. La [aceptación sintética](../evidence/acceptance-local.json) aprobó 60 pruebas sin omisiones en `8c8b730`; los cambios posteriores de UI tienen verificaciones separadas. La UI corregida está desplegada en mac24 y su [revisión visual de lectura](../evidence/ui-visual-review-mac24.json) quedó cerrada. Véanse [notas de versión](release-notes.md) e [inventario vigente](delivery-status.md).
 
-**Aceptación ejecutada (2026-10-24):** [60 pruebas sintéticas aprobadas](../evidence/acceptance-local.json), sin omisiones, en la Mac principal; entorno original restaurado. Las notas anteriores de ejecución pendiente son históricas. Quedan capturas de demo y revisión/tag de entrega.
-
-**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
+T8-D está entregado y T8-A/T8-C cerradas. T8-B conserva **failed**: no se declara aprobación global T8 ni concurrencia sostenida. No se requiere repetir aceptación, evaluación test, entrenamiento o despliegue para presentar la entrega existente.
 
 Informe académico · Datos Masivos · 24 de octubre de 2026
 
@@ -88,7 +86,7 @@ La VM mac24 tiene 4 CPU y 13.621 GiB efectivos. Los límites de nueve contenedor
 
 [Guía del evaluador y demo](demo.md), [instalación](setup.md), [bootstrap](bootstrap.md), [segunda Mac](second-mac.md) y [restauración](reproducibility.md) distinguen demo sintética, reproducción con Kaggle y restauración de un respaldo privado autorizado. Cada equipo necesita acceso Git propio y, para H&M, credenciales y términos Kaggle propios. No copiar `.env`, tokens o sockets. Las dependencias están en `uv.lock`, los digests/recursos en Compose y los protocolos/configuraciones en `configs/`.
 
-El [inventario de entrega](delivery-status.md) enumera evidencias y pendientes. Esta versión entrega documentación; no certifica aún la suite final de aceptación, capturas/video ni un tag de entrega final. No volver a ejecutar benchmark o test para generar material de presentación.
+El [inventario de entrega](delivery-status.md) enumera la documentación, aceptación sintética, capturas, tag académico y verificaciones posteriores de UI ya disponibles. El tag conserva su instantánea original; la UI corregida y su despliegue posterior se identifican por sus propios commits y reportes. No hay video de instalación/restauración ni validación de todas las plataformas; se presenta la evidencia documentada. No volver a ejecutar benchmark o test para generar material de presentación.
 
 ## Temario y referencias
 

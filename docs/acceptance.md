@@ -35,4 +35,4 @@ Con autorización del usuario, se pausó `default`, se preparó `hm-acceptance` 
 
 La suite host previa tiene 246 pruebas: 245 aprobadas y una opcional omitida. La aceptación Docker de 60 casos es una comprobación distinta, sin omisiones. No representa un benchmark, una medición de pico de memoria ni una grabación de navegador. La suite usa AppTest/HTTP para UI y componentes de pipeline; no reproduce un scheduler Airflow completo ni el ensayo H&M.
 
-La aceptación sintética ya está comprobada. Siguen pendientes capturas/video de demo y revisión/tag de entrega; T8/E8 todavía no se declaran cerrados. No repetir test, carga ni esta suite para fabricar evidencia visual.
+La aceptación sintética ya está comprobada. Las [capturas de demo](demo-gallery.md), el [tag académico](release-notes.md) y la [revisión visual posterior de mac24](../evidence/ui-visual-review-mac24.json) también están disponibles. No se grabó un video nuevo de instalación o restauración. T8-B conserva failed y no se declara aprobación global T8/E8. No repetir test, carga ni esta suite para fabricar evidencia visual.
