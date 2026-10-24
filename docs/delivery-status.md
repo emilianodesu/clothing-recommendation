@@ -2,7 +2,7 @@
 
 Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
-El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](../evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la revisión visual en navegador sólo se acredita en la demo local. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
+El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](../evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la [revisión visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) también quedó aceptada, en lectura. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
 
 ## Documentación disponible
 
@@ -45,14 +45,14 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 | Capturas de demo | [Galería](demo-gallery.md), con identidad y alcance; son capturas sintéticas, no una nueva instalación o restauración. |
 | Tag académico | `entrega-academica-2026-10-24`; conserva la entrega original y sus limitaciones. |
 | Corrección posterior de UI | [Regresión](../evidence/ui-metadata-fix-local.json) y [despliegue local verificado](ui-metadata-deployment.md); API/PostgreSQL conservados. |
-| UI de mac24 | Despliegue operativo aceptado, sin rollback; regresión sintética y render contra API correctos, seis auxiliares saludables. [Auditoría](../evidence/ui-deployment-review-mac24.json). Revisión visual en navegador no realizada. |
+| UI de mac24 | Despliegue operativo aceptado, sin rollback; regresión sintética y render contra API correctos, seis auxiliares saludables. [Auditoría](../evidence/ui-deployment-review-mac24.json). [Revisión visual en Chrome](../evidence/ui-visual-review-mac24.json) aceptada en lectura. |
 | Concurrencia sostenida | No acreditada: T8-B permanece failed. Operación secuencial documentada; cualquier nueva validación necesita un protocolo separado. |
 
 ## Cómo continuar
 
 Para presentar el proyecto, seguir [el recorrido del evaluador](demo.md): informe, selección de H, cobertura del temario, evaluación final, operación y demo sintética. No se necesita otra campaña de entrenamiento, evaluación test ni carga para presentar la evidencia existente.
 
-La UI corregida de mac24 ya quedó activa. Conservar su override e imágenes y seguir las [notas de operación](mac24-ui-deploy.md); no volver a ejecutar el lanzador ni `--restore-only`. Puede hacerse una revisión visual de lectura, sin registrar eventos ni refrescar perfiles. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
+La UI corregida de mac24 ya quedó activa. Conservar su override e imágenes y seguir las [notas de operación](mac24-ui-deploy.md); no volver a ejecutar el lanzador ni `--restore-only`. La revisión visual de lectura ya se realizó, sin registrar eventos ni refrescar perfiles; puede continuarse con la presentación del proyecto. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
 
 Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito retirado por el usuario), servicio público multiusuario, alta disponibilidad e impacto comercial online. No son resultados demostrados por las pruebas existentes.
 

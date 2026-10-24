@@ -1,6 +1,6 @@
 # Actualización UI de mac24
 
-El lanzador `scripts/mac24_ui_deploy.py` implementa el [plan de cambio exclusivo de UI](mac24-ui-deployment-plan.md). **Ejecutado y aceptado en mac24:** `ui-deploy-f37f5b3b0443`, procedimiento `8f1f0c5a8098ce2f6a87a7c3d365499f0ca9436d`. [Auditoría](../evidence/ui-deployment-review-mac24.json). Candidata activa, sin rollback; regresión sintética y render AppTest contra API correctos; seis auxiliares saludables y estado conservado según el reporte. Inspección visual en navegador no realizada. **No repetir despliegue, preparación ni `--restore-only`; la ventana está cerrada.**
+El lanzador `scripts/mac24_ui_deploy.py` implementa el [plan de cambio exclusivo de UI](mac24-ui-deployment-plan.md). **Ejecutado y aceptado en mac24:** `ui-deploy-f37f5b3b0443`, procedimiento `8f1f0c5a8098ce2f6a87a7c3d365499f0ca9436d`. [Auditoría](../evidence/ui-deployment-review-mac24.json). Candidata activa, sin rollback; regresión sintética y render AppTest contra API correctos; seis auxiliares saludables y estado conservado según el reporte. La [inspección visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) quedó aceptada en lectura: revisión 5, doce recomendaciones con imágenes y catálogo de 102,967 artículos. **No repetir despliegue, preparación ni `--restore-only`; la ventana está cerrada.**
 
 ## Procedimiento ejecutado — referencia histórica
 
@@ -26,7 +26,7 @@ El lanzador valida el reporte y estado privado de recuperación, imagen históri
 
 Después detiene sólo los seis auxiliares registrados (API/PostgreSQL restaurados T7, MLflow y tres servicios Airflow), construye con 2 GiB/1 CPU y comprueba la candidata. La regresión específica de UI corre sin red ni datos, con 512 MiB/0.5 CPU. La API, PostgreSQL y UI originales permanecen activos durante la preparación. Sólo después de aprobar se reemplaza UI, con el mismo binding localhost y sus límites originales. No modifica el tag compartido `hmrec-app:0.1.0`.
 
-Las comprobaciones de conservación usan IDs/imágenes/generaciones de contenedores, H vigente y una huella de conteos de once tablas más metadatos de streams/puntero/targets. No equivalen a un checksum de cada fila. El render contra API es de lectura, sin registrar eventos ni refrescar perfiles. La comprobación visible en un navegador sigue separada.
+Las comprobaciones de conservación usan IDs/imágenes/generaciones de contenedores, H vigente y una huella de conteos de once tablas más metadatos de streams/puntero/targets. No equivalen a un checksum de cada fila. El render contra API es de lectura, sin registrar eventos ni refrescar perfiles. La comprobación visible en navegador se realizó después y está documentada por separado; el reporte de despliegue original conserva su `visible_browser_verified=false`.
 
 ## Tratamiento de fallos del procedimiento histórico
 
@@ -58,3 +58,10 @@ docker --context colima-hm-project compose --env-file .env   --file compose.yaml
 ```
 
 Conservar ambas imágenes por ID, worktree de construcción, logs, fallos anteriores y reporte. La restauración de auxiliares vuelve al inventario histórico de límites; no acredita capacidad simultánea sostenida ni cambia el resultado T8-B.
+
+
+## Acceso visual por túnel
+
+La revisión de lectura del 24 de octubre utilizó `http://127.0.0.1:18501/`, reenviado por SSH al puerto `127.0.0.1:8501` de mac24. Se verificó el destino del proceso de túnel local para distinguirlo de Docker en la Mac principal. La cabecera mostró revisión 5 y fechas completas; se observaron doce tarjetas, imágenes, motivos y catálogo de 102,967 artículos. No se pulsaron controles de eventos ni actualización. No se repitió entrenamiento, evaluación ni despliegue.
+
+La captura de cabecera queda privada en la Mac principal (`.runtime/ui-visual-mac24/header.jpg`); Git contiene sólo el [reporte agregado](../evidence/ui-visual-review-mac24.json) y su huella. La pestaña requiere mantener abierto el túnel de Terminal; cerrarlo con Ctrl+C deja de dar acceso desde esta Mac, sin detener los servicios remotos.

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "protocol": "ui-visual-readonly-v1",
+  "reviewed_at": "2026-10-24T20:15:51.782109+00:00",
+  "decision": "accepted_visual_read_only_review",
+  "deployment_run_id": "ui-deploy-f37f5b3b0443",
+  "deployment_procedure_commit": "8f1f0c5a8098ce2f6a87a7c3d365499f0ca9436d",
+  "deployment_audit": "evidence/ui-deployment-review-mac24.json",
+  "deployment_audit_sha256": "cad60063ac5c1f3e4daf3b5b82a38afb763bbf6bd3c0fda1a4d0ec5b3e1e5228",
+  "browser": {
+    "name": "Chrome",
+    "url": "http://127.0.0.1:18501/",
+    "viewport_pixels": {
+      "width": 1470,
+      "height": 923
+    },
+    "inspection": "direct DOM snapshots and browser screenshots"
+  },
+  "connection": {
+    "method": "user-operated SSH local forwarding",
+    "local_binding": "127.0.0.1:18501",
+    "ssh_host": "192.168.100.78",
+    "remote_binding": "127.0.0.1:8501",
+    "tunnel_command_verified_from_local_process": true,
+    "direct_remote_shell_used": false
+  },
+  "observed": {
+    "page_title": "H&M · Recomendaciones",
+    "main_heading": "Tu próxima selección",
+    "mode": "simulation",
+    "release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "data_as_of": "2020-09-09",
+    "revision": 5,
+    "published_at": "2026-10-23T19:40:24.725365+00:00",
+    "received_before": "2026-10-23T19:40:00.967331+00:00",
+    "recommendation_cards": 12,
+    "product_images_visually_loaded": true,
+    "recommendation_reason_labels": [
+      "Compra reciente",
+      "Popular esta semana"
+    ],
+    "catalog_total": 102967,
+    "catalog_table_rendered": true,
+    "filters_and_page_control_present": true,
+    "purchase_and_refresh_controls_present": true,
+    "visible_load_failure": false,
+    "captured_browser_warning_error_entries": 0,
+    "image_elements": 12,
+    "loaded_images": 12
+  },
+  "actions": {
+    "opened_page": true,
+    "navigated_heading_anchors": [
+      "recommendations",
+      "catalog",
+      "main_heading"
+    ],
+    "events_submitted": 0,
+    "profile_refreshes_requested": 0,
+    "filters_changed": false,
+    "stream_or_customer_changed": false,
+    "deployments_or_restarts": 0,
+    "training_test_or_load_runs": 0
+  },
+  "screenshot": {
+    "path": ".runtime/ui-visual-mac24/header.jpg",
+    "sha256": "b701d745123adaaf007d836f5c6e311fe35cfd1460ad9cd9131617b42bf32097",
+    "bytes": 35621,
+    "captured_at": "2026-10-24T20:14:12.501611+00:00",
+    "size_pixels": {
+      "width": 1350,
+      "height": 345
+    },
+    "scope": "header crop only; excludes customer identifiers, individual recommendations and catalog rows",
+    "retention": "private local file; image not committed to Git"
+  },
+  "publication": {
+    "aggregate_report_only": true,
+    "customer_ids_in_report": false,
+    "individual_predictions_in_report": false,
+    "catalog_rows_in_report": false
+  },
+  "limits": [
+    "This review inspected the existing initial simulation view. It did not submit events, change filters or test profile refresh behavior in the browser.",
+    "Revision 5 and displayed dates were observed. The dynamic 4-to-5 regression remains supported by the earlier synthetic test, not a new browser write.",
+    "Container image/source identity, database state and service health were not independently re-audited in this browser session; those remain covered by the preceding deployment report.",
+    "No responsive/mobile, accessibility, sustained-load or all-stream review was performed.",
+    "The historical deployment report retains visible_browser_verified=false because this separate visual review occurred later.",
+    "T8-B remains failed; academic tag and prior campaigns are unchanged."
+  ],
+  "visual_review_complete": true,
+  "next_step": "Present or use the deployed UI within its documented limits. Keep the user-operated tunnel open while accessing this URL; no further deployment, recovery or campaign is pending."
+}

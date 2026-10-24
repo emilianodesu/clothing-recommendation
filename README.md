@@ -1,12 +1,12 @@
 # Proyecto final de Datos Masivos
 
-**UI de mac24 actualizada y aceptada:** `ui-deploy-f37f5b3b0443`, sin rollback. Regresión de revisión 4→5 y render contra API correctos; originales conservados y seis auxiliares saludables según el reporte auditado. [Resultado y límites](evidence/ui-deployment-review-mac24.json). La inspección visual en navegador sigue sin realizarse.
+**UI de mac24 actualizada y aceptada:** `ui-deploy-f37f5b3b0443`, sin rollback. Regresión de revisión 4→5 y render contra API correctos; originales conservados y seis auxiliares saludables según el reporte auditado. [Resultado y límites](evidence/ui-deployment-review-mac24.json). La [revisión visual en Chrome](evidence/ui-visual-review-mac24.json) también quedó cerrada: cabecera, imágenes y catálogo correctos, sin acciones de escritura.
 
 **Operación vigente:** conservar el override privado `.runtime/ui-deploy-v1/active-override.json` y ambas imágenes por ID. No repetir despliegue, preparación ni `--restore-only`: esta ventana quedó cerrada. [Guía y resultado](docs/mac24-ui-deploy.md). La entrega académica y T8-B permanecen sin cambios.
 
 ## Estado vigente y lectura de antecedentes
 
-El [inventario consolidado](docs/delivery-status.md) contiene los entregables completos y límites actuales. T8-D entregado, T8-A/T8-C cerradas y T8-B failed; no declarar T8/E8 globalmente aprobados. El tag académico existe. La corrección UI posterior está desplegada localmente y en mac24; la inspección visual en navegador sólo está acreditada en la demo local. No hay otra campaña ni evaluación test pendiente para presentar el trabajo.
+El [inventario consolidado](docs/delivery-status.md) contiene los entregables completos y límites actuales. T8-D entregado, T8-A/T8-C cerradas y T8-B failed; no declarar T8/E8 globalmente aprobados. El tag académico existe. La corrección UI posterior está desplegada localmente y en mac24; la inspección visual está acreditada en la demo local y, en lectura, en mac24. No hay una nueva prueba de actualización de perfiles en el navegador remoto. No hay otra campaña ni evaluación test pendiente para presentar el trabajo.
 
 Las notas cronológicas siguientes conservan decisiones anteriores: expresiones como «próximo paso», «test reservado» o «capturas pendientes» no son órdenes vigentes. No ejecutar prompts históricos por aparecer en esta página. Para continuar, usar el inventario y la solicitud actual del usuario; conservar resultados, reservas y datos.
 

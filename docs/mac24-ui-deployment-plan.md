@@ -1,6 +1,6 @@
 # Siguiente paso: actualizar exclusivamente UI en mac24
 
-Estado: **despliegue operativo mac24 ejecutado y aceptado**, `ui-deploy-f37f5b3b0443`; [auditoría](../evidence/ui-deployment-review-mac24.json). Inspección visual en navegador no realizada. El plan siguiente documenta la ventana ya cerrada; no repetir sus comandos. Véanse [instrucciones de ejecución](mac24-ui-deploy.md) y [evidencia local](../evidence/ui-deployment-local.json). La [preparación de recuperación](../evidence/ui-recovery-review-mac24.json) quedó aceptada con el alcance indicado abajo. Los adaptadores `mac24_ui_recovery.py` ya terminaron: no volver a ejecutarlos ni usar `--restore-only`.
+Estado: **despliegue operativo mac24 ejecutado y aceptado**, `ui-deploy-f37f5b3b0443`; [auditoría](../evidence/ui-deployment-review-mac24.json). La [inspección visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) también quedó cerrada en lectura. El plan siguiente documenta la ventana ya cerrada; no repetir sus comandos. Véanse [instrucciones de ejecución](mac24-ui-deploy.md) y [evidencia local](../evidence/ui-deployment-local.json). La [preparación de recuperación](../evidence/ui-recovery-review-mac24.json) quedó aceptada con el alcance indicado abajo. Los adaptadores `mac24_ui_recovery.py` ya terminaron: no volver a ejecutarlos ni usar `--restore-only`.
 
 ## Identidades fijadas
 
@@ -30,7 +30,7 @@ La operación fija del lanzador es `compose up -d --no-deps --no-build --pull ne
 
 Si falla la nueva UI, aplicar el override histórico con las mismas restricciones y comprobar salud; conservar candidata, logs y resultado failed. La recuperación cambia también la generación UI, no restaura su ID antiguo. Terminar siempre recuperando los seis auxiliares por sus IDs guardados y volver a comprobar conjuntamente la salud de todos al cierre; comprobar API/PostgreSQL sin cambios de identidad/generación. No reconstruir servicios para recuperarlos.
 
-El lanzador comprueba UI desde localhost, identidad del archivo y render de la UI instalada mediante Streamlit AppTest contra la API real, sin pulsar botones. La cabecera se contrasta con los metadatos actuales del stream. Este render no equivale a una inspección visual en navegador: el reporte conserva `visible_browser_verified=false`. La revisión visual posterior sigue separada. Cualquier demostración con escritura necesitará un stream sintético explícito, separado de los originales. Conservar el override activo y documentar su uso en operaciones futuras: ejecutar Compose sin él podría seleccionar la imagen antigua del tag compartido.
+El lanzador comprueba UI desde localhost, identidad del archivo y render de la UI instalada mediante Streamlit AppTest contra la API real, sin pulsar botones. La cabecera se contrasta con los metadatos actuales del stream. Este render no equivale a una inspección visual en navegador: el reporte conserva `visible_browser_verified=false`. La revisión visual posterior quedó documentada por separado y no cambia ese campo histórico del reporte. Cualquier demostración con escritura necesitará un stream sintético explícito, separado de los originales. Conservar el override activo y documentar su uso en operaciones futuras: ejecutar Compose sin él podría seleccionar la imagen antigua del tag compartido.
 
 ## Alcance del cierre
 
