@@ -1,0 +1,92 @@
+{
+  "run_id": "ui-recovery-5f15b3471c1a",
+  "procedure_commit": "f4cd8a7184d896d7a72f3b29c4c951d99953734f",
+  "status": "passed",
+  "stage": "complete",
+  "created_at": "2026-10-24T18:51:01.410410+00:00",
+  "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+  "image_id": "sha256:38b8937c7c16245f3198e5a1e1561a9dae75d5857d78cc4bfdcfcdb211fc4fe1",
+  "image_verified": true,
+  "build_started": true,
+  "probe_started": true,
+  "engine": {
+    "memory": 14624956416,
+    "cpus": 4,
+    "architecture": "aarch64"
+  },
+  "planned_build_bytes": 8589934592,
+  "vm_disk_free_bytes": 68891275264,
+  "buildx": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5",
+  "buildkit_image": "sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea",
+  "builder_limits": {
+    "memory": 2147483648,
+    "swap": 2147483648,
+    "period": 100000,
+    "quota": 100000
+  },
+  "probe_limits": {
+    "memory": 536870912,
+    "swap": 536870912,
+    "nano_cpus": 500000000,
+    "network": "none",
+    "readonly": true,
+    "ports": {}
+  },
+  "probe_checks": {
+    "health": "ok",
+    "python": "3.12.15",
+    "streamlit": "1.66.0",
+    "httpx": "0.28.1",
+    "ui_sha256": "5a59c1c6014f5c5fc4980783f398cff5b45c116d52ac09c1951feb12450fa4d8"
+  },
+  "restoration": [
+    {
+      "role": "postgres",
+      "restored": true
+    },
+    {
+      "role": "api",
+      "restored": true
+    },
+    {
+      "role": "mlflow",
+      "restored": true
+    },
+    {
+      "role": "airflow-api",
+      "restored": true
+    },
+    {
+      "role": "airflow-dag-processor",
+      "restored": true
+    },
+    {
+      "role": "airflow-scheduler",
+      "restored": true
+    }
+  ],
+  "auxiliaries_restored": true,
+  "original_services_preserved": true,
+  "recovery_complete": true,
+  "temporary_stopped": true,
+  "deployment_started": false,
+  "temporary_cleanup_complete": true,
+  "cleanup_errors": [],
+  "public_followup": true,
+  "prior_run_id": "ui-recovery-22fc4a3dcc96",
+  "prior_state_sha256": "7f9f19e3876033fdd3224a9a27e1a171fbf343bf4243e035f66b9a94ef93ab07",
+  "public_registry_checked": true,
+  "public_images": [
+    "moby/buildkit@sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea",
+    "python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+    "astral/uv:0.13.1@sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef30279f7d64048519ab901ada336"
+  ],
+  "public_buildkit_image_id": "sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea",
+  "maintenance_started": true,
+  "buildx_followup": true,
+  "plugin_source_run_id": "ui-recovery-926496b63278",
+  "plugin_source_state_sha256": "33d1aef4b0bb4599da173e50e04ef9376c5f234bf03ba9e36e455c8902549b58",
+  "buildx_plugin_sha256": "1945099c3b5c8eb9801c8fc2d29f790efa0419091877114ff06d676428fb8f62",
+  "private_buildx": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5",
+  "buildx_identity_verified": true
+}
