@@ -60,4 +60,4 @@ Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito 
 
 No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
 
-Preparación UI mac24: `blocked_capacity` según el reporte recibido; [ventana de mantenimiento propuesta](mac24-ui-maintenance-plan.md), pendiente de autorización. No hay todavía imagen de recuperación validada.
+Preparación UI mac24: `blocked_capacity` según el reporte recibido; [ventana de mantenimiento propuesta](mac24-ui-maintenance-plan.md), autorizada por el usuario el 2026-10-24, aún sin ejecución reportada. No hay todavía imagen de recuperación validada.

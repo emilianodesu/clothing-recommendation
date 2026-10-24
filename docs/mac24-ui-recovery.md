@@ -1,5 +1,7 @@
 # Preparar recuperación de UI en mac24, sin despliegue
 
+**Seguimiento autorizado:** aplicar la [ventana de seis auxiliares](mac24-ui-maintenance-plan.md) aprobada por el usuario el 2026-10-24. Esa guía sustituye la prohibición de detener auxiliares exclusivamente durante esta preparación y obliga a recuperarlos. Conservar el intento blocked_capacity; no desplegar UI.
+
 ## Resultado mac24 y siguiente decisión (2026-10-24)
 
 La preparación en `9b2dbf5b1cd8a84fed5f2c16d956f59841c3305c` terminó en **`blocked_capacity`**, etapa `capacity_admission`. Ver [evidencia agregada](../evidence/ui-recovery-mac24.json); el reporte completo y las instantáneas permanecen privados en mac24. Su huella SHA-256 está en la evidencia para correlacionarlos; este resumen no sustituye una auditoría independiente del reporte privado.
