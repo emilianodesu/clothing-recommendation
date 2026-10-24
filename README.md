@@ -2,7 +2,7 @@
 
 **Recuperación UI en mac24 aceptada:** se reconstruyó la imagen histórica y arrancó Streamlit en una prueba aislada; seis auxiliares recuperados y originales conservados según el reporte auditado. [Resultado y límites](evidence/ui-recovery-review-mac24.json). La UI corregida aún no está desplegada. Sigue [preparar la candidata y actualizar sólo UI](docs/mac24-ui-deployment-plan.md); no repetir los adaptadores de recuperación.
 
-**Siguiente desarrollo:** implementar el lanzador de actualización UI con candidata verificada, override exclusivo, rollback y recuperación de auxiliares, según el plan enlazado. La recepción del reporte no ejecuta despliegue, nuevas pausas ni T8.
+**Siguiente paso autorizado al continuar:** ejecutar una vez `scripts/mac24_ui_deploy.py --deploy --expected-commit SHA_COMPLETO --publish`, según la [guía](docs/mac24-ui-deploy.md). Lanzador implementado; ejecución mac24 pendiente. Pausa sólo seis auxiliares, verifica candidata y reemplaza sólo UI; recuperación por imagen histórica y restauración protegida. Conservar `.runtime/ui-deploy-v1` y el override activo. Ante recuperación pendiente, sólo `--restore-only` con el mismo SHA; no repetir preparación ni T8.
 
 ## Estado vigente y lectura de antecedentes
 

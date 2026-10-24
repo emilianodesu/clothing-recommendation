@@ -52,7 +52,7 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 
 Para presentar el proyecto, seguir [el recorrido del evaluador](demo.md): informe, selección de H, cobertura del temario, evaluación final, operación y demo sintética. No se necesita otra campaña de entrenamiento, evaluación test ni carga para presentar la evidencia existente.
 
-Para actualizar la UI de mac24, implementar el [procedimiento de candidata y actualización exclusiva](mac24-ui-deployment-plan.md), usando la imagen histórica recuperable ya aceptada. Debe comprobar compatibilidad, conservar API/PostgreSQL y recuperar auxiliares. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
+Para actualizar la UI de mac24, ejecutar una vez el [lanzador de candidata y actualización exclusiva](mac24-ui-deploy.md) con el SHA entregado, usando la imagen histórica recuperable ya aceptada. Debe comprobar compatibilidad, conservar API/PostgreSQL y recuperar auxiliares. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
 
 Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito retirado por el usuario), servicio público multiusuario, alta disponibilidad e impacto comercial online. No son resultados demostrados por las pruebas existentes.
 
@@ -60,4 +60,4 @@ Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito 
 
 No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
 
-Preparación UI mac24 aceptada: `ui-recovery-5f15b3471c1a`; [auditoría y límites](../evidence/ui-recovery-review-mac24.json). La imagen histórica se reconstruyó y pasó imports/hash/health aislados; seis auxiliares recuperados y servicios originales conservados según el reporte remoto. Se conservan `blocked_capacity` y los dos intentos failed. La UI corregida aún no está desplegada; su lanzador de actualización sigue pendiente. No repetir preparación ni `--restore-only`.
+Preparación UI mac24 aceptada: `ui-recovery-5f15b3471c1a`; [auditoría y límites](../evidence/ui-recovery-review-mac24.json). La imagen histórica se reconstruyó y pasó imports/hash/health aislados; seis auxiliares recuperados y servicios originales conservados según el reporte remoto. Se conservan `blocked_capacity` y los dos intentos failed. La UI corregida aún no está desplegada; su lanzador de actualización está implementado y verificado localmente, con ejecución mac24 pendiente; ver [guía](mac24-ui-deploy.md). No repetir preparación ni `--restore-only`.

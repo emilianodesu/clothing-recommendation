@@ -1,0 +1,73 @@
+{
+  "protocol": "ui-deployment-local-v1",
+  "created_at": "2026-10-24T19:31:48.578436+00:00",
+  "base_commit": "488926cec5d74e167712fb04b8119fbb046d1843",
+  "status": "local_verification_passed_remote_execution_pending",
+  "source_recovery_report_sha256": "c5d758bfe2e750a6b2f3a9db7cbad5a5594794e4b52644365e818621d232dd35",
+  "files_sha256": {
+    "scripts/mac24_ui_deploy.py": "9326d81a99d91a132327dd3b1ff79bcdf3090860526e265a5966771efab2db17",
+    "scripts/ui_deploy_control.py": "81a51e28a8028c05cc89ad32bf6d07cb6cc18b84089cceb1893d461c61b04254",
+    "tests/host/test_ui_deploy_control.py": "cc6d08fd1be2c4b61300c80766777c653b808791bb5c4733a14cb6dac3d10e96",
+    "tests/host/test_ui_deploy_runner.py": "52233196f8f76cce244ab13d39cfebd9a6c532d0cd52352edc8180cacec75fcf"
+  },
+  "verification": {
+    "focused_host_tests": {
+      "run": 13,
+      "passed": 13,
+      "skipped": 0
+    },
+    "full_host_suite": {
+      "run": 290,
+      "passed": 289,
+      "skipped": 1,
+      "seconds": 12.791,
+      "skip_reason": "test_inspect_health requires explicit synthetic Docker fixture",
+      "failures": 0,
+      "errors": 0
+    },
+    "compose_configuration": {
+      "compose_resolution": "passed",
+      "changed_fields": [
+        "services.ui.image"
+      ],
+      "service_count": 12,
+      "synthetic_configuration": true,
+      "daemon_mutated": false
+    },
+    "syntax_compilation": "passed",
+    "failure_cases": [
+      "public registry failure leaves services untouched",
+      "failed build/regression preserves old UI",
+      "failed candidate rolls back",
+      "failed/interrupted rollback still attempts all six auxiliaries",
+      "late unhealthy/restarted candidate rolls back",
+      "recovery revalidates current UI without rebuilding",
+      "rollback preserves failed status",
+      "private contract survives JSON roundtrip"
+    ],
+    "code_review": {
+      "final_blocking_findings": 0,
+      "review_scope": "static review of runner, contracts and failure tests; no remote or Docker lifecycle actions",
+      "fixed_findings": [
+        "late UI failure omitted rollback",
+        "interruption during rollback skipped auxiliaries",
+        "recovery summary could retain passed after rollback"
+      ]
+    }
+  },
+  "deployment": {
+    "mac24_executed": false,
+    "local_services_mutated": false,
+    "campaigns_or_test_evaluation_started": false,
+    "ssh_check": "No route to host",
+    "publication": "code and aggregate local evidence only"
+  },
+  "limits": [
+    "Host lifecycle tests use simulated Docker/services; actual build, application and rollback on mac24 remain unverified.",
+    "Only Compose configuration was resolved with the real CLI; no local images built or containers started.",
+    "The targeted synthetic Streamlit regression will run in the candidate image on mac24; the new live-render program has not run there.",
+    "AppTest checks the installed UI through real API reads; it does not establish visual browser verification.",
+    "The state signature covers table counts and selected metadata, not every row.",
+    "Returning auxiliaries restores the historical inventory, not sustained concurrency capacity. T8-B remains failed."
+  ]
+}
