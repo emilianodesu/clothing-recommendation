@@ -89,7 +89,7 @@ def main():
     sub.add_parser("down", help="Detener conservando volúmenes")
     sub.add_parser("status", help="Mostrar los contenedores de este proyecto")
     verify = sub.add_parser("verify", help="Ejecutar pruebas de la entrega disponible")
-    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline", "portability"), required=True)
+    verify.add_argument("--suite", choices=("bootstrap", "unit", "data", "model", "diagnostics", "quality", "releases", "serving", "events", "pipeline", "portability", "acceptance"), required=True)
     verify.add_argument("--existing-services", action="store_true", help="Exigir PostgreSQL activo sin arrancarlo ni recrearlo (serving/events)")
     demo=sub.add_parser('demo',help='T5: preparar demo sintética, interfaz y reporte cerrado')
     demo.add_argument('--skip-build',action='store_true')
@@ -143,6 +143,10 @@ def main():
         from pipeline_control import main as pipeline_main
         return pipeline_main(args.pipeline_args)
     try:
+        if args.action == "verify" and args.suite == "acceptance":
+            if args.existing_services:raise ValueError("Acceptance requires an isolated engine")
+            from acceptance import run
+            return run(ROOT)
         if args.action == 'clock-check':
             from clock_check import main as check_clock
             return check_clock(['--machine-id',args.machine_id,'--expected-commit',args.expected_commit,

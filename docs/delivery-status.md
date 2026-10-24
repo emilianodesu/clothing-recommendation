@@ -1,5 +1,7 @@
 # Inventario de entrega T8-D
 
+**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
+
 Fecha: 2026-10-24. Base auditada: `eb66c5a` (cierre T8-C); este cambio añade documentación, sin ejecutar H&M ni modificar servicios. T8 global permanece abierto.
 
 ## Documentación disponible
@@ -36,7 +38,7 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 
 ## Pendientes antes de declarar E8 completo
 
-1. Implementar y verificar el contrato de aceptación final sintética o resolver formalmente su alcance. El CLI todavía no tiene `verify --suite acceptance`; no anunciarlo como disponible. Debe comprobar recorrido crítico aislado, sin test real, entrenamiento ni nueva carga histórica.
+1. Verificar integralmente el contrato de aceptación final sintética implementado en `verify --suite acceptance`. Debe comprobar recorrido crítico aislado, sin test real, entrenamiento ni nueva carga histórica.
 2. Ejecutar y registrar esa aceptación en un entorno con presupuesto explícito. Conservar fuente/imagen/resultados, también si falla; una comprobación estática de documentos no acredita ejecución.
 3. Capturar la demo sintética según el guion, con versión y entorno. No publicar datos reales ni credenciales.
 4. Revisar los artefactos finales y crear un tag de entrega sobre el commit validado. No se creó todavía un tag final ni se declaró E7/E8 completos.

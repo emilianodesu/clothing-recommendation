@@ -1,5 +1,7 @@
 # Guía del evaluador y demostración
 
+**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
+
 ## Recorrido sin ejecutar trabajos (10–15 minutos)
 
 Esta ruta sirve para revisar la entrega actual sin modificar mac24. No necesita Kaggle ni abrir test. Los reportes son evidencia de ejecuciones anteriores, no una ejecución nueva.
@@ -47,4 +49,4 @@ Grabar sólo la demo sintética: arranque confirmado, recomendaciones, evento co
 
 ## Comandos que no forman parte de esta demo
 
-No ejecutar `mac24_t8_final.py`, reentrenamientos Q1–Q4, benchmarks históricos, `prune`, `down -v` ni limpieza de reservas. El CLI actual no ofrece `verify --suite acceptance` ni `project.py benchmark`: esas interfaces del plan todavía requieren implementación o una resolución explícita del alcance. La demo no sustituye esa aceptación final.
+No ejecutar `mac24_t8_final.py`, reentrenamientos Q1–Q4, benchmarks históricos, `prune`, `down -v` ni limpieza de reservas. El CLI ofrece `verify --suite acceptance` para un motor dedicado; su ensayo integral está pendiente. No ofrece `project.py benchmark`; usar los reportes auditados de carga, sin repetirlos. La demo no sustituye esa aceptación final.

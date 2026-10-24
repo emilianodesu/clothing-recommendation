@@ -1,5 +1,7 @@
 # Plataforma local reproducible de recomendaciones H&M
 
+**Actualización:** el comando de [aceptación sintética](acceptance.md) ya está implementado; su ejecución Docker integral sigue pendiente de un motor dedicado con capacidad. La preparación anterior que lo describe como inexistente es histórica. No ejecutar sobre el motor mac24 ocupado.
+
 Informe académico · Datos Masivos · 24 de octubre de 2026
 
 ## Objetivo y alcance
