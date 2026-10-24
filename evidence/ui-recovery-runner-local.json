@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "scope": "local host verification of SSH recovery adapter; no mac24 execution",
+  "host_suite": {
+    "tests": 264,
+    "passed": 263,
+    "skipped": 1,
+    "duration_seconds": 13.137
+  },
+  "new_tests": 14,
+  "regressions_observed_before_fix": [
+    "maintenance target validation",
+    "capacity admission",
+    "partial and failed recovery handling",
+    "historical checkout permissions",
+    "probe removal preventing builder stop"
+  ],
+  "review": {
+    "independent_review_performed": true,
+    "important_findings_fixed": [
+      "historical source readable by container user",
+      "probe removal failure does not prevent service recovery",
+      "restore-only honors publish while preserving failed outcome"
+    ],
+    "remaining_P1_P2": 0
+  },
+  "sources": {
+    "scripts/mac24_ui_recovery.py": "f2298ef255b9c6ed653b78c524b4d78d39e0da99a9a8b0788c2ea2822f7eee92",
+    "scripts/ui_recovery_control.py": "a7770fa98bbac54534db063f2434071843a44caf8820cc505d0e425877e52967",
+    "tests/host/test_ui_recovery_control.py": "4faa7b6f32612b8003fd6ecbf70326823de49759bf280a2e981f9a4d4ae81c59",
+    "tests/host/test_ui_recovery_runner.py": "bc5b49e8b3cac5445b0c7c163440ad9b761aeea31204f0168b2b71b67575858c"
+  },
+  "mac24_execution": false,
+  "maintenance_executed_here": false,
+  "image_recovery_verified": false,
+  "deployment_started": false
+}

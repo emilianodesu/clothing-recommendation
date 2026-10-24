@@ -39,3 +39,28 @@ La autorización concedida cubre únicamente esta preparación con mantenimiento
 Conservar el reporte privado y publicar únicamente su resumen agregado, sin clientes, credenciales, rutas privadas ni inventarios completos, en `evidence/ui-recovery-maintenance-mac24.json`. Registrar `procedure_commit`, estado, etapa, imagen recuperada por digest, fuente histórica, límites, resultado de imports/hash/health, preservación original y recuperación individual de los seis roles. Separar la aprobación de la imagen de la recuperación de servicios: ambas deben constar. Si hay fallo, publicarlo también sin cambiarlo a passed.
 
 Después de recuperar los servicios y cerrar el reporte, actualizar esta guía con el resultado, hacer commit y push de esos archivos en el repositorio privado. No modificar código, dependencias o umbrales durante el intento. Si el push falla, conservar el commit local y devolver el resumen al operador. El JSON no debe enviarse al empaquetador de ZIP históricos. No sobrescribir `evidence/ui-recovery-mac24.json`, que conserva blocked_capacity.
+
+## Ejecución desde Terminal por SSH
+
+Está implementado `scripts/mac24_ui_recovery.py`; no es necesario pasar instrucciones a otro agente. Tras actualizar un clon limpio al SHA entregado, ejecutar:
+
+```bash
+export SSL_CERT_FILE=/etc/ssl/cert.pem
+python3 scripts/mac24_ui_recovery.py --expected-commit SHA_COMPLETO --publish
+```
+
+El adaptador mantiene el contexto `colima-hm-project`, toma el bloqueo de jobs pesados, exige el inventario previo y la huella del reporte privado, comprueba DAG pausados/inactivos y ausencia de runs MLflow activos, y registra el estado antes de cualquier pausa. Rechaza un segundo intento si existe `.runtime/ui-recovery-terminal-v1/`. Usa un constructor nuevo con límites comprobados y un probe sin red externa, puertos, datos ni secretos. Los parámetros del constructor siguen la [documentación oficial de Docker](https://docs.docker.com/build/builders/drivers/docker-container/).
+
+Mantener la sesión abierta, AC y tapa abierta. La salida anuncia etapas y actividad cada 20 segundos durante procesos largos; logs completos en esa carpeta privada. `--publish` confirma el repositorio privado y publica sólo `evidence/ui-recovery-maintenance-mac24.json` después de recuperar los auxiliares, también si la construcción falló. No sobrescribe el reporte blocked_capacity ni modifica tags compartidos.
+
+Si la conexión se interrumpe, el adaptador intenta finalizar la construcción y recuperar auxiliares. Una pérdida de energía o terminación forzada no permite garantizar ese bloque. En ese caso, inspeccionar el estado guardado y ejecutar **únicamente**:
+
+```bash
+python3 scripts/mac24_ui_recovery.py --restore-only --expected-commit SHA_DEL_INTENTO --publish
+```
+
+Este modo comprueba huellas de los scripts, detiene sólo sus recursos temporales y recupera por los IDs guardados. No reconstruye ni repite el probe. Conserva el resultado failed si el intento original falló; la recuperación es un hecho separado. No borrar la carpeta de estado. Si falla el push, el resumen y cualquier commit local quedan conservados; publicar ese commit no requiere repetir mantenimiento.
+
+Limitación de validación local: las pruebas host simulan el motor remoto para comprobar selección, recuperación y fallos. El flujo completo de Buildx/Streamlit todavía debe ejecutarse en mac24 bajo esta ventana; no se acredita por la sola existencia del script.
+
+Las pruebas del adaptador cubren fallos de pausa parcial, construcción, recuperación individual, retirada del probe y pérdida de stdout SSH. El contexto histórico se crea con permisos legibles para el usuario no privilegiado del contenedor, dentro de una carpeta privada en el host; secretos y logs conservan permisos privados. Un fallo al retirar un probe ya detenido se registra sin bloquear la recuperación de servicios.
