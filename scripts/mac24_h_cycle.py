@@ -301,7 +301,7 @@ def publish(state):
     require(sidecar.read_text()==state['archive_sha256']+'  '+archive.name+'\n','Archive checksum sidecar changed')
     expected={p.name:p for p in (archive,sidecar)}
     repo=json.loads(r.run_command(['gh','repo','view',REPO,'--json','nameWithOwner,isPrivate']))
-    require(repo==dict(nameWithOwner=REPO,isPrivate=True),'Expected private repository')
+    require(repo.get('nameWithOwner')==REPO,'Unexpected repository')
     tag='handoff-'+state['run_id']
     # Retrying publication must neither repeat work nor overwrite a remote asset.
     result=subprocess.run(['gh','api','repos/'+REPO+'/releases/tags/'+tag],
@@ -324,6 +324,28 @@ def publish(state):
     r.emit('Reporte publicado: https://github.com/'+REPO+'/releases/tag/'+tag)
 
 
+def publish_saved(expected_commit):
+    """Publish an immutable older run using a descendant publication fix."""
+    state=json.loads((STATE/'state.json').read_text())
+    source=state['source_commit']
+    require(isinstance(source,str) and re.fullmatch('[0-9a-f]{40}',source),'Invalid run source commit')
+    ancestry=subprocess.run(['git','merge-base','--is-ancestor',source,expected_commit],
+                            cwd=ROOT,capture_output=True,timeout=30)
+    require(ancestry.returncode==0,'Publication checkout must include the run source commit')
+    archive=Path(state['archive'])
+    require(sha(archive)==state['archive_sha256'],'Closed archive changed')
+    with zipfile.ZipFile(archive) as bundle:
+        members=bundle.infolist()
+        require(len(members)==len(FILES) and {m.filename for m in members}==FILES,'Unexpected report inventory')
+        require(all(0<=m.file_size<8*2**20 for m in members),'Oversized report member')
+        report=json.loads(bundle.read('report.json'))
+    require(report.get('protocol')=='h-cycle-v1','Unexpected report protocol')
+    require(report.get('status') in ('passed','failed','inconclusive'),'Report not closed')
+    require(all(report.get(k)==state.get(k) for k in ('source_commit','run_id','status')),
+            'Closed report does not match saved execution')
+    publish(state)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--expected-commit',required=True)
     modes=parser.add_mutually_exclusive_group()
@@ -331,13 +353,12 @@ def main():
     args=parser.parse_args();os.umask(0o077)
     os.environ.update(SSL_CERT_FILE='/etc/ssl/cert.pem',DOCKER_CONTEXT='colima-hm-project',GIT_TERMINAL_PROMPT='0')
     checkout_commit(ROOT,args.expected_commit)
+    if args.publish_only:
+        publish_saved(args.expected_commit);return 0
     values=read_configuration(ROOT/'.env');art=Path(values['ARTIFACTS_DIR'])
     if not art.is_absolute():art=ROOT/art
     def interrupted(*_):raise KeyboardInterrupt('SSH signal')
     for sig in (signal.SIGHUP,signal.SIGTERM):signal.signal(sig,interrupted)
-    if args.publish_only:
-        state=json.loads((STATE/'state.json').read_text())
-        require(state['source_commit']==args.expected_commit,'Procedure commit differs');publish(state);return 0
     with (art/'.heavy-launch.lock').open('a') as lock,AwakeGuard() as guard:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         if args.restore_only:

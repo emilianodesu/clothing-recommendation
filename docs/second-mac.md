@@ -6,7 +6,7 @@ Esta guía conserva la instalación y las ejecuciones históricas entre las dos 
 
 ## 1. Obtener el código
 
-Se necesitan Git, Homebrew, Python 3.9+ nativo ARM64 y Ruby con YAML, además de GitHub CLI (`gh`) y una cuenta con permiso de escritura en el repositorio privado. Consulta [la preparación de Docker](setup.md) si falta un requisito. El script instala Docker CLI, Colima, Compose y Buildx cuando faltan; no instala Homebrew ni autentica GitHub por ti. La primera instalación necesita Internet para descargar imágenes y dependencias. No necesita una cuenta de nube ni Kaggle.
+Se necesitan Git, Homebrew, Python 3.9+ nativo ARM64 y Ruby con YAML, además de GitHub CLI (`gh`) y una cuenta con permiso de escritura en el repositorio. Consulta [la preparación de Docker](setup.md) si falta un requisito. El script instala Docker CLI, Colima, Compose y Buildx cuando faltan; no instala Homebrew ni autentica GitHub por ti. La primera instalación necesita Internet para descargar imágenes y dependencias. No necesita una cuenta de nube ni Kaggle.
 
 Prepara GitHub CLI una vez en esta Mac (si `gh` ya está instalado y autenticado con la cuenta correcta, conserva esa configuración):
 
@@ -81,7 +81,7 @@ Contenido del ZIP:
 | Logs por etapa | Diagnóstico, recursos efectivos y resultados de pruebas |
 | `preflight.log`, si aplica | Motivo de rechazo o fallo previo/final |
 
-El paquete incluye únicamente los archivos previstos. No adjunta `.env`, tokens, dataset ni modelos. Los logs pueden incluir rutas locales; el intercambio sigue siendo privado. Las huellas detectan cambios/corrupción en el contenido y no son una firma de identidad del equipo.
+El paquete incluye únicamente los archivos previstos. No adjunta `.env`, tokens, dataset ni modelos. Los logs pueden incluir rutas locales; la visibilidad de los reportes sigue la del repositorio. Las huellas detectan cambios/corrupción en el contenido y no son una firma de identidad del equipo.
 
 El agente puede verificarlo allí con:
 
@@ -93,7 +93,7 @@ Si falla una etapa, las posteriores no se ejecutan. Devuelve el ZIP fallido; no 
 
 ## 4. Comunicar el resultado a la Mac de desarrollo
 
-Toda la comunicación entre Macs usa el repositorio privado de GitHub:
+Toda la comunicación entre Macs usa el repositorio de GitHub (público o privado):
 
 ```text
 Mac de desarrollo → push de código, documentación y commit acordado
@@ -109,7 +109,7 @@ En la segunda Mac, después de que el instalador muestre la ruta final:
 python3 scripts/github-handoff.py upload artifacts/handoff/NOMBRE-EXACTO.zip
 ```
 
-Usa la ruta exacta del intento, sin comodines. El comando valida el ZIP y exige que el repositorio sea privado y la cuenta tenga escritura. Crea una Release marcada como prerelease, con nombre `handoff-RUN_ID`, vinculada al commit del reporte; no la marca como última versión de la aplicación. Adjunta únicamente el ZIP de diagnóstico (límite de este protocolo: 50 MiB), lo descarga para comparar su SHA-256 y devuelve la URL. Un reporte fallido también se puede publicar. Si falla la conexión, conserva el ZIP y repite el mismo comando: reutiliza contenido idéntico y rechaza sobrescribir contenido distinto. Una publicación incompleta recuperable permanece como borrador hasta terminar.
+Usa la ruta exacta del intento, sin comodines. El comando valida el ZIP y exige que la cuenta tenga escritura en el repositorio. Crea una Release marcada como prerelease, con nombre `handoff-RUN_ID`, vinculada al commit del reporte; no la marca como última versión de la aplicación. Adjunta únicamente el ZIP de diagnóstico (límite de este protocolo: 50 MiB), lo descarga para comparar su SHA-256 y devuelve la URL. Un reporte fallido también se puede publicar. Si falla la conexión, conserva el ZIP y repite el mismo comando: reutiliza contenido idéntico y rechaza sobrescribir contenido distinto. Una publicación incompleta recuperable permanece como borrador hasta terminar.
 
 Si el fallo ocurrió antes de obtener un commit, la Release usa la rama predeterminada como referencia técnica, pero el manifiesto conserva `source_commit: null`; no se atribuye una revisión comprobada a ese intento. Para publicar un reporte de un commit propio, ese commit debe estar previamente disponible en el remoto.
 
@@ -132,9 +132,9 @@ python3 scripts/read-handoff.py artifacts/incoming/RUN_ID.zip
 
 `github-handoff.py` devuelve **0 si el transporte fue correcto y 1 si falló**. Un transporte exitoso puede contener una instalación fallida: revisa siempre el estado del resumen. El lector local distingue **0: instalación reportada como satisfactoria; 1: reporte válido de fallo/interrupción; 2: paquete inválido o inaccesible**. Ninguno extrae ni ejecuta archivos del paquete.
 
-El destino predeterminado es `emilianodesu/clothing-recommendation`. Para usar otro repositorio privado autorizado, pasa `--repo PROPIETARIO/REPOSITORIO` antes de `upload`, `download` o `list`. No depende del directorio personal, de un token incluido en el código ni de un contexto GitHub implícito. El repositorio elegido debe seguir siendo privado.
+El destino predeterminado es `emilianodesu/clothing-recommendation`. Para usar otro repositorio autorizado, pasa `--repo PROPIETARIO/REPOSITORIO` antes de `upload`, `download` o `list`. No depende del directorio personal, de un token incluido en el código ni de un contexto GitHub implícito. Se admiten repositorios públicos y privados.
 
-Después de publicar, puedes escribir aquí «Revisa los reportes de mac24 en GitHub» o dar el `run_id`. El agente de aquí podrá descargarlos y analizarlos. Los reportes contienen logs privados, potencialmente con rutas locales; sus adjuntos sólo deben permanecer en el repositorio privado. La verificación de huellas detecta corrupción, pero no sustituye la confianza en la cuenta que publicó el reporte.
+Después de publicar, puedes escribir aquí «Revisa los reportes de mac24 en GitHub» o dar el `run_id`. El agente de aquí podrá descargarlos y analizarlos. Los reportes contienen logs, potencialmente con rutas locales; sus adjuntos tendrán la misma visibilidad que el repositorio. Datos, credenciales y respaldos permanecen fuera de este transporte. La verificación de huellas detecta corrupción, pero no sustituye la confianza en la cuenta que publicó el reporte.
 
 Formato breve que debe devolver el agente de la segunda Mac:
 
@@ -207,7 +207,7 @@ Instrucción para el agente de mac24:
 
 > Lee AGENTS.md, docs/second-mac.md y docs/data.md. Actualiza de forma segura y fija el commit indicado. Usa SSL_CERT_FILE=/etc/ssl/cert.pem en los intentos. Prepara Colima hm-project con 14 GiB/4 CPU sin interrumpir trabajos ni borrar volúmenes. Los perfiles ya están implementados: ejecuta T2 sintético y después H&M completo con --resources mac24 (10 GiB/3 CPU/2 hilos), descargando el dataset directamente de Kaggle. Espera resultados, valida y publica ambos reportes mediante github-handoff, incluso ante fallos. Devuelve commit, run_id, URL, recursos solicitados/efectivos, conteos, duración, memoria y errores si los hay. No inicies entrenamiento T3 ni cambies límites para ocultar fallos.
 
-En esta Mac recibimos los resultados con los comandos existentes `github-handoff.py list`, `download RUN_ID` y `read-handoff.py`. El nuevo tipo `data-handoff` viaja en una Release privada `handoff-data-...`, con el mismo control de integridad y límite de 50 MiB. GitHub es el único canal entre equipos; la subida no activa automáticamente al otro agente.
+En esta Mac recibimos los resultados con los comandos existentes `github-handoff.py list`, `download RUN_ID` y `read-handoff.py`. El nuevo tipo `data-handoff` viaja en una Release `handoff-data-...`, con el mismo control de integridad y límite de 50 MiB. GitHub es el único canal entre equipos; la subida no activa automáticamente al otro agente.
 
 
 ### Resultado T2 recibido de mac24
@@ -253,7 +253,7 @@ SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/read-handoff.py RUTA_EXACTA.zip
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py upload RUTA_EXACTA.zip
 ```
 
-Un reporte válido fallido devuelve 1 en el lector; aun así se publica. ZIP inválido devuelve 2 y no debe publicarse. Publicar cada reporte en el repositorio privado está autorizado.
+Un reporte válido fallido devuelve 1 en el lector; aun así se publica. ZIP inválido devuelve 2 y no debe publicarse. Publicar cada reporte agregado en el repositorio está autorizado.
 
 Para interrupciones recuperables:
 

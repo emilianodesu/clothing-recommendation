@@ -361,7 +361,7 @@ def summary(state):
 def publish(state):
     checkout_commit(ROOT,state['procedure_commit'])
     repository=json.loads(run_command(['gh','repo','view','--json','nameWithOwner,isPrivate']))
-    require(repository==dict(nameWithOwner='emilianodesu/clothing-recommendation',isPrivate=True),'Expected private project repository')
+    require(repository.get('nameWithOwner')=='emilianodesu/clothing-recommendation','Unexpected project repository')
     filename=('ui-recovery-buildx-mac24.json' if state.get('buildx_followup') else
               'ui-recovery-public-mac24.json' if state.get('public_followup') else 'ui-recovery-maintenance-mac24.json')
     destination=ROOT/'evidence'/filename

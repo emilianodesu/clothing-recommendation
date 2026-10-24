@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exchange completed bootstrap reports through private GitHub Releases."""
+"""Exchange validated reports through public or private GitHub Releases."""
 import argparse
 import hashlib
 import json
@@ -151,10 +151,8 @@ class GitHub:
         return [item for page in pages for item in page]
 
 
-def private_repository(client, write=False):
+def accessible_repository(client, write=False):
     repository = client.repository()
-    if repository.get('private') is not True:
-        raise ValueError('Se requiere un repositorio privado para intercambiar reportes')
     if write and repository.get('permissions', {}).get('push') is not True:
         raise ValueError('La cuenta de GitHub necesita permiso de escritura en este repositorio')
     return repository
@@ -190,7 +188,7 @@ def retrieve(client, release, run_id, directory):
 def upload(client, archive):
     # Validate a closed local report before any network operation.
     report = validate_archive(archive)
-    repository = private_repository(client, write=True)
+    repository = accessible_repository(client, write=True)
     run_id = report['run_id']
     tag = tag_for(run_id)
     with tempfile.TemporaryDirectory(prefix='hmrec-upload-') as temporary:
@@ -225,7 +223,7 @@ def upload(client, archive):
 
 def download(client, run_id, destination):
     tag_for(run_id)
-    private_repository(client)
+    accessible_repository(client)
     release = checked_release(client, run_id)
     if release is None:
         raise ValueError('No hay reporte publicado para ese run_id')
@@ -266,7 +264,7 @@ def main():
             print('Paquete verificado: ' + str(target))
             print(summary(read_report(target)))
         else:
-            private_repository(client)
+            accessible_repository(client)
             reports = []
             for release in client.releases():
                 tag = release.get('tag_name', '')

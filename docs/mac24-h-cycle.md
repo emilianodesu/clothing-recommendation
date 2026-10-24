@@ -59,7 +59,8 @@ intervalos posible/conservador, métricas por segmento y globales, recursos,
 hashes de código/cohorte/antecedentes y estado agregado antes/después. Trazas
 publicables sólo contienen tiempos relativos, segmento y éxito, sin solicitudes,
 respuestas, clientes, paths privados ni credenciales. ZIP + SHA-256 van a una
-Release privada de GitHub; logs, cohortes, salida H y estado de recuperación
+Release de GitHub con la visibilidad del repositorio (público o privado);
+logs, cohortes, salida H y estado de recuperación
 permanecen en mac24. No se modifican evidencias ni reservas anteriores.
 
 ## Ejecución y recuperación
@@ -86,3 +87,28 @@ El resultado es `failed` ante incumplimiento operativo/latencia, `inconclusive`
 ante muestra insuficiente y `passed` sólo para el ciclo observado. Requiere
 revisión principal antes de atribuirlo a la entrega. T8-B histórico y la
 limitación de concurrencia sostenida permanecen intactos en los tres casos.
+
+## Continuación de publicación del 24 de octubre
+
+El operador reportó `h-cycle-mac24-20261024T204022Z-10bcd520` como passed en
+`a3858fd56fb945f78f8893e181d3b8cd2b8782e7`. Falló después de cerrar el ZIP,
+al comprobar que el repositorio fuera privado. El usuario cambió el repositorio
+a público y autorizó continuar sin esa restricción. No se ha descargado ni
+auditado aún este ZIP en la Mac principal.
+
+Actualizar al commit de la corrección y ejecutar **sólo**:
+
+```bash
+python3 scripts/mac24_h_cycle.py --expected-commit SHA_NUEVO --publish-only
+```
+
+Este modo verifica checkout limpio, que el commit original sea antecesor del
+actual, SHA-256 del ZIP, inventario y coincidencia de origen/ejecución/estado.
+Publica los bytes ya cerrados y mantiene la Release vinculada al commit original.
+No lee `.env`, no consulta Docker, no requiere alimentación AC, no inicia carga
+ni modifica la reserva. Admite repositorios públicos y privados; conserva la
+comprobación del repositorio de destino y las verificaciones de integridad.
+
+Si existe una subida parcial, comprueba los adjuntos presentes y sube únicamente
+los faltantes. No borra ni reemplaza adjuntos. Después se descarga el reporte
+para revisión principal; el mensaje passed del lanzador no sustituye esa revisión.

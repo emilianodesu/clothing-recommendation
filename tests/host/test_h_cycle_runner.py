@@ -130,7 +130,7 @@ class CycleLifecycle(unittest.TestCase):
             commands=[]
             def command(args,**kwargs):
                 commands.append(args)
-                if args[:3]==['gh','repo','view']:return json.dumps(dict(nameWithOwner=h.REPO,isPrivate=True))
+                if args[:3]==['gh','repo','view']:return json.dumps(dict(nameWithOwner=h.REPO,isPrivate=False))
                 if args[:3]==['gh','release','create']:return ''
                 raise AssertionError(args)
             missing=subprocess.CompletedProcess([],1,'','gh: Not Found (HTTP 404)')

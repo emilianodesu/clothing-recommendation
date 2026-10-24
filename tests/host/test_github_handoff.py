@@ -18,12 +18,13 @@ class ReleaseStore:
     """Small in-memory boundary double; no GitHub writes during host tests."""
     def __init__(self):
         self.private = True
+        self.push = True
         self.releases = {}
         self.payloads = {}
         self.uploads = 0
 
     def repository(self):
-        return {'private': self.private, 'permissions': {'push': True}, 'default_branch': 'main'}
+        return {'private': self.private, 'permissions': {'push': self.push}, 'default_branch': 'main'}
 
     def lookup(self, tag):
         return self.releases.get(tag)
@@ -75,9 +76,16 @@ class GitHubHandoffTests(unittest.TestCase):
         with zipfile.ZipFile(destination) as bundle:
             self.assertEqual(json.loads(bundle.read('manifest.json'))['status'], 'failed')
 
-    def test_public_repository_is_rejected_before_upload(self):
+    def test_public_repository_upload_download_preserves_report(self):
         self.client.private = False
-        with self.assertRaisesRegex(ValueError, 'privado'):
+        self.module.upload(self.client, self.archive)
+        destination = self.module.download(self.client, self.run_id, self.root / 'incoming')
+        self.assertEqual(destination.read_bytes(), self.archive.read_bytes())
+
+    def test_public_repository_still_requires_write_access_to_upload(self):
+        self.client.private = False
+        self.client.push = False
+        with self.assertRaisesRegex(ValueError, 'escritura'):
             self.module.upload(self.client, self.archive)
         self.assertEqual(self.client.releases, {})
 

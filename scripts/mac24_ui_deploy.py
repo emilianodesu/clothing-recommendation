@@ -370,7 +370,7 @@ def execute(state,values,guard):
 def publish(state):
     checkout_commit(ROOT,state['procedure_commit'])
     repo=json.loads(r.run_command(['gh','repo','view','--json','nameWithOwner,isPrivate']))
-    require(repo==dict(nameWithOwner='emilianodesu/clothing-recommendation',isPrivate=True),'Expected private project repository')
+    require(repo.get('nameWithOwner')=='emilianodesu/clothing-recommendation','Unexpected project repository')
     destination=ROOT/'evidence/ui-deployment-mac24.json';require(not destination.exists(),'Deployment report already exists')
     write_json(destination,control.summary(state));r.run_command(['git','add',str(destination)])
     r.run_command(['git','commit','--only',str(destination),'-m','docs: report mac24 UI deployment'],log=STATE/'publish-commit.log')

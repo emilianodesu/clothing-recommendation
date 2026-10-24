@@ -1,0 +1,39 @@
+{
+  "protocol": "h-cycle-publication-fix-v1",
+  "date": "2026-10-24",
+  "status": "local_checks_passed",
+  "base_commit": "a3858fd56fb945f78f8893e181d3b8cd2b8782e7",
+  "source_run_id": "h-cycle-mac24-20261024T204022Z-10bcd520",
+  "operator_reported_status": "passed",
+  "archive_downloaded": false,
+  "principal_review_completed": false,
+  "root_cause": "Publication required private GitHub repository after the user changed visibility to public.",
+  "repository_visibility_verified": "public",
+  "changes": [
+    "Accept public/private repositories while retaining destination identity and write permission checks.",
+    "Publish-only accepts a descendant checkout and validates the immutable original archive/report source.",
+    "Publish-only bypasses .env, Docker, hardware checks, load and reservation writes."
+  ],
+  "script_sha256": {
+    "scripts/github-handoff.py": "6fc2b08f2dfb27827a1d64e80fba9e5b604070a523f8e8ce451d253b4ba2a987",
+    "scripts/mac24_h_cycle.py": "14908038a37599d3aa5d18675e24d189d910f0bfa1a5613927d58d8cadc5b91c",
+    "scripts/mac24_terminal.py": "69fcc3ae46766dcb6f1323cc40162ed3424f6f64ec4bb5fc5140fc7ae27c2a24",
+    "scripts/mac24_ui_deploy.py": "5dc8ff3500d23424adb7f41fa57f4f5b01145de2ad65fd06a5ef9e80a4f496f7",
+    "scripts/mac24_ui_recovery.py": "01b3798b07598bdfd1f236a78d3cbbd33d8af48947183de6b1fe3073b79c86fe"
+  },
+  "verification": {
+    "h_cycle_tests_passed": 24,
+    "github_handoff_tests_passed": 11,
+    "host_tests_run": 315,
+    "host_tests_passed": 314,
+    "host_tests_skipped": 1,
+    "host_suite_seconds": 13.274,
+    "skip_reason": "test_inspect_health requires explicit synthetic Docker fixture",
+    "independent_review": "no blocking findings"
+  },
+  "execution_repeated": false,
+  "publication_performed": false,
+  "docker_invoked": false,
+  "direct_ssh_attempt": "No route to host",
+  "next_action": "Update mac24 checkout and run only --publish-only; then download and audit the existing ZIP."
+}

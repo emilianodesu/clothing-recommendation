@@ -152,7 +152,7 @@ def main():
         active=command(['docker','ps','--format','{{.Label "com.docker.compose.service"}}']).splitlines()
         require(all(s in ('api','ui','postgres','mlflow','qdrant') for s in active),'Hay contenedores no reconocidos o trabajos activos; inspeccionar sin detenerlos.')
         access=json.loads(command(['gh','api','repos/emilianodesu/clothing-recommendation','--jq','{private:.private,push:.permissions.push}']))
-        require(access==dict(private=True,push=True),'GitHub requiere repositorio privado y permiso de escritura.')
+        require(access.get('push') is True,'GitHub requiere permiso de escritura en el repositorio.')
         require((data/'processed/hm-v1/manifest.json').is_file(),'Faltan datos T2 H&M; no se descargan ni reconstruyen automáticamente.')
         require(source(artifacts,SOURCE)['release_id']==RELEASE,'Fuente T4-A distinta.')
         historical=json.loads((ROOT/'evidence/events-memory-mac24.json').read_text())
