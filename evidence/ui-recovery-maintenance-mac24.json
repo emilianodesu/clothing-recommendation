@@ -1,0 +1,54 @@
+{
+  "run_id": "ui-recovery-22fc4a3dcc96",
+  "procedure_commit": "9e9b9205aa86120cec902fba4a3829e58e939916",
+  "status": "failed",
+  "stage": "complete",
+  "created_at": "2026-10-24T18:16:08.578808+00:00",
+  "historical_commit": "6130943641e599121119660693ed276cf3b3fbca",
+  "image_verified": false,
+  "build_started": false,
+  "probe_started": false,
+  "engine": {
+    "memory": 14624956416,
+    "cpus": 4,
+    "architecture": "aarch64"
+  },
+  "planned_build_bytes": 8589934592,
+  "vm_disk_free_bytes": 68891615232,
+  "buildx": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5",
+  "restoration": [
+    {
+      "role": "postgres",
+      "restored": true
+    },
+    {
+      "role": "api",
+      "restored": true
+    },
+    {
+      "role": "mlflow",
+      "restored": true
+    },
+    {
+      "role": "airflow-api",
+      "restored": true
+    },
+    {
+      "role": "airflow-dag-processor",
+      "restored": true
+    },
+    {
+      "role": "airflow-scheduler",
+      "restored": true
+    }
+  ],
+  "auxiliaries_restored": true,
+  "original_services_preserved": true,
+  "recovery_complete": true,
+  "temporary_stopped": true,
+  "deployment_started": false,
+  "error_type": "ValueError",
+  "failure_stage": "build_and_probe",
+  "temporary_cleanup_complete": true,
+  "cleanup_errors": []
+}
