@@ -40,6 +40,6 @@
     "websocket_auth_guard_401": true,
     "http_to_https_redirect": "passed"
   },
-  "images_archive": "substitute_placeholder (Kaggle ZIP optional, not mounted)",
-  "checked_at": "2026-10-25T04:59:21.192882+00:00"
+  "images_archive": "kaggle_hm_zip_mounted_and_verified (30,810,293,747 bytes, SHA-256 verified)",
+  "checked_at": "2026-10-25T20:11:37.149357+00:00"
 }
