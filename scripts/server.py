@@ -98,7 +98,9 @@ def http(url, headers=None):
         def redirect_request(self, req, fp, code, msg, hdrs, newurl):
             return None
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
-    request = urllib.request.Request(url, headers=headers or {})
+    req_headers = {'User-Agent': 'hmrec-server-check/1.0'}
+    req_headers.update(headers or {})
+    request = urllib.request.Request(url, headers=req_headers)
     try:
         response = opener.open(request, timeout=30)
     except urllib.error.HTTPError as error:
