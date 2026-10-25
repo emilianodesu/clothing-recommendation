@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "deployment_date": "2026-10-25",
+  "status": "passed",
+  "source_commit": "cdfce0ba8f4a0496ea372d4b28b994e583e93b42",
+  "handoff_base_commit": "bb5039175507d5bf44ba6f1c069058eee1d3c469",
+  "host": {
+    "os": "Ubuntu 26.04.1 LTS",
+    "kernel": "7.0.0-38-generic",
+    "architecture": "x86_64",
+    "cpus": 20,
+    "memory_bytes": 15893839872,
+    "docker_version": "29.8.1",
+    "compose_version": "5.5.1",
+    "buildx_version": "github.com/docker/buildx v0.37.1 0b265a9f62db554fa9aba6dd19e1bd5704bc7d8a",
+    "engine_mode": "shared_engine_with_cloudflare_tunnel"
+  },
+  "backup": {
+    "sha256": "b40ed253fee3c5913a0d94ca9549d5db5ed3683065530d5fdb85c7c5cd022f50",
+    "protocol": "hm-app-backup-v1",
+    "data_as_of": "2020-09-09",
+    "active_release_id": "h-d12e30cb4d8c44cc22468e86c634db566e6f126ddc704e36723fe09d9a8a7b0a",
+    "parity_queries_verified": 6
+  },
+  "images": {
+    "hmrec-jobs:0.1.0": "sha256:846585a15d3addc637fad63862fde7ae0399b34d9dc720f5ef392f64c37f6c0d",
+    "hmrec-app:0.1.0": "sha256:1db4aebec033f347a7ab385152eef0f12faa460b7e88ecca9e97df02d1df5074",
+    "postgres": "sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826",
+    "gateway": "caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f"
+  },
+  "checks": {
+    "host_unit_tests": "passed (335 passed, 1 skipped)",
+    "local_readiness": "passed",
+    "internal_ports_localhost_only": "passed",
+    "public_https": "passed",
+    "tls_verified": true,
+    "unauthorized_401": true,
+    "invalid_credentials_rejected_401": true,
+    "authenticated_ui_200": true,
+    "websocket_auth_guard_401": true,
+    "http_to_https_redirect": "passed"
+  },
+  "images_archive": "substitute_placeholder (Kaggle ZIP optional, not mounted)",
+  "checked_at": "2026-10-25T04:59:21.192882+00:00"
+}
