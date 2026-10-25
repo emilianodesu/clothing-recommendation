@@ -58,12 +58,13 @@ def prepare_destination(source,destination,port):
     if destination.exists() or destination.is_symlink():raise ValueError('Destination must not exist')
     if not destination.is_absolute() or not 1024<=int(port)<=65535:raise ValueError('Absolute destination and valid port required')
     files=source_inventory(source)
-    destination.mkdir(parents=True,mode=0o700)
+    destination.mkdir(parents=True,mode=0o711)
     for name in files:
         if name=='.env' or name.startswith(('.runtime/','artifacts/','data/','backups/','.git/')):continue
         src=source/name
         if src.is_symlink() or not src.is_file():raise ValueError('Only tracked regular source files are copied')
         target=destination/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,target)
+        if src.stat().st_mode & 0o111:target.chmod(0o755)
     (destination/'source-inventory.json').write_text(json.dumps({'files':files},sort_keys=True))
     values=prepare_configuration(destination)
     values['API_PORT']=str(port)
