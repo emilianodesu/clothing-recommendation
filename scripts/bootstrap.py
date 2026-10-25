@@ -83,7 +83,13 @@ def prepare_configuration(project_root: Path) -> dict:
         (root / name).mkdir(exist_ok=True)
     # Only existing host trust, mounted as a build secret and never baked into images.
     certificate_path = root / ".runtime/build-ca.pem"
-    certificates = ssl.create_default_context().get_ca_certs(binary_form=True)
+    ctx = ssl.create_default_context()
+    certificates = ctx.get_ca_certs(binary_form=True)
+    if not certificates:
+        paths = ssl.get_default_verify_paths()
+        ctx.load_verify_locations(cafile=paths.openssl_cafile if Path(paths.openssl_cafile).is_file() else None,
+                                  capath=paths.openssl_capath if Path(paths.openssl_capath).is_dir() else None)
+        certificates = ctx.get_ca_certs(binary_form=True)
     if not certificates:
         raise ValueError("No hay certificados CA confiados en Python; configurar SSL_CERT_FILE en el host.")
     descriptor = os.open(certificate_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)

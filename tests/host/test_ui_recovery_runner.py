@@ -116,7 +116,8 @@ class BuildContextPermissions(unittest.TestCase):
             state=dict(builder='b',image_tag='t')
             previous=os.umask(0o077)
             try:
-                with patch.object(r,'ROOT',root),patch.object(r,'STATE',private),patch.object(r,'HISTORY',commit),patch.object(r,'UI_SHA',hashlib.sha256(source.read_bytes()).hexdigest()),patch.object(r,'docker',side_effect=RuntimeError('stop before building')):
+                with patch.dict('os.environ', {}, clear=False),patch.object(r,'ROOT',root),patch.object(r,'STATE',private),patch.object(r,'HISTORY',commit),patch.object(r,'UI_SHA',hashlib.sha256(source.read_bytes()).hexdigest()),patch.object(r,'docker',side_effect=RuntimeError('stop before building')):
+                    os.environ.pop('SSL_CERT_FILE', None)
                     with self.assertRaises(RuntimeError):r.construct(state)
                 checked=private/'source/src/hm_recommender/ui/app.py'
                 self.assertEqual(checked.stat().st_mode & 0o004,0o004)

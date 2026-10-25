@@ -21,6 +21,14 @@ class Admission(unittest.TestCase):
         snap=self.snapshot();snap['running']=[dict(memory_bytes=2**30)]
         with self.assertRaisesRegex(ValueError, 'dedicado'):s.admit(snap,'build')
 
+    def test_shared_engine_admits_unrelated_containers_when_available_memory_suffices(self):
+        snap=self.snapshot();snap['host_available_memory_bytes']=6*2**30
+        snap['running']=[dict(project='other',service='web',memory_bytes=0)]
+        s.admit(snap,'build',shared=True)
+        snap['running'].append(dict(project='hmrec_existing',service='api',memory_bytes=4*2**30))
+        with self.assertRaisesRegex(ValueError, 'activos'):s.admit(snap,'build',shared=True)
+        s.admit(snap,'gateway',shared=True)
+
     def test_backup_accounts_for_services_and_job(self):
         snap=self.snapshot();snap['docker']['memory_bytes']=8*2**30
         snap['running']=[dict(memory_bytes=int(5.25*2**30))]
@@ -76,6 +84,8 @@ class Gateway(unittest.TestCase):
         self.assertIn('header_up -Authorization',config)
         self.assertNotIn('api:8000',config)
         self.assertLess(config.index('basic_auth'),config.index('reverse_proxy'))
+        tunnel_cfg=g.caddyfile('hm.alanmagno.com',{'ana':'$2a$14$'+'A'*53},tunnel=True)
+        self.assertIn('http://hm.alanmagno.com {',tunnel_cfg)
         with self.assertRaises(ValueError):g.caddyfile('team.example.com',{})
         with self.assertRaises(ValueError):g.caddyfile('team.example.com',{'bad name':'hash'})
 

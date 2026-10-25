@@ -30,17 +30,17 @@ def source_commit(root):
     return commit
 
 
-def guarded(root, phase):
+def guarded(root, phase, *, shared=False):
     snapshot = inventory(root)
-    admit(snapshot, phase)
+    admit(snapshot, phase, shared=shared)
     if os.getuid() == 0:
         raise ValueError('Ejecutar como usuario de despliegue sin root; debe tener acceso autorizado a Docker')
     return snapshot
 
 
-def build(root):
+def build(root, *, shared=False):
     commit = source_commit(root)
-    before = guarded(root, 'build')
+    before = guarded(root, 'build', shared=shared)
     values = prepare_start_configuration(root)
     if (root/'.runtime/server-build.json').exists():
         raise ValueError('Esta preparación ya tiene resultado; conservarlo y usar otro checkout para actualización')
@@ -48,6 +48,7 @@ def build(root):
     folder = root/'.runtime/server-build'/builder
     folder.mkdir(parents=True, mode=0o700, exist_ok=False)
     print('Logs privados de este intento: '+str(folder), flush=True)
+    mem_gib = 4 if shared else 6
     def logged(args, name):
         with (folder/name).open('w') as log:
             os.chmod(folder/name, 0o600)
@@ -55,7 +56,7 @@ def build(root):
             subprocess.run(args, cwd=root, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=7200)
     try:
         run(['docker', 'buildx', 'create', '--name', builder, '--driver', 'docker-container',
-             '--driver-opt', 'image='+BUILDKIT+',memory=6g,memory-swap=6g,cpu-period=100000,cpu-quota=300000'])
+             '--driver-opt', f'image={BUILDKIT},memory={mem_gib}g,memory-swap={mem_gib}g,cpu-period=100000,cpu-quota=300000'])
         for kind in ('jobs', 'app'):
             logged(['docker', 'buildx', 'build', '--builder', builder, '--load', '--progress', 'plain',
                     '--secret', 'id=build_ca,src='+str(root/'.runtime/build-ca.pem'),
@@ -67,7 +68,7 @@ def build(root):
         compose(root, values, 'pull', 'postgres')
         run(['docker', 'pull', gateway.IMAGE], timeout=600)
         write_private(root/'.runtime/server-build.json', dict(source_commit=commit, images=images,
-            docker=before['docker'], builder_image=BUILDKIT, builder_memory_bytes=6*2**30,
+            docker=before['docker'], builder_image=BUILDKIT, builder_memory_bytes=mem_gib*2**30,
             gateway_image=gateway.IMAGE, build_logs=str(folder), created_at=datetime.now(timezone.utc).isoformat()))
         print('Imágenes construidas/verificadas. Ningún servicio iniciado.')
     finally:
@@ -75,9 +76,9 @@ def build(root):
         subprocess.run(['docker', 'buildx', 'rm', '--keep-state', builder], stdout=subprocess.DEVNULL, check=False)
 
 
-def restore(root, args):
+def restore(root, args, *, shared=False):
     source_commit(root)
-    guarded(args.destination.parent, 'restore')
+    guarded(args.destination.parent, 'restore', shared=shared)
     check_routes(json.loads(run(['ip', '-j', '-4', 'route', 'show', 'table', 'all'])))
     receipt = json.loads((root/'.runtime/server-build.json').read_text())
     if receipt['source_commit'] != source_commit(root):
@@ -88,7 +89,7 @@ def restore(root, args):
     from restore import restore_into
     result = restore_into(root, args.archive, args.destination, args.sha256, args.port, pin_images=True)
     write_private(args.destination/'.runtime/server-origin.json', dict(source_commit=receipt['source_commit'],
-        backup_sha256=args.sha256, images=receipt['images'], restored=result['status']))
+        backup_sha256=args.sha256, images=receipt['images'], restored=result['status'], shared_engine=shared))
     print('Restauración terminada. Continuar usando --root '+str(args.destination))
 
 
@@ -150,19 +151,19 @@ def local_check(root, *, with_ui=True):
     return result
 
 
-def start_ui(root):
-    guarded(root, 'ui')
+def start_ui(root, *, shared=False):
+    guarded(root, 'ui', shared=shared)
     local_check(root, with_ui=False)
     values = read_configuration(root/'.env')
     compose(root, values, 'up', '-d', '--no-deps', '--no-build', '--pull', 'never', '--wait', 'ui')
     return local_check(root)
 
 
-def publish(root):
-    guarded(root, 'gateway')
+def publish(root, *, shared=False):
+    guarded(root, 'gateway', shared=shared)
     local_check(root)
     state = json.loads((root/'.runtime/server/gateway.json').read_text())
-    if (root/'.runtime/server/Caddyfile').read_text() != gateway.caddyfile(state['domain'], state['users']):
+    if (root/'.runtime/server/Caddyfile').read_text() != gateway.caddyfile(state['domain'], state['users'], tunnel=bool(state.get('tunnel_network'))):
         raise ValueError('Caddyfile difiere del estado de usuarios; revisar configuración')
     values = read_configuration(root/'.env')
     # Validation is a bounded temporary container with no published ports.
@@ -175,7 +176,7 @@ def publish(root):
     print('Gateway iniciado/recargado. Falta check-public y revisión desde otra red.')
 
 
-def check_public(root, user):
+def check_public(root, user, *, password=None):
     state = json.loads((root/'.runtime/server/gateway.json').read_text())
     domain = gateway.validate_domain(state['domain'])
     if user not in state['users']:
@@ -185,7 +186,8 @@ def check_public(root, user):
     wrong = base64.b64encode((user+':invalid-'+uuid.uuid4().hex).encode()).decode()
     if http('https://'+domain+'/', {'Authorization': 'Basic '+wrong})[0] != 401:
         raise ValueError('Credencial incorrecta no rechazada')
-    password = getpass.getpass('Contraseña web para comprobación HTTPS: ')
+    if password is None:
+        password = getpass.getpass('Contraseña web para comprobación HTTPS: ')
     auth = {'Authorization': 'Basic '+base64.b64encode((user+':'+password).encode()).decode()}
     for path in ('/', '/_stcore/health'):
         if http('https://'+domain+path, auth)[0] != 200:
@@ -205,6 +207,7 @@ def check_public(root, user):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=ROOT, help='Checkout fuente o instalación restaurada')
+    parser.add_argument('--shared-engine', action='store_true', help='Permitir coexistencia en motor Docker compartido con memoria disponible validada')
     sub = parser.add_subparsers(dest='action', required=True)
     for command in ('doctor', 'build', 'start-ui', 'check', 'publish', 'backup'):
         sub.add_parser(command)
@@ -214,30 +217,38 @@ def main(argv=None):
     item = sub.add_parser('user')
     item.add_argument('--domain', required=True);item.add_argument('--name', required=True)
     item.add_argument('--remove', action='store_true')
+    item.add_argument('--tunnel-network', default=None, help='Red Docker externa del túnel (ej. public-net)')
     item = sub.add_parser('check-public');item.add_argument('--user', required=True)
     args = parser.parse_args(argv);root = args.root.resolve()
+    origin_file = root/'.runtime/server-origin.json'
+    shared = args.shared_engine or (origin_file.is_file() and json.loads(origin_file.read_text()).get('shared_engine', False))
     try:
         if args.action == 'doctor':
             report = inventory(root)
             report['admission'] = {}
+            report['admission_shared'] = {}
             for phase in ('build', 'restore', 'ui', 'gateway', 'backup'):
                 try:
                     admit(report, phase);report['admission'][phase] = 'admitted'
                 except ValueError as error:
                     report['admission'][phase] = str(error)
+                try:
+                    admit(report, phase, shared=True);report['admission_shared'][phase] = 'admitted'
+                except ValueError as error:
+                    report['admission_shared'][phase] = str(error)
             print(json.dumps(report, indent=2));return 0
-        if args.action == 'build':build(root)
-        elif args.action == 'restore':restore(root, args)
-        elif args.action == 'start-ui':print(json.dumps(start_ui(root)))
+        if args.action == 'build':build(root, shared=shared)
+        elif args.action == 'restore':restore(root, args, shared=shared)
+        elif args.action == 'start-ui':print(json.dumps(start_ui(root, shared=shared)))
         elif args.action == 'check':print(json.dumps(local_check(root)))
         elif args.action == 'user':
-            guarded(root, 'gateway')
-            gateway.configure(root, args.domain, args.name, remove=args.remove)
+            guarded(root, 'gateway', shared=shared)
+            gateway.configure(root, args.domain, args.name, remove=args.remove, tunnel_network=args.tunnel_network)
             print('Usuario configurado. Ejecutar publish para aplicar cambios al gateway.')
-        elif args.action == 'publish':publish(root)
+        elif args.action == 'publish':publish(root, shared=shared)
         elif args.action == 'check-public':print(json.dumps(check_public(root, args.user)))
         elif args.action == 'backup':
-            guarded(root, 'backup')
+            guarded(root, 'backup', shared=shared)
             from backup import create
             create(root)
         return 0

@@ -29,7 +29,7 @@ def hash_password(password):
     return digest
 
 
-def caddyfile(domain, users):
+def caddyfile(domain, users, *, tunnel=False):
     domain = validate_domain(domain)
     if not users:
         raise ValueError('Se requiere al menos un usuario del equipo')
@@ -38,10 +38,11 @@ def caddyfile(domain, users):
         if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', user) or not re.fullmatch(r'\$2[aby]\$14\$[./A-Za-z0-9]{53}', digest):
             raise ValueError('Usuario o hash inválido')
         entries.append('            '+user+' '+digest)
+    site = 'http://'+domain if tunnel else domain
     return '''{
     admin localhost:2019
 }
-'''+domain+''' {
+'''+site+''' {
     header {
         X-Content-Type-Options nosniff
         X-Frame-Options DENY
@@ -61,12 +62,19 @@ def caddyfile(domain, users):
 '''
 
 
-def configure(root, domain, user, *, remove=False):
+def configure(root, domain, user, *, remove=False, password=None, tunnel_network=None):
     folder = root/'.runtime/server'
     path = folder/'gateway.json'
     state = json.loads(path.read_text()) if path.exists() else {'domain': validate_domain(domain), 'users': {}}
     if validate_domain(domain) != state['domain']:
         raise ValueError('Cambio de dominio requiere plan explícito y conservar configuración anterior')
+    if tunnel_network is not None:
+        if tunnel_network and not re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_.-]{0,62}', tunnel_network):
+            raise ValueError('Red de túnel inválida')
+        if tunnel_network:
+            state['tunnel_network'] = tunnel_network
+        else:
+            state.pop('tunnel_network', None)
     if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', user):
         raise ValueError('Usuario: minúsculas, dígitos, guión; iniciar con letra, máximo 32')
     if remove:
@@ -74,11 +82,12 @@ def configure(root, domain, user, *, remove=False):
             raise ValueError('Usuario no existe')
         del state['users'][user]
     else:
-        password = getpass.getpass('Contraseña web (no se guarda en claro): ')
-        if getpass.getpass('Repetir contraseña: ') != password:
-            raise ValueError('Contraseñas distintas')
+        if password is None:
+            password = getpass.getpass('Contraseña web (no se guarda en claro): ')
+            if getpass.getpass('Repetir contraseña: ') != password:
+                raise ValueError('Contraseñas distintas')
         state['users'][user] = hash_password(password)
-    rendered = caddyfile(state['domain'], state['users'])
+    rendered = caddyfile(state['domain'], state['users'], tunnel=bool(state.get('tunnel_network')))
     # Mount directory, not individual file, so atomic updates become visible on reload.
     write_private(folder/'Caddyfile', rendered)
     write_private(path, state)
@@ -95,6 +104,27 @@ def compose(root, values, *args):
     # application's network identity separate from this gateway's project.
     env['HMREC_APP_PROJECT'] = values['COMPOSE_PROJECT_NAME']
     import subprocess
+    files = ['-f', str(root/'deploy/compose.gateway.yaml')]
+    state_path = root/'.runtime/server/gateway.json'
+    if state_path.is_file():
+        state = json.loads(state_path.read_text())
+        if state.get('tunnel_network'):
+            override = root/'.runtime/server/gateway.override.json'
+            write_private(override, {
+                'services': {
+                    'gateway': {
+                        'ports': ['!override', '127.0.0.1:' + str(values.get('GATEWAY_PORT', '18080')) + ':80'],
+                        'networks': {
+                            'application': None,
+                            'tunnel': {'aliases': ['hm-gateway']},
+                        },
+                    }
+                },
+                'networks': {
+                    'tunnel': {'external': True, 'name': state['tunnel_network']}
+                },
+            })
+            files += ['-f', str(override)]
     command = ['docker', 'compose', '--project-directory', str(root), '--env-file', str(root/'.env'),
-               '-p', values['COMPOSE_PROJECT_NAME']+'_gateway', '-f', str(root/'deploy/compose.gateway.yaml'), *args]
+               '-p', values['COMPOSE_PROJECT_NAME']+'_gateway', *files, *args]
     subprocess.run(command, env=env, check=True)

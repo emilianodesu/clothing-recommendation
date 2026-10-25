@@ -75,7 +75,7 @@ def inventory(root):
     return result
 
 
-def admit(snapshot, action):
+def admit(snapshot, action, *, shared=False):
     if snapshot['system'] != 'Linux':
         raise ValueError('La ruta servidor requiere Linux; el diagnóstico es portable')
     engine = snapshot.get('docker')
@@ -86,14 +86,25 @@ def admit(snapshot, action):
     if engine['cpus'] < 4:
         raise ValueError('Admisión conservadora: al menos 4 CPU en Docker')
     running = snapshot['running']
-    if any(c['memory_bytes'] <= 0 for c in running):
-        raise ValueError('Hay contenedores sin límite RAM; revisar antes de admitir carga')
-    if action in ('build', 'restore') and running:
-        raise ValueError('Build/restore inicial requieren motor dedicado sin contenedores activos; no se detienen')
-    required = {'build': 8, 'restore': 7, 'ui': .5, 'gateway': .25, 'backup': 5}[action]
-    occupied = sum(c['memory_bytes'] for c in running)
-    if occupied + (required+1)*GIB > engine['memory_bytes']:
-        raise ValueError('RAM insuficiente: límites activos + fase + 1GiB de margen')
+    if shared:
+        own = [c for c in running if c.get('project', '').startswith('hmrec_')]
+        if any(c['memory_bytes'] <= 0 for c in own):
+            raise ValueError('Hay contenedores hmrec sin límite RAM; revisar antes de admitir carga')
+        if action in ('build', 'restore') and own:
+            raise ValueError('Build/restore requieren que no haya servicios hmrec activos')
+        required = {'build': 4, 'restore': 4, 'ui': .5, 'gateway': .25, 'backup': 4}[action]
+        available = snapshot.get('host_available_memory_bytes', 0)
+        if (required+1)*GIB > available:
+            raise ValueError('RAM disponible insuficiente en modo compartido')
+    else:
+        if any(c['memory_bytes'] <= 0 for c in running):
+            raise ValueError('Hay contenedores sin límite RAM; revisar antes de admitir carga')
+        if action in ('build', 'restore') and running:
+            raise ValueError('Build/restore inicial requieren motor dedicado sin contenedores activos; no se detienen')
+        required = {'build': 8, 'restore': 7, 'ui': .5, 'gateway': .25, 'backup': 5}[action]
+        occupied = sum(c['memory_bytes'] for c in running)
+        if occupied + (required+1)*GIB > engine['memory_bytes']:
+            raise ValueError('RAM insuficiente: límites activos + fase + 1GiB de margen')
     disk = 40 if action in ('build', 'restore') else 5
     if snapshot['free_disk_bytes'] < disk*GIB:
         raise ValueError(f'Espacio de disco insuficiente: se requieren {disk}GiB libres')
