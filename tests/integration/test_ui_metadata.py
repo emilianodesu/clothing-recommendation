@@ -23,6 +23,12 @@ def demo(handler_override=None):
         elif path == '/streams':
             value = {'items': [dict(stream_id=n, release_id='release-'+str(state['revision']), mode='synthetic', data_as_of='2020-09-09', revision=state['revision'], published_at='publication-private', received_before='cursor-private') for n in ('a', 'b')]}
         elif path == '/customers': value = {'items': ['private-buyer-hash']}
+        elif path.endswith('/demo-profiles'):
+            value = {'release_id': 'release-'+str(state['revision']), 'items': [dict(
+                customer_id='private-buyer-hash', key='light', label='Tonos claros',
+                description='Predominan los tonos claros en sus compras de referencia.',
+                history_count=5, matched_count=4,
+                examples=[dict(article_id='0000000001',product_type_name='T-shirt',colour_group_name='White')])]}
         elif path == '/catalog': value = {'items': articles, 'total': 3, 'filters': {k: [] for k in ('product_type_name', 'product_group_name', 'colour_group_name')}}
         elif path == '/articles/details': value = {'items': articles}
         elif path.endswith('/image'): return httpx.Response(200, text=IMAGE, headers={'content-type': 'image/svg+xml'})
@@ -53,7 +59,7 @@ def test_demo_has_photos_friendly_profiles_and_no_operational_metadata():
     with transport:
         app = AppTest.from_file(str(SOURCE), default_timeout=20).run()
         assert not app.exception
-        assert app.selectbox(key='profile').options == ['Nuevo visitante', 'Perfil 1']
+        assert app.selectbox(key='profile').options == ['Nuevo visitante', 'Tonos claros']
         assert len(app.get('image')) == 5
         assert 'Camiseta' in visible_text(app)
         for private in ('release-3', 'publication-private', 'cursor-private', 'private-buyer-hash', '0000000001'):
@@ -163,3 +169,50 @@ def test_unchanged_result_is_reported_honestly():
         app.selectbox(key='profile').select_index(1).run()
         app.selectbox(key='profile').select_index(0).run()
         assert 'La selección se mantiene.' not in visible_text(app)
+
+
+def test_descriptive_profile_selects_its_real_buyer_and_keeps_it_after_refresh():
+    state, transport = demo()
+    with transport:
+        app = AppTest.from_file(str(SOURCE), default_timeout=20).run()
+        app.selectbox(key='profile').select_index(1).run()
+        assert 'Predominan los tonos claros' in visible_text(app)
+        assert 'Camiseta' in visible_text(app) and 'Blanco' in visible_text(app)
+        app.button(key='catalog_purchase_0000000002').click().run()
+        assert state['events'][-1]['customer_id'] == 'private-buyer-hash'
+        app.button(key='refresh').click().run()
+        assert app.selectbox(key='profile').value == 'private-buyer-hash'
+        assert 'private-buyer-hash' not in visible_text(app)
+
+
+def test_profile_service_failure_keeps_new_visitor_and_purchase_working():
+    def unavailable(request, state):
+        if request.url.path.endswith('/demo-profiles'): return httpx.Response(503)
+    state, transport = demo(unavailable)
+    with transport:
+        app = AppTest.from_file(str(SOURCE), default_timeout=20).run()
+        assert not app.exception
+        assert app.selectbox(key='profile').options == ['Nuevo visitante']
+        app.button(key='catalog_purchase_0000000002').click().run()
+        assert state['events'][-1]['customer_id'] == app.session_state['visitor']
+
+
+def test_refresh_keeps_reference_profile_when_a_new_revision_would_choose_another_buyer():
+    def changing_candidates(request, state):
+        if request.url.path == '/streams':
+            return httpx.Response(200, json={'items': [dict(stream_id='a', release_id='fixed-release',
+                mode='synthetic', data_as_of='2020-09-09', revision=state['revision'])]})
+        if request.url.path.endswith('/demo-profiles'):
+            changed = state['revision'] > 3
+            return httpx.Response(200, json={'release_id': 'fixed-release', 'items': [dict(
+                customer_id='replacement' if changed else 'reference', key='dark', label='Tonos oscuros',
+                description='Compras de referencia oscuras.', history_count=4, matched_count=4, examples=[])]})
+    state, transport = demo(changing_candidates)
+    with transport:
+        app = AppTest.from_file(str(SOURCE), default_timeout=20).run()
+        app.selectbox(key='profile').select_index(1).run()
+        app.button(key='refresh').click().run()
+        assert not app.exception and state['revision'] == 4
+        assert app.selectbox(key='profile').value == 'reference'
+        app.button(key='catalog_purchase_0000000002').click().run()
+        assert state['events'][-1]['customer_id'] == 'reference'

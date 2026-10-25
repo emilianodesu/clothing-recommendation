@@ -14,6 +14,7 @@ from hm_recommender.api.schemas import EventInput, RecommendationRequest
 from hm_recommender.events.store import EventStore, Conflict
 from hm_recommender.events.aggregate import stream_identity, aggregate_events, metadata
 from hm_recommender.ui.images import ImageCache
+from hm_recommender.api.demo_profiles import DemoProfiles
 
 
 class RefreshInput(BaseModel):
@@ -28,6 +29,7 @@ class ArticleDetailsInput(BaseModel):
 
 def install_events(app, registry, admin):
     store=EventStore(registry.store.connection)
+    profiles=DemoProfiles(store.connection, os.environ.get('HMREC_IMAGE_ARCHIVE'))
     images=ImageCache(os.environ.get('HMREC_IMAGE_ARCHIVE'),os.environ.get('HMREC_IMAGE_CACHE','/tmp/hmrec-images'),
                       max_bytes=int(os.environ.get('HMREC_IMAGE_CACHE_BYTES',64*1024**2)))
 
@@ -44,6 +46,15 @@ def install_events(app, registry, admin):
     def customers():
         try: return {'items':heapq.nsmallest(50,registry.snapshot().customers)}
         except Exception: raise HTTPException(503,'Customers unavailable') from None
+
+    @app.get('/streams/{stream_id}/demo-profiles')
+    def demo_profiles(stream_id: str):
+        try:
+            stream_identity(stream_id)
+            return profiles.get(registry.snapshot(), stream_id)
+        except Conflict: raise HTTPException(409, 'Stream belongs to another active release') from None
+        except ValueError: raise HTTPException(404, 'Stream unavailable') from None
+        except Exception: raise HTTPException(503, 'Demonstration profiles unavailable') from None
 
     @app.get('/catalog')
     def catalog(offset: int=Query(0,ge=0,le=10_000_000),limit: int=Query(12,ge=1,le=48)):

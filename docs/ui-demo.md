@@ -4,14 +4,14 @@ La interfaz se centra en las prendas y en el efecto de una compra simulada. Las 
 
 ## Recorrido para la presentación
 
-1. Abrir **Para ti**. **Nuevo visitante** empieza sin compras de esta sesión; los perfiles numerados permiten explorar compradores anónimos existentes.
+1. Abrir **Para ti**. **Nuevo visitante** empieza sin compras de esta sesión; los [perfiles descriptivos](demo-profiles.md) permiten explorar historiales anónimos reales con hábitos reconocibles, como tonos claros, oscuros, estampados o variedad de prendas.
 2. Abrir **Explorar catálogo**. Elegir una prenda y pulsar **Simular compra**. La confirmación indica que se guardó; todavía falta actualizar la selección.
 3. Pulsar **Actualizar recomendaciones**. La aplicación vuelve a **Para ti**, compara las dos listas e indica las prendas nuevas o las que subieron. Si nada cambia, lo explica sin inventar una mejora.
 4. Mostrar **¿Cómo funciona?** para explicar la mezcla de compras recientes y popularidad. Los filtros de prenda/color afectan a las recomendaciones; el catálogo permite explorar todos los artículos por páginas.
 
 No se hacen pedidos ni cobros. Cada clic nuevo en Simular compra representa una interacción distinta. Si se pierde la confirmación, **Reintentar compra** conserva el mismo identificador y contenido para evitar duplicados. La selección de perfil y la actualización se bloquean mientras hay una compra pendiente. Cerrar un intento rechazado no deshace una compra ya guardada.
 
-Los números de perfil son etiquetas de presentación, no nombres reales ni cuentas personales. El nuevo visitante dura la sesión del navegador. La simulación conserva su fecha de referencia y registra compras dentro de la ventana ya admitida; no avanza el reloj ni cambia H para producir un resultado más vistoso. Una compra puede dejar la lista igual, especialmente si la prenda ya encabezaba las recomendaciones.
+Los nombres de perfil describen compras de referencia, no nombres reales ni cuentas personales. Moda masculina y femenina son categorías del catálogo, no el género del comprador. El nuevo visitante dura la sesión del navegador. La simulación conserva su fecha de referencia y registra compras dentro de la ventana ya admitida; no avanza el reloj ni cambia H para producir un resultado más vistoso. Una compra puede dejar la lista igual, especialmente si la prenda ya encabezaba las recomendaciones.
 
 ## Fotografías y nombres
 

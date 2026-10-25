@@ -14,6 +14,8 @@ Este comando sólo consulta el equipo. No instala, detiene servicios, descarga d
 
 El repositorio puede ser público. Contiene código, documentación, configuraciones y reportes agregados; **no contiene los datos H&M, paquetes con compradores, respaldos, tokens ni contraseñas**. La vía preparada restaura un respaldo privado autorizado en una instalación nueva. Las imágenes de artículos requieren el ZIP Kaggle propio; sin él se muestran sustitutos. El acceso web es para operadores de confianza del equipo, con usuario/contraseña sobre HTTPS; no es un portal público de compradores ni tiene roles individuales dentro de la aplicación.
 
+La demo incluye [perfiles descriptivos](docs/demo-profiles.md) elegidos por historiales reales: tonos claros/oscuros, prendas estampadas y hábitos menos obvios. Describen compras, no atributos personales. Actualizar API y UI; no requiere migraciones ni reconstruir el motor.
+
 ## Resultado y entregables
 
 | Lectura | Contenido |

@@ -122,15 +122,36 @@ def main():
         chosen = current[stream]
         release = chosen['release_id']
         cutoff = date.fromisoformat(chosen['data_as_of'])
-        customers = call('GET', '/customers')['items']
-        profiles = [st.session_state['visitor'], *customers]
+        # Keep the chosen examples stable while purchases change their results.
+        # A new stream, release or date obtains a fresh set of reference histories.
+        profile_context = (stream, release, str(cutoff))
+        saved_profiles = st.session_state.get('descriptive_profiles', {})
+        if saved_profiles.get('context') != profile_context:
+            saved_profiles = {'context': profile_context, 'items': []}
+            try:
+                with st.spinner('Buscando perfiles con estilos reconocibles…'):
+                    described = call('GET', f'/streams/{stream}/demo-profiles')
+                if described.get('release_id') == release:
+                    saved_profiles['items'] = described['items']
+                    st.session_state['descriptive_profiles'] = saved_profiles
+            except httpx.HTTPError:
+                st.caption('Los perfiles de ejemplo no están disponibles por el momento. Puedes probar como nuevo visitante.')
+        descriptions = {p['customer_id']: p for p in saved_profiles['items']}
+        profiles = [st.session_state['visitor'], *descriptions]
         if st.session_state.get('profile') not in profiles: st.session_state['profile'] = profiles[0]
         left, right = st.columns([2, 1], vertical_alignment='bottom')
         customer = left.selectbox('¿Para quién buscamos?', profiles, key='profile', disabled=pending,
-            format_func=lambda cid: 'Nuevo visitante' if cid == profiles[0] else f'Perfil {customers.index(cid)+1}')
+            format_func=lambda cid: 'Nuevo visitante' if cid == profiles[0] else descriptions[cid]['label'])
         refresh = right.button('Actualizar recomendaciones', key='refresh', type='primary',
                                disabled=pending, width='stretch')
         st.caption('Las compras son simuladas. No se realizan pedidos ni cobros.')
+        selected_description = descriptions.get(customer)
+        if selected_description:
+            st.write(selected_description['description'])
+            examples = [' '.join((label(a.get('product_type_name')), label(a.get('colour_group_name'), ''))).strip()
+                        for a in selected_description['examples']]
+            if examples: st.caption('Compras de referencia: ' + ' · '.join(examples))
+            st.caption('El nombre describe su historial de partida. Tus compras simuladas pueden cambiar la selección.')
         catalog = call('GET', '/catalog', params={'offset': 0, 'limit': 12})
         if refresh: st.session_state['demo_tab'] = 'Para ti'
         for_you, explore = st.tabs(['Para ti', 'Explorar catálogo'], key='demo_tab', on_change='rerun')
@@ -220,6 +241,8 @@ def main():
                      'Si el perfil no tiene compras recientes, empieza por las populares. '
                      'Al simular una compra y actualizar, puedes observar si la prenda aparece o cambia de posición.')
             st.caption('Proyecto universitario de Datos Masivos. Los perfiles representan ejemplos anónimos; no son cuentas personales.')
+            st.caption('Los estilos se eligen por compras observadas. Moda masculina y femenina son categorías del catálogo, '
+                       'no el género de quien compra. Estos ejemplos ilustrativos no representan a todos los compradores.')
     except httpx.HTTPError:
         st.error('No pudimos cargar la demostración. Recarga la página en unos momentos; tus compras confirmadas se conservan.')
     finally:

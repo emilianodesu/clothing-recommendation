@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-25",
+  "protocol": "descriptive-demo-profiles-v1",
+  "status": "passed_locally",
+  "user_choice": "real anonymous representative histories",
+  "source_files_sha256": {
+    "src/hm_recommender/api/demo_profiles.py": "8a9c258f97922c3f0a3d81cf5e1cf567514355328a48045a3871cf018e61c9fd",
+    "src/hm_recommender/api/events.py": "2dc8dc90b6894ed2a8a12a5fd8ce65294e7b53b60916c81d774665909b94cf35",
+    "src/hm_recommender/ui/app.py": "5a16433cdd151f4d70445e3ca33c07d9b9693c79bc57647642b174995051dcb0"
+  },
+  "tests": {
+    "targeted_passed": 27,
+    "host_passed": 334,
+    "host_skipped": 1,
+    "host_total": 335,
+    "targeted_warning": "Upstream Starlette TestClient/httpx deprecation; no dependency change",
+    "initial_host_sandbox_run": "11 local socket permission errors; same suite passed with local socket access"
+  },
+  "real_catalogue_check": {
+    "source": "verified local H&M partitions; prior purchases only",
+    "data_as_of": "2020-09-09",
+    "history_start": "2020-08-12",
+    "sampled_histories": 25000,
+    "available_profiles": [
+      {
+        "key": "mens-dark",
+        "label": "Moda masculina · oscuros",
+        "history_count": 7,
+        "matched_count": 7
+      },
+      {
+        "key": "ladies-light",
+        "label": "Moda femenina · claros",
+        "history_count": 7,
+        "matched_count": 7
+      },
+      {
+        "key": "dark",
+        "label": "Negro, gris y tonos oscuros",
+        "history_count": 8,
+        "matched_count": 8
+      },
+      {
+        "key": "light",
+        "label": "Blancos y tonos claros",
+        "history_count": 8,
+        "matched_count": 8
+      },
+      {
+        "key": "patterns",
+        "label": "Estampados y rayas",
+        "history_count": 7,
+        "matched_count": 7
+      },
+      {
+        "key": "dresses",
+        "label": "Vestidos y faldas",
+        "history_count": 8,
+        "matched_count": 8
+      },
+      {
+        "key": "layers",
+        "label": "Capas y abrigo",
+        "history_count": 10,
+        "matched_count": 10
+      },
+      {
+        "key": "one-colour",
+        "label": "Un color, varias prendas",
+        "history_count": 12,
+        "matched_count": 12
+      },
+      {
+        "key": "varied",
+        "label": "Variedad sin un favorito",
+        "history_count": 12,
+        "matched_count": 12
+      }
+    ],
+    "selection_seconds": 0.185,
+    "read_and_selection_seconds": 1.089,
+    "process_peak_rss_bytes": 503857152,
+    "campaign_or_test_evaluation": false,
+    "database_modified": false
+  },
+  "database_check": {
+    "status": "passed",
+    "source": "existing local synthetic database",
+    "read_only_transaction": true,
+    "revision_and_event_count_preserved": true,
+    "cached_response_equal": true,
+    "catalogue_size": 24,
+    "styles_available": 0
+  },
+  "review": {
+    "independent_review": "ready after fixes",
+    "corrections": [
+      "Types must occur within dominant colour",
+      "Unsupported archive compression falls back to served metadata",
+      "Refresh preserves reference buyer even if new revision offers another",
+      "Incomplete colours cannot establish varied style"
+    ]
+  },
+  "preserved": {
+    "ranking_H": true,
+    "rules_and_windows": true,
+    "academic_test": true,
+    "no_migrations": true,
+    "no_customer_identifiers_published": true,
+    "no_individual_predictions_published": true
+  },
+  "limits": [
+    "Illustrative examples, not a representative population sample",
+    "At most 25000 published histories and first12 distinct items",
+    "Catalogue gender-category is not buyer gender",
+    "No new training, academic evaluation or sustained load test",
+    "Public browser verification pending; current Chrome access redirected to Zscaler isolation",
+    "Git publication does not prove deployed API/UI images"
+  ]
+}

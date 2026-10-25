@@ -8,6 +8,8 @@ La preparación del repositorio no equivale a haber desplegado en el servidor. E
 
 ## Reglas vigentes
 
+- La UI usa [perfiles descriptivos](docs/demo-profiles.md) seleccionados de historiales reales, a petición del usuario. No sustituirlos por personajes con compras inventadas ni inferir género de compradores. Las categorías de moda y estampados requieren metadatos del catálogo; si faltan, omitirlas. Conservar H y sus reglas. Desplegar API/UI conjuntamente, sin migraciones ni campañas.
+
 - Repo público o privado según decisión del usuario; no exigir privacidad ni cambiar visibilidad. Código y agregados pueden viajar por GitHub. Nunca publicar `.env`, tokens, datos H&M, compradores, predicciones individuales, backups o paquetes privados.
 - H es historial28d+popularidad7d, reglas `recent-history-v1`, seleccionado bajo `quality-v1`. Mantener ventanas, desempates, deduplicación y cortes. H no necesita entrenamiento, Qdrant, MLflow ni PyTorch en inferencia. Conservar esos experimentos y sus resultados.
 - Q1–Q4 y test final están consumidos y cerrados. No repetir campañas, test, aceptación mac24, carga ni runners históricos para instalar. El test no puede usarse para elegir otro método. Las comprobaciones funcionales nuevas del servidor no son otra evaluación académica.
