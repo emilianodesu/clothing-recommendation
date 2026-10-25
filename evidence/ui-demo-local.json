@@ -1,0 +1,54 @@
+{
+  "status": "passed_local_deployment_verification_pending",
+  "date": "2026-10-25",
+  "base_commit": "cedac55c430f86866e7c3126ef94637d3e83a05d",
+  "scope": "UI demonstration and bounded display metadata; no ranking/data changes",
+  "local_tests": {
+    "ui_api_images": {
+      "passed": 16,
+      "skipped": 0,
+      "command": "PYTHONPATH=src python -m pytest tests/integration/test_ui_metadata.py tests/integration/test_article_details.py tests/unit/test_image_cache.py -q"
+    },
+    "host": {
+      "run": 335,
+      "passed": 334,
+      "skipped": 1,
+      "command": "python3 -m unittest discover -s tests/host"
+    },
+    "runtime": "Native CPython 3.12; installed test/UI dependency versions aligned with uv.lock; no Docker or production data"
+  },
+  "browser_local": {
+    "transport": "synthetic HTTP fixture",
+    "catalog_visible": true,
+    "purchase_confirmation": true,
+    "refresh_returns_to_recommendations": true,
+    "actual_order_comparison": true
+  },
+  "live_before_change": {
+    "url": "https://hm.alanmagno.com",
+    "real_product_photographs_visually_confirmed": true,
+    "sample": "Four recommendation cards visible in a browser; not every catalog image",
+    "production_events_written": false,
+    "screenshots_exported": false
+  },
+  "code_review": {
+    "blocking_findings": 0,
+    "minor_stale_comparison_fixed_and_tested": true
+  },
+  "deployment": {
+    "automatic_from_repository": "user_confirmed",
+    "new_interface_live_verified": false
+  },
+  "preserved": [
+    "H ranking and cutoffs",
+    "closed academic evaluations",
+    "database and existing events",
+    "photograph archive",
+    "gateway authentication and HTTPS"
+  ],
+  "limitations": [
+    "Server updater implementation is external to this repository",
+    "Database-backed UI integration adapted but not rerun on production",
+    "Missing photographs retain a placeholder; this is not a complete image archive audit"
+  ]
+}

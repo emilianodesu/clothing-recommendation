@@ -5,10 +5,11 @@ from datetime import date, datetime, timezone
 import heapq
 import os
 from pathlib import Path
+from typing import Annotated
 import polars as pl
 from fastapi import HTTPException, Depends, Query
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from hm_recommender.api.schemas import EventInput, RecommendationRequest
 from hm_recommender.events.store import EventStore, Conflict
 from hm_recommender.events.aggregate import stream_identity, aggregate_events, metadata
@@ -18,6 +19,11 @@ from hm_recommender.ui.images import ImageCache
 class RefreshInput(BaseModel):
     model_config=ConfigDict(extra='forbid')
     data_as_of: date
+
+
+class ArticleDetailsInput(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    article_ids: list[Annotated[str, Field(min_length=1, max_length=32, pattern=r'^\d+$')]] = Field(min_length=1, max_length=48)
 
 
 def install_events(app, registry, admin):
@@ -55,6 +61,20 @@ def install_events(app, registry, admin):
             body,mime=images.read(article_id);return Response(body,media_type=mime)
         except HTTPException: raise
         except Exception: raise HTTPException(503,'Image unavailable') from None
+
+    @app.post('/articles/details')
+    def article_details(request: ArticleDetailsInput):
+        """Bounded display metadata from the active snapshot; never changes ranking."""
+        try:
+            base = registry.snapshot()
+            details = {item: {'article_id': item} for item in request.article_ids if item in base.catalog}
+            requested = set(details)
+            for field, groups in base.filter_index.items():
+                for value, members in groups.items():
+                    for item in requested.intersection(members):
+                        details[item][field] = value
+            return {'release_id': base.release_id, 'items': list(details.values())}
+        except Exception: raise HTTPException(503, 'Article details unavailable') from None
 
     @app.post('/admin/streams/{stream_id}/refresh',dependencies=[Depends(admin)])
     def refresh(stream_id: str, request: RefreshInput):

@@ -1,5 +1,7 @@
 # Guía del evaluador y demostración
 
+**Interfaz simplificada vigente:** seguir [el recorrido de la demo](ui-demo.md): elegir perfil, explorar prendas, simular compra y actualizar para comparar. La información técnica se consulta en los documentos, no en la pantalla de presentación.
+
 Entrega documental y visual disponible: [inventario vigente](delivery-status.md), [galería](demo-gallery.md) y [notas de versión](release-notes.md). La aceptación sintética aprobó 60 pruebas en `8c8b730`; la corrección posterior de UI tiene [verificación propia](ui-metadata-deployment.md). T8-B conserva failed; no se declara aprobación global T8.
 
 ## Recorrido sin ejecutar trabajos (10–15 minutos)
@@ -35,9 +37,9 @@ Una vez anunciado el éxito, abrir la dirección UI de esa instalación (por def
 
 | Paso | Acción | Observación esperada |
 | --- | --- | --- |
-| Recomendación | Seleccionar comprador | Lista y motivos, versión/corte visibles; fallback cuando corresponda |
-| Evento | Seleccionar artículo y registrar compra | Confirmación de escritura; no asumir que el primer artículo cambiará |
-| Publicación | Pulsar **Actualizar recomendaciones** | Recomendaciones del stream para su reloj de simulación |
+| Recomendación | Seleccionar comprador | Fotografías, tipo de prenda y motivos; popularidad cuando no hay compras recientes |
+| Evento | Explorar catálogo y pulsar Simular compra | Confirmación de escritura; no asumir que el primer artículo cambiará |
+| Publicación | Pulsar **Actualizar recomendaciones** | Regreso a Para ti y comparación real de la selección anterior con la nueva |
 | Explicación | Comparar historial y respaldo | Compra estrictamente anterior al corte; vistas/clics no alimentan compras |
 | Evidencia | Abrir el ZIP agregado con `scripts/read-handoff.py` | Inventario/huellas/estado; sin compradores en el paquete público |
 

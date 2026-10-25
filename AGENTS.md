@@ -2,7 +2,7 @@
 
 ## Tarea vigente y entrada
 
-Preparación para desplegar en el servidor propio del equipo, con dominio/HTTPS y autenticación para operadores del equipo. **Leer README.md, docs/handoff.md y docs/server-deployment.md antes de actuar.** El usuario delegó descubrir SO, arquitectura, RAM y disco al agente receptor: `python3 scripts/server.py doctor` es diagnóstico en lectura. No asumir que es mac24, ni ejecutar sus lanzadores históricos.
+El servidor del equipo ya está publicado. El usuario pidió simplificar la UI para demostrar recomendaciones, sin hashes/versiones ni controles de implementación. Leer [recorrido y verificación UI](docs/ui-demo.md). Confirmó actualización automática desde el repositorio; verificar el resultado en navegador y conservar autenticación, datos y volúmenes. La siguiente guía de preparación se conserva para instalaciones nuevas. **Leer README.md, docs/handoff.md y docs/server-deployment.md antes de actuar.** El usuario delegó descubrir SO, arquitectura, RAM y disco al agente receptor: `python3 scripts/server.py doctor` es diagnóstico en lectura. No asumir que es mac24, ni ejecutar sus lanzadores históricos.
 
 La preparación del repositorio no equivale a haber desplegado en el servidor. El receptor debe registrar su commit, diagnóstico, entradas privadas, imágenes efectivas, checks locales/HTTPS y comprobación de navegador. Docker/Linux ARM64 y AMD64 están contemplados; la evidencia académica física previa es Mac ARM64. Si faltan dominio/DNS, acceso al servidor o respaldo privado, completar lo independiente y reportar el pendiente concreto.
 

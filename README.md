@@ -10,7 +10,7 @@ Proyecto final de Datos Masivos: datos masivos de compras, evaluación temporal,
 python3 scripts/server.py doctor
 ```
 
-Este comando sólo consulta el equipo. No instala, detiene servicios, descarga datos ni inicia entrenamientos. El agente debe identificar Linux ARM64/AMD64, Docker, recursos, puertos y red antes de continuar. El servidor real y su dominio aún no se han validado.
+Este comando sólo consulta el equipo. No instala, detiene servicios, descarga datos ni inicia entrenamientos. El agente debe identificar Linux ARM64/AMD64, Docker, recursos, puertos y red antes de continuar. El compañero reportó el despliegue Linux y HTTPS en [su evidencia](evidence/server-deployment-2026-10-25.json). La revisión visual posterior confirmó fotografías en el sitio; el [recorrido de la nueva interfaz](docs/ui-demo.md) explica la demo y su actualización.
 
 El repositorio puede ser público. Contiene código, documentación, configuraciones y reportes agregados; **no contiene los datos H&M, paquetes con compradores, respaldos, tokens ni contraseñas**. La vía preparada restaura un respaldo privado autorizado en una instalación nueva. Las imágenes de artículos requieren el ZIP Kaggle propio; sin él se muestran sustitutos. El acceso web es para operadores de confianza del equipo, con usuario/contraseña sobre HTTPS; no es un portal público de compradores ni tiene roles individuales dentro de la aplicación.
 

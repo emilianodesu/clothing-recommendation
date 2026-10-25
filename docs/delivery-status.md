@@ -1,5 +1,7 @@
 # Inventario de entrega T8-D
 
+Actualización de interfaz del 25 de octubre: [demo simplificada](ui-demo.md), fotos y perfiles legibles, compra simulada y comparación antes/después. No cambia H ni reabre ensayos. El despliegue automático requiere comprobar la nueva vista en el sitio.
+
 Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
 La validación adicional [h-cycle-v1](mac24-h-cycle.md) quedó aceptada tras

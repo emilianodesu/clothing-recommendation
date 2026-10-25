@@ -29,13 +29,13 @@ def test_ui_purchase_retry_and_refresh_use_real_service(events,monkeypatch):
         assert server.started
         app=AppTest.from_file(str(source),default_timeout=30).run()
         assert not app.exception
-        app.text_input(key='customer').set_value('ui-buyer').run()
+        customer = app.session_state['visitor']
         original=EventStore.insert
         def lose_reply(self,payload):
             original(self,payload);raise OSError('lost reply')
         monkeypatch.setattr(EventStore,'insert',lose_reply)
-        app.button(key='purchase').click().run()
-        assert app.error and app.session_state['pending']['customer_id']=='ui-buyer'
+        app.button(key='catalog_purchase_000000').click().run()
+        assert app.error and app.session_state['pending']['customer_id']==customer
         saved=app.session_state['pending']['event_id']
         monkeypatch.setattr(EventStore,'insert',original)
         app.button(key='retry').click().run()
@@ -45,18 +45,18 @@ def test_ui_purchase_retry_and_refresh_use_real_service(events,monkeypatch):
             assert [str(r[0]) for r in rows]==[saved]
         app.button(key='refresh').click().run()
         assert not app.exception
-        response=serving[0].post(f'/streams/{stream}/recommend',json={'customer_id':'ui-buyer'}).json()
+        response=serving[0].post(f'/streams/{stream}/recommend',json={'customer_id':customer}).json()
         assert response['fallback'] is False and response['items'][0]['article_id']=='000000'
-        assert app.caption  # Release, cutoff, publication and origin are visible.
+        assert app.caption  # Human-readable purchase reasons stay visible.
         # A permanent 409 must not trap every future interaction behind retry.
         from hm_recommender.events.store import Conflict
         def conflict(self,payload):raise Conflict('version changed')
         monkeypatch.setattr(EventStore,'insert',conflict)
-        app.button(key='purchase').click().run()
+        app.button(key='catalog_purchase_000000').click().run()
         assert app.error and app.session_state['pending'] is not None
         assert app.button(key='retry').disabled
         app.button(key='discard_pending').click().run()
-        assert app.session_state['pending'] is None and not app.button(key='purchase').disabled
+        assert app.session_state['pending'] is None and not app.button(key='catalog_purchase_000000').disabled
         monkeypatch.setattr(EventStore,'insert',original)
     finally:
         server.should_exit=True;thread.join(timeout=10);sock.close()

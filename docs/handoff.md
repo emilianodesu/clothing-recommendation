@@ -1,6 +1,6 @@
 # Traspaso al compañero y su agente
 
-La implementación académica y sus resultados están disponibles. Esta entrega añade la ruta para instalar una copia en un servidor Linux, accesible al equipo mediante HTTPS y cuentas individuales. **El próximo trabajo es desplegar y comprobar el servidor real**, no volver a investigar modelos.
+La implementación académica y sus resultados están disponibles. Esta entrega añade la ruta para instalar una copia en un servidor Linux, accesible al equipo mediante HTTPS y cuentas individuales. El compañero ya [reportó el despliegue Linux](../evidence/server-deployment-2026-10-25.json). El usuario confirmó actualización automática desde Git; consultar [la revisión de interfaz](ui-demo.md) y verificarla en el sitio. Los pasos siguientes son la ruta para instalaciones nuevas, no instrucciones para restaurar otra vez el servidor activo.
 
 ## Orden de lectura y trabajo
 
