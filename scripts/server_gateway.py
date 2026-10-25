@@ -109,13 +109,15 @@ def compose(root, values, *args):
     if state_path.is_file():
         state = json.loads(state_path.read_text())
         if state.get('tunnel_network'):
+            env.setdefault('GATEWAY_BIND_IP', '127.0.0.1')
+            env.setdefault('GATEWAY_HTTP_PORT', '18080')
+            env.setdefault('GATEWAY_HTTPS_PORT', '18443')
             override = root/'.runtime/server/gateway.override.json'
             write_private(override, {
                 'services': {
                     'gateway': {
-                        'ports': ['!override', '127.0.0.1:' + str(values.get('GATEWAY_PORT', '18080')) + ':80'],
                         'networks': {
-                            'application': None,
+                            'application': {},
                             'tunnel': {'aliases': ['hm-gateway']},
                         },
                     }

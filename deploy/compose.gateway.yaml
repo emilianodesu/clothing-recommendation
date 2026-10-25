@@ -4,8 +4,8 @@ services:
     image: caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
     command: [caddy, run, --config, /etc/caddy/Caddyfile, --adapter, caddyfile]
     ports:
-      - "80:80"
-      - "443:443"
+      - "${GATEWAY_BIND_IP:-0.0.0.0}:${GATEWAY_HTTP_PORT:-80}:80"
+      - "${GATEWAY_BIND_IP:-0.0.0.0}:${GATEWAY_HTTPS_PORT:-443}:443"
     volumes:
       - type: bind
         source: ./.runtime/server
