@@ -106,7 +106,14 @@ def http(url, headers=None, data=None):
     except urllib.error.HTTPError as error:
         response = error
     with response:
-        return response.status, dict(response.headers), response.read(1024*1024)
+        class CaseInsensitiveDict(dict):
+            def get(self, key, default=None):
+                k = key.lower()
+                for item_k, item_v in self.items():
+                    if item_k.lower() == k:
+                        return item_v
+                return default
+        return response.status, CaseInsensitiveDict(response.headers), response.read(1024*1024)
 
 
 def local_check(root, *, with_ui=True):
