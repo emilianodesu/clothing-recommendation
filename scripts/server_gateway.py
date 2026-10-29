@@ -55,6 +55,11 @@ def caddyfile(domain, users, *, tunnel=False):
             forward_auth api:8000 {
                 uri /auth/verify
                 copy_headers Set-Cookie Location
+                header_up -Upgrade
+                header_up -Connection
+                header_up -Sec-WebSocket-Key
+                header_up -Sec-WebSocket-Version
+                header_up -Sec-WebSocket-Extensions
             }
             reverse_proxy ui:8501 {
                 header_up -Authorization
