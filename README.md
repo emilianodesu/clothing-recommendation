@@ -1,47 +1,150 @@
-# H&M · Plataforma reproducible de recomendaciones
+# H&M Fashion Recommender Platform
+> Plataforma de recomendación personalizada de moda en tiempo real sobre datos masivos de compras, arquitectura contenerizada de microservicios y despliegue continuo GitOps.
 
-Proyecto final de Datos Masivos: datos masivos de compras, evaluación temporal, experimentos de grafos y modelos, API de recomendaciones, eventos, pipeline y recuperación. **El motor desplegado es H: historial de 28 días + popularidad de 7 días**, seleccionado por calidad bajo restricciones. No necesita entrenamiento neuronal ni Hopsworks para servir.
+[![Producción](https://img.shields.io/badge/Producción-En_Línea-success?style=flat-square)](https://hm.alanmagno.com/)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-blue?style=flat-square)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688?style=flat-square)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.66-FF4B4B?style=flat-square)](https://streamlit.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17.11-336791?style=flat-square)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square)](https://www.docker.com/)
 
-## Desplegar en el servidor del equipo
+---
 
-**Comenzar por [la guía del agente receptor](docs/server-deployment.md).** Incluye diagnóstico automático, construcción con recursos acotados, restauración, cuentas individuales del equipo, dominio/HTTPS, verificación y operación.
+## 🌐 Demostración en Producción
 
-```sh
-python3 scripts/server.py doctor
+El sistema se encuentra desplegado y accesible públicamente con credenciales de operador en:  
+👉 **[https://hm.alanmagno.com/](https://hm.alanmagno.com/)**
+
+### Aspectos Destacados:
+* **Motor H (Recent History 28d + Popularity 7d):** Motor de inferencia heurístico ultrarrápido y determinístico especializado en recompra con fallback inteligente por popularidad semanal.
+* **Simulación en Tiempo Real:** Interfaz web interactiva para simular compras y observar la adaptación reactiva e instantánea del catálogo recomendado.
+* **Perfiles Descriptivos Reales:** Modelos de compradores obtenidos de historiales reales del dataset oficial de H&M Kaggle (gamas cromáticas, prendas estampadas y patrones de recompra).
+* **Arquitectura de Grado Producción:** Caddy Gateway perimetral con TLS automático, API REST asíncrona, PostgreSQL relacional para eventos y telemetría Prometheus.
+
+---
+
+## 🏛️ Arquitectura del Sistema
+
+```mermaid
+flowchart TD
+    subgraph Internet_Layer ["Capa Perimetral (Pública)"]
+        Client["Usuario / Operador Web"]
+        DNS["Cloudflare DNS (hm.alanmagno.com)"]
+    end
+
+    subgraph Host_Server ["Servidor Host Linux (Producción)"]
+        subgraph Gateway_Container ["Caddy Gateway"]
+            Caddy["Caddy 2.11\n• Terminación TLS/HTTPS\n• HTTP Basic Auth Guard\n• Redirección 80 a 443\n• Reverse Proxy"]
+        end
+
+        subgraph Presentation_Container ["Frontend (Docker: hmrec-app)"]
+            UI["Streamlit UI (Port 8501)\n• Layout Reactivo\n• Catálogo Paginado\n• Perfiles Reales de Demo\n• Simulación de Compra"]
+            UICache["Disk Image Cache\n(/tmp/hmrec-images)"]
+        end
+
+        subgraph Backend_Container ["API Serving (Docker: hmrec-app)"]
+            FastAPI["FastAPI Engine (Port 8000)\n• /recommend\n• /catalog\n• /articles/details\n• /articles/{id}/image\n• /events\n• /metrics\n• /health/*"]
+            Metrics["Telemetría & Prometheus"]
+        end
+
+        subgraph Engine_Layer ["Motor In-Memory"]
+            H_Engine["Algoritmo H\n• Historial Reciente (28d)\n• Popularidad Semanal (7d)\n• Fallback Determinístico"]
+            ReleaseReg["ReleaseRegistry\n(Snapshot In-Memory Atómico)"]
+        end
+
+        subgraph Storage_Layer ["Persistencia (Docker: postgres:17)"]
+            Postgres[("PostgreSQL 17.11\n• Event Streams\n• Serving Advisory Leases\n• Release Pointers")]
+        end
+
+        subgraph Deploy_Pipeline ["Pipeline GitOps (server-checks)"]
+            DeployScript["hm-deploy.sh (Cron)\n1. Git Fetch origin/main\n2. Sandbox: pytest tests/unit\n3. BuildKit Build (jobs & app)\n4. Database Migrate\n5. Hot Container Restart\n6. local_check & check_public"]
+        end
+    end
+
+    Client -->|"HTTPS :443"| DNS
+    DNS --> Caddy
+    Caddy -->|"Reverse Proxy :8501"| UI
+    UI -->|"HTTP Interno :8000"| FastAPI
+    FastAPI -->|"In-Memory Lookup"| ReleaseReg
+    ReleaseReg --> H_Engine
+    FastAPI -->|"Advisory Locks & Events"| Postgres
+    UI -.->|"Caché Local de Imágenes"| UICache
+    FastAPI -.->|"Telemetría"| Metrics
+    DeployScript -.->|"Reconstrucción & Verificación"| Presentation_Container
+    DeployScript -.->|"Reconstrucción & Verificación"| Backend_Container
 ```
 
-Este comando sólo consulta el equipo. No instala, detiene servicios, descarga datos ni inicia entrenamientos. El agente debe identificar Linux ARM64/AMD64, Docker, recursos, puertos y red antes de continuar. El compañero reportó el despliegue Linux y HTTPS en [su evidencia](evidence/server-deployment-2026-10-25.json). La revisión visual posterior confirmó fotografías en el sitio; el [recorrido de la nueva interfaz](docs/ui-demo.md) explica la demo y su actualización.
+---
 
-El repositorio puede ser público. Contiene código, documentación, configuraciones y reportes agregados; **no contiene los datos H&M, paquetes con compradores, respaldos, tokens ni contraseñas**. La vía preparada restaura un respaldo privado autorizado en una instalación nueva. Las imágenes de artículos requieren el ZIP Kaggle propio; sin él se muestran sustitutos. El acceso web es para operadores de confianza del equipo, con usuario/contraseña sobre HTTPS; no es un portal público de compradores ni tiene roles individuales dentro de la aplicación.
+## 🛠️ Requisitos Previos
 
-La demo incluye [perfiles descriptivos](docs/demo-profiles.md) elegidos por historiales reales: tonos claros/oscuros, prendas estampadas y hábitos menos obvios. Describen compras, no atributos personales. Actualizar API y UI; no requiere migraciones ni reconstruir el motor.
+* Docker Engine 24+ & Docker Compose v2
+* Python 3.12 con [Astral `uv`](https://github.com/astral-sh/uv) (gestor de paquetes de alto rendimiento)
 
-## Resultado y entregables
+---
 
-| Lectura | Contenido |
-| --- | --- |
-| [Traspaso y mapa del proyecto](docs/handoff.md) | Qué recibe el compañero, entradas que debe obtener, estructura e índice de evidencia/planes |
-| [Informe académico](docs/final-report.md) | Metodología, comparaciones, métricas, arquitectura y hallazgos |
-| [Selección de modelos](docs/model-selection.md) / [ficha H](docs/model-card.md) | Por qué se eligió H y qué limitaciones tiene |
-| [Cobertura del temario](docs/course-coverage.md) | Subtemas implementados y no implementados |
-| [Hallazgos consolidados](docs/findings.md) | Resultados negativos, incidencias y conclusiones operativas |
-| [Estado de entrega](docs/delivery-status.md) | Auditorías y alcance vigente |
-| [Operación del servidor](docs/server-operations.md) | Usuarios, respaldos, actualización, recuperación y diagnóstico |
-| [Referencias](docs/references.md) | Bibliografía, fuentes técnicas y recursos de aprendizaje |
-| [Demo y capturas](docs/demo.md) / [galería](docs/demo-gallery.md) | Demostración sintética de eventos/recomendaciones |
+## 🚀 Inicio Rápido Local (Quickstart)
 
-Test final, 68,984 compradores: MAP@12 H **0.02628451** / popularidad **0.00874768**; Recall@200 **0.20463536 / 0.18077114**. La mejora se concentra en recompra; H pierde en descubrimiento. RG obtuvo mayor MAP medio en validación, pero incumplió restricciones. H no es un óptimo universal.
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/emilianodesu/clothing-recommendation.git
+   cd clothing-recommendation
+   ```
 
-T8-A y T8-C están cerradas; T8-D entregada. **T8-B conserva failed** por solapamiento insuficiente. El [H-cycle posterior](evidence/h-cycle-review-mac24.json) acredita un ciclo breve bajo carga, no concurrencia sostenida ni aprobación global T8. UI corregida desplegada y revisada en mac24. No hay una nueva campaña/test pendiente para desplegar una copia.
+2. **Instalar dependencias del entorno:**
+   ```bash
+   uv sync --extra ui
+   ```
 
-## Desarrollo y conservación
+3. **Iniciar los servicios con Docker Compose:**
+   ```bash
+   docker compose --profile serve up -d
+   ```
+   * Interfaz de Usuario (Streamlit): `http://localhost:8501`
+   * Documentación de la API (Swagger/OpenAPI): `http://localhost:8000/docs`
 
-Host: Python estándar; runtime: Python 3.12 en imágenes con `uv.lock`. `compose.yaml` conserva los perfiles de experimentación y servicio. `deploy/compose.gateway.yaml` añade exclusivamente el gateway. `scripts/server.py` es la entrada del nuevo servidor; los runners `mac24_*` son procedimientos históricos, no instaladores genéricos.
+---
 
-```sh
-python3 -m unittest discover -s tests/host
+## 🧪 Ejecución de Pruebas
+
+* **Pruebas unitarias de motor y API (ejecutadas en sandbox):**
+  ```bash
+  uv run pytest tests/unit -v
+  ```
+
+* **Pruebas de integración de base de datos y UI:**
+  ```bash
+  uv run pytest tests/integration -v
+  ```
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+clothing-recommendation/
+├── compose.yaml              # Definición de servicios (postgres, api, ui, etc.)
+├── pyproject.toml            # Definición del paquete hm-recommender y dependencias
+├── docker/                   # Dockerfiles optimizados multi-stage con BuildKit
+├── src/
+│   └── hm_recommender/
+│       ├── api/              # FastAPI application, routing, esquemas Pydantic y eventos
+│       ├── ui/               # Streamlit application, estilos CSS e internacionalización
+│       ├── model/            # Modelos de recomendación (heurística H y two-tower)
+│       ├── ranking/          # Algoritmos determinísticos de desempate y deduplicación
+│       ├── releases/         # Gestión de releases y leases de servicio
+│       └── events/           # Almacenamiento y agregación de eventos de usuario
+├── tests/
+│   ├── unit/                 # Pruebas unitarias ultrarrápidas aisladas
+│   ├── integration/          # Pruebas de integración HTTP y persistencia
+│   └── fixtures/             # Datos sintéticos para pruebas
+└── docs/                     # Documentación técnica, de operaciones y archivo histórico
 ```
 
-Algunas pruebas de integración requieren Docker aislado y capacidad admitida: consultar [aceptación](docs/acceptance.md). No ejecutar campañas cerradas ni `verify --suite acceptance` en una instalación con datos. No borrar volúmenes ni reservas para superar comprobaciones.
+---
 
-El tag `entrega-academica-2026-10-24` conserva la entrega original; la preparación del servidor es posterior. Los [README](docs/history/README-2026-10-24.md) e [instrucciones](docs/history/AGENTS-2026-10-24.md) cronológicos se preservan como antecedentes, sin órdenes operativas vigentes.
+## 🚢 Operación y Despliegue en Servidor
+
+El despliegue en servidor se gestiona mediante el pipeline automatizado `server-checks/hm-deploy.sh`, que vigila `origin/main`, ejecuta pruebas unitarias en contenedor cerrado sin red, reconstruye imágenes con BuildKit y realiza validaciones locales y de certificados HTTPS antes de conmutar tráfico.
+
+Para consultar los procedimientos detallados de diagnóstico, certificados y respaldos, consulte la [Guía de Operaciones del Servidor](docs/server-operations.md).
