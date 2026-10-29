@@ -224,11 +224,32 @@ def check_public(root, user, *, password=None):
     if status != 200:
         raise ValueError('Acceso a la app mediante cookie de sesión falló')
 
+    import socket, ssl
+    raw_sock = socket.create_connection((domain, 443), timeout=15)
+    ssl_ctx = ssl.create_default_context()
+    with ssl_ctx.wrap_socket(raw_sock, server_hostname=domain) as ws_sock:
+        ws_req = (
+            'GET /_stcore/stream HTTP/1.1\r\n'
+            f'Host: {domain}\r\n'
+            'Upgrade: websocket\r\n'
+            'Connection: Upgrade\r\n'
+            'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n'
+            'Sec-WebSocket-Version: 13\r\n'
+            f'Origin: https://{domain}\r\n'
+            f'Cookie: {session_cookie}\r\n'
+            'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\n\r\n'
+        )
+        ws_sock.sendall(ws_req.encode())
+        ws_resp = ws_sock.recv(4096).decode('utf-8', errors='ignore')
+        if not ws_resp.startswith(('HTTP/1.1 101', 'HTTP/2 101')):
+            first_line = ws_resp.split('\r\n')[0] if ws_resp else 'Empty response'
+            raise ValueError(f'Handshake WebSocket navegador falló: {first_line}')
+
     status, headers, _ = http('http://'+domain+'/')
     if status not in (301, 308) or headers.get('Location') != 'https://'+domain+'/':
         raise ValueError('Redirección HTTP→HTTPS no válida')
     result = dict(status='passed', domain=domain, tls_verified=True, unauthorized_status=401,
-                  ui_http_status=200, websocket_auth_guard=True, browser_websocket_verified=False,
+                  ui_http_status=200, websocket_auth_guard=True, browser_websocket_verified=True,
                   checked_at=datetime.now(timezone.utc).isoformat())
     write_private(root/'.runtime/server/public-check.json', result)
     return result

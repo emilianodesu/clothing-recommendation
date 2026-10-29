@@ -169,9 +169,11 @@ services:
     image: hmrec-app:0.1.0
     profiles: [serve, demo]
     user: ${HMREC_UID:?Run bootstrap first}:${HMREC_GID:?Run bootstrap first}
-    command: [streamlit, run, /opt/hmrec/src/hm_recommender/ui/app.py, --server.address=0.0.0.0, --server.port=8501, --server.headless=true, --browser.gatherUsageStats=false]
+    command: [streamlit, run, /opt/hmrec/src/hm_recommender/ui/app.py, --server.address=0.0.0.0, --server.port=8501, --server.headless=true, --browser.gatherUsageStats=false, --server.enableCORS=false, --server.enableXsrfProtection=false]
     environment:
       PYTHONDONTWRITEBYTECODE: "1"
+      STREAMLIT_SERVER_ENABLE_CORS: "false"
+      STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION: "false"
       HMREC_API_URL: http://api:8000
       HM_APP_PASSWORD: ${HM_APP_PASSWORD:?Run bootstrap first}
     ports:

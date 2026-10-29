@@ -45,16 +45,28 @@ def render_photo(client: httpx.Client, article_id: str, name: str) -> None:
 def main() -> None:
     """Main Streamlit application entry point."""
     st.set_page_config(
-        page_title='H&M · Recomendaciones',
-        page_icon='🧥',
+        page_title='H&M // Intelligent Styling Nexus',
+        page_icon='⚡',
         layout='wide',
         initial_sidebar_state='collapsed',
     )
     inject_custom_css()
 
-    st.caption('H&M · DEMO DE RECOMENDACIONES')
-    st.title('Encuentra tu próxima prenda')
-    st.write('Elige un perfil, simula una compra y descubre cómo cambia su selección.')
+    st.markdown(
+        """
+        <div class="hud-banner">
+            <div class="hud-telemetry">
+                <span class="hud-status-badge"><span class="hud-pulse"></span> CORE ONLINE</span>
+                <span class="hud-chip">MODEL: HEURISTIC (H-28d/7d)</span>
+                <span class="hud-chip">INFERENCE: REALTIME DETERMINISTIC</span>
+                <span class="hud-chip">SECURITY: TLS / EDGE-SECURE</span>
+            </div>
+            <h1 class="hud-title-text">H&amp;M // INTELLIGENT STYLING NEXUS</h1>
+            <p class="hud-subtitle-text">Motor heurístico de recomendación predictiva y simulación adaptativa en tiempo real.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     client = create_api_client()
 
@@ -295,14 +307,23 @@ def main() -> None:
                     st.markdown(f'**{idx + 1}. {item_name}**')
                     if info.get('colour_group_name'):
                         st.caption(label(info['colour_group_name']))
-                    st.caption(
-                        'Ya la compraste' if item['reason'] == 'recent_purchase' else 'Popular esta semana'
+                    reason_badge = (
+                        '<span class="cyber-badge cyber-badge-bought">⚡ RECIENTE · HISTORIAL</span>'
+                        if item['reason'] == 'recent_purchase'
+                        else '<span class="cyber-badge cyber-badge-popular">🔥 TRENDING · 7 DÍAS</span>'
                     )
+                    st.markdown(reason_badge, unsafe_allow_html=True)
                     if previous is not None:
                         if article not in previous:
-                            st.caption('Nueva en tu selección')
+                            st.markdown(
+                                '<span class="cyber-badge cyber-badge-new">✨ NUEVA SELECCIÓN</span>',
+                                unsafe_allow_html=True,
+                            )
                         elif previous.index(article) > idx:
-                            st.caption(f'Subió del puesto {previous.index(article) + 1}')
+                            st.markdown(
+                                f'<span class="cyber-badge cyber-badge-rank">▲ SUBIÓ #{previous.index(article) + 1}</span>',
+                                unsafe_allow_html=True,
+                            )
 
         with explore:
             st.subheader('Elige una prenda para probar')
@@ -336,8 +357,12 @@ def main() -> None:
                     st.markdown(f'**{cat_name}**')
                     if item.get('colour_group_name'):
                         st.caption(label(item['colour_group_name']))
+                    st.markdown(
+                        f'<span class="cyber-badge cyber-badge-popular">ID: {article[:8]}…</span>',
+                        unsafe_allow_html=True,
+                    )
                     if st.button(
-                        'Simular compra',
+                        'Simular compra ⚡',
                         key='catalog_purchase_' + article,
                         disabled=pending,
                         width='stretch',
