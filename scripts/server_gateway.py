@@ -1,5 +1,6 @@
 """Team-only Caddy gateway. Credentials never enter process arguments or Git."""
 import getpass
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -33,11 +34,6 @@ def caddyfile(domain, users, *, tunnel=False):
     domain = validate_domain(domain)
     if not users:
         raise ValueError('Se requiere al menos un usuario del equipo')
-    entries = []
-    for user, digest in sorted(users.items()):
-        if not re.fullmatch(r'[a-z][a-z0-9_-]{0,31}', user) or not re.fullmatch(r'\$2[aby]\$14\$[./A-Za-z0-9]{53}', digest):
-            raise ValueError('Usuario o hash inválido')
-        entries.append('            '+user+' '+digest)
     site = 'http://'+domain if tunnel else domain
     return '''{
     admin localhost:2019
@@ -51,11 +47,18 @@ def caddyfile(domain, users, *, tunnel=False):
         -Server
     }
     route {
-        basic_auth {
-'''+ '\n'.join(entries)+'''
+        @auth_routes path /login /logout
+        handle @auth_routes {
+            reverse_proxy api:8000
         }
-        reverse_proxy ui:8501 {
-            header_up -Authorization
+        handle {
+            forward_auth api:8000 {
+                uri /auth/verify
+                copy_headers Set-Cookie Location
+            }
+            reverse_proxy ui:8501 {
+                header_up -Authorization
+            }
         }
     }
 }
@@ -81,12 +84,14 @@ def configure(root, domain, user, *, remove=False, password=None, tunnel_network
         if user not in state['users']:
             raise ValueError('Usuario no existe')
         del state['users'][user]
+        state.get('password_hashes', {}).pop(user, None)
     else:
         if password is None:
             password = getpass.getpass('Contraseña web (no se guarda en claro): ')
             if getpass.getpass('Repetir contraseña: ') != password:
                 raise ValueError('Contraseñas distintas')
         state['users'][user] = hash_password(password)
+        state.setdefault('password_hashes', {})[user] = hashlib.sha256(password.encode('utf-8')).hexdigest()
     rendered = caddyfile(state['domain'], state['users'], tunnel=bool(state.get('tunnel_network')))
     # Mount directory, not individual file, so atomic updates become visible on reload.
     write_private(folder/'Caddyfile', rendered)

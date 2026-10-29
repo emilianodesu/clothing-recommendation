@@ -141,6 +141,12 @@ services:
         target: /serving
         bind:
           create_host_path: false
+      - type: bind
+        source: ./.runtime/server
+        target: /etc/hmrec/server
+        read_only: true
+        bind:
+          create_host_path: false
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     depends_on:

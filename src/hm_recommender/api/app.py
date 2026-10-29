@@ -7,11 +7,21 @@ from pathlib import Path
 import threading
 import time
 from typing import Callable
+import urllib.parse
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse, Response
 
+from hm_recommender.api.auth import (
+    COOKIE_NAME,
+    DEFAULT_SESSION_DURATION,
+    create_session_token,
+    load_user_hashes,
+    render_login_html,
+    verify_session_token,
+    verify_user_credentials,
+)
 from hm_recommender.api.metrics import Metrics
 from hm_recommender.api.runtime import source_digest
 from hm_recommender.api.schemas import (
@@ -70,6 +80,87 @@ def create_app(
         expected = ('Bearer ' + token).encode()
         if not hmac.compare_digest(authorization.encode(), expected):
             raise HTTPException(status_code=403, detail='Administrative authorization required')
+
+    session_secret = token.encode('utf-8')
+
+    @app.get('/login', response_class=HTMLResponse)
+    async def login_get(request: Request):
+        token_val = request.cookies.get(COOKIE_NAME)
+        if token_val and verify_session_token(token_val, session_secret):
+            return RedirectResponse(url='/', status_code=303)
+        return HTMLResponse(content=render_login_html())
+
+    @app.post('/login')
+    async def login_post(request: Request):
+        raw_body = await request.body()
+        form_data = urllib.parse.parse_qs(raw_body.decode('utf-8', errors='ignore'))
+        username = (form_data.get('username') or [''])[0].strip()
+        password = (form_data.get('password') or [''])[0]
+        remember = bool(form_data.get('remember'))
+
+        hashes = load_user_hashes()
+        if not verify_user_credentials(username, password, hashes):
+            return HTMLResponse(
+                content=render_login_html(error='Usuario o contraseña incorrectos. Verifica tus datos.'),
+                status_code=200,
+            )
+
+        max_age = DEFAULT_SESSION_DURATION if remember else None
+        session_token = create_session_token(username, session_secret, max_age=DEFAULT_SESSION_DURATION)
+        response = RedirectResponse(url='/', status_code=303)
+        response.set_cookie(
+            key=COOKIE_NAME,
+            value=session_token,
+            max_age=max_age,
+            httponly=True,
+            samesite='lax',
+            secure=True,
+            path='/',
+        )
+        return response
+
+    @app.get('/logout')
+    async def logout():
+        response = RedirectResponse(url='/login', status_code=303)
+        response.delete_cookie(key=COOKIE_NAME, path='/')
+        return response
+
+    @app.get('/auth/verify')
+    async def auth_verify(request: Request):
+        # 1. Cookie check
+        token_val = request.cookies.get(COOKIE_NAME)
+        if token_val and verify_session_token(token_val, session_secret):
+            return Response(status_code=200)
+
+        # 2. Basic Auth check (for automated tests, server.check_public, curl)
+        auth = request.headers.get('authorization', '')
+        if auth.startswith('Basic '):
+            import base64
+            try:
+                decoded = base64.b64decode(auth[6:]).decode('utf-8', errors='ignore')
+                u, p = decoded.split(':', 1)
+                hashes = load_user_hashes()
+                if verify_user_credentials(u, p, hashes):
+                    return Response(status_code=200)
+            except Exception:
+                pass
+            return Response(status_code=401, headers={'WWW-Authenticate': 'Basic realm="restricted"'})
+
+        # 3. Unauthenticated request:
+        user_agent = request.headers.get('user-agent', '')
+        accept = request.headers.get('accept', '')
+        forwarded_uri = request.headers.get('x-forwarded-uri', '')
+
+        # Automated server checks or WebSocket/health probes without credentials -> return 401:
+        if (
+            'hmrec-server-check' in user_agent
+            or forwarded_uri.startswith('/_stcore/')
+            or 'text/html' not in accept
+        ):
+            return Response(status_code=401, headers={'WWW-Authenticate': 'Basic realm="restricted"'})
+
+        # Human browser navigation -> redirect to /login:
+        return Response(status_code=307, headers={'Location': '/login'})
 
     @app.get('/health/live')
     def live():

@@ -93,14 +93,14 @@ def restore(root, args, *, shared=False):
     print('Restauración terminada. Continuar usando --root '+str(args.destination))
 
 
-def http(url, headers=None):
+def http(url, headers=None, data=None):
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, req, fp, code, msg, hdrs, newurl):
             return None
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
     req_headers = {'User-Agent': 'hmrec-server-check/1.0'}
     req_headers.update(headers or {})
-    request = urllib.request.Request(url, headers=req_headers)
+    request = urllib.request.Request(url, data=data, headers=req_headers)
     try:
         response = opener.open(request, timeout=30)
     except urllib.error.HTTPError as error:
@@ -196,6 +196,27 @@ def check_public(root, user, *, password=None):
             raise ValueError('Acceso autenticado o salud UI falló')
     if http('https://'+domain+'/_stcore/stream')[0] != 401:
         raise ValueError('Ruta WebSocket no protegida')
+
+    # Portal de login HTML y redirección para navegadores
+    status, _, body = http('https://'+domain+'/login')
+    if status != 200 or b'name="username"' not in body or b'name="password"' not in body:
+        raise ValueError('Portal de login HTML no disponible o incompleto')
+
+    status, headers, _ = http('https://'+domain+'/', {'Accept': 'text/html'})
+    if status not in (302, 303, 307) or headers.get('Location') != '/login':
+        raise ValueError('Navegador sin sesión no redirigido a /login')
+
+    form_data = urllib.parse.urlencode({'username': user, 'password': password, 'remember': '1'}).encode()
+    status, headers, _ = http('https://'+domain+'/login', {'Content-Type': 'application/x-www-form-urlencoded'}, data=form_data)
+    set_cookie = headers.get('Set-Cookie', '')
+    if status not in (302, 303) or 'hmrec_session=' not in set_cookie:
+        raise ValueError('Inicio de sesión con formulario tradicional falló')
+
+    session_cookie = set_cookie.split(';')[0]
+    status, _, _ = http('https://'+domain+'/', {'Cookie': session_cookie})
+    if status != 200:
+        raise ValueError('Acceso a la app mediante cookie de sesión falló')
+
     status, headers, _ = http('http://'+domain+'/')
     if status not in (301, 308) or headers.get('Location') != 'https://'+domain+'/':
         raise ValueError('Redirección HTTP→HTTPS no válida')
