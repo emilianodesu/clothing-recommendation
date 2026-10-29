@@ -23,19 +23,28 @@ class HistoryConfig(ComparisonConfig):
 def recent_histories(transactions, catalog, customers, days=28):
     """Return aligned catalog indices, using only events strictly before validation."""
     from hm_recommender.quality.temporal import history_table
-    selected = transactions.join(pl.DataFrame({'customer_id':customers}).lazy(), on='customer_id', how='semi')
+
+    selected = transactions.join(pl.DataFrame({'customer_id': customers}).lazy(), on='customer_id', how='semi')
     selected = selected.join(catalog.select('article_id').lazy(), on='article_id', how='semi')
-    grouped = history_table(selected, VALIDATION, days).group_by('customer_id', maintain_order=True).agg(pl.col('article_id').head(200))
-    indices = {item:i for i,item in enumerate(catalog['article_id'])}
-    mapped = {customer:np.asarray([indices[item] for item in items],dtype=np.int64) for customer,items in grouped.iter_rows()}
-    return [mapped.get(customer,np.empty(0,dtype=np.int64)) for customer in customers]
+    grouped = (
+        history_table(selected, VALIDATION, days)
+        .group_by('customer_id', maintain_order=True)
+        .agg(pl.col('article_id').head(200))
+    )
+    indices = {item: i for i, item in enumerate(catalog['article_id'])}
+    mapped = {
+        customer: np.asarray([indices[item] for item in items], dtype=np.int64)
+        for customer, items in grouped.iter_rows()
+    }
+    return [mapped.get(customer, np.empty(0, dtype=np.int64)) for customer in customers]
 
 
 def compose_recent(history, popular, *, model=None, k=200):
     # Both variants have an explicit popularity fallback when no recent history exists.
     streams = (history, model, popular) if len(history) and model is not None else (history, popular)
-    selected=unique_prefix((map(int,stream) for stream in streams),limit=k)
-    if len(selected)==k:return np.asarray(selected,dtype=np.int64)
+    selected = unique_prefix((map(int, stream) for stream in streams), limit=k)
+    if len(selected) == k:
+        return np.asarray(selected, dtype=np.int64)
     raise ValueError('Insufficient unique candidates for recent-history ranking')
 
 

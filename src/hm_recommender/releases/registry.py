@@ -163,7 +163,8 @@ class ReleaseRegistry:
             candidate = self._load(previous)
             with self._lock:
                 try:
-                    self.store.check(); self.store.activate(previous)
+                    self.store.check()
+                    self.store.activate(previous)
                 except Exception:
                     self._state = None
                     raise
