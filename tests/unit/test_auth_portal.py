@@ -141,6 +141,15 @@ def test_api_auth_endpoints(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     assert res.status_code == 401
     assert "Basic" in res.headers.get("www-authenticate", "")
 
+    # 9b. GET /auth/verify unauthenticated browser check with Accept: text/html returns 307
+    res = client.get(
+        "/auth/verify",
+        headers={"User-Agent": "hmrec-server-check/1.0", "Accept": "text/html"},
+        follow_redirects=False,
+    )
+    assert res.status_code == 307
+    assert res.headers["location"] == "/login"
+
     # 10. GET /auth/verify unauthenticated WebSocket endpoint returns 401
     res = client.get("/auth/verify", headers={"X-Forwarded-Uri": "/_stcore/stream"})
     assert res.status_code == 401

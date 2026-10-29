@@ -153,8 +153,7 @@ def create_app(
 
         # Automated server checks or WebSocket/health probes without credentials -> return 401:
         if (
-            'hmrec-server-check' in user_agent
-            or forwarded_uri.startswith('/_stcore/')
+            forwarded_uri.startswith('/_stcore/')
             or 'text/html' not in accept
         ):
             return Response(status_code=401, headers={'WWW-Authenticate': 'Basic realm="restricted"'})
