@@ -16,7 +16,11 @@ from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Red
 from hm_recommender.api.auth import (
     COOKIE_NAME,
     DEFAULT_SESSION_DURATION,
+    MAX_LOGIN_BODY_BYTES,
+    SECURITY_HEADERS,
+    LoginRateLimiter,
     create_session_token,
+    extract_client_ip,
     load_user_hashes,
     render_login_html,
     verify_session_token,
@@ -82,17 +86,39 @@ def create_app(
             raise HTTPException(status_code=403, detail='Administrative authorization required')
 
     session_secret = token.encode('utf-8')
+    rate_limiter = LoginRateLimiter()
 
     @app.get('/login', response_class=HTMLResponse)
     async def login_get(request: Request):
         token_val = request.cookies.get(COOKIE_NAME)
         if token_val and verify_session_token(token_val, session_secret):
-            return RedirectResponse(url='/', status_code=303)
-        return HTMLResponse(content=render_login_html())
+            return RedirectResponse(url='/', status_code=303, headers=SECURITY_HEADERS)
+        return HTMLResponse(content=render_login_html(), headers=SECURITY_HEADERS)
 
     @app.post('/login')
     async def login_post(request: Request):
+        client_ip = extract_client_ip(
+            request.headers,
+            request.client.host if request.client else 'unknown',
+        )
+        if rate_limiter.is_blocked(client_ip):
+            return HTMLResponse(
+                content=render_login_html(
+                    error='Demasiados intentos fallidos. Espera unos minutos antes de volver a intentarlo.'
+                ),
+                status_code=429,
+                headers=SECURITY_HEADERS,
+            )
+
         raw_body = await request.body()
+        if len(raw_body) > MAX_LOGIN_BODY_BYTES:
+            rate_limiter.record_failure(client_ip)
+            return HTMLResponse(
+                content=render_login_html(error='Solicitud inválida.'),
+                status_code=400,
+                headers=SECURITY_HEADERS,
+            )
+
         form_data = urllib.parse.parse_qs(raw_body.decode('utf-8', errors='ignore'))
         username = (form_data.get('username') or [''])[0].strip()
         password = (form_data.get('password') or [''])[0]
@@ -100,14 +126,17 @@ def create_app(
 
         hashes = load_user_hashes()
         if not verify_user_credentials(username, password, hashes):
+            rate_limiter.record_failure(client_ip)
             return HTMLResponse(
                 content=render_login_html(error='Usuario o contraseña incorrectos. Verifica tus datos.'),
                 status_code=200,
+                headers=SECURITY_HEADERS,
             )
 
+        rate_limiter.reset(client_ip)
         max_age = DEFAULT_SESSION_DURATION if remember else None
         session_token = create_session_token(username, session_secret, max_age=DEFAULT_SESSION_DURATION)
-        response = RedirectResponse(url='/', status_code=303)
+        response = RedirectResponse(url='/', status_code=303, headers=SECURITY_HEADERS)
         response.set_cookie(
             key=COOKIE_NAME,
             value=session_token,
@@ -121,7 +150,7 @@ def create_app(
 
     @app.get('/logout')
     async def logout():
-        response = RedirectResponse(url='/login', status_code=303)
+        response = RedirectResponse(url='/login', status_code=303, headers=SECURITY_HEADERS)
         response.delete_cookie(key=COOKIE_NAME, path='/')
         return response
 
@@ -135,15 +164,26 @@ def create_app(
         # 2. Basic Auth check (for automated tests, server.check_public, curl)
         auth = request.headers.get('authorization', '')
         if auth.startswith('Basic '):
+            client_ip = extract_client_ip(
+                request.headers,
+                request.client.host if request.client else 'unknown',
+            )
+            if rate_limiter.is_blocked(client_ip):
+                return Response(
+                    status_code=429,
+                    headers={'WWW-Authenticate': 'Basic realm="restricted"'},
+                )
             import base64
             try:
                 decoded = base64.b64decode(auth[6:]).decode('utf-8', errors='ignore')
                 u, p = decoded.split(':', 1)
                 hashes = load_user_hashes()
                 if verify_user_credentials(u, p, hashes):
+                    rate_limiter.reset(client_ip)
                     return Response(status_code=200)
             except Exception:
                 pass
+            rate_limiter.record_failure(client_ip)
             return Response(status_code=401, headers={'WWW-Authenticate': 'Basic realm="restricted"'})
 
         # 3. Unauthenticated request:

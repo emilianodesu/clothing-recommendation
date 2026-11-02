@@ -153,29 +153,36 @@ header[data-testid="stHeader"] {
     font-weight: 400 !important;
 }
 
-.logout-btn, a.logout-btn:link, a.logout-btn:visited {
+.logout-btn,
+a.logout-btn:link,
+a.logout-btn:visited,
+[data-testid="stMarkdownContainer"] a.logout-btn {
     display: inline-flex !important;
     align-items: center !important;
-    background: var(--atelier-surface) !important;
-    color: var(--atelier-noir) !important;
-    border: 1px solid var(--atelier-border) !important;
-    border-radius: 3px !important;
+    align-self: flex-start !important;
+    background: transparent !important;
+    color: var(--atelier-light-muted) !important;
+    border: none !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: 10.5px !important;
-    letter-spacing: 0.14em !important;
-    text-transform: uppercase !important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.02em !important;
+    text-transform: none !important;
     text-decoration: none !important;
-    padding: 9px 16px !important;
-    transition: all 0.2s ease !important;
+    padding: 4px 2px !important;
+    opacity: 0.72 !important;
+    transition: opacity 0.2s ease, color 0.2s ease !important;
     white-space: nowrap !important;
 }
 
-.logout-btn:hover, a.logout-btn:hover {
-    background: var(--atelier-primary-bg) !important;
-    color: var(--atelier-primary-fg) !important;
-    border-color: var(--atelier-primary-bg) !important;
-    text-decoration: none !important;
+.logout-btn:hover,
+a.logout-btn:hover,
+[data-testid="stMarkdownContainer"] a.logout-btn:hover {
+    background: transparent !important;
+    color: var(--atelier-noir) !important;
+    opacity: 1 !important;
+    text-decoration: underline !important;
+    text-underline-offset: 4px !important;
 }
 
 /* Fallback / legacy banners */

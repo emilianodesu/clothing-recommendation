@@ -10,6 +10,8 @@ import pytest
 from hm_recommender.api.app import create_app
 from hm_recommender.api.auth import (
     COOKIE_NAME,
+    MAX_LOGIN_ATTEMPTS,
+    LoginRateLimiter,
     create_session_token,
     hash_password,
     render_login_html,
@@ -158,3 +160,44 @@ def test_api_auth_endpoints(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     res = client.get("/logout", follow_redirects=False)
     assert res.status_code == 303
     assert res.headers["location"] == "/login"
+
+    # 12. Brute-force protection returns 429 after MAX_LOGIN_ATTEMPTS failures
+    for _ in range(MAX_LOGIN_ATTEMPTS):
+        client.post(
+            "/login",
+            data={"username": "testuser", "password": "BadPassword"},
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Forwarded-For": "203.0.113.99",
+            },
+        )
+    res_blocked = client.post(
+        "/login",
+        data={"username": "testuser", "password": pwd},
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Forwarded-For": "203.0.113.99",
+        },
+    )
+    assert res_blocked.status_code == 429
+    assert "Demasiados intentos" in res_blocked.text
+
+
+def test_login_rate_limiter_unit():
+    limiter = LoginRateLimiter(max_attempts=3, window_seconds=60)
+    assert limiter.is_blocked("198.51.100.1", now=100.0) is False
+    limiter.record_failure("198.51.100.1", now=100.0)
+    limiter.record_failure("198.51.100.1", now=110.0)
+    assert limiter.is_blocked("198.51.100.1", now=120.0) is False
+    limiter.record_failure("198.51.100.1", now=120.0)
+    assert limiter.is_blocked("198.51.100.1", now=125.0) is True
+    # Expires after window
+    assert limiter.is_blocked("198.51.100.1", now=165.0) is False
+
+
+def test_render_login_html_escapes_xss():
+    malicious = '<script>alert("xss")</script>'
+    rendered = render_login_html(error=malicious)
+    assert "<script>" not in rendered
+    assert "&lt;script&gt;" in rendered
+

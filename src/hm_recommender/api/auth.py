@@ -1,16 +1,89 @@
 """Authentication portal, session management, and perimeter security."""
 
 import base64
+from collections import deque
 import hashlib
 import hmac
+import html
 import json
 import os
 from pathlib import Path
+import threading
 import time
 from typing import Any
 
 COOKIE_NAME = "hmrec_session"
 DEFAULT_SESSION_DURATION = 30 * 86400  # 30 days
+MAX_LOGIN_ATTEMPTS = 8
+RATE_LIMIT_WINDOW_SECONDS = 300  # 5 minutes
+MAX_LOGIN_BODY_BYTES = 4096
+_DUMMY_PASSWORD_HASH = hashlib.sha256(b"hmrec_constant_time_dummy_secret").hexdigest()
+
+SECURITY_HEADERS = {
+    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+}
+
+
+class LoginRateLimiter:
+    """Thread-safe sliding-window brute-force rate limiter keyed by client IP."""
+
+    def __init__(
+        self,
+        max_attempts: int = MAX_LOGIN_ATTEMPTS,
+        window_seconds: int = RATE_LIMIT_WINDOW_SECONDS,
+    ) -> None:
+        self.max_attempts = max_attempts
+        self.window_seconds = window_seconds
+        self._failures: dict[str, deque[float]] = {}
+        self._lock = threading.Lock()
+
+    def _prune(self, key: str, now: float) -> deque[float]:
+        bucket = self._failures.get(key)
+        if not bucket:
+            return deque()
+        cutoff = now - self.window_seconds
+        while bucket and bucket[0] <= cutoff:
+            bucket.popleft()
+        if not bucket:
+            self._failures.pop(key, None)
+        return bucket
+
+    def is_blocked(self, key: str, now: float | None = None) -> bool:
+        """Return True if the client IP has reached the maximum failed login attempts."""
+        ts = time.time() if now is None else now
+        with self._lock:
+            bucket = self._prune(key, ts)
+            return len(bucket) >= self.max_attempts
+
+    def record_failure(self, key: str, now: float | None = None) -> None:
+        """Record a failed login attempt for the given client IP."""
+        ts = time.time() if now is None else now
+        with self._lock:
+            bucket = self._prune(key, ts)
+            if key not in self._failures:
+                self._failures[key] = bucket
+            bucket.append(ts)
+
+    def reset(self, key: str) -> None:
+        """Clear failure history after a successful authentication."""
+        with self._lock:
+            self._failures.pop(key, None)
+
+
+def extract_client_ip(headers: Any, fallback_host: str = "unknown") -> str:
+    """Extract the real client IP address from reverse-proxy headers or socket peer."""
+    forwarded = headers.get("x-forwarded-for", "")
+    if forwarded:
+        first_ip = forwarded.split(",", 1)[0].strip()
+        if first_ip:
+            return first_ip
+    real_ip = headers.get("x-real-ip", "").strip()
+    if real_ip:
+        return real_ip
+    return fallback_host or "unknown"
 
 
 def create_session_token(username: str, secret: bytes, max_age: int = DEFAULT_SESSION_DURATION) -> str:
@@ -65,16 +138,25 @@ def load_user_hashes(config_path: Path | None = None) -> dict[str, str]:
 
 
 def verify_user_credentials(username: str, password: str, user_hashes: dict[str, str]) -> bool:
-    """Verify username and password against SHA-256 hash dictionary."""
-    if not username or not password or username not in user_hashes:
+    """Verify username and password against SHA-256 hash dictionary in constant time."""
+    safe_password = password[:256] if password else ""
+    computed_hash = hash_password(safe_password)
+    expected_hash = user_hashes.get(username, _DUMMY_PASSWORD_HASH)
+    digest_matches = hmac.compare_digest(computed_hash, expected_hash)
+    if (
+        not username
+        or not password
+        or len(username) > 128
+        or len(password) > 256
+        or username not in user_hashes
+    ):
         return False
-    expected_hash = user_hashes[username]
-    computed_hash = hash_password(password)
-    return hmac.compare_digest(computed_hash, expected_hash)
+    return digest_matches
 
 
 def render_login_html(error: str | None = None) -> str:
     """Render high-polish, minimalist luxury editorial HTML login portal."""
+    safe_error = html.escape(error, quote=True) if error else ""
     error_html = (
         f"""<div class="error-banner" role="alert">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -82,9 +164,9 @@ def render_login_html(error: str | None = None) -> str:
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            <span>{error}</span>
+            <span>{safe_error}</span>
         </div>"""
-        if error
+        if safe_error
         else ""
     )
 
