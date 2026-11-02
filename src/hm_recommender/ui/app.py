@@ -45,8 +45,8 @@ def render_photo(client: httpx.Client, article_id: str, name: str) -> None:
 def main() -> None:
     """Main Streamlit application entry point."""
     st.set_page_config(
-        page_title='H&M // Intelligent Styling Nexus',
-        page_icon='⚡',
+        page_title='H&M · Estudio de Estilo & Recomendación',
+        page_icon='✦',
         layout='wide',
         initial_sidebar_state='collapsed',
     )
@@ -54,15 +54,15 @@ def main() -> None:
 
     st.markdown(
         """
-        <div class="hud-banner">
-            <div class="hud-telemetry">
-                <span class="hud-status-badge"><span class="hud-pulse"></span> CORE ONLINE</span>
-                <span class="hud-chip">MODEL: HEURISTIC (H-28d/7d)</span>
-                <span class="hud-chip">INFERENCE: REALTIME DETERMINISTIC</span>
-                <span class="hud-chip">SECURITY: TLS / EDGE-SECURE</span>
+        <div class="mcm-banner">
+            <div class="mcm-telemetry">
+                <span class="mcm-status-badge"><span class="mcm-pulse"></span> SISTEMA ACTIVO</span>
+                <span class="mcm-chip">MODELO H · 28D / 7D</span>
+                <span class="mcm-chip">INFERENCIA EN TIEMPO REAL</span>
+                <span class="mcm-chip">CURADURÍA H&amp;M · EST. 1947</span>
             </div>
-            <h1 class="hud-title-text">H&amp;M // INTELLIGENT STYLING NEXUS</h1>
-            <p class="hud-subtitle-text">Motor heurístico de recomendación predictiva y simulación adaptativa en tiempo real.</p>
+            <h1 class="mcm-title-text">H&amp;M · ESTUDIO DE ESTILO</h1>
+            <p class="mcm-subtitle-text">Curaduría predictiva de vestuario y experimentación en tiempo real inspirada en diseño de mediados de siglo.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -308,20 +308,20 @@ def main() -> None:
                     if info.get('colour_group_name'):
                         st.caption(label(info['colour_group_name']))
                     reason_badge = (
-                        '<span class="cyber-badge cyber-badge-bought">⚡ RECIENTE · HISTORIAL</span>'
+                        '<span class="mcm-badge mcm-badge-bought">✦ HISTORIAL · RECIENTE</span>'
                         if item['reason'] == 'recent_purchase'
-                        else '<span class="cyber-badge cyber-badge-popular">🔥 TRENDING · 7 DÍAS</span>'
+                        else '<span class="mcm-badge mcm-badge-popular">◈ POPULAR · 7 DÍAS</span>'
                     )
                     st.markdown(reason_badge, unsafe_allow_html=True)
                     if previous is not None:
                         if article not in previous:
                             st.markdown(
-                                '<span class="cyber-badge cyber-badge-new">✨ NUEVA SELECCIÓN</span>',
+                                '<span class="mcm-badge mcm-badge-new">✻ NUEVA SELECCIÓN</span>',
                                 unsafe_allow_html=True,
                             )
                         elif previous.index(article) > idx:
                             st.markdown(
-                                f'<span class="cyber-badge cyber-badge-rank">▲ SUBIÓ #{previous.index(article) + 1}</span>',
+                                f'<span class="mcm-badge mcm-badge-rank">▲ SUBIÓ #{previous.index(article) + 1}</span>',
                                 unsafe_allow_html=True,
                             )
 
@@ -358,11 +358,11 @@ def main() -> None:
                     if item.get('colour_group_name'):
                         st.caption(label(item['colour_group_name']))
                     st.markdown(
-                        f'<span class="cyber-badge cyber-badge-popular">ID: {article[:8]}…</span>',
+                        f'<span class="mcm-badge mcm-badge-popular">REF: {article[:8]}…</span>',
                         unsafe_allow_html=True,
                     )
                     if st.button(
-                        'Simular compra ⚡',
+                        'Simular compra ✦',
                         key='catalog_purchase_' + article,
                         disabled=pending,
                         width='stretch',

@@ -1,25 +1,31 @@
-"""Custom stylesheet and layout enhancements for the Streamlit UI."""
+"""Mid-Century Modern stylesheet and layout enhancements for the Streamlit UI."""
 import streamlit as st
 
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --cyber-bg: #07090e;
-    --cyber-neon-cyan: #00f0ff;
-    --cyber-neon-red: #ff003c;
-    --cyber-neon-green: #00ff9d;
-    --cyber-neon-purple: #c084fc;
-    --cyber-neon-amber: #fbbf24;
-    --cyber-border: rgba(0, 240, 255, 0.22);
-    --cyber-glow-cyan: rgba(0, 240, 255, 0.35);
+    --mcm-bg: #FAF7F2;
+    --mcm-card: #FFFFFF;
+    --mcm-walnut: #251B14;
+    --mcm-espresso: #1E1610;
+    --mcm-terracotta: #C85A32;
+    --mcm-terracotta-dark: #B34820;
+    --mcm-ochre: #DDA15E;
+    --mcm-olive: #5B7546;
+    --mcm-teal: #245864;
+    --mcm-linen: #F5EFEB;
+    --mcm-border: #E5DCCE;
+    --mcm-border-subtle: #EFE8DD;
+    --mcm-text: #281F19;
+    --mcm-text-muted: #786C60;
 }
 
-/* Background Cyber Grid & Void Styling */
+/* Background Canvas & Architectural Grid */
 .stApp {
-    background: radial-gradient(circle at 50% 0%, #0d1527 0%, #06080e 75%, #030408 100%) !important;
-    color: #e2e8f0 !important;
+    background: radial-gradient(circle at 50% 0%, #FCFBF9 0%, #F8F4EC 65%, #F0E9DE 100%) !important;
+    color: var(--mcm-text) !important;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
@@ -31,9 +37,9 @@ CUSTOM_CSS = """
     width: 100vw;
     height: 100vh;
     background-image: 
-        linear-gradient(to right, rgba(0, 240, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 240, 255, 0.035) 1px, transparent 1px);
-    background-size: 36px 36px;
+        linear-gradient(to right, rgba(198, 166, 138, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(198, 166, 138, 0.08) 1px, transparent 1px);
+    background-size: 38px 38px;
     pointer-events: none;
     z-index: 0;
 }
@@ -43,315 +49,323 @@ header[data-testid="stHeader"] {
 }
 
 .block-container {
-    max-width: 1280px;
+    max-width: 1260px;
     padding-top: 1.8rem;
     padding-bottom: 3.5rem;
     position: relative;
     z-index: 1;
 }
 
-/* Futuristic HUD Telemetry Banner */
-.hud-banner {
-    background: rgba(10, 17, 32, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(0, 240, 255, 0.28);
-    border-left: 4px solid #ff003c;
-    border-radius: 14px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 240, 255, 0.04);
-    position: relative;
-    overflow: hidden;
+/* Mid-Century Modern Atelier Pavilion Banner */
+.mcm-banner, .hud-banner {
+    background: #251B14 !important;
+    border: 1px solid #3E2F24 !important;
+    border-top: 4px solid var(--mcm-terracotta) !important;
+    border-radius: 16px !important;
+    padding: 26px 32px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 14px 34px rgba(37, 27, 20, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    color: #FAF6EE !important;
 }
 
-.hud-banner::after {
+.mcm-banner::after, .hud-banner::after {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
-    width: 140px;
+    width: 260px;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.05));
+    background: radial-gradient(circle at 100% 50%, rgba(200, 90, 50, 0.18) 0%, rgba(221, 161, 94, 0.08) 45%, transparent 75%);
     pointer-events: none;
 }
 
-.hud-telemetry {
+.mcm-telemetry, .hud-telemetry {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
-.hud-status-badge {
+.mcm-status-badge, .hud-status-badge {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Outfit', sans-serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #00ff9d;
-    background: rgba(0, 255, 157, 0.12);
-    border: 1px solid rgba(0, 255, 157, 0.35);
-    padding: 4px 11px;
+    color: #8EB872;
+    background: rgba(142, 184, 114, 0.16);
+    border: 1px solid rgba(142, 184, 114, 0.35);
+    padding: 4px 12px;
     border-radius: 20px;
-    box-shadow: 0 0 12px rgba(0, 255, 157, 0.2);
 }
 
-.hud-pulse {
+.mcm-pulse, .hud-pulse {
     width: 7px;
     height: 7px;
-    background-color: #00ff9d;
+    background-color: #8EB872;
     border-radius: 50%;
-    box-shadow: 0 0 8px #00ff9d;
-    animation: pulse-glow 2s infinite ease-in-out;
+    box-shadow: 0 0 6px #8EB872;
+    animation: mcm-pulse-glow 2.5s infinite ease-in-out;
 }
 
-@keyframes pulse-glow {
-    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #00ff9d; }
-    50% { opacity: 0.4; transform: scale(0.85); box-shadow: 0 0 2px #00ff9d; }
+@keyframes mcm-pulse-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-.hud-chip {
-    font-family: 'JetBrains Mono', monospace;
+.mcm-chip, .hud-chip {
+    font-family: 'Outfit', sans-serif;
     font-size: 11px;
     font-weight: 500;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 4px 10px;
+    color: #D3C9BD;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 4px 11px;
     border-radius: 6px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
 }
 
-.hud-title-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 45%, #ff0055 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0 0 6px 0;
+.mcm-title-text, .hud-title-text {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: #FFFDF9;
+    margin: 0 0 8px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.hud-subtitle-text {
-    font-size: 14px;
-    color: #94a3b8;
+.mcm-subtitle-text, .hud-subtitle-text {
+    font-size: 14.5px;
+    color: #CFC3B3;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.55;
+    font-weight: 400;
 }
 
-/* Fashion Item Cards (Glassmorphism & HUD Glow) */
+/* Mid-Century Product Cards */
 [data-testid="stVerticalBlockBorderWrapper"] {
     position: relative !important;
-    background: rgba(10, 16, 30, 0.8) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border: 1px solid rgba(0, 240, 255, 0.18) !important;
-    border-radius: 12px !important;
-    padding: 12px !important;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), inset 0 0 16px rgba(0, 240, 255, 0.03) !important;
-    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    background: var(--mcm-card) !important;
+    border: 1px solid var(--mcm-border) !important;
+    border-radius: 14px !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 16px rgba(40, 31, 25, 0.05), 0 1px 3px rgba(40, 31, 25, 0.03) !important;
+    transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 [data-testid="stVerticalBlockBorderWrapper"]:hover {
     transform: translateY(-4px) !important;
-    border-color: rgba(0, 240, 255, 0.6) !important;
-    box-shadow: 0 12px 36px rgba(0, 240, 255, 0.22), inset 0 0 20px rgba(0, 240, 255, 0.08) !important;
+    border-color: var(--mcm-terracotta) !important;
+    box-shadow: 0 14px 30px rgba(200, 90, 50, 0.14), 0 3px 8px rgba(40, 31, 25, 0.04) !important;
 }
 
-/* Image Holographic Frame */
+/* Oatmeal Fabric Image Plate */
 [data-testid="stImage"] img {
     height: 245px !important;
     object-fit: contain !important;
-    background: radial-gradient(circle at center, #172138 0%, #070a14 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 8px !important;
+    background: var(--mcm-linen) !important;
+    border: 1px solid #EAE2D5 !important;
+    border-radius: 9px !important;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 [data-testid="stVerticalBlockBorderWrapper"]:hover [data-testid="stImage"] img {
-    transform: scale(1.03) !important;
+    transform: scale(1.025) !important;
 }
 
-/* Cyber Badges */
-.cyber-badge {
+/* Mid-Century Swatch Badges */
+.mcm-badge, .cyber-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.6px;
     text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 5px;
-    margin: 3px 0;
+    padding: 4px 9px;
+    border-radius: 6px;
+    margin: 4px 0;
 }
 
-.cyber-badge-bought {
-    background: rgba(0, 255, 157, 0.12);
-    color: #00ff9d;
-    border: 1px solid rgba(0, 255, 157, 0.35);
-    box-shadow: 0 0 8px rgba(0, 255, 157, 0.15);
+.mcm-badge-bought, .cyber-badge-bought {
+    background: #EDF4E8;
+    color: #385226;
+    border: 1px solid #C4DAB8;
 }
 
-.cyber-badge-popular {
-    background: rgba(0, 240, 255, 0.12);
-    color: #00f0ff;
-    border: 1px solid rgba(0, 240, 255, 0.35);
-    box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+.mcm-badge-popular, .cyber-badge-popular {
+    background: #FDF0EB;
+    color: #A94323;
+    border: 1px solid #F3C8BA;
 }
 
-.cyber-badge-new {
-    background: rgba(217, 70, 239, 0.14);
-    color: #f472b6;
-    border: 1px solid rgba(217, 70, 239, 0.4);
-    box-shadow: 0 0 8px rgba(217, 70, 239, 0.15);
+.mcm-badge-new, .cyber-badge-new {
+    background: #FAF3DE;
+    color: #8C5C15;
+    border: 1px solid #EED8A4;
 }
 
-.cyber-badge-rank {
-    background: rgba(251, 191, 36, 0.14);
-    color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.15);
+.mcm-badge-rank, .cyber-badge-rank {
+    background: #E8F3F5;
+    color: #1A5460;
+    border: 1px solid #B4D7DF;
 }
 
-/* Futuristic Action Buttons */
+/* Mid-Century Modern Buttons */
 [data-testid="stButton"] button[kind="primary"] {
-    background: linear-gradient(135deg, #ff0844 0%, #ff1744 50%, #e50010 100%) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    background: var(--mcm-terracotta) !important;
+    color: #FFFFFF !important;
+    border: 1px solid var(--mcm-terracotta-dark) !important;
     border-radius: 8px !important;
-    font-family: 'Rajdhani', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    letter-spacing: 1.5px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 14.5px !important;
+    letter-spacing: 0.8px !important;
     text-transform: uppercase !important;
-    box-shadow: 0 0 20px rgba(255, 8, 68, 0.45) !important;
+    box-shadow: 0 4px 14px rgba(200, 90, 50, 0.3) !important;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 [data-testid="stButton"] button[kind="primary"]:hover {
-    box-shadow: 0 0 35px rgba(255, 8, 68, 0.8), 0 0 10px #ffffff !important;
-    transform: translateY(-2px) scale(1.01) !important;
+    background: var(--mcm-terracotta-dark) !important;
+    box-shadow: 0 6px 20px rgba(200, 90, 50, 0.45) !important;
+    transform: translateY(-2px) !important;
 }
 
 [data-testid="stButton"] button:not([kind="primary"]) {
-    background: rgba(0, 240, 255, 0.07) !important;
-    color: #00f0ff !important;
-    border: 1px solid rgba(0, 240, 255, 0.4) !important;
+    background: #FAF6EF !important;
+    color: var(--mcm-walnut) !important;
+    border: 1px solid #D6CAB8 !important;
     border-radius: 8px !important;
-    font-family: 'Rajdhani', sans-serif !important;
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 13.5px !important;
-    letter-spacing: 1.2px !important;
+    font-size: 13px !important;
+    letter-spacing: 0.6px !important;
     text-transform: uppercase !important;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 [data-testid="stButton"] button:not([kind="primary"]):hover {
-    background: #00f0ff !important;
-    color: #07090e !important;
-    border-color: #00f0ff !important;
-    box-shadow: 0 0 22px rgba(0, 240, 255, 0.6) !important;
+    background: var(--mcm-walnut) !important;
+    color: #FAF6EF !important;
+    border-color: var(--mcm-walnut) !important;
+    box-shadow: 0 4px 14px rgba(37, 27, 20, 0.2) !important;
     transform: translateY(-2px) !important;
 }
 
-/* Tabs & Navigation */
+/* Elegant Editorial Tabs */
 [data-testid="stTabs"] {
-    border-bottom: 1px solid rgba(0, 240, 255, 0.15) !important;
-    margin-bottom: 20px !important;
+    border-bottom: 1px solid var(--mcm-border) !important;
+    margin-bottom: 24px !important;
 }
 
 [data-testid="stTab"] {
-    font-family: 'Rajdhani', sans-serif !important;
-    font-weight: 700 !important;
-    letter-spacing: 1.5px !important;
-    text-transform: uppercase !important;
-    color: #94a3b8 !important;
+    font-family: 'DM Serif Display', Georgia, serif !important;
+    font-weight: 400 !important;
+    font-size: 18px !important;
+    letter-spacing: 0.3px !important;
+    color: var(--mcm-text-muted) !important;
     padding: 12px 24px !important;
     border-bottom: 2px solid transparent !important;
     transition: all 0.2s ease !important;
 }
 
 [data-testid="stTab"][aria-selected="true"] {
-    color: #00f0ff !important;
-    border-bottom: 2px solid #00f0ff !important;
-    text-shadow: 0 0 12px rgba(0, 240, 255, 0.5) !important;
+    color: var(--mcm-walnut) !important;
+    border-bottom: 2px solid var(--mcm-terracotta) !important;
 }
 
 /* Form Controls & Inputs */
-[data-testid="stSelectbox"] label, [data-testid="stNumberInput"] label {
-    font-family: 'Rajdhani', sans-serif !important;
+[data-testid="stWidgetLabel"] label, label {
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 600 !important;
-    letter-spacing: 1px !important;
+    letter-spacing: 0.6px !important;
     text-transform: uppercase !important;
-    color: #94a3b8 !important;
-    font-size: 13px !important;
+    color: var(--mcm-text) !important;
+    font-size: 12.5px !important;
 }
 
 [data-testid="stSelectbox"] > div > div {
-    background: rgba(13, 20, 36, 0.85) !important;
-    border: 1px solid rgba(0, 240, 255, 0.25) !important;
+    background: #FFFFFF !important;
+    border: 1px solid #D8CFC2 !important;
     border-radius: 8px !important;
-    color: #f1f5f9 !important;
-    font-family: 'Rajdhani', sans-serif !important;
-    font-size: 15px !important;
+    color: var(--mcm-text) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 14.5px !important;
 }
 
 [data-testid="stSelectbox"] > div > div:focus-within {
-    border-color: #00f0ff !important;
-    box-shadow: 0 0 16px rgba(0, 240, 255, 0.35) !important;
+    border-color: var(--mcm-terracotta) !important;
+    box-shadow: 0 0 0 2px rgba(200, 90, 50, 0.2) !important;
 }
 
 [data-testid="stNumberInput"] input {
-    background: rgba(13, 20, 36, 0.85) !important;
-    border: 1px solid rgba(0, 240, 255, 0.25) !important;
-    color: #00f0ff !important;
+    background: #FFFFFF !important;
+    border: 1px solid #D8CFC2 !important;
+    color: var(--mcm-text) !important;
     font-family: 'JetBrains Mono', monospace !important;
 }
 
 [data-testid="stPopover"] > div > button {
-    background: rgba(13, 20, 36, 0.85) !important;
-    border: 1px solid rgba(0, 240, 255, 0.3) !important;
+    background: #FAF6EF !important;
+    border: 1px solid #D6CAB8 !important;
     border-radius: 8px !important;
-    color: #00f0ff !important;
-    font-family: 'Rajdhani', sans-serif !important;
+    color: var(--mcm-walnut) !important;
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 600 !important;
-    letter-spacing: 1px !important;
+    letter-spacing: 0.6px !important;
     text-transform: uppercase !important;
 }
 
+[data-testid="stPopover"] > div > button:hover {
+    background: var(--mcm-walnut) !important;
+    color: #FAF6EE !important;
+    border-color: var(--mcm-walnut) !important;
+}
+
 [data-testid="stAlert"] {
-    background: rgba(13, 20, 36, 0.85) !important;
-    border: 1px solid rgba(0, 240, 255, 0.25) !important;
+    background: #FDF9F2 !important;
+    border: 1px solid var(--mcm-border) !important;
     border-radius: 10px !important;
-    backdrop-filter: blur(10px) !important;
+    color: var(--mcm-text) !important;
 }
 
 [data-testid="stExpander"] {
-    background: rgba(10, 16, 29, 0.6) !important;
-    border: 1px solid rgba(0, 240, 255, 0.15) !important;
+    background: #FAF6EF !important;
+    border: 1px solid var(--mcm-border) !important;
     border-radius: 10px !important;
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Orbitron', 'Rajdhani', sans-serif !important;
-    color: #f1f5f9 !important;
-    letter-spacing: 0.5px !important;
+    font-family: 'DM Serif Display', Georgia, serif !important;
+    color: var(--mcm-walnut) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.2px !important;
+}
+
+[data-testid="stCaptionContainer"], p.caption {
+    color: var(--mcm-text-muted) !important;
+    font-size: 13px !important;
 }
 
 @media (max-width: 640px) {
     [data-testid="stImage"] img {
         height: 210px !important;
     }
-    .hud-title-text {
-        font-size: 20px !important;
+    .mcm-title-text, .hud-title-text {
+        font-size: 24px !important;
+    }
+    .mcm-banner, .hud-banner {
+        padding: 20px 22px !important;
     }
 }
 </style>
@@ -359,5 +373,5 @@ h1, h2, h3, h4 {
 
 
 def inject_custom_css():
-    """Inject responsive styling into the current Streamlit page."""
+    """Inject responsive Mid-Century Modern styling into the current Streamlit page."""
     st.html(CUSTOM_CSS)
