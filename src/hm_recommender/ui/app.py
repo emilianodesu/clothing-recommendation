@@ -45,8 +45,8 @@ def render_photo(client: httpx.Client, article_id: str, name: str) -> None:
 def main() -> None:
     """Main Streamlit application entry point."""
     st.set_page_config(
-        page_title='H&M · Estudio de Estilo & Recomendación',
-        page_icon='✦',
+        page_title='H&M Studio — Curaduría & Recomendación',
+        page_icon='◻',
         layout='wide',
         initial_sidebar_state='collapsed',
     )
@@ -54,15 +54,26 @@ def main() -> None:
 
     st.markdown(
         """
-        <div class="mcm-banner">
-            <div class="mcm-telemetry">
-                <span class="mcm-status-badge"><span class="mcm-pulse"></span> SISTEMA ACTIVO</span>
-                <span class="mcm-chip">MODELO H · 28D / 7D</span>
-                <span class="mcm-chip">INFERENCIA EN TIEMPO REAL</span>
-                <span class="mcm-chip">CURADURÍA H&amp;M · EST. 1947</span>
+        <div class="atelier-masthead">
+            <div class="atelier-topbar">
+                <span class="atelier-brand">H&amp;M STUDIO</span>
+                <span class="atelier-tagline">CURATED INTELLIGENCE · EST. 1947</span>
+                <span class="atelier-status"><span class="atelier-status-dot"></span> STUDIO ACTIVE</span>
             </div>
-            <h1 class="mcm-title-text">H&amp;M · ESTUDIO DE ESTILO</h1>
-            <p class="mcm-subtitle-text">Curaduría predictiva de vestuario y experimentación en tiempo real inspirada en diseño de mediados de siglo.</p>
+            <div class="atelier-divider"></div>
+            <div class="atelier-hero">
+                <h1 class="atelier-title">Edición &amp; Recomendación</h1>
+                <p class="atelier-description">
+                    Selección predictiva de vestuario basada en patrones de compra y tendencias temporales de catálogo.
+                </p>
+            </div>
+            <div class="atelier-metadata">
+                <span class="meta-item">HEURÍSTICA H (28D / 7D)</span>
+                <span class="meta-sep">/</span>
+                <span class="meta-item">INFERENCIA DETERMINÍSTICA</span>
+                <span class="meta-sep">/</span>
+                <span class="meta-item">CATÁLOGO DINÁMICO</span>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -308,20 +319,20 @@ def main() -> None:
                     if info.get('colour_group_name'):
                         st.caption(label(info['colour_group_name']))
                     reason_badge = (
-                        '<span class="mcm-badge mcm-badge-bought">✦ HISTORIAL · RECIENTE</span>'
+                        '<span class="atelier-badge atelier-badge-recent">HISTORIAL RECIENTE</span>'
                         if item['reason'] == 'recent_purchase'
-                        else '<span class="mcm-badge mcm-badge-popular">◈ POPULAR · 7 DÍAS</span>'
+                        else '<span class="atelier-badge atelier-badge-popular">TENDENCIA 7 DÍAS</span>'
                     )
                     st.markdown(reason_badge, unsafe_allow_html=True)
                     if previous is not None:
                         if article not in previous:
                             st.markdown(
-                                '<span class="mcm-badge mcm-badge-new">✻ NUEVA SELECCIÓN</span>',
+                                '<span class="atelier-badge atelier-badge-new">NUEVA SELECCIÓN</span>',
                                 unsafe_allow_html=True,
                             )
                         elif previous.index(article) > idx:
                             st.markdown(
-                                f'<span class="mcm-badge mcm-badge-rank">▲ SUBIÓ #{previous.index(article) + 1}</span>',
+                                f'<span class="atelier-badge atelier-badge-rank">SUBIÓ #{previous.index(article) + 1}</span>',
                                 unsafe_allow_html=True,
                             )
 
@@ -358,11 +369,11 @@ def main() -> None:
                     if item.get('colour_group_name'):
                         st.caption(label(item['colour_group_name']))
                     st.markdown(
-                        f'<span class="mcm-badge mcm-badge-popular">REF: {article[:8]}…</span>',
+                        f'<span class="atelier-badge atelier-badge-popular">ART. {article[:8]}</span>',
                         unsafe_allow_html=True,
                     )
                     if st.button(
-                        'Simular compra ✦',
+                        'Simular compra',
                         key='catalog_purchase_' + article,
                         disabled=pending,
                         width='stretch',

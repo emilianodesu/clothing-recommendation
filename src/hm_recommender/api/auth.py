@@ -74,10 +74,10 @@ def verify_user_credentials(username: str, password: str, user_hashes: dict[str,
 
 
 def render_login_html(error: str | None = None) -> str:
-    """Render high-polish, Mid-Century Modern HTML login terminal."""
+    """Render high-polish, minimalist luxury editorial HTML login portal."""
     error_html = (
         f"""<div class="error-banner" role="alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -93,146 +93,121 @@ def render_login_html(error: str | None = None) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H&amp;M · Estudio de Estilo &amp; Recomendación — Acceso</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <title>H&amp;M Studio — Acceso de Operador</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◻</text></svg>">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
         :root {{
-            --mcm-bg: #FAF7F2;
-            --mcm-card: #251B14;
-            --mcm-terracotta: #C85A32;
-            --mcm-terracotta-dark: #B34820;
-            --mcm-ochre: #DDA15E;
-            --mcm-olive: #8EB872;
-            --mcm-border: #3E2F24;
-            --text-main: #FFFDF9;
-            --text-muted: #CFC3B3;
-            --focus-ring: rgba(200, 90, 50, 0.4);
+            --bg-canvas: #FAF9F7;
+            --bg-card: #FFFFFF;
+            --text-noir: #121212;
+            --text-charcoal: #2A2A28;
+            --text-muted: #73736E;
+            --text-light-muted: #9E9E98;
+            --border-atelier: #E8E8E3;
+            --border-focus: #121212;
+            --plate: #F4F4F1;
         }}
         * {{
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }}
         body {{
-            background: radial-gradient(circle at 50% 0%, #FCFBF9 0%, #F8F4EC 65%, #F0E9DE 100%);
-            color: #281F19;
+            background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(240, 238, 232, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(242, 239, 233, 0.4) 0px, transparent 50%);
+            color: var(--text-noir);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 24px;
             position: relative;
-            overflow-x: hidden;
-        }}
-        body::before {{
-            content: "";
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(to right, rgba(198, 166, 138, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(198, 166, 138, 0.08) 1px, transparent 1px);
-            background-size: 38px 38px;
-            pointer-events: none;
-            z-index: 0;
         }}
         .login-card {{
             position: relative;
             z-index: 1;
-            background: var(--mcm-card);
-            border: 1px solid var(--mcm-border);
-            border-top: 4px solid var(--mcm-terracotta);
-            border-radius: 16px;
-            box-shadow: 0 16px 40px rgba(37, 27, 20, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            background: var(--bg-card);
+            border: 1px solid var(--border-atelier);
+            border-radius: 4px;
+            box-shadow: 0 4px 24px rgba(18, 18, 18, 0.04);
             width: 100%;
-            max-width: 440px;
-            padding: 38px 34px;
-            overflow: hidden;
-            color: var(--text-main);
+            max-width: 420px;
+            padding: 42px 38px;
+            color: var(--text-noir);
         }}
         .telemetry-row {{
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 24px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.8px;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
         }}
         .hud-status {{
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            color: var(--mcm-olive);
-            background: rgba(142, 184, 114, 0.16);
-            border: 1px solid rgba(142, 184, 114, 0.35);
-            padding: 4px 10px;
+            color: #385E38;
+            background: #EFF6EE;
+            border: 1px solid #D6E8D4;
+            padding: 3px 9px;
             border-radius: 20px;
-            text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 600;
         }}
         .hud-dot {{
-            width: 6px; height: 6px;
-            background: var(--mcm-olive);
+            width: 5px; height: 5px;
+            background: #385E38;
             border-radius: 50%;
-            box-shadow: 0 0 6px var(--mcm-olive);
-            animation: pulse-glow 2.5s infinite ease-in-out;
-        }}
-        @keyframes pulse-glow {{
-            0%, 100% {{ opacity: 1; transform: scale(1); }}
-            50% {{ opacity: 0.4; transform: scale(0.85); }}
         }}
         .hud-tag {{
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+            color: var(--text-light-muted);
             font-weight: 500;
         }}
         .brand-header {{
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 30px;
         }}
         .brand-badge {{
             display: inline-block;
-            background: var(--mcm-terracotta);
-            color: #ffffff;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            padding: 4px 14px;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(200, 90, 50, 0.3);
-            margin-bottom: 12px;
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            color: var(--text-noir);
+            margin-bottom: 8px;
             text-transform: uppercase;
         }}
         .brand-title {{
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: 26px;
+            font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+            font-size: 28px;
             font-weight: 400;
-            letter-spacing: 0.5px;
-            color: #FFFDF9;
-            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+            color: var(--text-noir);
+            margin-bottom: 8px;
         }}
         .brand-subtitle {{
-            font-size: 13.5px;
+            font-size: 13px;
             color: var(--text-muted);
-            letter-spacing: 0.3px;
             line-height: 1.5;
         }}
         .error-banner {{
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(200, 90, 50, 0.15);
-            border: 1px solid rgba(200, 90, 50, 0.5);
-            color: #F8B4A0;
-            padding: 12px 14px;
-            border-radius: 8px;
-            font-size: 13px;
+            background: #FFF5F5;
+            border: 1px solid #FED7D7;
+            border-left: 3px solid #E53E3E;
+            color: #C53030;
+            padding: 11px 14px;
+            border-radius: 2px;
+            font-size: 12.5px;
             font-weight: 500;
             margin-bottom: 22px;
         }}
@@ -241,31 +216,30 @@ def render_login_html(error: str | None = None) -> str:
         }}
         label {{
             display: block;
-            font-family: 'Outfit', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 7px;
+            color: var(--text-charcoal);
+            margin-bottom: 8px;
         }}
         input[type="text"],
         input[type="password"] {{
             width: 100%;
-            padding: 13px 15px;
-            border: 1px solid #4A3A2E;
-            border-radius: 8px;
-            background: #1C140E;
-            color: #FFFDF9;
-            font-size: 14.5px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-atelier);
+            border-radius: 2px;
+            background: var(--bg-card);
+            color: var(--text-noir);
+            font-size: 14px;
             outline: none;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: border-color 0.2s ease;
         }}
         input[type="text"]:focus,
         input[type="password"]:focus {{
-            border-color: var(--mcm-terracotta);
-            box-shadow: 0 0 0 3px var(--focus-ring);
-            background: #140E0A;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 1px var(--border-focus);
         }}
         .remember-row {{
             display: flex;
@@ -274,15 +248,15 @@ def render_login_html(error: str | None = None) -> str:
             margin-bottom: 26px;
         }}
         .remember-row input[type="checkbox"] {{
-            accent-color: var(--mcm-terracotta);
-            width: 16px;
-            height: 16px;
+            accent-color: var(--text-noir);
+            width: 15px;
+            height: 15px;
             cursor: pointer;
         }}
         .remember-row label {{
             margin-bottom: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 400;
             letter-spacing: 0;
             text-transform: none;
@@ -291,31 +265,31 @@ def render_login_html(error: str | None = None) -> str:
         }}
         button[type="submit"] {{
             width: 100%;
-            background: var(--mcm-terracotta);
-            color: #ffffff;
-            border: 1px solid var(--mcm-terracotta-dark);
-            border-radius: 8px;
+            background: var(--text-noir);
+            color: #FFFFFF;
+            border: 1px solid var(--text-noir);
+            border-radius: 2px;
             padding: 14px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 14.5px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(200, 90, 50, 0.35);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(18, 18, 18, 0.1);
+            transition: all 0.2s ease;
         }}
         button[type="submit"]:hover {{
-            background: var(--mcm-terracotta-dark);
-            box-shadow: 0 6px 20px rgba(200, 90, 50, 0.5);
-            transform: translateY(-2px);
+            background: #333333;
+            border-color: #333333;
+            transform: translateY(-1px);
         }}
         .footer-note {{
             text-align: center;
-            font-family: 'Outfit', sans-serif;
-            font-size: 11px;
-            color: #8C7E72;
-            letter-spacing: 0.8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 10px;
+            color: var(--text-light-muted);
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             margin-top: 26px;
         }}
@@ -324,31 +298,31 @@ def render_login_html(error: str | None = None) -> str:
 <body>
     <div class="login-card">
         <div class="telemetry-row">
-            <span class="hud-status"><span class="hud-dot"></span> ACCESO SEGURO</span>
+            <span class="hud-status"><span class="hud-dot"></span> STUDIO ACTIVE</span>
             <span class="hud-tag">EDICIÓN 1947</span>
         </div>
         <div class="brand-header">
-            <div class="brand-badge">H&amp;M · ESTUDIO</div>
-            <h1 class="brand-title">RECOMENDADOR DE VESTUARIO</h1>
-            <p class="brand-subtitle">Curaduría predictiva de vestuario y catálogo de estilo</p>
+            <div class="brand-badge">H&amp;M STUDIO</div>
+            <h1 class="brand-title">Acceso de Operador</h1>
+            <p class="brand-subtitle">Plataforma de Curaduría &amp; Recomendación</p>
         </div>
         {error_html}
         <form method="POST" action="/login">
             <div class="form-group">
-                <label for="username">IDENTIFICADOR DE OPERADOR</label>
+                <label for="username">Identificador de Usuario</label>
                 <input type="text" id="username" name="username" autocomplete="username" autofocus required placeholder="Ej. alanmagno">
             </div>
             <div class="form-group">
-                <label for="password">CLAVE DE ACCESO</label>
+                <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••••••••••">
             </div>
             <div class="remember-row">
                 <input type="checkbox" id="remember" name="remember" value="1" checked>
                 <label for="remember">Recordar sesión en este equipo</label>
             </div>
-            <button type="submit">INICIAR SESIÓN ✦</button>
+            <button type="submit">Acceder al Estudio</button>
         </form>
-        <p class="footer-note">H&amp;M ESTUDIO DE ESTILO · SESIÓN CIFRADA</p>
+        <p class="footer-note">H&amp;M STUDIO · SESIÓN CIFRADA</p>
     </div>
 </body>
 </html>"""
