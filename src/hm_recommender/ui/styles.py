@@ -52,6 +52,11 @@ header[data-testid="stHeader"] {
 
 /* Minimal Header */
 .minimal-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
     background: transparent !important;
     padding: 0 0 20px 0 !important;
     margin-bottom: 24px !important;
@@ -74,6 +79,31 @@ header[data-testid="stHeader"] {
     margin: 0 !important;
     line-height: 1.5 !important;
     font-weight: 400 !important;
+}
+
+.logout-btn, a.logout-btn:link, a.logout-btn:visited {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: var(--atelier-surface) !important;
+    color: var(--atelier-noir) !important;
+    border: 1px solid var(--atelier-border) !important;
+    border-radius: 3px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 10.5px !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    padding: 9px 16px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.logout-btn:hover, a.logout-btn:hover {
+    background: var(--atelier-noir) !important;
+    color: #FFFFFF !important;
+    border-color: var(--atelier-noir) !important;
+    text-decoration: none !important;
 }
 
 /* Fallback / legacy banners */

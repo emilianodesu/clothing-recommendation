@@ -55,8 +55,11 @@ def main() -> None:
     st.markdown(
         """
         <div class="minimal-header">
-            <h1 class="minimal-title">Recomendaciones de vestuario</h1>
-            <p class="minimal-subtitle">Selección personalizada según historial y tendencias de catálogo.</p>
+            <div>
+                <h1 class="minimal-title">Recomendaciones de vestuario</h1>
+                <p class="minimal-subtitle">Selección personalizada según historial y tendencias de catálogo.</p>
+            </div>
+            <a href="/logout" target="_self" class="logout-btn">Cerrar sesión</a>
         </div>
         """,
         unsafe_allow_html=True,
