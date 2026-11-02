@@ -284,33 +284,19 @@ def render_login_html(error: str | None = None) -> str:
             border-color: #333333;
             transform: translateY(-1px);
         }}
-        .footer-note {{
-            text-align: center;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 10px;
-            color: var(--text-light-muted);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            margin-top: 26px;
-        }}
     </style>
 </head>
 <body>
     <div class="login-card">
-        <div class="telemetry-row">
-            <span class="hud-status"><span class="hud-dot"></span> STUDIO ACTIVE</span>
-            <span class="hud-tag">EDICIÓN 1947</span>
-        </div>
         <div class="brand-header">
-            <div class="brand-badge">H&amp;M STUDIO</div>
-            <h1 class="brand-title">Acceso de Operador</h1>
-            <p class="brand-subtitle">Plataforma de Curaduría &amp; Recomendación</p>
+            <h1 class="brand-title">Iniciar sesión</h1>
+            <p class="brand-subtitle">Introduce tus credenciales para continuar.</p>
         </div>
         {error_html}
         <form method="POST" action="/login">
             <div class="form-group">
-                <label for="username">Identificador de Usuario</label>
-                <input type="text" id="username" name="username" autocomplete="username" autofocus required placeholder="Ej. alanmagno">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" autocomplete="username" autofocus required placeholder="Usuario">
             </div>
             <div class="form-group">
                 <label for="password">Contraseña</label>
@@ -320,9 +306,8 @@ def render_login_html(error: str | None = None) -> str:
                 <input type="checkbox" id="remember" name="remember" value="1" checked>
                 <label for="remember">Recordar sesión en este equipo</label>
             </div>
-            <button type="submit">Acceder al Estudio</button>
+            <button type="submit">Entrar</button>
         </form>
-        <p class="footer-note">H&amp;M STUDIO · SESIÓN CIFRADA</p>
     </div>
 </body>
 </html>"""

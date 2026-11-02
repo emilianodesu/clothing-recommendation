@@ -50,112 +50,35 @@ header[data-testid="stHeader"] {
     z-index: 1;
 }
 
-/* Architectural Masthead (Gallery & Editorial Atelier) */
-.atelier-masthead, .mcm-banner, .hud-banner {
-    background: var(--atelier-surface) !important;
-    border: 1px solid var(--atelier-border) !important;
-    border-radius: 4px !important;
-    padding: 34px 40px !important;
-    margin-bottom: 32px !important;
-    box-shadow: 0 4px 20px rgba(18, 18, 18, 0.03) !important;
-    position: relative !important;
-    overflow: hidden !important;
+/* Minimal Header */
+.minimal-header {
+    background: transparent !important;
+    padding: 0 0 20px 0 !important;
+    margin-bottom: 24px !important;
+    border-bottom: 1px solid var(--atelier-border) !important;
 }
 
-.atelier-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.atelier-brand {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--atelier-noir);
-}
-
-.atelier-tagline {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--atelier-light-muted);
-}
-
-.atelier-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #385E38;
-    background: #EFF6EE;
-    border: 1px solid #D6E8D4;
-    padding: 3px 10px;
-    border-radius: 20px;
-}
-
-.atelier-status-dot {
-    width: 6px;
-    height: 6px;
-    background-color: #385E38;
-    border-radius: 50%;
-}
-
-.atelier-divider {
-    height: 1px;
-    width: 100%;
-    background: var(--atelier-border-subtle);
-    margin-bottom: 24px;
-}
-
-.atelier-title, .mcm-title-text, .hud-title-text {
+.minimal-title {
     font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif !important;
-    font-size: 42px !important;
-    font-weight: 400 !important;
-    letter-spacing: -0.02em !important;
+    font-size: 34px !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em !important;
     color: var(--atelier-noir) !important;
-    margin: 0 0 10px 0 !important;
-    line-height: 1.15 !important;
+    margin: 0 0 6px 0 !important;
+    line-height: 1.2 !important;
 }
 
-.atelier-description, .mcm-subtitle-text, .hud-subtitle-text {
-    font-size: 15px !important;
+.minimal-subtitle {
+    font-size: 14.5px !important;
     color: var(--atelier-muted) !important;
-    margin: 0 0 20px 0 !important;
-    line-height: 1.6 !important;
-    max-width: 780px !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
     font-weight: 400 !important;
 }
 
-.atelier-metadata {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--atelier-muted);
-    padding-top: 16px;
-    border-top: 1px solid var(--atelier-border-subtle);
-}
-
-.atelier-metadata .meta-sep {
-    color: #D4D4CE;
-    font-weight: 300;
+/* Fallback / legacy banners */
+.atelier-masthead, .mcm-banner, .hud-banner {
+    display: none !important;
 }
 
 /* Legacy banner compatibility */

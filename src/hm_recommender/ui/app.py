@@ -45,7 +45,7 @@ def render_photo(client: httpx.Client, article_id: str, name: str) -> None:
 def main() -> None:
     """Main Streamlit application entry point."""
     st.set_page_config(
-        page_title='H&M Studio — Curaduría & Recomendación',
+        page_title='Recomendaciones de vestuario',
         page_icon='◻',
         layout='wide',
         initial_sidebar_state='collapsed',
@@ -54,26 +54,9 @@ def main() -> None:
 
     st.markdown(
         """
-        <div class="atelier-masthead">
-            <div class="atelier-topbar">
-                <span class="atelier-brand">H&amp;M STUDIO</span>
-                <span class="atelier-tagline">CURATED INTELLIGENCE · EST. 1947</span>
-                <span class="atelier-status"><span class="atelier-status-dot"></span> STUDIO ACTIVE</span>
-            </div>
-            <div class="atelier-divider"></div>
-            <div class="atelier-hero">
-                <h1 class="atelier-title">Edición &amp; Recomendación</h1>
-                <p class="atelier-description">
-                    Selección predictiva de vestuario basada en patrones de compra y tendencias temporales de catálogo.
-                </p>
-            </div>
-            <div class="atelier-metadata">
-                <span class="meta-item">HEURÍSTICA H (28D / 7D)</span>
-                <span class="meta-sep">/</span>
-                <span class="meta-item">INFERENCIA DETERMINÍSTICA</span>
-                <span class="meta-sep">/</span>
-                <span class="meta-item">CATÁLOGO DINÁMICO</span>
-            </div>
+        <div class="minimal-header">
+            <h1 class="minimal-title">Recomendaciones de vestuario</h1>
+            <p class="minimal-subtitle">Selección personalizada según historial y tendencias de catálogo.</p>
         </div>
         """,
         unsafe_allow_html=True,
