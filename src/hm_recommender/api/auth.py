@@ -93,21 +93,45 @@ def render_login_html(error: str | None = None) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H&amp;M Studio — Acceso de Operador</title>
+    <title>Iniciar sesión</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◻</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
         :root {{
-            --bg-canvas: #FAF9F7;
-            --bg-card: #FFFFFF;
-            --text-noir: #121212;
-            --text-charcoal: #2A2A28;
-            --text-muted: #73736E;
-            --text-light-muted: #9E9E98;
-            --border-atelier: #E8E8E3;
-            --border-focus: #121212;
-            --plate: #F4F4F1;
+            color-scheme: light dark;
+            --bg-canvas: light-dark(#FAF9F7, #0E0E0D);
+            --bg-card: light-dark(#FFFFFF, #171716);
+            --text-noir: light-dark(#121212, #F2F0EC);
+            --text-charcoal: light-dark(#2A2A28, #D6D3CD);
+            --text-muted: light-dark(#73736E, #9A968E);
+            --text-light-muted: light-dark(#9E9E98, #6E6B64);
+            --border-atelier: light-dark(#E8E8E3, #2A2A27);
+            --border-focus: light-dark(#121212, #F2F0EC);
+            --btn-bg: light-dark(#121212, #F2F0EC);
+            --btn-fg: light-dark(#FFFFFF, #121212);
+            --btn-hover-bg: light-dark(#333333, #DCD9D2);
+            --err-bg: light-dark(#FFF5F5, #291414);
+            --err-border: light-dark(#FED7D7, #5C2323);
+            --err-fg: light-dark(#C53030, #FCA5A5);
+        }}
+        @media (prefers-color-scheme: dark) {{
+            :root {{
+                --bg-canvas: #0E0E0D;
+                --bg-card: #171716;
+                --text-noir: #F2F0EC;
+                --text-charcoal: #D6D3CD;
+                --text-muted: #9A968E;
+                --text-light-muted: #6E6B64;
+                --border-atelier: #2A2A27;
+                --border-focus: #F2F0EC;
+                --btn-bg: #F2F0EC;
+                --btn-fg: #121212;
+                --btn-hover-bg: #DCD9D2;
+                --err-bg: #291414;
+                --err-border: #5C2323;
+                --err-fg: #FCA5A5;
+            }}
         }}
         * {{
             box-sizing: border-box;
@@ -118,9 +142,6 @@ def render_login_html(error: str | None = None) -> str:
         }}
         body {{
             background-color: var(--bg-canvas);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(240, 238, 232, 0.6) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(242, 239, 233, 0.4) 0px, transparent 50%);
             color: var(--text-noir);
             min-height: 100vh;
             display: flex;
@@ -135,54 +156,15 @@ def render_login_html(error: str | None = None) -> str:
             background: var(--bg-card);
             border: 1px solid var(--border-atelier);
             border-radius: 4px;
-            box-shadow: 0 4px 24px rgba(18, 18, 18, 0.04);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
             width: 100%;
             max-width: 420px;
             padding: 42px 38px;
             color: var(--text-noir);
         }}
-        .telemetry-row {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            font-size: 10px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }}
-        .hud-status {{
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #385E38;
-            background: #EFF6EE;
-            border: 1px solid #D6E8D4;
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-weight: 600;
-        }}
-        .hud-dot {{
-            width: 5px; height: 5px;
-            background: #385E38;
-            border-radius: 50%;
-        }}
-        .hud-tag {{
-            color: var(--text-light-muted);
-            font-weight: 500;
-        }}
         .brand-header {{
             text-align: center;
             margin-bottom: 30px;
-        }}
-        .brand-badge {{
-            display: inline-block;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 0.28em;
-            color: var(--text-noir);
-            margin-bottom: 8px;
-            text-transform: uppercase;
         }}
         .brand-title {{
             font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
@@ -201,10 +183,10 @@ def render_login_html(error: str | None = None) -> str:
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #FFF5F5;
-            border: 1px solid #FED7D7;
+            background: var(--err-bg);
+            border: 1px solid var(--err-border);
             border-left: 3px solid #E53E3E;
-            color: #C53030;
+            color: var(--err-fg);
             padding: 11px 14px;
             border-radius: 2px;
             font-size: 12.5px;
@@ -265,9 +247,9 @@ def render_login_html(error: str | None = None) -> str:
         }}
         button[type="submit"] {{
             width: 100%;
-            background: var(--text-noir);
-            color: #FFFFFF;
-            border: 1px solid var(--text-noir);
+            background: var(--btn-bg);
+            color: var(--btn-fg);
+            border: 1px solid var(--btn-bg);
             border-radius: 2px;
             padding: 14px;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -276,12 +258,12 @@ def render_login_html(error: str | None = None) -> str:
             letter-spacing: 0.16em;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(18, 18, 18, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }}
         button[type="submit"]:hover {{
-            background: #333333;
-            border-color: #333333;
+            background: var(--btn-hover-bg);
+            border-color: var(--btn-hover-bg);
             transform: translateY(-1px);
         }}
     </style>
