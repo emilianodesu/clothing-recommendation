@@ -76,13 +76,17 @@ def main() -> None:
         st.session_state['pending'] = payload
         try:
             result = call_api('POST', '/events', json=payload)
+            simulated = st.session_state.setdefault('simulated_history', [])
+            simulated.append(payload.get('article_id'))
             st.session_state.update(
                 pending=None,
                 pending_terminal=False,
                 receipt=result,
+                demo_tab='Para ti',
+                auto_refresh_trigger=True,
                 notice=(
                     'success',
-                    'Compra simulada guardada. Pulsa «Actualizar recomendaciones» para ver el resultado.',
+                    'Compra simulada guardada. Mostrando tu selección actualizada.',
                 ),
             )
         except httpx.HTTPError as error:
@@ -234,7 +238,8 @@ def main() -> None:
                 st.session_state['comparison'] = None
             st.session_state['selection_context'] = context
 
-            if refresh:
+            auto_refresh = st.session_state.pop('auto_refresh_trigger', False)
+            if refresh or auto_refresh:
                 st.session_state['comparison'] = None
                 before = st.session_state.get('last_selection')
                 try:
@@ -246,7 +251,10 @@ def main() -> None:
                             headers={'Authorization': 'Bearer ' + os.environ.get('HM_APP_PASSWORD', '')},
                         )
                     st.session_state['comparison'] = before if before and before['context'] == context else None
-                    st.session_state['notice'] = ('success', 'Recomendaciones actualizadas.')
+                    st.session_state['notice'] = (
+                        'success',
+                        'Recomendaciones actualizadas con tu última selección.',
+                    )
                     st.rerun()
                 except httpx.HTTPError:
                     st.error(
@@ -264,7 +272,10 @@ def main() -> None:
             previous = comparison['items'] if comparison and comparison['context'] == context else None
             st.session_state['last_selection'] = {'context': context, 'items': ranked}
 
-            st.subheader('Recomendado para ti')
+            st.markdown(
+                '<h2 style="font-size: 22px; font-weight: 500; margin: 1.2rem 0 0.2rem 0;">Recomendado para ti</h2>',
+                unsafe_allow_html=True,
+            )
             st.caption(
                 'Sin compras recientes para esta selección: empezamos por las prendas populares.'
                 if result['fallback']
@@ -323,24 +334,44 @@ def main() -> None:
                             )
 
         with explore:
-            st.subheader('Elige una prenda para probar')
-            st.caption(
-                'Simula una compra y después pulsa «Actualizar recomendaciones». Puedes probar con varias prendas.'
+            st.markdown(
+                '<h2 style="font-size: 22px; font-weight: 500; margin: 1.2rem 0 0.2rem 0;">Elige una prenda para probar</h2>',
+                unsafe_allow_html=True,
             )
+            st.caption(
+                'Simula una compra y el sistema actualizará tus recomendaciones automáticamente para mostrar el impacto.'
+            )
+
+            simulated = st.session_state.get('simulated_history', [])
+            if simulated:
+                c1, c2 = st.columns([3, 1], vertical_alignment='center')
+                c1.info(f'Has simulado {len(simulated)} compra(s) en esta sesión.')
+                if c2.button('Ver recomendaciones →', key='btn_goto_for_you', type='primary', width='stretch'):
+                    st.session_state['demo_tab'] = 'Para ti'
+                    st.session_state['auto_refresh_trigger'] = True
+                    st.rerun()
+
             total_pages = max(1, (catalog['total'] + 11) // 12)
-            if st.session_state.get('catalog_page', 1) > total_pages:
+            current_page = st.session_state.get('catalog_page', 1)
+            if current_page > total_pages:
+                current_page = 1
                 st.session_state['catalog_page'] = 1
 
-            page = st.number_input(
-                'Página',
-                min_value=1,
-                max_value=total_pages,
-                value=1,
-                step=1,
-                key='catalog_page',
+            col_prev, col_status, col_next = st.columns([1, 2, 1], vertical_alignment='center')
+            if col_prev.button('← Anterior', key='btn_prev_page', disabled=current_page <= 1, width='stretch'):
+                st.session_state['catalog_page'] = max(1, current_page - 1)
+                st.rerun()
+            col_status.markdown(
+                f"<div style='text-align: center; font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; color: var(--atelier-muted); padding: 8px 0;'>"
+                f"PÁGINA {current_page} DE {total_pages}</div>",
+                unsafe_allow_html=True,
             )
-            if page > 1:
-                catalog = call_api('GET', '/catalog', params={'offset': (page - 1) * 12, 'limit': 12})
+            if col_next.button('Siguiente →', key='btn_next_page', disabled=current_page >= total_pages, width='stretch'):
+                st.session_state['catalog_page'] = min(total_pages, current_page + 1)
+                st.rerun()
+
+            if current_page > 1:
+                catalog = call_api('GET', '/catalog', params={'offset': (current_page - 1) * 12, 'limit': 12})
 
             if not catalog['items']:
                 st.info('El catálogo estará disponible en unos momentos.')

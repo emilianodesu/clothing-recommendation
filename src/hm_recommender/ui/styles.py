@@ -3,7 +3,7 @@ import streamlit as st
 
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root, body, .stApp {
     color-scheme: light dark;
@@ -151,6 +151,8 @@ header[data-testid="stHeader"] {
     margin: 0 !important;
     line-height: 1.5 !important;
     font-weight: 400 !important;
+    text-wrap: pretty !important;
+    max-width: 65ch !important;
 }
 
 .logout-btn,
@@ -161,28 +163,35 @@ a.logout-btn:visited,
     align-items: center !important;
     align-self: flex-start !important;
     background: transparent !important;
-    color: var(--atelier-light-muted) !important;
-    border: none !important;
+    color: var(--atelier-muted) !important;
+    border: 1px solid var(--atelier-border) !important;
+    border-radius: 3px !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 400 !important;
-    font-size: 12px !important;
-    letter-spacing: 0.02em !important;
+    font-weight: 500 !important;
+    font-size: 11.5px !important;
+    letter-spacing: 0.04em !important;
     text-transform: none !important;
     text-decoration: none !important;
-    padding: 4px 2px !important;
-    opacity: 0.72 !important;
-    transition: opacity 0.2s ease, color 0.2s ease !important;
+    padding: 6px 14px !important;
+    opacity: 1 !important;
+    transition: all 0.2s ease !important;
     white-space: nowrap !important;
 }
 
 .logout-btn:hover,
 a.logout-btn:hover,
 [data-testid="stMarkdownContainer"] a.logout-btn:hover {
-    background: transparent !important;
+    background: var(--atelier-surface-elevated) !important;
     color: var(--atelier-noir) !important;
-    opacity: 1 !important;
-    text-decoration: underline !important;
-    text-underline-offset: 4px !important;
+    border-color: var(--atelier-border-hover) !important;
+    text-decoration: none !important;
+}
+
+.logout-btn:focus-visible,
+a.logout-btn:focus-visible,
+[data-testid="stButton"] button:focus-visible {
+    outline: 2px solid var(--atelier-noir) !important;
+    outline-offset: 2px !important;
 }
 
 /* Fallback / legacy banners */
@@ -228,13 +237,13 @@ a.logout-btn:hover,
     align-items: center;
     gap: 5px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 10px;
+    font-size: 11.5px;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 3px 8px;
+    padding: 4px 9px;
     border-radius: 2px;
-    margin: 5px 0 2px 0;
+    margin: 6px 0 3px 0;
 }
 
 .mcm-badge-bought, .cyber-badge-bought, .atelier-badge-recent {
@@ -296,7 +305,7 @@ a.logout-btn:hover,
     border-radius: 3px !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 10.5px !important;
+    font-size: 11.5px !important;
     letter-spacing: 0.14em !important;
     text-transform: uppercase !important;
     padding: 10px 18px !important;
@@ -513,8 +522,11 @@ h3 {
 
 [data-testid="stCaptionContainer"],
 [data-testid="stCaptionContainer"] *,
+[data-testid="stCaptionContainer"] p,
+.st-emotion-cache-1v9fngi,
 p.caption {
     color: var(--atelier-muted) !important;
+    opacity: 1 !important;
     font-size: 13px !important;
     line-height: 1.55 !important;
 }
