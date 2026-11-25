@@ -1,6 +1,6 @@
 # Plataforma local reproducible de recomendaciones H&M
 
-**Entrega 2026-10-24:** documentación, [galería sintética](demo-gallery.md) y tag `entrega-academica-2026-10-24` disponibles. La [aceptación sintética](../evidence/acceptance-local.json) aprobó 60 pruebas sin omisiones en `8c8b730`; los cambios posteriores de UI tienen verificaciones separadas. La UI corregida está desplegada en mac24 y su [revisión visual de lectura](../evidence/ui-visual-review-mac24.json) quedó cerrada. Véanse [notas de versión](release-notes.md) e [inventario vigente](delivery-status.md).
+**Entrega 2026-10-24:** documentación, [galería sintética](demo-gallery.md) y tag `entrega-academica-2026-10-24` disponibles. La [aceptación sintética](archive/evidence/acceptance-local.json) aprobó 60 pruebas sin omisiones en `8c8b730`; los cambios posteriores de UI tienen verificaciones separadas. La UI corregida está desplegada en mac24 y su [revisión visual de lectura](archive/evidence/ui-visual-review-mac24.json) quedó cerrada. Véanse [notas de versión](release-notes.md) e [inventario vigente](delivery-status.md).
 
 T8-D está entregado y T8-A/T8-C cerradas. T8-B conserva **failed**: no se declara aprobación global T8 ni concurrencia sostenida. No se requiere repetir aceptación, evaluación test, entrenamiento o despliegue para presentar la entrega existente.
 
@@ -44,7 +44,7 @@ Ventana [2020-09-16, 2020-09-23): 68,984 compradores, 213,728 pares relevantes, 
 
 H mejora principalmente para los 31,095 compradores con historial reciente. Los demás segmentos reciben el fallback P. En recompra, MAP@12 H/P es 0.32532/0.00770; en descubrimiento es 0.00616/0.00872: H empeora ese objetivo. Cobertura top12: 17.00%/0.01155%; aun así diez artículos concentran el 73.00% de exposiciones H. Cobertura no equivale a relevancia ni a equidad.
 
-Es una comparación descriptiva final, sin nuevos intervalos de confianza, ajustes o selección. No mide conversión comercial, satisfacción ni impacto causal. [Auditoría T8-C](../evidence/final-review-mac24.json): ZIP, fuentes, contratos, agregados y recursos comprobados aquí; métricas individuales calculadas en mac24, no transferidas ni recalculadas aquí.
+Es una comparación descriptiva final, sin nuevos intervalos de confianza, ajustes o selección. No mide conversión comercial, satisfacción ni impacto causal. [Auditoría T8-C](archive/evidence/final-review-mac24.json): ZIP, fuentes, contratos, agregados y recursos comprobados aquí; métricas individuales calculadas en mac24, no transferidas ni recalculadas aquí.
 
 ## Arquitectura y flujo de datos
 
@@ -78,12 +78,12 @@ El despliegue es de un operador local: API/UI enlazadas a localhost, PostgreSQL 
 | T7 | Respaldo de 918,506,419 bytes; ensayo de respaldo/restauración en 96.531 s, con seis consultas de paridad y seis offline | Otro proyecto/ruta en mac24; no otra cuenta ni traslado físico del respaldo |
 | T8-A | 12,000 respuestas correctas a 20 solicitudes/s durante 600 s; p95 14.099 ms, p99 15.417 ms | Localhost, carga concreta, no capacidad máxima |
 | T8-B | 12,000 respuestas correctas; construcción concurrente de 4.064 s | **Failed:** solapamiento 5.061 s/101 llegadas, inferior a 10 s/200; concurrencia sostenida no acreditada |
-| H-cycle posterior | 12,000 respuestas correctas; construcción 6.821 s; 132 llegadas en intervalo conservador de 6.580 s, p95 8.909 ms; p95 global 14.151 ms | [Ciclo breve aceptado](../evidence/h-cycle-review-mac24.json) bajo protocolo propio; no reemplaza T8-B ni prueba concurrencia sostenida |
+| H-cycle posterior | 12,000 respuestas correctas; construcción 6.821 s; 132 llegadas en intervalo conservador de 6.580 s, p95 8.909 ms; p95 global 14.151 ms | [Ciclo breve aceptado](archive/evidence/h-cycle-review-mac24.json) bajo protocolo propio; no reemplaza T8-B ni prueba concurrencia sostenida |
 | T8-C | H/P final, 30.558 s, pico worker 2.570 GiB/5 GiB, ocho capturas sin swap/nuevos OOM | No incluye construcción de imagen ni consumo total de VM |
 
 La VM mac24 tiene 4 CPU y 13.621 GiB efectivos. Los límites de nueve contenedores suman 16.75 GiB: son cuotas, no consumo observado, pero impiden admitir otro trabajo pesado por simple suma. Se adopta mantenimiento secuencial con transiciones explícitas y recuperación por identidad. No aumentar recursos ni reiniciar contadores para ocultar un fallo. El servicio mantiene H con corte 2020-09-09; no se activó el snapshot del test.
 
-El ensayo adicional [h-cycle-v1](mac24-h-cycle.md) permitió observar una construcción
+El ensayo adicional [h-cycle-v1](archive/prompts/mac24-h-cycle.md) permitió observar una construcción
 H dentro del scheduler mientras la API seguía atendiendo, pausando únicamente
 MLflow y la instalación restaurada T7. Cumplió sus criterios acotados y recuperó
 esos tres auxiliares según el runner. No autoriza ejecutar todos los servicios y

@@ -10,11 +10,11 @@ Esto reemplaza el requisito anterior de que el ranking principal fuera necesaria
 
 **Cierre de la ampliación del mismo día:** el usuario aprobó ampliar la validación temporal, grafos y ranking. Tras Q4, `recent_then_popular`, reglas `recent-history-v1`, queda **seleccionado como H bajo `quality-v1`**, pendiente de implementación del servicio y aceptación final. Es el candidato preferido con la evidencia actual, no un óptimo global ni garantía de rendimiento futuro. PyTorch y sus checkpoints permanecen como experimentos reproducibles; no se eliminan artefactos ni se reescriben resultados.
 
-El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1, Q2 y Q3 están cerradas operativamente tras descargar y revisar cinco, cinco y diez reportes mac24 respectivamente: [Q1](../evidence/quality-q1-review.json), [Q2](../evidence/quality-q2-review.json) y [Q3](../evidence/quality-q3-review.json). [Q4 está cerrada y auditada](quality-summary.md); ningún candidato nuevo cumple todos los controles deterministas, aunque mejore MAP promedio.
+El [diseño `quality-v1`](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md) fija tres cortes, candidatos, recursos, umbrales y límites; el [plan Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) guía el trabajo. Q1, Q2 y Q3 están cerradas operativamente tras descargar y revisar cinco, cinco y diez reportes mac24 respectivamente: [Q1](archive/evidence/quality-q1-review.json), [Q2](archive/evidence/quality-q2-review.json) y [Q3](archive/evidence/quality-q3-review.json). [Q4 está cerrada y auditada](quality-summary.md); ningún candidato nuevo cumple todos los controles deterministas, aunque mejore MAP promedio.
 
 ## Evidencia que decide la selección
 
-La [revisión independiente de los ZIP recibidos](../evidence/mac24-recent-history-review-2026-10-20.json) conserva integridad, configuración, cohortes, recursos y contrastes. Los métodos de esta tabla se evaluaron sobre los mismos 72,019 compradores y 102,967 artículos:
+La [revisión independiente de los ZIP recibidos](archive/evidence/mac24-recent-history-review-2026-10-20.json) conserva integridad, configuración, cohortes, recursos y contrastes. Los métodos de esta tabla se evaluaron sobre los mismos 72,019 compradores y 102,967 artículos:
 
 | Candidato | MAP@12 | NDCG@12 | Recall@200 | Papel |
 | --- | ---: | ---: | ---: | --- |
@@ -29,7 +29,7 @@ Agregar PyTorch al mismo prefijo no demuestra mejora de MAP: delta -0.00006190, 
 
 ## Confirmación temporal Q1 y límite de descubrimiento
 
-La [revisión Q1](../evidence/quality-q1-review.json) confirma que H supera a P en MAP/NDCG/Recall en tres semanas completas. MAP H/P: V1 0.01936354/0.00682845; V2 0.02272145/0.00673213; V3 0.02458902/0.00660410. El promedio no ponderado entre semanas mejora MAP +230.65%, sin que esto constituya un nuevo contraste con intervalo de confianza. V3 coincide con el reporte histórico original.
+La [revisión Q1](archive/evidence/quality-q1-review.json) confirma que H supera a P en MAP/NDCG/Recall en tres semanas completas. MAP H/P: V1 0.01936354/0.00682845; V2 0.02272145/0.00673213; V3 0.02458902/0.00660410. El promedio no ponderado entre semanas mejora MAP +230.65%, sin que esto constituya un nuevo contraste con intervalo de confianza. V3 coincide con el reporte histórico original.
 
 La ventaja global proviene de la recompra. En la evaluación de artículos no comprados anteriormente, MAP de H es 26.88–30.18% inferior a P. Además, 55–56% de compradores de cada semana carecen de historial28 y conservan exactamente P. Esta evidencia justificó continuar el contraste de grafo/ranking ya fijado, manteniendo H como referencia y sin cambiar ventanas ni umbrales tras observar resultados.
 
@@ -45,7 +45,7 @@ Q3 conservó RH y RG conforme al protocolo: el primero reordena H y el segundo G
 
 ## Resultado Q3: mejora global con regresiones por segmento
 
-La [auditoría de los diez ZIP Q3](../evidence/quality-q3-review.json) confirma entrenamiento y evaluación temporal completos, parámetros congelados, referencias y recursos. RH mejora MAP medio de 0.02222467 a 0.02311949 (+4.03%) y NDCG +5.34%, conservando Recall. RG alcanza MAP 0.02544361 (+14.48% frente a H, +7.53% frente a G) y NDCG +16.67% frente a H, pero mantiene la pérdida de Recall −4.39% de G.
+La [auditoría de los diez ZIP Q3](archive/evidence/quality-q3-review.json) confirma entrenamiento y evaluación temporal completos, parámetros congelados, referencias y recursos. RH mejora MAP medio de 0.02222467 a 0.02311949 (+4.03%) y NDCG +5.34%, conservando Recall. RG alcanza MAP 0.02544361 (+14.48% frente a H, +7.53% frente a G) y NDCG +16.67% frente a H, pero mantiene la pérdida de Recall −4.39% de G.
 
 El control por segmentos impide promover RH: en V1 pierde MAP −27.66% para compradores sin compras previas y −16.19% con sólo historia anterior a 90 días; en V3 pierde −11.62% y −9.93% respectivamente. Todos esos segmentos superan 1,000 compradores y exceden la pérdida máxima del 5% fijada antes de medir. RG también incumple segmentos (V1 −22.24%/−19.24%; V3 sin historial −6.48%). V2 mejora esos segmentos; el promedio global oculta esa variación temporal.
 
@@ -55,7 +55,7 @@ H queda seleccionado. G falla Recall; RH falla segmentos; RG falla ambos. Q4 com
 
 ## Cierre Q4: mejora promedio significativa y selección bajo restricciones
 
-La [auditoría Q4](../evidence/quality-decision-mac24.json) reconcilia el reporte full con los doce ZIP fuente y quince evaluaciones. Con 190,944 compradores únicos, tres semanas y 2,000 réplicas agrupadas por comprador, los IC98.3333% del delta MAP son G [0.00126171, 0.00162986], RH [0.00062544, 0.00114128] y RG [0.00294479, 0.00348630]. Todos son positivos, al igual que sus mejoras puntuales en las tres semanas. La incertidumbre global no explica ni elimina los incumplimientos de Recall/segmentos.
+La [auditoría Q4](archive/evidence/quality-decision-mac24.json) reconcilia el reporte full con los doce ZIP fuente y quince evaluaciones. Con 190,944 compradores únicos, tres semanas y 2,000 réplicas agrupadas por comprador, los IC98.3333% del delta MAP son G [0.00126171, 0.00162986], RH [0.00062544, 0.00114128] y RG [0.00294479, 0.00348630]. Todos son positivos, al igual que sus mejoras puntuales en las tres semanas. La incertidumbre global no explica ni elimina los incumplimientos de Recall/segmentos.
 
 La regla previamente fijada conserva H cuando ningún candidato es elegible. RG logra el mayor MAP medio; seleccionar H no significa negar esa ventaja ni afirmar que sea el mejor algoritmo posible. Se prioriza el conjunto de requisitos acordados, con compras anteriores permitidas y el respaldo de popularidad intacto. H mantiene también su limitación de descubrimiento descrita arriba. La selección exploratoria está cerrada; test y aceptación final no se ejecutaron.
 
@@ -110,4 +110,4 @@ El [plan de plataforma](superpowers/plans/2026-10-18-plataforma-local-hm.md) con
 - **Separación:** las imágenes y dependencias científicas actuales siguen funcionando. Reducir dependencias de servicio es trabajo de implementación, no una capacidad ya probada.
 - **Intercambio:** código y reportes continúan por GitHub privado. Los ZIP actuales sólo contienen reportes. Inicialmente cada Mac reconstruye el paquete con su descarga propia de Kaggle; no se publican perfiles ni modelos mediante el protocolo actual.
 
-Q1–Q4, T4-A y T4-B están cerradas. La [auditoría T4-A](../evidence/releases-review-mac24.json) confirma los reportes demo/H&M y su paridad con Q1-V3; el [paquete portable H](releases.md) queda preparado. La [auditoría T4-B v2](../evidence/serving-host-review-mac24.json) verifica 877 recomendaciones internas y diez desde el host, identidad, reinicio y rollback en mac24. Ambos problemas detectados en v1 quedaron resueltos; los reportes originales se conservan. Sigue el desarrollo T5 de interfaz/eventos y actualización temporal de perfiles, sin repetir campañas ni cambiar H. La [cobertura académica](course-coverage.md) distingue lo implementado de lo pendiente. Carga y aceptación final siguen reservadas para T8; el ensayo secuencial no acredita sus metas.
+Q1–Q4, T4-A y T4-B están cerradas. La [auditoría T4-A](archive/evidence/releases-review-mac24.json) confirma los reportes demo/H&M y su paridad con Q1-V3; el [paquete portable H](releases.md) queda preparado. La [auditoría T4-B v2](archive/evidence/serving-host-review-mac24.json) verifica 877 recomendaciones internas y diez desde el host, identidad, reinicio y rollback en mac24. Ambos problemas detectados en v1 quedaron resueltos; los reportes originales se conservan. Sigue el desarrollo T5 de interfaz/eventos y actualización temporal de perfiles, sin repetir campañas ni cambiar H. La [cobertura académica](course-coverage.md) distingue lo implementado de lo pendiente. Carga y aceptación final siguen reservadas para T8; el ensayo secuencial no acredita sus metas.

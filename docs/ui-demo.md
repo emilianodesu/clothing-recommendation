@@ -34,4 +34,4 @@ Se reconoce la nueva interfaz por **Encuentra tu próxima prenda**, **Para ti** 
 - Caché de imágenes y suite host; no se repiten pruebas académicas con datos H&M.
 - Navegador local con transporte sintético: catálogo, confirmación y regreso automático a Para ti con comparación. No prueba una escritura en la base de producción.
 
-Las capturas de entrega anteriores siguen siendo evidencia histórica; no representan el diseño actual. Véase [evidencia de UI](../evidence/ui-demo-local.json).
+Las capturas de entrega anteriores siguen siendo evidencia histórica; no representan el diseño actual. Véase [evidencia de UI](archive/evidence/ui-demo-local.json).

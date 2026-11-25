@@ -4,13 +4,13 @@ Actualización de interfaz del 25 de octubre: [demo simplificada](ui-demo.md), f
 
 Estado consolidado al 2026-10-24. **T8-D documental y visual entregado; T8-A y T8-C cerradas. T8-B conserva failed y no se declara aprobación global T8/E8.**
 
-La validación adicional [h-cycle-v1](mac24-h-cycle.md) quedó aceptada tras
-[revisión principal](../evidence/h-cycle-review-mac24.json): construcción 6.821 s,
+La validación adicional [h-cycle-v1](archive/prompts/mac24-h-cycle.md) quedó aceptada tras
+[revisión principal](archive/evidence/h-cycle-review-mac24.json): construcción 6.821 s,
 12,000 respuestas correctas, p95 global 14.151 ms y 132 llegadas solapadas con
 p95 8.909ms. Publicación completada. Acredita un ciclo breve, conserva T8-B
 histórico failed y no constituye una nueva evaluación test.
 
-El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](../evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la [revisión visual posterior en Chrome](../evidence/ui-visual-review-mac24.json) también quedó aceptada, en lectura. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
+El tag `entrega-academica-2026-10-24` conserva la instantánea académica original. La corrección UI `e478f71` es posterior; está desplegada en la demo local y en mac24. El [despliegue mac24](archive/evidence/ui-deployment-review-mac24.json) tiene validación operativa y render AppTest; la [revisión visual posterior en Chrome](archive/evidence/ui-visual-review-mac24.json) también quedó aceptada, en lectura. Véanse [notas de versión](release-notes.md) y [despliegue local](ui-metadata-deployment.md).
 
 ## Documentación disponible
 
@@ -49,19 +49,19 @@ Los archivos de la tabla están en `evidence/`; cada auditoría identifica fuent
 
 | Elemento | Estado y evidencia |
 | --- | --- |
-| Aceptación sintética | 60 pruebas aprobadas, sin omisiones, en `8c8b730`; [reporte](../evidence/acceptance-local.json). No se atribuye esa ejecución a cambios posteriores. |
+| Aceptación sintética | 60 pruebas aprobadas, sin omisiones, en `8c8b730`; [reporte](archive/evidence/acceptance-local.json). No se atribuye esa ejecución a cambios posteriores. |
 | Limpieza y recuperación local | Recursos temporales retirados y 22 contenedores originales restaurados; misma evidencia de aceptación. |
 | Capturas de demo | [Galería](demo-gallery.md), con identidad y alcance; son capturas sintéticas, no una nueva instalación o restauración. |
 | Tag académico | `entrega-academica-2026-10-24`; conserva la entrega original y sus limitaciones. |
-| Corrección posterior de UI | [Regresión](../evidence/ui-metadata-fix-local.json) y [despliegue local verificado](ui-metadata-deployment.md); API/PostgreSQL conservados. |
-| UI de mac24 | Despliegue operativo aceptado, sin rollback; regresión sintética y render contra API correctos, seis auxiliares saludables. [Auditoría](../evidence/ui-deployment-review-mac24.json). [Revisión visual en Chrome](../evidence/ui-visual-review-mac24.json) aceptada en lectura. |
+| Corrección posterior de UI | [Regresión](archive/evidence/ui-metadata-fix-local.json) y [despliegue local verificado](ui-metadata-deployment.md); API/PostgreSQL conservados. |
+| UI de mac24 | Despliegue operativo aceptado, sin rollback; regresión sintética y render contra API correctos, seis auxiliares saludables. [Auditoría](archive/evidence/ui-deployment-review-mac24.json). [Revisión visual en Chrome](archive/evidence/ui-visual-review-mac24.json) aceptada en lectura. |
 | Concurrencia sostenida | No acreditada: T8-B permanece failed. H-cycle acredita sólo una construcción breve con tres auxiliares pausados; conservar la política de admisión de recursos. |
 
 ## Cómo continuar
 
 Para presentar el proyecto, seguir [el recorrido del evaluador](demo.md): informe, selección de H, cobertura del temario, evaluación final, operación y demo sintética. No se necesita otra campaña de entrenamiento, evaluación test ni carga para presentar la evidencia existente.
 
-La UI corregida de mac24 ya quedó activa. Conservar su override e imágenes y seguir las [notas de operación](mac24-ui-deploy.md); no volver a ejecutar el lanzador ni `--restore-only`. La revisión visual de lectura ya se realizó, sin registrar eventos ni refrescar perfiles; puede continuarse con la presentación del proyecto. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
+La UI corregida de mac24 ya quedó activa. Conservar su override e imágenes y seguir las [notas de operación](archive/prompts/mac24-ui-deploy.md); no volver a ejecutar el lanzador ni `--restore-only`. La revisión visual de lectura ya se realizó, sin registrar eventos ni refrescar perfiles; puede continuarse con la presentación del proyecto. El procedimiento local no autoriza copiar su `.env`, rutas, imágenes históricas o datos a otra máquina.
 
 Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito retirado por el usuario), servicio público multiusuario, alta disponibilidad e impacto comercial online. No son resultados demostrados por las pruebas existentes.
 
@@ -69,7 +69,7 @@ Se mantienen como límites declarados Linux/AMD64, otra cuenta de SO (requisito 
 
 No repetir los adaptadores históricos `mac24_t8_*`, abrir nuevamente test, modificar umbrales ni convertir T8-B a passed. Los experimentos, ZIP y reservas originales permanecen intactos. Los Markdown versionados son la documentación de entrega; los planes históricos describen etapas anteriores y no constituyen una cola de comandos por ejecutar.
 
-Preparación UI mac24 aceptada: `ui-recovery-5f15b3471c1a`; [auditoría y límites](../evidence/ui-recovery-review-mac24.json). La imagen histórica se reconstruyó y pasó imports/hash/health aislados; seis auxiliares recuperados y servicios originales conservados según el reporte remoto. Se conservan `blocked_capacity` y los dos intentos failed. La actualización posterior `ui-deploy-f37f5b3b0443` también quedó aceptada en su alcance operativo; ver [guía](mac24-ui-deploy.md). No repetir preparación, despliegue ni `--restore-only`.
+Preparación UI mac24 aceptada: `ui-recovery-5f15b3471c1a`; [auditoría y límites](archive/evidence/ui-recovery-review-mac24.json). La imagen histórica se reconstruyó y pasó imports/hash/health aislados; seis auxiliares recuperados y servicios originales conservados según el reporte remoto. Se conservan `blocked_capacity` y los dos intentos failed. La actualización posterior `ui-deploy-f37f5b3b0443` también quedó aceptada en su alcance operativo; ver [guía](archive/prompts/mac24-ui-deploy.md). No repetir preparación, despliegue ni `--restore-only`.
 
 ## Traspaso al servidor del equipo (posterior a entrega académica)
 
@@ -81,7 +81,7 @@ equipo. Se prepararon [guía de despliegue](server-deployment.md),
 `scripts/server.py` y gateway Caddy independiente. README/AGENTS ahora presentan el
 estado vigente; su historia se preserva en `docs/history/`.
 
-[Verificación de preparación](../evidence/server-handoff-local.json): tests host,
+[Verificación de preparación](archive/evidence/server-handoff-local.json): tests host,
 configuración Compose y proxy sintético. No equivale a una instalación física
 Linux. Siguen como entradas del receptor: acceso/recursos del servidor, dominio y
 DNS, respaldo lógico privado con huella (o plan separado de reconstrucción) y

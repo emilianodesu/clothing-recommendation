@@ -10,9 +10,9 @@ Esta ruta sirve para revisar la entrega actual sin modificar mac24. No necesita 
 
 1. Leer [informe](final-report.md) y [ficha H](model-card.md). Explicar por qué RG tiene mayor MAP pero H satisface el conjunto de restricciones.
 2. Mostrar [cobertura](course-coverage.md): grafo comercial, PageRank acotado y componentes de recomendación; distinguir los subtemas no implementados.
-3. Mostrar [T8-C](../evidence/final-review-mac24.json): población, ventana, H/P, recompra frente a descubrimiento y recursos. No abrir artefactos individuales.
-4. Mostrar [T8-A](../evidence/benchmark-review-mac24.json) y [T8-B](../evidence/concurrency-review-mac24.json). Diferenciar latencia observada y concurrencia sostenida no acreditada.
-5. Mostrar [T7](../evidence/portability-review-mac24.json): respaldo privado, credenciales nuevas, paridad y operación offline. Explicar qué quedó fuera del respaldo.
+3. Mostrar [T8-C](archive/evidence/final-review-mac24.json): población, ventana, H/P, recompra frente a descubrimiento y recursos. No abrir artefactos individuales.
+4. Mostrar [T8-A](archive/evidence/benchmark-review-mac24.json) y [T8-B](archive/evidence/concurrency-review-mac24.json). Diferenciar latencia observada y concurrencia sostenida no acreditada.
+5. Mostrar [T7](archive/evidence/portability-review-mac24.json): respaldo privado, credenciales nuevas, paridad y operación offline. Explicar qué quedó fuera del respaldo.
 6. Cerrar con [pendientes reales](delivery-status.md), sin presentar el informe como certificación de todos ellos.
 
 ## Demo interactiva sintética en una instalación independiente

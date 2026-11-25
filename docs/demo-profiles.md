@@ -47,4 +47,4 @@ Después de que el actualizador del servidor publique ambas imágenes, comprobar
 
 La comprobación del 25 de octubre encontró los nueve estilos en 25,000 historiales H&M entre 2020-08-12 y 2020-09-08. Se verificaron las huellas de las particiones locales leídas. Sólo se publican conteos agregados; compradores, artículos seleccionados y resultados individuales permanecen en `.runtime/`.
 
-Se comprobó el selector, el enriquecimiento opcional, el comportamiento de la UI y una consulta de sólo lectura sobre PostgreSQL sintético existente. No se ejecutó otra evaluación académica ni se modificaron datos. Los tiempos de esta comprobación local no son una medición del servidor ni una prueba de carga. Véase [evidencia](../evidence/demo-profiles-local.json).
+Se comprobó el selector, el enriquecimiento opcional, el comportamiento de la UI y una consulta de sólo lectura sobre PostgreSQL sintético existente. No se ejecutó otra evaluación académica ni se modificaron datos. Los tiempos de esta comprobación local no son una medición del servidor ni una prueba de carga. Véase [evidencia](archive/evidence/demo-profiles-local.json).

@@ -1,6 +1,6 @@
 # Demostración visual sintética — 24 de octubre de 2026
 
-Capturas reales de la interfaz local existente, catálogo de 24 artículos sintéticos. No son imágenes H&M ni una nueva instalación del último commit. [Identidad, observaciones y SHA-256](../evidence/demo-captures-local.json). La imagen de la demo es histórica; la aceptación del código actual se acredita separadamente con [60 pruebas](../evidence/acceptance-local.json).
+Capturas reales de la interfaz local existente, catálogo de 24 artículos sintéticos. No son imágenes H&M ni una nueva instalación del último commit. [Identidad, observaciones y SHA-256](archive/evidence/demo-captures-local.json). La imagen de la demo es histórica; la aceptación del código actual se acredita separadamente con [60 pruebas](archive/evidence/acceptance-local.json).
 
 ## 1. Comprador nuevo y respaldo popular
 

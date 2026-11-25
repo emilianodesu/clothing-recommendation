@@ -1,6 +1,6 @@
 # Traspaso al compañero y su agente
 
-La implementación académica y sus resultados están disponibles. Esta entrega añade la ruta para instalar una copia en un servidor Linux, accesible al equipo mediante HTTPS y cuentas individuales. El compañero ya [reportó el despliegue Linux](../evidence/server-deployment-2026-10-25.json). El usuario confirmó actualización automática desde Git; consultar [la revisión de interfaz](ui-demo.md) y verificarla en el sitio. Los pasos siguientes son la ruta para instalaciones nuevas, no instrucciones para restaurar otra vez el servidor activo.
+La implementación académica y sus resultados están disponibles. Esta entrega añade la ruta para instalar una copia en un servidor Linux, accesible al equipo mediante HTTPS y cuentas individuales. El compañero ya [reportó el despliegue Linux](archive/evidence/server-deployment-2026-10-25.json). El usuario confirmó actualización automática desde Git; consultar [la revisión de interfaz](ui-demo.md) y verificarla en el sitio. Los pasos siguientes son la ruta para instalaciones nuevas, no instrucciones para restaurar otra vez el servidor activo.
 
 ## Orden de lectura y trabajo
 
@@ -52,7 +52,7 @@ El [informe](final-report.md) reúne metodología y resultados. [Selección](mod
 | [Entrenamiento dos Macs](superpowers/specs/2026-10-19-entrenamiento-dos-macs-design.md) | Histórico ejecutado; no es instalador del servidor |
 | [Calidad Q1–Q4](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md) | Cerrada; no reabrir test ni ajustar selección |
 | [T5 operativo](superpowers/plans/2026-10-22-t5-operational.md) | Cerrado tras preservar fallos de memoria/relojes |
-| [UI mac24](mac24-ui-deployment-plan.md) | Desplegada y revisada; no reutilizar sus IDs en Linux |
+| [UI mac24](archive/prompts/mac24-ui-deployment-plan.md) | Desplegada y revisada; no reutilizar sus IDs en Linux |
 | [H-cycle](superpowers/plans/2026-10-24-h-cycle.md) | Un ciclo breve aceptado; no carga sostenida |
 | [Servidor](superpowers/plans/2026-10-24-server-handoff.md) | Herramientas preparadas; aceptación del destino físico pendiente |
 

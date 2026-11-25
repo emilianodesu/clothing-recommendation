@@ -51,17 +51,17 @@ Los trabajos de construcción/refresh escriben JSON agregados en `artifacts/pipe
 
 El contrato `pipeline-v1` exige frescura recepción→publicación menor de 600 s para ambos eventos; si se excede, conserva el fallo. Guarda un ZIP agregado con inventario/huellas, identidad del build exacto, fuente/corte/Q4 y comparación del código y DAG instalados en los tres servicios Airflow contra el clon. La suite y el inventario privado de originales se reportan por separado. Un corte abrupto puede dejar sólo carpeta/log: no interpretarlo como aprobado ni volver a lanzar. Un DAG pausado puede tener una tarea aún en ejecución; inspecciona el estado antes de detener procesos.
 
-El [procedimiento mac24](mac24-t6-prompt.md) ya se ejecutó y es histórico. T6/E5 están cerradas tras la revisión principal descrita abajo. T7, T8, evaluación final y carga siguen pendientes.
+El [procedimiento mac24](archive/prompts/mac24-t6-prompt.md) ya se ejecutó y es histórico. T6/E5 están cerradas tras la revisión principal descrita abajo. T7, T8, evaluación final y carga siguen pendientes.
 
 ## Validación local del 23 de octubre
 
-[Reporte sintético](../evidence/pipeline-local.json): `pipeline-development-20261023T054340Z-360a4df3`, commit `9ec0d67b435dc75f5efa708949d0b06b2ba71d85`. Ensayo de 89.021 s, dos ciclos programados, frescura 3.611 s y 65.850 s, 24 capturas sin swap/OOM capturados. Se verificaron build exacto, código/DAG instalados, idempotencia, reinicio, PostgreSQL y `/recommend` inmutables, y pausa final. La fase de construcción/publicación sintética previa duró 4.832 s y está ligada en el ZIP. El pico del scheduler fue 502,562,816 bytes; no extrapolar estos valores a H&M.
+[Reporte sintético](archive/evidence/pipeline-local.json): `pipeline-development-20261023T054340Z-360a4df3`, commit `9ec0d67b435dc75f5efa708949d0b06b2ba71d85`. Ensayo de 89.021 s, dos ciclos programados, frescura 3.611 s y 65.850 s, 24 capturas sin swap/OOM capturados. Se verificaron build exacto, código/DAG instalados, idempotencia, reinicio, PostgreSQL y `/recommend` inmutables, y pausa final. La fase de construcción/publicación sintética previa duró 4.832 s y está ligada en el ZIP. El pico del scheduler fue 502,562,816 bytes; no extrapolar estos valores a H&M.
 
 Pasaron las suites pipeline y bootstrap; después, 175 pruebas host y el ensayo congelado cubrieron las correcciones del lanzador. La evidencia separa commits y conjuntos de pruebas. Dos ensayos previos fallaron antes de sembrar por incompatibilidades del recolector y del helper HTTP; sus ZIP permanecen publicados, sin reinterpretarlos. La revisión estática resolvió las observaciones de generaciones, procedencia del build y código instalado. Esa evidencia local precede a la revisión H&M descrita abajo.
 
 ## Reinicio de Colima antes de T6 (23 de octubre)
 
-La VM `hm-project` estaba detenida, conservando 14 GiB/4 CPU/100 GiB. El usuario inició el mismo perfil. El contenedor e imagen PostgreSQL coinciden con T5; su nuevo arranque es `2026-10-23T19:15:26.34851292Z`. La API conserva H y el corte 2020-09-09. Las consultas aportadas por el usuario coinciden con revisión 3, cuatro eventos procesados/almacenados, 972,591 filas semilla y 1,069,693 compras entre 2020-08-12 y 2020-09-08. [Registro y límites](../evidence/postgres-recovery-mac24.json).
+La VM `hm-project` estaba detenida, conservando 14 GiB/4 CPU/100 GiB. El usuario inició el mismo perfil. El contenedor e imagen PostgreSQL coinciden con T5; su nuevo arranque es `2026-10-23T19:15:26.34851292Z`. La API conserva H y el corte 2020-09-09. Las consultas aportadas por el usuario coinciden con revisión 3, cuatro eventos procesados/almacenados, 972,591 filas semilla y 1,069,693 compras entre 2020-08-12 y 2020-09-08. [Registro y límites](archive/evidence/postgres-recovery-mac24.json).
 
 `pipeline-v2` registra esa transición explícitamente. El adaptador sólo acepta la pareja exacta de identidades registrada en `pipeline_recovery.py` y el ZIP T5 con su huella aprobada. Antes de reservar T6 repite las consultas parametrizadas en una transacción de sólo lectura y snapshot consistente; vuelve a comprobarlas antes de los eventos. Si cambia el arranque, contenedor, imagen, fuente o cualquier agregado, se detiene. No hay flag para ignorar reinicios, ni se borran reservas. El caso sin cambio de generación conserva la comprobación estricta original.
 
@@ -71,7 +71,7 @@ Seguridad: consultas de sólo lectura con parámetros y timeout, salida limitada
 
 ## Revisión principal H&M, 23 de octubre
 
-[Auditoría](../evidence/pipeline-review-mac24.json) de `pipeline-mac24-20261023T193510Z-532c902f`: ZIP verificado de 6,441 bytes, código/runner/DAG recalculados desde Git y fuente T5 comprobada. T6/E5 se aceptan bajo `pipeline-v2`. Dos compras simuladas, idempotencia, dos ciclos programados y recuperación de evento pendiente tras reiniciar scheduler; frescura 30.465/276.191 s, por debajo de 600 s. Ensayo de 327.475 s. Construcción H vinculada a ejecución/recibo y fuentes T2/Q4 congeladas, sin activar el paquete nuevo. H anterior y recomendaciones base conservados; ambos DAG pausados.
+[Auditoría](archive/evidence/pipeline-review-mac24.json) de `pipeline-mac24-20261023T193510Z-532c902f`: ZIP verificado de 6,441 bytes, código/runner/DAG recalculados desde Git y fuente T5 comprobada. T6/E5 se aceptan bajo `pipeline-v2`. Dos compras simuladas, idempotencia, dos ciclos programados y recuperación de evento pendiente tras reiniciar scheduler; frescura 30.465/276.191 s, por debajo de 600 s. Ensayo de 327.475 s. Construcción H vinculada a ejecución/recibo y fuentes T2/Q4 congeladas, sin activar el paquete nuevo. H anterior y recomendaciones base conservados; ambos DAG pausados.
 
 Las 24 capturas conservan límites y generaciones; cero swap/OOM capturados. PostgreSQL registra 73,327 eventos `max` nuevos y pico 536,879,104 bytes (8 KiB sobre 512 MiB). Se acepta funcionamiento bajo el protocolo operativo, no margen de memoria ni carga sostenida. El cambio de generación previo de Colima se documenta por identidad y agregados; no se comparan contadores con T5. La recuperación no acredita igualdad fila por fila.
 
@@ -79,4 +79,4 @@ La suite pipeline con salida cero, 3,380 archivos preservados y capacidad VM son
 
 ## Respaldo y recuperación T7
 
-Consultar [reproducibilidad](reproducibility.md) para backup, restauración aislada y controles offline. El ensayo sintético pasó; H&M requiere [una ejecución mac24](mac24-t7-prompt.md) y revisión. No se modifica el servicio original ni se reanuda Airflow automáticamente en el destino.
+Consultar [reproducibilidad](reproducibility.md) para backup, restauración aislada y controles offline. El ensayo sintético pasó; H&M requiere [una ejecución mac24](archive/prompts/mac24-t7-prompt.md) y revisión. No se modifica el servicio original ni se reanuda Airflow automáticamente en el destino.

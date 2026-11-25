@@ -2,7 +2,7 @@
 
 ## Cierre tras revisión principal — 2026-10-24
 
-La [auditoría](../evidence/final-review-mac24.json) acepta `final-mac24-20261024T065353Z-bad40a67`, commit `9bd5a97a8a7271db5ba09223017908ea3ac04d42`. Se verificaron inventario y SHA-256 del ZIP, fuentes de runner/worker, cuatro archivos antecedentes, coherencia de agregados, ocho capturas de recursos y los seis IDs/imágenes/límites recuperados contra el inventario de capacidad. Los comandos que siguen son históricos: **no repetir evaluación ni recuperación**.
+La [auditoría](archive/evidence/final-review-mac24.json) acepta `final-mac24-20261024T065353Z-bad40a67`, commit `9bd5a97a8a7271db5ba09223017908ea3ac04d42`. Se verificaron inventario y SHA-256 del ZIP, fuentes de runner/worker, cuatro archivos antecedentes, coherencia de agregados, ocho capturas de recursos y los seis IDs/imágenes/límites recuperados contra el inventario de capacidad. Los comandos que siguen son históricos: **no repetir evaluación ni recuperación**.
 
 Test temporal [2020-09-16, 2020-09-23), 68,984 compradores con compras en esa ventana, 213,728 pares relevantes y catálogo de 103,880 artículos. Estado preparado con 1,356,709 perfiles y 939,710 filas de historial, usando sólo pasado. Los 8,334 relevantes fuera de catálogo permanecen en el denominador.
 

@@ -4,7 +4,7 @@
 
 ## Decisión tras revisar los cuatro reportes
 
-La máquina principal descargó los cuatro ZIP de mac24 y verificó inventario, tamaños, SHA-256, package ID, commit limpio, límites, conciliación de épocas y comparación completa. Coinciden con [la evidencia de tres épocas](../evidence/mac24-three-epochs-2026-10-20.json). La auditoría local queda en `artifacts/reviews/mac24-three-epochs-review.json`, fuera de Git.
+La máquina principal descargó los cuatro ZIP de mac24 y verificó inventario, tamaños, SHA-256, package ID, commit limpio, límites, conciliación de épocas y comparación completa. Coinciden con [la evidencia de tres épocas](archive/evidence/mac24-three-epochs-2026-10-20.json). La auditoría local queda en `artifacts/reviews/mac24-three-epochs-review.json`, fuera de Git.
 
 El candidato de tres épocas consumió 68,023,995 ejemplos, con 790.859 s de job y 4.122 GiB de pico de contenedor. La comparación tardó 353.868 s con 3.857 GiB; no hubo swap ni OOM. Sin embargo, MAP@12 cayó de 0.00576877 a 0.00490391 y NDCG@12 de 0.01120105 a 0.01022287. Los intervalos de ambas diferencias quedan debajo de cero. Recall aumentó de 0.13893485 a 0.14574184, pero popularidad de siete días alcanza 0.16757920. Su MAP@12, 0.00660410, también supera ambos modelos. La mejora de cobertura y la señal de personalización de tres épocas no cumplen el criterio de calidad.
 
@@ -48,7 +48,7 @@ La fuente debe ser un ZIP T3 aprobado en `artifacts/handoff/`, con checkpoint lo
 
 ## Verificación local antes de mac24
 
-La [evidencia local](../evidence/local-recent-history.json) registra 96 pruebas únicas aprobadas: 56 host, 16 unitarias y 24 de integración (datos, entrenamiento, diagnósticos y bootstrap). El código probado es `dd90fd12860e30bd89aef389bea82a397c8cd21a`. Las pruebas de la imagen final se ejecutaron sin montar código desde el host.
+La [evidencia local](archive/evidence/local-recent-history.json) registra 96 pruebas únicas aprobadas: 56 host, 16 unitarias y 24 de integración (datos, entrenamiento, diagnósticos y bootstrap). El código probado es `dd90fd12860e30bd89aef389bea82a397c8cd21a`. Las pruebas de la imagen final se ejecutaron sin montar código desde el host.
 
 El primer intento falló en la verificación porque la imagen no incluía el lector importado por la nueva prueba; su reporte fallido se conservó y publicó. Tras incluir ese archivo en la imagen, pasaron los dos diagnósticos oficiales locales:
 
@@ -63,7 +63,7 @@ En el piloto, MAP@12 fue 0.00619763 para popularidad7d, 0.02215935 para historia
 
 ## Revisión de los reportes de mac24
 
-La [revisión de la máquina principal](../evidence/mac24-recent-history-review-2026-10-20.json) verificó ambos ZIP contra su inventario, SHA-256, package ID y evidencia publicada. También concilió los reportes originales de entrenamiento, configuración, replay, cinco contrastes, diez controles por variante, medias ponderadas de segmentos, recursos y aislamiento. Los 19 archivos originales intactos son una comprobación informada por mac24; los pesos no se transfirieron ni se recalcularon sus hashes aquí.
+La [revisión de la máquina principal](archive/evidence/mac24-recent-history-review-2026-10-20.json) verificó ambos ZIP contra su inventario, SHA-256, package ID y evidencia publicada. También concilió los reportes originales de entrenamiento, configuración, replay, cinco contrastes, diez controles por variante, medias ponderadas de segmentos, recursos y aislamiento. Los 19 archivos originales intactos son una comprobación informada por mac24; los pesos no se transfirieron ni se recalcularon sus hashes aquí.
 
 Full: 72,019 compradores, 102,967 artículos, 132.132 s y 2.568 GiB de pico de contenedor, sin swap ni OOM. Estos recursos corresponden al diagnóstico offline; no prueban latencia de API.
 

@@ -1,6 +1,6 @@
 # Q1: referencias temporales reproducibles
 
-Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q1, [Q2](graph-quality.md) y [Q3](ranker-quality.md) están cerradas tras revisión de sus reportes mac24. [Q4](quality-summary.md) también está cerrada y seleccionó H; T4 permanece pendiente. Esta página conserva la reproducción histórica Q1, no debe repetirse por defecto. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](../evidence/quality-q1-mac24.json) y su [revisión](../evidence/quality-q1-review.json) ya cierran Q1.
+Esta entrega implementa Q1-A/Q1-B del [plan](superpowers/plans/2026-10-20-calidad-temporal-grafos-ranking.md). Compara P (popularidad de 7 días) y H (historial de 28 días seguido de P). Q1, [Q2](graph-quality.md) y [Q3](ranker-quality.md) están cerradas tras revisión de sus reportes mac24. [Q4](quality-summary.md) también está cerrada y seleccionó H; T4 permanece pendiente. Esta página conserva la reproducción histórica Q1, no debe repetirse por defecto. `passed` significa que la ejecución y sus controles pasaron; no significa que se haya seleccionado el mejor motor. La evidencia local se registra en `evidence/local-quality-q1.json`; la [evidencia mac24](archive/evidence/quality-q1-mac24.json) y su [revisión](archive/evidence/quality-q1-review.json) ya cierran Q1.
 
 ## Protocolo y archivos
 
@@ -95,14 +95,14 @@ La demo oficial de la primera Mac usa `--machine-id local --profile default --re
 
 ## Evidencia local de esta entrega
 
-La [evidencia estructurada](../evidence/local-quality-q1.json) registra 116 pruebas distintas: 65 host, 43 unitarias/integración científica y 8 de infraestructura Docker. La revisión final detectó tres problemas operativos; sus regresiones fallaron antes de corregirlos y pasaron después. La imagen final se probó sin montajes auxiliares de código y conserva compatibilidad con los 19 ZIP históricos recibidos.
+La [evidencia estructurada](archive/evidence/local-quality-q1.json) registra 116 pruebas distintas: 65 host, 43 unitarias/integración científica y 8 de infraestructura Docker. La revisión final detectó tres problemas operativos; sus regresiones fallaron antes de corregirlos y pasaron después. La imagen final se probó sin montajes auxiliares de código y conserva compatibilidad con los 19 ZIP históricos recibidos.
 
 La [demo oficial final](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T200951Z-1f9c6a28), ejecutada en `502e4a932e22374ae3d78ceda2f7c4c6903083fc`, pasó con 33 compradores, 24 artículos y paridad exacta V3. Duró 6.006559 s, con RSS máximo 0.412128 GiB, sin swap ni OOM. El ZIP se exportó, validó, publicó y volvió a descargar/verificar. Se conserva la primera demo anterior a las correcciones. Estas son mediciones sintéticas de la primera Mac; no acreditan calidad ni rendimiento H&M en mac24.
 
 
 ## Ejecución mac24: 20 de octubre de 2026
 
-Los cinco intentos pasaron desde `120e8f3f68c1b1c7efe0786585d52490dc0e299a`, con clon limpio, Colima 14 GiB/4 CPU y límites efectivos 10 GiB/3 CPU/2 hilos. Se ejecutaron secuencialmente y cada ZIP se validó, publicó y descargó/verificó antes del siguiente. [Evidencia mac24](../evidence/quality-q1-mac24.json).
+Los cinco intentos pasaron desde `120e8f3f68c1b1c7efe0786585d52490dc0e299a`, con clon limpio, Colima 14 GiB/4 CPU y límites efectivos 10 GiB/3 CPU/2 hilos. Se ejecutaron secuencialmente y cada ZIP se validó, publicó y descargó/verificó antes del siguiente. [Evidencia mac24](archive/evidence/quality-q1-mac24.json).
 
 | Fold / tamaño y Release | Compradores / catálogo | Tiempo job | Pico RSS / cgroup GiB | MAP P / H |
 | --- | ---: | ---: | ---: | ---: |
@@ -120,7 +120,7 @@ Las métricas P/H, segmentos, recompra/descubrimiento, exposición, espacio libr
 
 ## Revisión de la máquina principal: Q1 cerrada
 
-Se descargaron los cinco ZIP desde GitHub y se verificaron inventario, tamaños/SHA-256, package ID, commit, configuración normativa, lock, recursos, aislamiento, secuencia y presupuesto acumulado. Los agregados redondeados de Git coinciden con los resultados originales. Piloto y full V3 comparten snapshot; V1/V2/V3 tienen snapshots distintos con una misma fuente H&M. La [revisión estructurada](../evidence/quality-q1-review.json) conserva comprobaciones y límites.
+Se descargaron los cinco ZIP desde GitHub y se verificaron inventario, tamaños/SHA-256, package ID, commit, configuración normativa, lock, recursos, aislamiento, secuencia y presupuesto acumulado. Los agregados redondeados de Git coinciden con los resultados originales. Piloto y full V3 comparten snapshot; V1/V2/V3 tienen snapshots distintos con una misma fuente H&M. La [revisión estructurada](archive/evidence/quality-q1-review.json) conserva comprobaciones y límites.
 
 Se recalcularon las comparaciones de métricas, exposición y segmentos de V3 contra el ZIP histórico de historial reciente: diferencia de las métricas globales exactamente cero para P y H. El worker informó igualdad exacta de rankings, que permanecen privados en mac24; aquí se compararon agregados, no filas individuales. Se corrigió en el resumen Git la tolerancia `absolute_tolerance`, que el redondeo había convertido de `1e-10` a `0.0`; el ZIP original era correcto y se conserva intacto.
 

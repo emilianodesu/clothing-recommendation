@@ -1,6 +1,6 @@
 # Iniciar la segunda Mac y devolver resultados
 
-**Estado vigente:** T4-B v2 ya pasó en mac24 y está [cerrada tras revisión](../evidence/serving-host-review-mac24.json). No hay otra ejecución pendiente allí; ambos prompts T4-B son históricos. El siguiente desarrollo del plan es T5 (interfaz, eventos y actualización de perfiles). Conservar paquetes y resultados Q1–Q4/T4-A/T4-B; no repetir campañas ni evaluar test.
+**Estado vigente:** T4-B v2 ya pasó en mac24 y está [cerrada tras revisión](archive/evidence/serving-host-review-mac24.json). No hay otra ejecución pendiente allí; ambos prompts T4-B son históricos. El siguiente desarrollo del plan es T5 (interfaz, eventos y actualización de perfiles). Conservar paquetes y resultados Q1–Q4/T4-A/T4-B; no repetir campañas ni evaluar test.
 
 Esta guía conserva la instalación y las ejecuciones históricas entre las dos Macs. **T1–T4 y Q1–Q4 están cerradas y revisadas; H fue seleccionado y su paquete conserva la paridad.** No repetir instalación, descarga, entrenamientos ni campañas anteriores. La API, activación, acceso desde el host y rollback de T4-B están implementados y reproducidos en mac24; `serving-check` verifica el ciclo de versiones con los paquetes existentes y devuelve reportes cerrados.
 
@@ -168,9 +168,9 @@ T1 ya está aceptada y T2 está implementada: importación por lotes, validació
 
 ## Verificación disponible
 
-El 19 de octubre de 2026 se ejecutó el instalador completo en la Mac de desarrollo, reutilizando su perfil Colima `default`: las siete etapas y las 26 pruebas pasaron; el lector verificó el ZIP con salida 0. La [evidencia sanitizada](../evidence/second-mac-script-2026-10-19.json) registra el commit y los resultados. Esto comprueba el recorrido local y el empaquetado; la prueba física posterior de mac24 ya pasó y está registrada en [la revisión](../evidence/mac24-bootstrap-review-2026-10-19.json).
+El 19 de octubre de 2026 se ejecutó el instalador completo en la Mac de desarrollo, reutilizando su perfil Colima `default`: las siete etapas y las 26 pruebas pasaron; el lector verificó el ZIP con salida 0. La [evidencia sanitizada](archive/evidence/second-mac-script-2026-10-19.json) registra el commit y los resultados. Esto comprueba el recorrido local y el empaquetado; la prueba física posterior de mac24 ya pasó y está registrada en [la revisión](archive/evidence/mac24-bootstrap-review-2026-10-19.json).
 
-Después se añadió el transporte GitHub: la suite completa pasó con **35 pruebas**. Se publicó ese ZIP de instalación, se listó, descargó y leyó mediante los comandos nuevos; su SHA-256 coincide con el original y con GitHub. Un segundo envío reutilizó el mismo adjunto. La [evidencia del transporte](../evidence/github-handoff-2026-10-19.json) registra estas operaciones; el ZIP de prueba sigue correspondiendo a la ejecución anterior de infraestructura.
+Después se añadió el transporte GitHub: la suite completa pasó con **35 pruebas**. Se publicó ese ZIP de instalación, se listó, descargó y leyó mediante los comandos nuevos; su SHA-256 coincide con el original y con GitHub. Un segundo envío reutilizó el mismo adjunto. La [evidencia del transporte](archive/evidence/github-handoff-2026-10-19.json) registra estas operaciones; el ZIP de prueba sigue correspondiendo a la ejecución anterior de infraestructura.
 
 ## Referencias del transporte
 
@@ -212,7 +212,7 @@ En esta Mac recibimos los resultados con los comandos existentes `github-handoff
 
 ### Resultado T2 recibido de mac24
 
-Las corridas sintética `data-mac24-20261019T182008Z-b0c98090` y completa `data-mac24-20261020T000332Z-c95306b5` terminaron `passed` con el commit `8e62bfdc55024428a08c7f16d58d718560116509`. Ver [resultados y Releases](data.md#resultado-físico-en-mac24--19-de-octubre-de-2026) y [evidencia agregada](../evidence/mac24-t2-2026-10-19.json).
+Las corridas sintética `data-mac24-20261019T182008Z-b0c98090` y completa `data-mac24-20261020T000332Z-c95306b5` terminaron `passed` con el commit `8e62bfdc55024428a08c7f16d58d718560116509`. Ver [resultados y Releases](data.md#resultado-físico-en-mac24--19-de-octubre-de-2026) y [evidencia agregada](archive/evidence/mac24-t2-2026-10-19.json).
 
 En la máquina principal, después de actualizar este repositorio, descargar y validar los paquetes:
 
@@ -279,7 +279,7 @@ La descarga valida inventario, SHA-256 y la identidad del paquete; repetirla es 
 
 ### Resultado T3 de mac24 disponible para la máquina principal
 
-Las cuatro corridas terminaron `passed` en el commit `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. Full completó una época de 22,674,665 ejemplos; ver [métricas y limitaciones](evaluation.md#evidencia-física-de-mac24) y [evidencia agregada](../evidence/mac24-t3-2026-10-19.json). Cada run_id coincide con experiment_id, intento 1.
+Las cuatro corridas terminaron `passed` en el commit `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. Full completó una época de 22,674,665 ejemplos; ver [métricas y limitaciones](evaluation.md#evidencia-física-de-mac24) y [evidencia agregada](archive/evidence/mac24-t3-2026-10-19.json). Cada run_id coincide con experiment_id, intento 1.
 
 | Configuración | Reporte publicado y verificado |
 | --- | --- |
@@ -297,7 +297,7 @@ Demo, pilotos y full ya pasaron en mac24. Continúa con [el procedimiento de dia
 
 ### Retorno del diagnóstico T3 de mac24
 
-Los diagnósticos demo y full pasaron en `b4248cc80337dc524ce1d505b4c96248278a3119` y reprodujeron exactamente las métricas originales. Ver [resultados, controles y Releases](diagnostics.md#resultado-físico-en-mac24) y [evidencia agregada](../evidence/mac24-t3-diagnostics-2026-10-19.json). Para recibirlos en la máquina principal:
+Los diagnósticos demo y full pasaron en `b4248cc80337dc524ce1d505b4c96248278a3119` y reprodujeron exactamente las métricas originales. Ver [resultados, controles y Releases](diagnostics.md#resultado-físico-en-mac24) y [evidencia agregada](archive/evidence/mac24-t3-diagnostics-2026-10-19.json). Para recibirlos en la máquina principal:
 
 ```bash
 SSL_CERT_FILE=/etc/ssl/cert.pem python3 scripts/github-handoff.py download diagnose-mac24-20261020T012621Z-0f44f776

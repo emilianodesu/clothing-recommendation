@@ -1,8 +1,8 @@
 # T5: seguimiento de relojes en lectura
 
-El diagnóstico H&M conserva `failed` y T5/E4 siguen abiertas. La [auditoría](../evidence/events-memory-review-mac24.json) encontró 15,767.860 s UTC frente a 1,593.043 s monotónicos. Esta entrega prepara una recolección breve sobre ese ZIP y el historial de energía del host; no reproduce compras ni inicia Docker.
+El diagnóstico H&M conserva `failed` y T5/E4 siguen abiertas. La [auditoría](archive/evidence/events-memory-review-mac24.json) encontró 15,767.860 s UTC frente a 1,593.043 s monotónicos. Esta entrega prepara una recolección breve sobre ese ZIP y el historial de energía del host; no reproduce compras ni inicia Docker.
 
-**Estado vigente:** la recolección mac24 ya fue [auditada](../evidence/events-clock-review-mac24.json) y resultó incompleta por límite de tamaño. El procedimiento siguiente se conserva como histórico; no repetirlo automáticamente. Sigue implementar y comprobar el protocolo prospectivo descrito abajo, con la causa histórica aún desconocida.
+**Estado vigente:** la recolección mac24 ya fue [auditada](archive/evidence/events-clock-review-mac24.json) y resultó incompleta por límite de tamaño. El procedimiento siguiente se conserva como histórico; no repetirlo automáticamente. Sigue implementar y comprobar el protocolo prospectivo descrito abajo, con la causa histórica aún desconocida.
 
 ## Comando reproducible
 
@@ -60,9 +60,9 @@ Después de recibir el seguimiento, revisar correlación con energía y limitaci
 
 ## Evidencia local y entrega
 
-La [evidencia local](../evidence/events-clock-local.json) distingue los tests y el seguimiento del reporte sintético `events-development-20261022T050923Z-da5ae7f6` de la tarea pendiente en mac24. Se verificaron también los dos ZIP T5 fallidos y la fuente T4-A con el lector nuevo, conservando sus estados. No se cambiaron imágenes, dependencias, servicio, motor ni datos.
+La [evidencia local](archive/evidence/events-clock-local.json) distingue los tests y el seguimiento del reporte sintético `events-development-20261022T050923Z-da5ae7f6` de la tarea pendiente en mac24. Se verificaron también los dos ZIP T5 fallidos y la fuente T4-A con el lector nuevo, conservando sus estados. No se cambiaron imágenes, dependencias, servicio, motor ni datos.
 
-El [prompt de recolección](mac24-t5-clock-prompt.md) ya se ejecutó y se conserva como histórico. No hay otra ejecución pendiente en mac24 hasta preparar y comprobar el siguiente protocolo; no entrenar, evaluar test, repetir H&M ni iniciar T6.
+El [prompt de recolección](archive/prompts/mac24-t5-clock-prompt.md) ya se ejecutó y se conserva como histórico. No hay otra ejecución pendiente en mac24 hasta preparar y comprobar el siguiente protocolo; no entrenar, evaluar test, repetir H&M ni iniciar T6.
 
 ## Recolección mac24 (2026-10-22, America/Mexico_City)
 
@@ -70,7 +70,7 @@ Una única recolección `events-mac24-20261023T012714Z-659b1686` (run_id UTC),
 en `7900b82f5e7483624ba4df888d821b16438839c3`: **failed**, evidencia incompleta
 válida, `clock_diagnostic.complete=false`. [Reporte publicado y verificado por
 descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261023T012714Z-659b1686).
-[Resultado y entorno exactos](../evidence/events-clock-mac24.json).
+[Resultado y entorno exactos](archive/evidence/events-clock-mac24.json).
 
 La consulta pmset terminó con `collection_status=size_limit` (límite 16 MiB).
 El fragmento disponible no abarca la ventana fuente: cero filas fechadas dentro
@@ -97,7 +97,7 @@ la Mac principal revisará esta evidencia antes de preparar otro paso.
 
 ## Revisión en la Mac principal (2026-10-22)
 
-La [auditoría](../evidence/events-clock-review-mac24.json) verifica el ZIP de
+La [auditoría](archive/evidence/events-clock-review-mac24.json) verifica el ZIP de
 5,159 bytes, su inventario/identidad/hash, igualdad de `result` y `environment`
 con Git y huella de todos los scripts desde el commit congelado. También
 verifica la fuente original y recalcula las doce capturas y los once intervalos
@@ -130,4 +130,4 @@ nueva deberá acreditar su propia continuidad.
 
 ## Implementación del protocolo prospectivo
 
-La propuesta anterior está implementada en [events-operational-v1](events-operational.md). Consulta [la evidencia local](../evidence/events-operational-local.json) y [el nuevo prompt mac24](mac24-t5-operational-prompt.md). No repetir la captura histórica de energía; su resultado permanece incompleto y la causa desconocida.
+La propuesta anterior está implementada en [events-operational-v1](events-operational.md). Consulta [la evidencia local](archive/evidence/events-operational-local.json) y [el nuevo prompt mac24](archive/prompts/mac24-t5-operational-prompt.md). No repetir la captura histórica de energía; su resultado permanece incompleto y la causa desconocida.

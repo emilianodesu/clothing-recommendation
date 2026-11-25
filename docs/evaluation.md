@@ -57,7 +57,7 @@ Referencias: [Adagrad en PyTorch](https://docs.pytorch.org/docs/stable/generated
 
 ## Evidencia previa a mac24
 
-La [evidencia local](../evidence/cpu-feasibility.json) corresponde a una Mac de 16 GiB, perfil `base` de 5 GiB/3 CPU/2 hilos, commit `ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4`. La demo y dos pilotos reales terminaron y verificaron el transporte HTTP de MLflow.
+La [evidencia local](archive/evidence/cpu-feasibility.json) corresponde a una Mac de 16 GiB, perfil `base` de 5 GiB/3 CPU/2 hilos, commit `ca3a2db966c02b0c7e78fb6913d8c62bbeb56eb4`. La demo y dos pilotos reales terminaron y verificaron el transporte HTTP de MLflow.
 
 | Piloto | Filas entrenadas | RSS hasta fin del entrenamiento | MAP@12 | Popularidad MAP@12 |
 | --- | ---: | ---: | ---: | ---: |
@@ -69,7 +69,7 @@ Estos resultados comprueban ejecución, sin demostrar todavía calidad suficient
 
 ## Evidencia física de mac24
 
-El 19 de octubre de 2026 (America/Mexico_City; run_id fechados el 20 en UTC), las cuatro corridas pasaron desde el commit limpio `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. La suite model pasó 61 pruebas: 14 de contenedor y 47 de host. Colima tuvo 14 GiB/4 CPU y cada job verificó 10 GiB/3 CPU/2 hilos. Todos fueron primer intento, sin swap ni eventos OOM. La [evidencia agregada](../evidence/mac24-t3-2026-10-19.json) conserva identidades, límites, segmentos, MLflow, huellas y enlaces de Releases.
+El 19 de octubre de 2026 (America/Mexico_City; run_id fechados el 20 en UTC), las cuatro corridas pasaron desde el commit limpio `6ba7e6e7972c655fb780cdade995a2bf8f54db36`. La suite model pasó 61 pruebas: 14 de contenedor y 47 de host. Colima tuvo 14 GiB/4 CPU y cada job verificó 10 GiB/3 CPU/2 hilos. Todos fueron primer intento, sin swap ni eventos OOM. La [evidencia agregada](archive/evidence/mac24-t3-2026-10-19.json) conserva identidades, límites, segmentos, MLflow, huellas y enlaces de Releases.
 
 | Configuración | Filas consumidas | Épocas | Entrenamiento / job (s) | Pico RSS / cgroup del job (GiB) |
 | --- | ---: | ---: | ---: | ---: |

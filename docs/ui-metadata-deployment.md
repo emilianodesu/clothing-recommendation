@@ -1,6 +1,6 @@
 # Actualización local de cabecera — 2026-10-24
 
-La UI sintética local se actualizó al código `e478f71`. [Evidencia](../evidence/ui-metadata-deployment-local.json): revisión visible 4 → 5 y fechas nuevas después de una compra y una publicación sintéticas. API y PostgreSQL conservaron ID, imagen y hora de inicio. No se tocó mac24 ni se repitieron experimentos.
+La UI sintética local se actualizó al código `e478f71`. [Evidencia](archive/evidence/ui-metadata-deployment-local.json): revisión visible 4 → 5 y fechas nuevas después de una compra y una publicación sintéticas. API y PostgreSQL conservaron ID, imagen y hora de inicio. No se tocó mac24 ni se repitieron experimentos.
 
 ![Cabecera después de publicar perfiles](images/ui-fix/metadata-actualizada.jpg)
 

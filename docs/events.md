@@ -2,7 +2,7 @@
 
 **Estado al 24 de octubre de 2026:** T4–T7, T8-A y T8-C cerradas tras revisión; el test ya se ejecutó y no debe repetirse. T8-B conserva failed por solapamiento insuficiente. [Informe consolidado](final-report.md) e [inventario de pendientes T8-D](delivery-status.md). Las referencias a pasos futuros o test reservado en la narración histórica de abajo no reabren esas campañas.
 
-H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M histórico conserva estado fallido por memoria PostgreSQL; el protocolo operativo posterior fue auditado y cerró T5/E4. Véase [auditoría operativa](../evidence/events-operational-review-mac24.json). No confundir ese cierre con aceptación completa T8.
+H sigue siendo historial28d+popularidad7d. T5 incorpora Streamlit, eventos durables y actualización de perfiles en PostgreSQL. El paquete inicial y `/recommend` permanecen congelados; cada entorno tiene un `stream_id` y usa `/streams/{stream_id}/recommend`. El intento H&M histórico conserva estado fallido por memoria PostgreSQL; el protocolo operativo posterior fue auditado y cerró T5/E4. Véase [auditoría operativa](archive/evidence/events-operational-review-mac24.json). No confundir ese cierre con aceptación completa T8.
 
 Paso histórico, ya superado por el cierre operativo: integrar y comprobar continuidad temporal y el siguiente contrato operativo. El [seguimiento de relojes/energía](clock-diagnostics.md) ya fue auditado como captura incompleta; no se repite ni hay otro ensayo H&M pendiente. La causa histórica sigue desconocida y el nuevo protocolo debe verificarse antes de otra aceptación.
 
@@ -49,7 +49,7 @@ Mac24 conserva Colima 14 GiB/4 CPU. Los 3 GiB de semilla consideran el pico prev
 
 ## Ensayo H&M y devolución de evidencia
 
-El [prompt mac24 T5](mac24-t5-prompt.md) conserva el procedimiento ya ejecutado; no repetirlo. Se reutilizó el paquete full activo y su dataset local; los ZIP de reportes no sustituyen esos artefactos privados. El [prompt diagnóstico](mac24-t5-memory-prompt.md) también es histórico: la corrida con doce capturas ya fue [auditada](events-memory.md#revisión-en-la-mac-principal-2026-10-22). T5/E4 permanecen abiertas por el criterio de memoria y la discrepancia temporal; no hay otro ensayo pendiente.
+El [prompt mac24 T5](archive/prompts/mac24-t5-prompt.md) conserva el procedimiento ya ejecutado; no repetirlo. Se reutilizó el paquete full activo y su dataset local; los ZIP de reportes no sustituyen esos artefactos privados. El [prompt diagnóstico](archive/prompts/mac24-t5-memory-prompt.md) también es histórico: la corrida con doce capturas ya fue [auditada](events-memory.md#revisión-en-la-mac-principal-2026-10-22). T5/E4 permanecen abiertas por el criterio de memoria y la discrepancia temporal; no hay otro ensayo pendiente.
 
 ```bash
 SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima-hm-project python3 scripts/project.py up --profile serve
@@ -74,7 +74,7 @@ Referencias de implementación: [Streamlit AppTest](https://docs.streamlit.io/de
 
 ## Verificación local
 
-Dos ensayos desde clones limpios terminaron `passed`, con configuración PostgreSQL propia y sin Kaggle. El último (`events-development-20261022T042237Z-5238dc2c`, código `6130943641e599121119660693ed276cf3b3fbca`) comprobó cuatro interacciones, deduplicación/conflicto, publicación repetida y persistencia tras reiniciar API en 4.263 s, excluyendo construcción y arranque. Son sintéticos, no una medición de capacidad H&M. La [evidencia agregada](../evidence/events-local.json) identifica cada revisión y reporte.
+Dos ensayos desde clones limpios terminaron `passed`, con configuración PostgreSQL propia y sin Kaggle. El último (`events-development-20261022T042237Z-5238dc2c`, código `6130943641e599121119660693ed276cf3b3fbca`) comprobó cuatro interacciones, deduplicación/conflicto, publicación repetida y persistencia tras reiniciar API en 4.263 s, excluyendo construcción y arranque. Son sintéticos, no una medición de capacidad H&M. La [evidencia agregada](archive/evidence/events-local.json) identifica cada revisión y reporte.
 
 Pasaron 133 pruebas científicas/integración, 93 del host, ocho de bootstrap Docker y una de publicación API/UI (235 casos distintos); la prueba separada de MLflow no se ejecutó. `verify --suite events` también pasó contra la imagen final instalada. Chrome mostró las 12 recomendaciones y controles; la compra/reintento/conflicto se verificó con AppTest y HTTP/PostgreSQL reales. La revisión independiente tuvo dos correcciones comprobadas RED→GREEN y no dejó menores aplazados. [Decisiones y límites de revisión](t5-decisions.md). La reproducción H&M permanece pendiente.
 
@@ -83,7 +83,7 @@ Pasaron 133 pruebas científicas/integración, 93 del host, ocho de bootstrap Do
 Una única ejecución en `ee27bf7911ff38d15aae66922d716cec7426b9ab`:
 `events-mac24-20261022T043907Z-ddcd2e42` (run_id UTC), **failed**.
 [ZIP válido publicado y verificado por descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T043907Z-ddcd2e42);
-[evidencia agregada](../evidence/events-mac24.json). El lector devuelve 1:
+[evidencia agregada](archive/evidence/events-mac24.json). El lector devuelve 1:
 fallo de ejecución válido, no ZIP inválido. No se reintentó.
 
 La suite events pasó 194 pruebas: 62 unitarias, 28 de integración serving,
@@ -111,7 +111,7 @@ principal. T5 no está cerrada; no se entrenó, evaluó test ni inició T6.
 
 ## Revisión en la Mac principal
 
-La [auditoría del intento H&M](../evidence/events-review-mac24.json) verifica el ZIP cerrado de 4,013 bytes, sus huellas e inventario, el código `ee27bf7`, `uv.lock` y la cadena hacia el reporte T4-A original. `read-handoff.py` devuelve 1, como corresponde a un fallo válido. El resultado y el entorno publicados en Git coinciden exactamente con el ZIP. Al reconstruir sólo en memoria la entrada al validador antes del fallo, la única condición falsa es la comparación del pico PostgreSQL contra el límite. No se modificó ni reclasificó el reporte original.
+La [auditoría del intento H&M](archive/evidence/events-review-mac24.json) verifica el ZIP cerrado de 4,013 bytes, sus huellas e inventario, el código `ee27bf7`, `uv.lock` y la cadena hacia el reporte T4-A original. `read-handoff.py` devuelve 1, como corresponde a un fallo válido. El resultado y el entorno publicados en Git coinciden exactamente con el ZIP. Al reconstruir sólo en memoria la entrada al validador antes del fallo, la única condición falsa es la comparación del pico PostgreSQL contra el límite. No se modificó ni reclasificó el reporte original.
 
 | Componente | Pico reportado, MiB | Límite, MiB |
 | --- | ---: | ---: |
@@ -135,9 +135,9 @@ Preparar instrumentación y pruebas antes de una nueva ejecución remota:
 3. Separar `final-validation` de `restart` y guardar componente/criterio fallido en el reporte cerrado. Cubrir por regresión un pico histórico alto, presión nueva, OOM, swap y cambio de cgroup.
 4. Mantener el contrato v1 y su ZIP fallido intactos. Versionar explícitamente cualquier nuevo contrato y justificar sus criterios antes de medir; la información actual no permite elegir entre ajustar recursos o aceptar el comportamiento observado. Preparar después un prompt para una sola corrida, con presupuesto PostgreSQL conservado de 512 MiB durante el diagnóstico.
 
-**T5/E4 permanecen abiertas.** Los pasos de instrumentación anteriores se implementaron en `events-memory-v1` y la corrida H&M ya fue [revisada](../evidence/events-memory-review-mac24.json). Se confirmó el pico heredado y actividad nueva junto al límite sin swap/OOM; se detectó también una discrepancia UTC/monotónico que impide interpretar rendimiento. Sigue [la resolución temporal y del contrato](events-memory.md#revisión-en-la-mac-principal-2026-10-22). Ambos prompts T5 son históricos; no repetirlos. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.
+**T5/E4 permanecen abiertas.** Los pasos de instrumentación anteriores se implementaron en `events-memory-v1` y la corrida H&M ya fue [revisada](archive/evidence/events-memory-review-mac24.json). Se confirmó el pico heredado y actividad nueva junto al límite sin swap/OOM; se detectó también una discrepancia UTC/monotónico que impide interpretar rendimiento. Sigue [la resolución temporal y del contrato](events-memory.md#revisión-en-la-mac-principal-2026-10-22). Ambos prompts T5 son históricos; no repetirlos. Conservar el entorno y las fuentes originales. T6, entrenamiento y test no se iniciaron.
 
 
 ## Continuación vigente: protocolo operativo
 
-Se implementó [events-operational-v1](events-operational.md) con relojes por operación, presupuesto y guard de reposo, manteniendo recursos y reportes anteriores. Sigue [una ejecución mac24 con SHA congelado](mac24-t5-operational-prompt.md); T5/E4 siguen abiertas hasta su auditoría.
+Se implementó [events-operational-v1](events-operational.md) con relojes por operación, presupuesto y guard de reposo, manteniendo recursos y reportes anteriores. Sigue [una ejecución mac24 con SHA congelado](archive/prompts/mac24-t5-operational-prompt.md); T5/E4 siguen abiertas hasta su auditoría.

@@ -1,6 +1,6 @@
 # Cobertura del temario y límites de la entrega
 
-La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está cerrada y H seleccionado tras la [auditoría](../evidence/quality-decision-mac24.json); API, publicación y recuperación fueron auditadas en T4–T7; T8-A y T8-C están cerradas. T8-B conserva su limitación; la entrega documental/visual y las verificaciones posteriores de UI están disponibles en el [inventario vigente](delivery-status.md).
+La evidencia describe una red comercial comprador–artículo y una proyección de coocurrencia artículo–artículo. No constituye una red social de amistades. Los experimentos académicos se conservan aunque no sean el motor elegido. Q4 está cerrada y H seleccionado tras la [auditoría](archive/evidence/quality-decision-mac24.json); API, publicación y recuperación fueron auditadas en T4–T7; T8-A y T8-C están cerradas. T8-B conserva su limitación; la entrega documental/visual y las verificaciones posteriores de UI están disponibles en el [inventario vigente](delivery-status.md).
 
 | Subtema | Implementación y evidencia | Alcance real |
 | --- | --- | --- |
@@ -26,9 +26,9 @@ La cobertura se concentra en 3.1, 3.3, caminatas de 3.4, sistemas de recomendaci
 
 ## Evidencia y explicación académica
 
-- [Q1](../evidence/quality-q1-review.json): H supera a popularidad en tres semanas.
-- [Q2](../evidence/quality-q2-review.json): G mejora MAP medio, pierde Recall; PPR es control acotado con prueba de personalización.
-- [Q3](../evidence/quality-q3-review.json): RH conserva el pool y mejora MAP pero perjudica segmentos; RG ordena mejor un pool con menor recuperación. Mejor media no basta para promoción.
+- [Q1](archive/evidence/quality-q1-review.json): H supera a popularidad en tres semanas.
+- [Q2](archive/evidence/quality-q2-review.json): G mejora MAP medio, pierde Recall; PPR es control acotado con prueba de personalización.
+- [Q3](archive/evidence/quality-q3-review.json): RH conserva el pool y mejora MAP pero perjudica segmentos; RG ordena mejor un pool con menor recuperación. Mejor media no basta para promoción.
 - [Selección](model-selection.md) y [Q4](quality-summary.md): criterios predefinidos, incertidumbre pareada y preferencia por coste entre resultados equivalentes.
 - [T3 y tres épocas](three-epochs.md): el modelo latente no superó las referencias temporales recientes. Más épocas no mejoraron MAP; conservar el resultado negativo y evitar atribuirlo sólo a PyTorch.
 

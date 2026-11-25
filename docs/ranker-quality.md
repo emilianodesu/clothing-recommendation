@@ -1,8 +1,8 @@
 # Q3: ordenamiento LightGBM sobre H y G
 
-Q3 implementa RH y RG del [protocolo quality-v1](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). RH reordena exactamente los candidatos H; RG reordena G. Ambos conservan Recall@200. Las diez corridas mac24 se descargaron y [auditaron](../evidence/quality-q3-review.json): **Q3 está cerrada operativamente**. RH mejora MAP medio, pero incumple el límite de pérdida por segmento; RG mejora más MAP, pero incumple Recall y segmentos. Q4 hará la selección formal con sus intervalos. Test permanece reservado. Esta guía conserva la reproducción histórica; no repetir Q3 por defecto.
+Q3 implementa RH y RG del [protocolo quality-v1](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). RH reordena exactamente los candidatos H; RG reordena G. Ambos conservan Recall@200. Las diez corridas mac24 se descargaron y [auditaron](archive/evidence/quality-q3-review.json): **Q3 está cerrada operativamente**. RH mejora MAP medio, pero incumple el límite de pérdida por segmento; RG mejora más MAP, pero incumple Recall y segmentos. Q4 hará la selección formal con sus intervalos. Test permanece reservado. Esta guía conserva la reproducción histórica; no repetir Q3 por defecto.
 
-La implementación y pruebas locales están en [la evidencia Q3](../evidence/local-quality-q3.json); los resultados H&M y recursos ya medidos están al final de esta guía. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes. La auditoría de agregados no sustituye el bootstrap por comprador ni la aceptación final.
+La implementación y pruebas locales están en [la evidencia Q3](archive/evidence/local-quality-q3.json); los resultados H&M y recursos ya medidos están al final de esta guía. Los pesos y tablas quedan locales, fuera de Git y de los ZIP de reportes. La auditoría de agregados no sustituye el bootstrap por comprador ni la aceptación final.
 
 ## Contrato implementado
 
@@ -99,7 +99,7 @@ Siguiente paso: ejecutar la secuencia mac24 anterior con el commit de entrega, c
 
 ## Ejecución Q3 en mac24: 20 de octubre de 2026
 
-Las diez corridas pasaron desde el commit limpio `b0c93b85ea3dd96a4218fbae4882ca177214691f`, en el orden fijado. Cada ZIP se exportó, validó y publicó con descarga verificada antes del siguiente intento. La suite `quality` pasó tras demo H y antes de piloto H: 41 unitarias, 12 integraciones y 68 host. [Evidencia Q3 completa](../evidence/quality-q3-mac24.json).
+Las diez corridas pasaron desde el commit limpio `b0c93b85ea3dd96a4218fbae4882ca177214691f`, en el orden fijado. Cada ZIP se exportó, validó y publicó con descarga verificada antes del siguiente intento. La suite `quality` pasó tras demo H y antes de piloto H: 41 unitarias, 12 integraciones y 68 host. [Evidencia Q3 completa](archive/evidence/quality-q3-mac24.json).
 
 Colima 14 GiB/4 CPU; trabajos 10 GiB/3 CPU/2 hilos, uno a la vez, Mac sin suspensión y TLS validado. Los 1,725 archivos inventariados de datos procesados, features, entrenamientos/checkpoints y `work` Q1/Q2 conservaron SHA-256 antes/después. Inventarios y artefactos privados Q3 permanecen en mac24; no se publicaron modelos ni filas individuales.
 
@@ -154,7 +154,7 @@ Presupuesto acumulado Q1–Q3: full 3001.522436 s, pilotos 173.372630 s y demos 
 
 ## Revisión de los diez ZIP en la Mac principal
 
-La actualización `0e1afd8` se integró por avance rápido. Se descargaron las diez Releases privadas, se validaron inventario/tamaños/SHA-256 y contratos completos y se conciliaron los agregados de Git contra los ZIP sin redondear. Todos proceden del commit limpio solicitado `b0c93b85ea3dd96a4218fbae4882ca177214691f`; orden de corridas y tiempos no muestran solapamiento. Configuración, lock, perfil mac24, límites efectivos, aislamiento y cadena Q2→Q1 coinciden. P/H/G, poblaciones, entradas y hashes de sus artefactos coinciden exactamente con las referencias originales. [Auditoría estructurada](../evidence/quality-q3-review.json).
+La actualización `0e1afd8` se integró por avance rápido. Se descargaron las diez Releases privadas, se validaron inventario/tamaños/SHA-256 y contratos completos y se conciliaron los agregados de Git contra los ZIP sin redondear. Todos proceden del commit limpio solicitado `b0c93b85ea3dd96a4218fbae4882ca177214691f`; orden de corridas y tiempos no muestran solapamiento. Configuración, lock, perfil mac24, límites efectivos, aislamiento y cadena Q2→Q1 coinciden. P/H/G, poblaciones, entradas y hashes de sus artefactos coinciden exactamente con las referencias originales. [Auditoría estructurada](archive/evidence/quality-q3-review.json).
 
 Se comprobaron las cuatro fechas internas por corrida, conciliaciones de grupos/filas/positivos, validación interna completa, selección de iteraciones/refit, costes y conservación reportada de candidatos y Recall. Los modelos, tablas individuales, inventarios privados y log independiente de `verify --suite quality` siguen en mac24: su preservación y esa suite son declaraciones del equipo emisor. Aquí se verificaron los ZIP y cálculos agregados, sin recalcular predicciones ni intervalos desde archivos que no se recibieron.
 

@@ -1,6 +1,6 @@
 # Diagnóstico T5 de memoria por fase
 
-El intento H&M original conserva `failed` y T5/E4 siguen abiertas. Su [auditoría](../evidence/events-review-mac24.json) encontró un pico acumulado PostgreSQL de 512.258 MiB frente a 512 MiB. Esta entrega mide dónde aparece la presión, sin aumentar recursos, cambiar H ni reinterpretar el reporte original.
+El intento H&M original conserva `failed` y T5/E4 siguen abiertas. Su [auditoría](archive/evidence/events-review-mac24.json) encontró un pico acumulado PostgreSQL de 512.258 MiB frente a 512 MiB. Esta entrega mide dónde aparece la presión, sin aumentar recursos, cambiar H ni reinterpretar el reporte original.
 
 ## Protocolo y criterios
 
@@ -40,11 +40,11 @@ SSL_CERT_FILE=/etc/ssl/cert.pem DOCKER_CONTEXT=colima python3 scripts/project.py
   --machine-id development --memory-diagnostics
 ```
 
-El [prompt mac24](mac24-t5-memory-prompt.md) es ahora histórico: su única corrida H&M ya terminó y fue revisada abajo. No repetirlo. El reporte v1, sus streams, datos, ledger y volúmenes se preservan. No entrenar, abrir test ni iniciar T6.
+El [prompt mac24](archive/prompts/mac24-t5-memory-prompt.md) es ahora histórico: su única corrida H&M ya terminó y fue revisada abajo. No repetirlo. El reporte v1, sus streams, datos, ledger y volúmenes se preservan. No entrenar, abrir test ni iniciar T6.
 
 ## Evidencia local y revisión
 
-Dos ensayos sintéticos desde clones limpios produjeron doce capturas completas y reportes aprobados; el último usa `7332cea42df360fd6910b3100412b01948844ed5`, dura 5.245 s y confirma el cambio de generación API sin reiniciar PostgreSQL. [Reporte privado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T050923Z-da5ae7f6), [evidencia agregada](../evidence/events-memory-local.json). Son pruebas locales, no una medición de capacidad H&M.
+Dos ensayos sintéticos desde clones limpios produjeron doce capturas completas y reportes aprobados; el último usa `7332cea42df360fd6910b3100412b01948844ed5`, dura 5.245 s y confirma el cambio de generación API sin reiniciar PostgreSQL. [Reporte privado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-development-20261022T050923Z-da5ae7f6), [evidencia agregada](archive/evidence/events-memory-local.json). Son pruebas locales, no una medición de capacidad H&M.
 
 La revisión independiente encontró y se corrigieron con regresiones dos problemas del lector: evasión mediante cambio de protocolo y causas/recursos contradictorios en reportes fallidos. No quedaron menores aplazados. La suite host final pasó 112 casos; la suite oficial events y las ocho pruebas de bootstrap Docker también pasaron. La suite científica completa pasó 133 casos y omitió la prueba dedicada a MLflow. El primer comando genérico `pytest` dentro de jobs encontró siete errores de colección de pruebas que pertenecen al host; el comando corregido separa ambos entornos y sus resultados están registrados en la evidencia.
 
@@ -56,7 +56,7 @@ Corrida única `events-mac24-20261022T184956Z-e167c9d2`, commit
 `44327b4cd9bfd8c5a803e58f3e34ccf675ed5fd2`, protocolo `events-memory-v1`.
 Estado **failed**, con `diagnostics.complete=true`, doce capturas y cero errores
 de captura. [ZIP válido publicado y verificado por descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-events-mac24-20261022T184956Z-e167c9d2);
-[resultado y entorno exactos, intervalos y evidencia local](../evidence/events-memory-mac24.json).
+[resultado y entorno exactos, intervalos y evidencia local](archive/evidence/events-memory-mac24.json).
 
 La fase final-validation identificó `postgres / peak_below_limit`: 537,141,248
 bytes frente a 536,870,912. Ese máximo ya estaba presente antes de semilla y
@@ -94,7 +94,7 @@ No se reintentó, entrenó, evaluó test ni inició T6.
 
 ## Revisión en la Mac principal (2026-10-22)
 
-La [auditoría](../evidence/events-memory-review-mac24.json) valida el ZIP de
+La [auditoría](archive/evidence/events-memory-review-mac24.json) valida el ZIP de
 8,211 bytes, inventario, SHA-256 e identidad; confirma igualdad exacta con
 `result`/`environment` recibidos y recalcula código científico, scripts y lock
 del commit `44327b4`. También verifica la cadena T4-A y conserva intacto el ZIP
@@ -175,8 +175,8 @@ verificó reportes, fuentes y cálculos agregados; no ejecutó Docker ni recalcu
 perfiles H&M. **T5/E4 permanecen abiertas; T6, entrenamiento y test no se
 activan al recibir este reporte.**
 
-El primer paso de seguimiento ya se ejecutó y fue [auditado](../evidence/events-clock-review-mac24.json): la [recolección de relojes/energía
-en lectura](clock-diagnostics.md) quedó incompleta por límite de tamaño y su [prompt mac24](mac24-t5-clock-prompt.md) es histórico; no repetirlo. La causa permanece desconocida. Sigue integrar y comprobar el protocolo prospectivo antes de otra ejecución H&M.
+El primer paso de seguimiento ya se ejecutó y fue [auditado](archive/evidence/events-clock-review-mac24.json): la [recolección de relojes/energía
+en lectura](clock-diagnostics.md) quedó incompleta por límite de tamaño y su [prompt mac24](archive/prompts/mac24-t5-clock-prompt.md) es histórico; no repetirlo. La causa permanece desconocida. Sigue integrar y comprobar el protocolo prospectivo antes de otra ejecución H&M.
 Los controles temporales están probados como utilidades para la siguiente
 versión; aún no se integraron al ensayo H&M ni se modificaron sus validadores
 vigentes. La nueva integración debe verificarse antes de otra corrida.

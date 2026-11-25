@@ -8,7 +8,7 @@ No equivale a aceptación final ni a haber cumplido las metas de carga. Véase
 
 La corrección **v2** añade una red de publicación exclusiva para API y comprueba
 HTTP desde el host. Su reproducción H&M en mac24 pasó y está
-[auditada](../evidence/serving-host-review-mac24.json). El ensayo v1 conserva sus
+[auditada](archive/evidence/serving-host-review-mac24.json). El ensayo v1 conserva sus
 resultados; ambos procedimientos y prompts son históricos, no deben repetirse
 salvo petición explícita. El siguiente desarrollo del plan es T5.
 
@@ -30,7 +30,7 @@ de 24 artículos y 32 compradores históricos: cinco comprobaciones de 41
 solicitudes cada una, incluyendo filtros y un comprador desconocido. Duró
 11.615 s, con pico API de 140,636,160 bytes y sin swap/OOM. Conservó las huellas
 de respuestas tras reinicio y rollback. El [reporte privado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-dev-20261021T194554Z-65bdaa1d)
-se publicó y verificó por descarga; [evidence/serving.json](../evidence/serving.json)
+se publicó y verificó por descarga; [evidence/serving.json](archive/evidence/serving.json)
 conserva identidades, recursos, revisión y decisiones. Estos resultados no
 acreditan capacidad con H&M ni latencia bajo carga.
 
@@ -146,7 +146,7 @@ los paquetes de servicio, transacciones, perfiles, predicciones ni credenciales.
 Ensayo único `serving-mac24-20261021T200054Z-cce4d43e` en
 `d1898dd3e471f208c814888250915b42150e842d`: **passed**, reporte validado y
 [publicado con verificación por descarga](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261021T200054Z-cce4d43e).
-La [evidencia mac24](../evidence/mac24-serving-t4b.json) registra las fuentes
+La [evidencia mac24](archive/evidence/mac24-serving-t4b.json) registra las fuentes
 T4-A originales, versiones, hashes, muestras y recursos.
 
 Las imágenes app-check/jobs se reconstruyeron; suite serving: 60 unitarias,
@@ -167,7 +167,7 @@ no se cambió configuración ni se reinició/reintentó para ocultar el resultad
 
 Los 3,065 archivos inventariados, incluidos paquetes originales y ledger,
 permanecen iguales. Calidad final y test siguen pendientes; no se inició T5.
-La evidencia ya fue [auditada en la Mac principal](../evidence/serving-review-mac24.json).
+La evidencia ya fue [auditada en la Mac principal](archive/evidence/serving-review-mac24.json).
 
 ## Revisión y bloqueo del acceso local
 
@@ -234,12 +234,12 @@ No regenerar datos ni modificar recursos para ocultar fallos. Conservar inventar
 privado de originales antes/después, incluido el ZIP v1 y ledger.
 
 Al finalizar registrar `evidence/mac24-serving-host-t4b.json`, separado de la
-evidencia v1, y actualizar esta guía. El [prompt v2](mac24-t4b-host-prompt.md)
+evidencia v1, y actualizar esta guía. El [prompt v2](archive/prompts/mac24-t4b-host-prompt.md)
 reúne las instrucciones; no usar el prompt histórico ni iniciar T5/test.
 
 ### Verificación local de v2
 
-La [evidencia](../evidence/serving-host.json) registra 216 pruebas distintas
+La [evidencia](archive/evidence/serving-host.json) registra 216 pruebas distintas
 aprobadas: 121 científicas en imagen sin montajes de código, 86 de host, ocho de
 infraestructura Docker y una regresión de publicación con Compose real. La prueba
 externa de MLflow sigue omitida; la de publicación se ejecutó desde el host.
@@ -257,7 +257,7 @@ H&M v2 en mac24 ni mide carga T8.
 Ensayo único `serving-mac24-20261022T032542Z-59d9bfe4`, protocolo
 `history-serving-v2`, en `58c408e829b1809c5edd95bb6d10ebe219bb8ac2`: **passed**.
 El run_id usa UTC. [Reporte validado y publicado](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-serving-mac24-20261022T032542Z-59d9bfe4);
-[evidencia agregada](../evidence/mac24-serving-host-t4b.json).
+[evidencia agregada](archive/evidence/mac24-serving-host-t4b.json).
 
 Se reconstruyeron app-check/jobs y pasaron 175 pruebas: 60 unitarias, 28 de
 integración, una regresión Docker de publicación desde el host y 86 de host.
@@ -282,7 +282,7 @@ carga T8 ni inicia automáticamente el desarrollo T5.
 
 ## Revisión principal y cierre T4-B
 
-La [auditoría v2](../evidence/serving-host-review-mac24.json) valida inventario,
+La [auditoría v2](archive/evidence/serving-host-review-mac24.json) valida inventario,
 tamaños, SHA-256 y contrato del ZIP; concilia exactamente la evidencia versionada
 y el entorno, código/lock del commit ejecutado y ambos paquetes T4-A originales.
 Las cinco huellas de respuesta interna coinciden con v1; las cinco del host

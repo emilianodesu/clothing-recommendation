@@ -48,7 +48,7 @@ Salida 0 indica ensayo aprobado por el contrato nuevo; 1 o 130 indican fallo/int
 
 ## Evidencia local e instrucciones históricas
 
-La evidencia local se registra en `evidence/events-operational-local.json`: pruebas y ensayo sintético se distinguen de la ejecución H&M pendiente. La guía mac24 está en [el prompt versionado](mac24-t5-operational-prompt.md). No cerrar T5/E4 ni iniciar T6 hasta descargar y auditar el nuevo reporte remoto.
+La evidencia local se registra en `evidence/events-operational-local.json`: pruebas y ensayo sintético se distinguen de la ejecución H&M pendiente. La guía mac24 está en [el prompt versionado](archive/prompts/mac24-t5-operational-prompt.md). No cerrar T5/E4 ni iniciar T6 hasta descargar y auditar el nuevo reporte remoto.
 
 Validación final local: 257 pruebas (62 unitarias, 28 integración serving, 1 publicación HTTP, 10 eventos y 156 host). Ensayo `events-development-20261023T021835Z-75f5c65b` aprobado con 106 operaciones y 12 capturas, relojes coherentes, limpieza/guard correctos y cero swap/OOM; véase la evidencia enlazada. Las cinco correcciones de revisión tienen regresiones RED→GREEN. Conservamos el ensayo inicial incompleto y el primer ZIP aprobado; la validación H&M todavía corresponde a mac24.
 
@@ -56,7 +56,7 @@ Mac24 publicó `events-mac24-20261023T030009Z-3f97f2a0`, estado `passed`. Revisi
 
 ## Revisión principal de mac24
 
-**T5/E4 cerradas bajo `events-operational-v1`**, tras descargar y auditar `events-mac24-20261023T030009Z-3f97f2a0`; [auditoría completa](../evidence/events-operational-review-mac24.json). El reporte original permanece intacto, incluido `t5_closed=false`: la decisión de cierre pertenece a esta revisión posterior. No repetir el adaptador ni el prompt operativo.
+**T5/E4 cerradas bajo `events-operational-v1`**, tras descargar y auditar `events-mac24-20261023T030009Z-3f97f2a0`; [auditoría completa](archive/evidence/events-operational-review-mac24.json). El reporte original permanece intacto, incluido `t5_closed=false`: la decisión de cierre pertenece a esta revisión posterior. No repetir el adaptador ni el prompt operativo.
 
 Se verificaron el ZIP de 26,419 bytes, su inventario/huellas, igualdad con evidencia recibida, árboles de código/runner y lock desde el commit congelado, y fuente T4-A. Se recalcularon nueve intervalos de memoria y la continuidad de 548 marcas/108 operaciones. Doce capturas completas, límites conservados, cero swap/OOM capturados, paridad inicial, cuatro eventos, idempotencia/conflicto, actualización, fuente inmutable, persistencia tras reiniciar API, limpieza y guard correctos.
 

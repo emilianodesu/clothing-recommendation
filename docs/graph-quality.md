@@ -1,6 +1,6 @@
 # Q2: grafo de artículos y control PageRank
 
-Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. Los cinco reportes mac24 ya se descargaron y [revisaron](../evidence/quality-q2-review.json): Q2 está cerrada operativamente. G mejora MAP/NDCG, pero incumple el límite de pérdida de Recall. Esta página conserva el procedimiento de reproducción; no repetirlo por defecto. [Q3](ranker-quality.md) también está cerrada tras revisar diez reportes mac24. Q4 y T4 siguen pendientes y test permanece reservado.
+Q2 implementa la recuperación G del [protocolo aprobado](superpowers/specs/2026-10-20-calidad-temporal-grafos-ranking-design.md). Conserva P/H como referencias verificadas de Q1. Los cinco reportes mac24 ya se descargaron y [revisaron](archive/evidence/quality-q2-review.json): Q2 está cerrada operativamente. G mejora MAP/NDCG, pero incumple el límite de pérdida de Recall. Esta página conserva el procedimiento de reproducción; no repetirlo por defecto. [Q3](ranker-quality.md) también está cerrada tras revisar diez reportes mac24. Q4 y T4 siguen pendientes y test permanece reservado.
 
 ## Qué calcula
 
@@ -14,7 +14,7 @@ El control PageRank selecciona hasta 5,000 compradores por hash antes de separar
 
 Los resultados completos de G y los de la muestra PPR están separados. No se promueve un motor a partir de la muestra. Las membresías/aciertos exclusivos describen las fuentes del pool G finalmente seleccionado; no estiman causalidad ni el valor de cambiar hiperparámetros.
 
-[Prompt histórico Q2](mac24-q2-prompt.md), ya ejecutado; no reutilizarlo para iniciar Q3.
+[Prompt histórico Q2](archive/prompts/mac24-q2-prompt.md), ya ejecutado; no reutilizarlo para iniciar Q3.
 
 ## Referencias y preparación
 
@@ -96,7 +96,7 @@ Q2 añade pesado de vínculos (3.3), caminatas aleatorias/PageRank personalizado
 
 ## Evidencia local y revisión
 
-La [evidencia local Q2](../evidence/local-quality-q2.json) registra 133 pruebas distintas: 58 científicas, 67 host y 8 de infraestructura Docker. La suite completa científica inicial pasó 57; la prueba adicional de offsets/recencia pasó después y la suite quality final pasó 34 unitarias y 7 integraciones. También se verificaron los 24 ZIP históricos. La revisión final independiente no encontró hallazgos accionables.
+La [evidencia local Q2](archive/evidence/local-quality-q2.json) registra 133 pruebas distintas: 58 científicas, 67 host y 8 de infraestructura Docker. La suite completa científica inicial pasó 57; la prueba adicional de offsets/recencia pasó después y la suite quality final pasó 34 unitarias y 7 integraciones. También se verificaron los 24 ZIP históricos. La revisión final independiente no encontró hallazgos accionables.
 
 La [demo oficial](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-quality-local-20261020T204855Z-99a612bd), commit `db3d7389da74a2d45022da37b4262f2b02a898ff`, pasó con 33 compradores, 24 artículos, 224 cestas y 48 aristas. Las 32 ejecuciones PPR con semillas convergieron; un comprador quedó fuera del contraste de personalización por no tener semillas. Duración 6.047426 s, RSS 0.434319 GiB, sin swap/OOM. Se exportó, validó, publicó y verificó la descarga del ZIP privado. G empató con H y las permutaciones no alteraron materialmente las métricas de esta fixture: no es una mejora demostrada en H&M.
 
@@ -105,7 +105,7 @@ La implementación preserva la incidencia dispersa en RAM y persiste coocurrenci
 
 ## Resultados mac24: 20 de octubre de 2026
 
-Los cinco intentos Q2 pasaron desde el commit limpio `77267d02248e082259cccc4c573f9adff72d2114`. La suite `quality` pasó en mac24 después de la demo y antes del piloto. Cada ZIP se exportó, validó, publicó y descargó/verificó antes del siguiente intento. [Evidencia agregada Q2](../evidence/quality-q2-mac24.json).
+Los cinco intentos Q2 pasaron desde el commit limpio `77267d02248e082259cccc4c573f9adff72d2114`. La suite `quality` pasó en mac24 después de la demo y antes del piloto. Cada ZIP se exportó, validó, publicó y descargó/verificó antes del siguiente intento. [Evidencia agregada Q2](archive/evidence/quality-q2-mac24.json).
 
 Colima 14 GiB/4 CPU; jobs 10 GiB/3 CPU/2 hilos, secuenciales, con suspensión inhibida. Los 500 archivos de features, entrenamientos/checkpoints y cinco `work` Q1 conservaron SHA-256 antes/después. Inventarios y tablas individuales permanecen locales. No se repitió Q1 ni entrenamiento ni se evaluó test.
 
@@ -145,7 +145,7 @@ La evidencia incluye segmentos, recompra/descubrimiento, exposición, fuentes de
 
 ## Revisión de la máquina principal: Q2 cerrada
 
-La [auditoría estructurada](../evidence/quality-q2-review.json) verifica los cinco ZIP: inventario/SHA-256, identidades, commit limpio, configuración/lock/recursos, referencias Q1, poblaciones, secuencia y presupuesto. Los agregados redondeados de Git concuerdan con los originales. P/H y sus hashes de rankings/métricas coinciden exactamente con Q1. Piloto y full V3 usan el mismo grafo global, con hashes idénticos; los tres folds tienen snapshots distintos y la misma fuente H&M. Cada log de worker registra 35 pruebas aprobadas.
+La [auditoría estructurada](archive/evidence/quality-q2-review.json) verifica los cinco ZIP: inventario/SHA-256, identidades, commit limpio, configuración/lock/recursos, referencias Q1, poblaciones, secuencia y presupuesto. Los agregados redondeados de Git concuerdan con los originales. P/H y sus hashes de rankings/métricas coinciden exactamente con Q1. Piloto y full V3 usan el mismo grafo global, con hashes idénticos; los tres folds tienen snapshots distintos y la misma fuente H&M. Cada log de worker registra 35 pruebas aprobadas.
 
 | Media simple de tres folds | H | G | Cambio relativo G/H |
 | --- | ---: | ---: | ---: |

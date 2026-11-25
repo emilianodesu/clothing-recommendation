@@ -4,8 +4,8 @@ H quedó seleccionado al cerrar Q4. Esta entrega construye su estado local y com
 paridad offline al **2020-09-09**, sin entrenamiento. API, activación y rollback
 pertenecen a T4-B; test y aceptación final siguen reservados para T8.
 **T4-A cerrada tras revisar demo y H&M en mac24 el 2026-10-21.** La
-[auditoría](../evidence/releases-review-mac24.json) verifica reportes, referencias
-y paridad; el estado se registra en [evidence/releases.json](../evidence/releases.json).
+[auditoría](archive/evidence/releases-review-mac24.json) verifica reportes, referencias
+y paridad; el estado se registra en [evidence/releases.json](archive/evidence/releases.json).
 Los comandos siguientes se conservan para reproducción, no para repetir la etapa
 ya aprobada. El siguiente desarrollo es corregir el acceso HTTP del host en T4-B.
 
@@ -182,7 +182,7 @@ filtrar filas privadas y puede requerir inspección adicional en mac24.
 Ejecución T4-A completada en `d59e14775f1e6a51ea5725d4ba9d0d9a61310236`.
 Mac24 declara imagen jobs reconstruida y suite releases aprobada: 60 unitarias,
 cuatro de integración y 74 host; un aviso de invariantes sparse de PyTorch.
-La [evidencia agregada](../evidence/mac24-release-t4a.json) conserva métricas,
+La [evidencia agregada](archive/evidence/mac24-release-t4a.json) conserva métricas,
 identidad/hashes, recursos efectivos y URLs verificadas de ambos reportes.
 
 - Synthetic: `release-mac24-20261021T190539Z-02a850f8`, passed, 5.012 s,
@@ -197,7 +197,7 @@ Recall@200 0.1907855419943058. Pico RSS 2,028,105,728 bytes y cgroup
 2,413,895,680 bytes, sin swap ni OOM. Estos tiempos son offline, no latencia
 de servicio. Límites efectivos: 10 GiB/3 CPU/2 hilos sobre Colima 14 GiB/4 CPU.
 
-La [revisión desde la Mac principal](../evidence/releases-review-mac24.json)
+La [revisión desde la Mac principal](archive/evidence/releases-review-mac24.json)
 validó ambos ZIP y los tres reportes fuente congelados, identidad del código y
 configuración, límites, aislamiento, conteos y huellas de ranking/métricas contra
 Q1-V3. Las métricas también coinciden con el diagnóstico histórico. Los seis
@@ -211,7 +211,7 @@ transfirieron su inventario, paquete H&M ni tablas privadas. La paridad completa
 fue calculada por el worker en mac24; aquí se contrastaron sus agregados y huellas
 con los reportes anteriores. **T4-A queda cerrada operativamente** y se conservan:
 `quality_accepted=false`, `test_evaluated=false`, `activated=false`.
-La [revisión T4-B v2](../evidence/serving-host-review-mac24.json) cierra carga H&M,
+La [revisión T4-B v2](archive/evidence/serving-host-review-mac24.json) cierra carga H&M,
 HTTP interno y desde el host, activación, reinicio y rollback en mac24.
 Ambos prompts T4-B son históricos; sigue el desarrollo T5. La duración offline
 y el ensayo HTTP secuencial no acreditan carga T8.

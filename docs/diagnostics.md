@@ -74,7 +74,7 @@ GitHub transporta evidencia; no activa al otro agente. El usuario avisa cuando l
 
 ## Evidencia de esta entrega
 
-Se probaron 84 casos únicos: 50 host, 12 unitarios, 4 de entrenamiento, 2 de diagnóstico, 8 de datos y 8 de bootstrap. En la Mac de desarrollo de 16 GiB se ejecutaron dos diagnósticos desacoplados desde `bfa7b7a`: demo (4.185 s, 0.455 GiB pico de contenedor) y checkpoint H&M del piloto de 10,000 usuarios entrenados (13.539 s, 1.008 GiB; evaluación de 2,000 compradores y 102,967 artículos). Ambos reprodujeron las métricas originales, sin swap/OOM y con hashes del entrenamiento intactos. Los tiempos excluyen construir la imagen. Véase [evidencia local](../evidence/local-t3-diagnostics.json); no representa ejecución full en mac24.
+Se probaron 84 casos únicos: 50 host, 12 unitarios, 4 de entrenamiento, 2 de diagnóstico, 8 de datos y 8 de bootstrap. En la Mac de desarrollo de 16 GiB se ejecutaron dos diagnósticos desacoplados desde `bfa7b7a`: demo (4.185 s, 0.455 GiB pico de contenedor) y checkpoint H&M del piloto de 10,000 usuarios entrenados (13.539 s, 1.008 GiB; evaluación de 2,000 compradores y 102,967 artículos). Ambos reprodujeron las métricas originales, sin swap/OOM y con hashes del entrenamiento intactos. Los tiempos excluyen construir la imagen. Véase [evidencia local](archive/evidence/local-t3-diagnostics.json); no representa ejecución full en mac24.
 
 En ese piloto, popularidad reciente supera al modelo y hay mucha coincidencia entre recomendaciones de distintos compradores. Esto demuestra que el diagnóstico detecta diferencias útiles; la ejecución posterior sobre el checkpoint full de mac24 se documenta abajo para revisar posibles cambios al modelo.
 
@@ -90,7 +90,7 @@ Ambos diagnósticos pasaron desde el commit limpio `b4248cc80337dc524ce1d505b4c9
 | Demo | [diagnose-mac24-20261020T012621Z-0f44f776](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012621Z-0f44f776) | 4.678 s | 0.331 / 0.454 GiB |
 | Full | [diagnose-mac24-20261020T012703Z-46890b00](https://github.com/emilianodesu/clothing-recommendation/releases/tag/handoff-diagnose-mac24-20261020T012703Z-46890b00) | 121.299 s | 1.926 / 2.569 GiB |
 
-Swap máximo y eventos OOM: cero en ambos. Los tiempos excluyen construir la imagen. Los run_id usan UTC del 20 de octubre; fecha local de ejecución: 19 de octubre de 2026, America/Mexico_City. Ambos ZIP fueron exportados, validados y publicados con descarga verificada. La [evidencia agregada](../evidence/mac24-t3-diagnostics-2026-10-19.json) conserva las huellas, recursos, controles y resultados completos de ambas corridas.
+Swap máximo y eventos OOM: cero en ambos. Los tiempos excluyen construir la imagen. Los run_id usan UTC del 20 de octubre; fecha local de ejecución: 19 de octubre de 2026, America/Mexico_City. Ambos ZIP fueron exportados, validados y publicados con descarga verificada. La [evidencia agregada](archive/evidence/mac24-t3-diagnostics-2026-10-19.json) conserva las huellas, recursos, controles y resultados completos de ambas corridas.
 
 Full: 72,019 compradores y 102,967 artículos del catálogo de validación.
 
@@ -129,7 +129,7 @@ El [experimento de tres épocas](three-epochs.md) añade `--reference-run-id` pa
 
 ## Experimento de tres épocas ejecutado en mac24
 
-Los cuatro pasos finalizaron con `passed` desde el commit limpio `41e41037a3e203a683d94226ee535b56079563fc`. Los cuatro ZIP se exportaron, validaron y publicaron con descarga verificada. La [evidencia agregada](../evidence/mac24-three-epochs-2026-10-20.json) conserva métricas, intervalos, recursos, hashes y controles completos. Las horas de los run_id son UTC; la ejecución atravesó la medianoche local del 19 al 20 de octubre de 2026 (America/Mexico_City).
+Los cuatro pasos finalizaron con `passed` desde el commit limpio `41e41037a3e203a683d94226ee535b56079563fc`. Los cuatro ZIP se exportaron, validaron y publicaron con descarga verificada. La [evidencia agregada](archive/evidence/mac24-three-epochs-2026-10-20.json) conserva métricas, intervalos, recursos, hashes y controles completos. Las horas de los run_id son UTC; la ejecución atravesó la medianoche local del 19 al 20 de octubre de 2026 (America/Mexico_City).
 
 Colima `hm-project`: 14 GiB/4 CPU. Recursos solicitados y efectivos de cada trabajo: 10 GiB/3 CPU/2 hilos. Un trabajo pesado a la vez, Mac despierta y TLS validado. Los 9 archivos de la demo original y los 10 del full original conservaron sus SHA-256. No se evaluó test ni se inició T4.
 
@@ -211,7 +211,7 @@ Se mantiene `quality_accepted=false`; aumentar épocas no resolvió la calidad. 
 
 ## Historial reciente validado en mac24 (20 de octubre de 2026)
 
-Protocolo `recent-history-v1`, commit limpio `d4a4f8495bc05d4458e1fb084d9411f3b9e06385`. Demo y full finalizaron `passed`, verificación 0, replay del modelo confirmado, cinco comparaciones pareadas y diez permutaciones por variante. Ambos ZIP se exportaron, validaron y publicaron con descarga verificada. [Evidencia agregada completa](../evidence/mac24-recent-history-2026-10-20.json).
+Protocolo `recent-history-v1`, commit limpio `d4a4f8495bc05d4458e1fb084d9411f3b9e06385`. Demo y full finalizaron `passed`, verificación 0, replay del modelo confirmado, cinco comparaciones pareadas y diez permutaciones por variante. Ambos ZIP se exportaron, validaron y publicaron con descarga verificada. [Evidencia agregada completa](archive/evidence/mac24-recent-history-2026-10-20.json).
 
 Colima `hm-project`: 14 GiB/4 CPU; cada job solicitó y recibió 10 GiB/3 CPU/2 hilos. Ejecución secuencial con suspensión inhibida y TLS validado. Los 19 archivos de los dos entrenamientos originales conservaron sus SHA-256. No hubo entrenamiento, evaluación de test ni T4.
 
@@ -282,4 +282,4 @@ Los intervalos son condicionales al checkpoint, reglas y permutaciones. Se reuti
 
 ### Revisión completada en la máquina principal
 
-Ambos ZIP se descargaron y validaron; sus métricas y recursos coinciden con esta evidencia. La [auditoría](../evidence/mac24-recent-history-review-2026-10-20.json) concilia identidades de origen, replay, configuración, segmentos, controles y aislamiento. La [decisión y sus límites](recent-history.md#revisión-de-los-reportes-de-mac24) recomiendan historial+popularidad como candidato: cumple el criterio primario de validación; el aporte incremental del modelo no lo cumple. No se altera `quality_accepted=false` en los reportes originales ni se afirma calidad final sobre test. Antes de T4 debe revisarse el diseño porque el candidato ganador no utiliza inferencia neuronal. No se inició entrenamiento, test ni T4 durante esta revisión.
+Ambos ZIP se descargaron y validaron; sus métricas y recursos coinciden con esta evidencia. La [auditoría](archive/evidence/mac24-recent-history-review-2026-10-20.json) concilia identidades de origen, replay, configuración, segmentos, controles y aislamiento. La [decisión y sus límites](recent-history.md#revisión-de-los-reportes-de-mac24) recomiendan historial+popularidad como candidato: cumple el criterio primario de validación; el aporte incremental del modelo no lo cumple. No se altera `quality_accepted=false` en los reportes originales ni se afirma calidad final sobre test. Antes de T4 debe revisarse el diseño porque el candidato ganador no utiliza inferencia neuronal. No se inició entrenamiento, test ni T4 durante esta revisión.
