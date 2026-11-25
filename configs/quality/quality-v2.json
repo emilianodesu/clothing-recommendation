@@ -1,0 +1,854 @@
+{
+  "protocol": "quality-v2",
+  "seed": 42,
+  "label_days": 7,
+  "recall_ks": [
+    200,
+    300
+  ],
+  "min_segment_users": 1000,
+  "segments": [
+    "recent28d",
+    "history29_90d",
+    "older_history",
+    "no_history"
+  ],
+  "folds": {
+    "V1": "2020-08-26",
+    "V2": "2020-09-02",
+    "V3": "2020-09-09"
+  },
+  "descriptive_test_window": {
+    "fold_id": "TEST",
+    "cutoff": "2020-09-16",
+    "label_end": "2020-09-23"
+  },
+  "retrieval": {
+    "history_days": 180,
+    "history_tau_short": 14.0,
+    "history_tau_long": 60.0,
+    "history_short_weight": 0.6,
+    "history_long_weight": 0.4,
+    "history_limit": 80,
+    "variant_limit": 60,
+    "variant_pop_days": 14,
+    "variant_per_code_cap": 50,
+    "cooc_days": 90,
+    "cooc_basket_cap": 50,
+    "cooc_half_life_days": 14.0,
+    "cooc_bm25_k1": 1.2,
+    "cooc_bm25_b": 0.75,
+    "cooc_out_degree": 80,
+    "cooc_block_nodes": 512,
+    "cooc_limit": 80,
+    "latent_dim": 64,
+    "latent_window_days": 180,
+    "latent_half_life_days": 30.0,
+    "latent_limit": 60,
+    "content_limit": 60,
+    "content_max_vocab": 16384,
+    "pop_days": 7,
+    "segment_pop_limit": 80,
+    "global_pop_limit": 80,
+    "missing_rank_sentinel": 9999,
+    "user_batch_size": 4096
+  },
+  "ranker": {
+    "weeks": 5,
+    "val_weeks": 1,
+    "negatives_per_group": 40,
+    "hard_negatives_per_group": 0,
+    "exclude_cold_start_train": true,
+    "max_train_buyers_per_week": 8000,
+    "objective": "lambdarank",
+    "label_gain": [
+      0,
+      1
+    ],
+    "lambdarank_truncation_level": 15,
+    "num_boost_round": 300,
+    "early_stopping_rounds": 25,
+    "learning_rate": 0.08,
+    "num_leaves": 63,
+    "min_data_in_leaf": 100,
+    "max_bin": 255,
+    "lambda_l2": 1.0,
+    "feature_fraction": 0.8,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 1,
+    "seed": 42,
+    "num_threads": 2,
+    "inference_num_threads": 1,
+    "deterministic": true,
+    "force_col_wise": true,
+    "cold_start_col": "user_count180",
+    "batch_users": 2048,
+    "dataset_batch_size": 32768,
+    "cleanup_work_files": true
+  },
+  "gates": {
+    "target_avg_map_at_12": 0.031,
+    "min_avg_map_over_h": 0.02222467,
+    "min_avg_map_over_rg": 0.02544361,
+    "min_test_map_over_h": 0.02628451,
+    "require_positive_discovery_gain_over_h": true,
+    "require_positive_discovery_gain_over_p": true,
+    "max_segment_relative_loss": 0.02,
+    "min_segment_users": 1000
+  },
+  "baselines_v1": {
+    "quality_v1_avg": {
+      "P": {
+        "map_at_12": 0.0067215616089272,
+        "ndcg_at_12": 0.013325960583730584,
+        "recall_at_200": 0.17469611155224388,
+        "discovery_map_at_12": 0.006437396799382132,
+        "repeat_map_at_12": 0.010884176751523743
+      },
+      "H": {
+        "map_at_12": 0.022224669607739445,
+        "ndcg_at_12": 0.033008880660881736,
+        "recall_at_200": 0.19526923868832757,
+        "discovery_map_at_12": 0.004589489346438261,
+        "repeat_map_at_12": 0.2949628001300548
+      },
+      "RG": {
+        "map_at_12": 0.02544360813940372,
+        "ndcg_at_12": 0.03851158055956312,
+        "recall_at_200": 0.18669113220086608,
+        "discovery_map_at_12": 0.00755596329828838,
+        "repeat_map_at_12": 0.3019859430143688
+      }
+    },
+    "folds": {
+      "V1": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.006828450550800507,
+            "ndcg_at_12": 0.013366627087098912,
+            "recall_at_200": 0.17618542538356166
+          },
+          "population": {
+            "catalog_size": 101151,
+            "users": 80253
+          },
+          "targets": {
+            "discovery": {
+              "users": 78475,
+              "relevant_items": 246170,
+              "metrics": {
+                "map_at_12": 0.006544205371714856,
+                "ndcg_at_12": 0.012711479139003147,
+                "recall_at_200": 0.17206316071184594
+              }
+            },
+            "repeat": {
+              "users": 7266,
+              "relevant_items": 9002,
+              "metrics": {
+                "map_at_12": 0.010686569931684164,
+                "ndcg_at_12": 0.019652519772686037,
+                "recall_at_200": 0.25342933284716934
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 24612,
+              "metrics": {
+                "map_at_12": 0.006708330720512553,
+                "ndcg_at_12": 0.013124560738772236,
+                "recall_at_200": 0.1802998584901568
+              }
+            },
+            "no_history": {
+              "users": 5940,
+              "metrics": {
+                "map_at_12": 0.00489408668925063,
+                "ndcg_at_12": 0.01090440764392713,
+                "recall_at_200": 0.17975502548643305
+              }
+            },
+            "older_history": {
+              "users": 14733,
+              "metrics": {
+                "map_at_12": 0.006118423027085164,
+                "ndcg_at_12": 0.012673627921041356,
+                "recall_at_200": 0.17715856959599405
+              }
+            },
+            "recent28d": {
+              "users": 34968,
+              "metrics": {
+                "map_at_12": 0.00754074024731022,
+                "ndcg_at_12": 0.014247240138202274,
+                "recall_at_200": 0.17227312882921653
+              }
+            }
+          }
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.019363538204238476,
+            "ndcg_at_12": 0.02936682977155125,
+            "recall_at_200": 0.1934519842404921
+          },
+          "population": {
+            "catalog_size": 101151,
+            "users": 80253
+          },
+          "targets": {
+            "discovery": {
+              "users": 78475,
+              "relevant_items": 246170,
+              "metrics": {
+                "map_at_12": 0.004569272440134062,
+                "ndcg_at_12": 0.009810749595523085,
+                "recall_at_200": 0.17107213690306103
+              }
+            },
+            "repeat": {
+              "users": 7266,
+              "relevant_items": 9002,
+              "metrics": {
+                "map_at_12": 0.2671149819823459,
+                "ndcg_at_12": 0.3228311199210561,
+                "recall_at_200": 0.6098862827083306
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 24612,
+              "metrics": {
+                "map_at_12": 0.006708330720512553,
+                "ndcg_at_12": 0.013124560738772236,
+                "recall_at_200": 0.1802998584901568
+              }
+            },
+            "no_history": {
+              "users": 5940,
+              "metrics": {
+                "map_at_12": 0.00489408668925063,
+                "ndcg_at_12": 0.01090440764392713,
+                "recall_at_200": 0.17975502548643305
+              }
+            },
+            "older_history": {
+              "users": 14733,
+              "metrics": {
+                "map_at_12": 0.006118423027085164,
+                "ndcg_at_12": 0.012673627921041356,
+                "recall_at_200": 0.17715856959599405
+              }
+            },
+            "recent28d": {
+              "users": 34968,
+              "metrics": {
+                "map_at_12": 0.03630928261322642,
+                "ndcg_at_12": 0.05096836419549333,
+                "recall_at_200": 0.21190059245153514
+              }
+            }
+          }
+        },
+        "RG": {
+          "metrics": {
+            "map_at_12": 0.02179049303944023,
+            "ndcg_at_12": 0.033715713026918025,
+            "recall_at_200": 0.18380590542306202
+          },
+          "population": {
+            "catalog_size": 101151,
+            "users": 80253
+          },
+          "targets": {
+            "discovery": {
+              "users": 78475,
+              "relevant_items": 246170,
+              "metrics": {
+                "map_at_12": 0.0066951783059487555,
+                "ndcg_at_12": 0.01400615973774393,
+                "recall_at_200": 0.16210882342894817
+              }
+            },
+            "repeat": {
+              "users": 7266,
+              "relevant_items": 9002,
+              "metrics": {
+                "map_at_12": 0.2727826309638716,
+                "ndcg_at_12": 0.33319026591071194,
+                "recall_at_200": 0.6311764076214943
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 24612,
+              "metrics": {
+                "map_at_12": 0.008669033593807315,
+                "ndcg_at_12": 0.016802176080321297,
+                "recall_at_200": 0.14581527133230052
+              }
+            },
+            "no_history": {
+              "users": 5940,
+              "metrics": {
+                "map_at_12": 0.0038055141611338496,
+                "ndcg_at_12": 0.008951090385478961,
+                "recall_at_200": 0.17975502548643305
+              }
+            },
+            "older_history": {
+              "users": 14733,
+              "metrics": {
+                "map_at_12": 0.004941301974674028,
+                "ndcg_at_12": 0.010297498460749179,
+                "recall_at_200": 0.17715856959599405
+              }
+            },
+            "recent28d": {
+              "users": 34968,
+              "metrics": {
+                "map_at_12": 0.0411800854201957,
+                "ndcg_at_12": 0.05969370390495373,
+                "recall_at_200": 0.2140341973415472
+              }
+            }
+          }
+        }
+      },
+      "V2": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.006732129931170216,
+            "ndcg_at_12": 0.014006634772290326,
+            "recall_at_200": 0.1803237071232947
+          },
+          "population": {
+            "catalog_size": 101945,
+            "users": 75822
+          },
+          "targets": {
+            "discovery": {
+              "users": 73863,
+              "relevant_items": 228879,
+              "metrics": {
+                "map_at_12": 0.006527665188514237,
+                "ndcg_at_12": 0.013453120708085348,
+                "recall_at_200": 0.1759797709076019
+              }
+            },
+            "repeat": {
+              "users": 7383,
+              "relevant_items": 9195,
+              "metrics": {
+                "map_at_12": 0.010513553278181478,
+                "ndcg_at_12": 0.019402722544717935,
+                "recall_at_200": 0.269826435246996
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 22595,
+              "metrics": {
+                "map_at_12": 0.0065033382754499415,
+                "ndcg_at_12": 0.013640683243711631,
+                "recall_at_200": 0.1797614305073394
+              }
+            },
+            "no_history": {
+              "users": 5714,
+              "metrics": {
+                "map_at_12": 0.005911697370582814,
+                "ndcg_at_12": 0.012488996787170047,
+                "recall_at_200": 0.18378392236026295
+              }
+            },
+            "older_history": {
+              "users": 14076,
+              "metrics": {
+                "map_at_12": 0.006098392999999686,
+                "ndcg_at_12": 0.013551827844083366,
+                "recall_at_200": 0.18382465387575697
+              }
+            },
+            "recent28d": {
+              "users": 33437,
+              "metrics": {
+                "map_at_12": 0.0072937227820645085,
+                "ndcg_at_12": 0.014704733302560809,
+                "recall_at_200": 0.1786385572529658
+              }
+            }
+          }
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.02272145257462101,
+            "ndcg_at_12": 0.03416696156412639,
+            "recall_at_200": 0.2015701898301848
+          },
+          "population": {
+            "catalog_size": 101945,
+            "users": 75822
+          },
+          "targets": {
+            "discovery": {
+              "users": 73863,
+              "relevant_items": 228879,
+              "metrics": {
+                "map_at_12": 0.004636378467036525,
+                "ndcg_at_12": 0.010544590361343436,
+                "recall_at_200": 0.1750097721661383
+              }
+            },
+            "repeat": {
+              "users": 7383,
+              "relevant_items": 9195,
+              "metrics": {
+                "map_at_12": 0.2941253579082036,
+                "ndcg_at_12": 0.3536237240180062,
+                "recall_at_200": 0.655484446250395
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 22595,
+              "metrics": {
+                "map_at_12": 0.0065033382754499415,
+                "ndcg_at_12": 0.013640683243711631,
+                "recall_at_200": 0.1797614305073394
+              }
+            },
+            "no_history": {
+              "users": 5714,
+              "metrics": {
+                "map_at_12": 0.005911697370582814,
+                "ndcg_at_12": 0.012488996787170047,
+                "recall_at_200": 0.18378392236026295
+              }
+            },
+            "older_history": {
+              "users": 14076,
+              "metrics": {
+                "map_at_12": 0.006098392999999686,
+                "ndcg_at_12": 0.013551827844083366,
+                "recall_at_200": 0.18382465387575697
+              }
+            },
+            "recent28d": {
+              "users": 33437,
+              "metrics": {
+                "map_at_12": 0.043551234564572695,
+                "ndcg_at_12": 0.06042044637522264,
+                "recall_at_200": 0.22681724588537366
+              }
+            }
+          }
+        },
+        "RG": {
+          "metrics": {
+            "map_at_12": 0.025961595625516535,
+            "ndcg_at_12": 0.03960858115360822,
+            "recall_at_200": 0.1933443163099947
+          },
+          "population": {
+            "catalog_size": 101945,
+            "users": 75822
+          },
+          "targets": {
+            "discovery": {
+              "users": 73863,
+              "relevant_items": 228879,
+              "metrics": {
+                "map_at_12": 0.007908536607987382,
+                "ndcg_at_12": 0.016386738852859562,
+                "recall_at_200": 0.1683285875185654
+              }
+            },
+            "repeat": {
+              "users": 7383,
+              "relevant_items": 9195,
+              "metrics": {
+                "map_at_12": 0.296734384398867,
+                "ndcg_at_12": 0.3584684901910803,
+                "recall_at_200": 0.6641575240417175
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 22595,
+              "metrics": {
+                "map_at_12": 0.00994281729123173,
+                "ndcg_at_12": 0.018678812652105484,
+                "recall_at_200": 0.14434152214836418
+              }
+            },
+            "no_history": {
+              "users": 5714,
+              "metrics": {
+                "map_at_12": 0.0065325772150800895,
+                "ndcg_at_12": 0.013517806272788932,
+                "recall_at_200": 0.18378392236026295
+              }
+            },
+            "older_history": {
+              "users": 14076,
+              "metrics": {
+                "map_at_12": 0.007351117404004583,
+                "ndcg_at_12": 0.014767146476027535,
+                "recall_at_200": 0.18382465387575697
+              }
+            },
+            "recent28d": {
+              "users": 33437,
+              "metrics": {
+                "map_at_12": 0.04794092388781283,
+                "ndcg_at_12": 0.06866797169349162,
+                "recall_at_200": 0.23209913861866893
+              }
+            }
+          }
+        }
+      },
+      "V3": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.006604104344810876,
+            "ndcg_at_12": 0.012604619891802515,
+            "recall_at_200": 0.1675792021498753
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 72019
+          },
+          "targets": {
+            "discovery": {
+              "users": 70127,
+              "relevant_items": 218955,
+              "metrics": {
+                "map_at_12": 0.006240319837917305,
+                "ndcg_at_12": 0.011893491987277582,
+                "recall_at_200": 0.1633414537025692
+              }
+            },
+            "repeat": {
+              "users": 7148,
+              "relevant_items": 8955,
+              "metrics": {
+                "map_at_12": 0.01145240704470559,
+                "ndcg_at_12": 0.019195884900284912,
+                "recall_at_200": 0.25202343201783606
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 20970,
+              "metrics": {
+                "map_at_12": 0.005829793770124035,
+                "ndcg_at_12": 0.01196363564877419,
+                "recall_at_200": 0.16771959551969962
+              }
+            },
+            "no_history": {
+              "users": 5395,
+              "metrics": {
+                "map_at_12": 0.00639293046364188,
+                "ndcg_at_12": 0.012449327570326567,
+                "recall_at_200": 0.1687994644564134
+              }
+            },
+            "older_history": {
+              "users": 13240,
+              "metrics": {
+                "map_at_12": 0.007565855167137806,
+                "ndcg_at_12": 0.014225897406616662,
+                "recall_at_200": 0.17661159239878546
+              }
+            },
+            "recent28d": {
+              "users": 32414,
+              "metrics": {
+                "map_at_12": 0.006747344764150707,
+                "ndcg_at_12": 0.012382910980669284,
+                "recall_at_200": 0.16359585510833277
+              }
+            }
+          }
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.02458901804435885,
+            "ndcg_at_12": 0.03549285064696758,
+            "recall_at_200": 0.1907855419943058
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 72019
+          },
+          "targets": {
+            "discovery": {
+              "users": 70127,
+              "relevant_items": 218955,
+              "metrics": {
+                "map_at_12": 0.004562817132144198,
+                "ndcg_at_12": 0.009541688320042575,
+                "recall_at_200": 0.1625662184064426
+              }
+            },
+            "repeat": {
+              "users": 7148,
+              "relevant_items": 8955,
+              "metrics": {
+                "map_at_12": 0.3236480604996149,
+                "ndcg_at_12": 0.38317807640754686,
+                "recall_at_200": 0.6663317411463746
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 20970,
+              "metrics": {
+                "map_at_12": 0.005829793770124035,
+                "ndcg_at_12": 0.01196363564877419,
+                "recall_at_200": 0.16771959551969962
+              }
+            },
+            "no_history": {
+              "users": 5395,
+              "metrics": {
+                "map_at_12": 0.00639293046364188,
+                "ndcg_at_12": 0.012449327570326567,
+                "recall_at_200": 0.1687994644564134
+              }
+            },
+            "older_history": {
+              "users": 13240,
+              "metrics": {
+                "map_at_12": 0.007565855167137806,
+                "ndcg_at_12": 0.014225897406616662,
+                "recall_at_200": 0.17661159239878546
+              }
+            },
+            "recent28d": {
+              "users": 32414,
+              "metrics": {
+                "map_at_12": 0.04670709979986815,
+                "ndcg_at_12": 0.06323709407304395,
+                "recall_at_200": 0.215156828430232
+              }
+            }
+          }
+        },
+        "RG": {
+          "metrics": {
+            "map_at_12": 0.0285787357532544,
+            "ndcg_at_12": 0.04221044749816312,
+            "recall_at_200": 0.18292317486954152
+          },
+          "population": {
+            "catalog_size": 102967,
+            "users": 72019
+          },
+          "targets": {
+            "discovery": {
+              "users": 70127,
+              "relevant_items": 218955,
+              "metrics": {
+                "map_at_12": 0.008064174980929003,
+                "ndcg_at_12": 0.016132217687953764,
+                "recall_at_200": 0.15551198176067607
+              }
+            },
+            "repeat": {
+              "users": 7148,
+              "relevant_items": 8955,
+              "metrics": {
+                "map_at_12": 0.3364408136803679,
+                "ndcg_at_12": 0.3977413166704556,
+                "recall_at_200": 0.6866787579609348
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 20970,
+              "metrics": {
+                "map_at_12": 0.009840527775940043,
+                "ndcg_at_12": 0.01743388363648929,
+                "recall_at_200": 0.12986038315845416
+              }
+            },
+            "no_history": {
+              "users": 5395,
+              "metrics": {
+                "map_at_12": 0.005978745437007054,
+                "ndcg_at_12": 0.012631711035648772,
+                "recall_at_200": 0.1687994644564134
+              }
+            },
+            "older_history": {
+              "users": 13240,
+              "metrics": {
+                "map_at_12": 0.007579746083628576,
+                "ndcg_at_12": 0.014677404331813282,
+                "recall_at_200": 0.17661159239878546
+              }
+            },
+            "recent28d": {
+              "users": 32414,
+              "metrics": {
+                "map_at_12": 0.05304019661171934,
+                "ndcg_at_12": 0.07440885926212429,
+                "recall_at_200": 0.22218057944081132
+              }
+            }
+          }
+        }
+      },
+      "TEST": {
+        "P": {
+          "metrics": {
+            "map_at_12": 0.008747681312782597,
+            "ndcg_at_12": 0.01575737581052502,
+            "recall_at_200": 0.18077113790855182
+          },
+          "population": {
+            "catalog_size": 103880,
+            "users": 68984
+          },
+          "targets": {
+            "discovery": {
+              "users": 67076,
+              "relevant_items": 205291,
+              "metrics": {
+                "map_at_12": 0.008721578865185996,
+                "ndcg_at_12": 0.015593960010793745,
+                "recall_at_200": 0.17725221543304717
+              }
+            },
+            "repeat": {
+              "users": 6703,
+              "relevant_items": 8437,
+              "metrics": {
+                "map_at_12": 0.00769697644231435,
+                "ndcg_at_12": 0.013133412434211107,
+                "recall_at_200": 0.244238361712978
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 19422,
+              "metrics": {
+                "map_at_12": 0.009099007284123288,
+                "ndcg_at_12": 0.01606186031665602,
+                "recall_at_200": 0.1793432013474726
+              }
+            },
+            "no_history": {
+              "users": 5572,
+              "metrics": {
+                "map_at_12": 0.007877974233786032,
+                "ndcg_at_12": 0.0142335967658529,
+                "recall_at_200": 0.16649975093175534
+              }
+            },
+            "older_history": {
+              "users": 12895,
+              "metrics": {
+                "map_at_12": 0.007679268476140145,
+                "ndcg_at_12": 0.01504987805181658,
+                "recall_at_200": 0.18639682048598952
+              }
+            },
+            "recent28d": {
+              "users": 31095,
+              "metrics": {
+                "map_at_12": 0.009127155130351157,
+                "ndcg_at_12": 0.01613364152389957,
+                "recall_at_200": 0.18188740661052744
+              }
+            }
+          }
+        },
+        "H": {
+          "metrics": {
+            "map_at_12": 0.026284513575717667,
+            "ndcg_at_12": 0.038095671567879866,
+            "recall_at_200": 0.2046353569387929
+          },
+          "population": {
+            "catalog_size": 103880,
+            "users": 68984
+          },
+          "targets": {
+            "discovery": {
+              "users": 67076,
+              "relevant_items": 205291,
+              "metrics": {
+                "map_at_12": 0.006156193805605598,
+                "ndcg_at_12": 0.012141597418758967,
+                "recall_at_200": 0.17627233566882447
+              }
+            },
+            "repeat": {
+              "users": 6703,
+              "relevant_items": 8437,
+              "metrics": {
+                "map_at_12": 0.3253198524310118,
+                "ndcg_at_12": 0.3859109706058373,
+                "recall_at_200": 0.6742177158296807
+              }
+            }
+          },
+          "segments": {
+            "history29_90d": {
+              "users": 19422,
+              "metrics": {
+                "map_at_12": 0.009099007284123288,
+                "ndcg_at_12": 0.01606186031665602,
+                "recall_at_200": 0.1793432013474726
+              }
+            },
+            "no_history": {
+              "users": 5572,
+              "metrics": {
+                "map_at_12": 0.007877974233786032,
+                "ndcg_at_12": 0.0142335967658529,
+                "recall_at_200": 0.16649975093175534
+              }
+            },
+            "older_history": {
+              "users": 12895,
+              "metrics": {
+                "map_at_12": 0.007679268476140145,
+                "ndcg_at_12": 0.01504987805181658,
+                "recall_at_200": 0.18639682048598952
+              }
+            },
+            "recent28d": {
+              "users": 31095,
+              "metrics": {
+                "map_at_12": 0.04803247228186468,
+                "ndcg_at_12": 0.06569096567650826,
+                "recall_at_200": 0.23482997890775045
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "budget": {
+    "container_memory_bytes": 5368709120,
+    "eval_batch_users": 2048,
+    "bootstrap_resamples": 2000
+  }
+}
