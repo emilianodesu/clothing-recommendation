@@ -69,6 +69,22 @@ NAMES = {
     'Silver': 'Plateado',
     'Gold': 'Dorado',
     'Other': 'Otro',
+    'Solid': 'Liso',
+    'Stripe': 'Rayas',
+    'All over pattern': 'Estampado integral',
+    'Melange': 'Jaspeado',
+    'Denim': 'Mezclilla',
+    'Check': 'Cuadros',
+    'Dot': 'Lunares',
+    'Front print': 'Estampado frontal',
+}
+
+INDEX_GROUPS = {
+    'Ladieswear': 'Mujer (Ladieswear)',
+    'Menswear': 'Hombre (Menswear)',
+    'Divided': 'Divided',
+    'Sport': 'Deportivo (Sport)',
+    'Baby/Children': 'Bebé y niños (Baby/Children)',
 }
 
 
@@ -77,3 +93,10 @@ def label(value: str | None, default: str = 'Prenda') -> str:
     if not value:
         return default
     return NAMES.get(value, value)
+
+
+def section_label(value: str | None, default: str = 'Todas') -> str:
+    """Return the localized label for a catalog section (`index_group_name`)."""
+    if not value:
+        return default
+    return INDEX_GROUPS.get(value, value)

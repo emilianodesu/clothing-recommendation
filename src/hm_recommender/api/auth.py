@@ -1,23 +1,41 @@
 """Authentication portal, session management, and perimeter security."""
 
 import base64
-from collections import deque
+from collections import OrderedDict, deque
 import hashlib
 import hmac
 import html
+import ipaddress
 import json
 import os
 from pathlib import Path
+import re
 import threading
 import time
 from typing import Any
 
 COOKIE_NAME = "hmrec_session"
 DEFAULT_SESSION_DURATION = 30 * 86400  # 30 days
+SHORT_SESSION_DURATION = 12 * 3600  # 12 hours
 MAX_LOGIN_ATTEMPTS = 8
 RATE_LIMIT_WINDOW_SECONDS = 300  # 5 minutes
+MAX_TRACKED_IPS = 10_000
 MAX_LOGIN_BODY_BYTES = 4096
-_DUMMY_PASSWORD_HASH = hashlib.sha256(b"hmrec_constant_time_dummy_secret").hexdigest()
+
+_SCRYPT_N = 16384
+_SCRYPT_R = 8
+_SCRYPT_P = 1
+_SCRYPT_SALT_BYTES = 16
+_SCRYPT_DKLEN = 32
+_SCRYPT_MAXMEM = 32 * 1024 * 1024
+_SCRYPT_MAX_ACCEPT_MAXMEM = 64 * 1024 * 1024
+_DUMMY_SCRYPT_SALT = b"\x00" * _SCRYPT_SALT_BYTES
+_DUMMY_SCRYPT_DIGEST = b"\x00" * _SCRYPT_DKLEN
+_HEX_RE = re.compile(r"^[0-9a-fA-F]+$")
+_LEGACY_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+_HASH_CACHE_LOCK = threading.Lock()
+_HASH_CACHE: dict[Path, tuple[int, int, dict[str, str]]] = {}
 
 SECURITY_HEADERS = {
     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
@@ -34,10 +52,14 @@ class LoginRateLimiter:
         self,
         max_attempts: int = MAX_LOGIN_ATTEMPTS,
         window_seconds: int = RATE_LIMIT_WINDOW_SECONDS,
+        max_tracked_ips: int = MAX_TRACKED_IPS,
     ) -> None:
+        if max_tracked_ips < 1:
+            raise ValueError("max_tracked_ips must be >= 1")
         self.max_attempts = max_attempts
         self.window_seconds = window_seconds
-        self._failures: dict[str, deque[float]] = {}
+        self.max_tracked_ips = max_tracked_ips
+        self._failures: OrderedDict[str, deque[float]] = OrderedDict()
         self._lock = threading.Lock()
 
     def _prune(self, key: str, now: float) -> deque[float]:
@@ -51,11 +73,17 @@ class LoginRateLimiter:
             self._failures.pop(key, None)
         return bucket
 
+    def _sweep_expired(self, now: float) -> None:
+        for tracked_key in list(self._failures.keys()):
+            self._prune(tracked_key, now)
+
     def is_blocked(self, key: str, now: float | None = None) -> bool:
         """Return True if the client IP has reached the maximum failed login attempts."""
         ts = time.time() if now is None else now
         with self._lock:
             bucket = self._prune(key, ts)
+            if bucket:
+                self._failures.move_to_end(key)
             return len(bucket) >= self.max_attempts
 
     def record_failure(self, key: str, now: float | None = None) -> None:
@@ -64,7 +92,13 @@ class LoginRateLimiter:
         with self._lock:
             bucket = self._prune(key, ts)
             if key not in self._failures:
+                if len(self._failures) >= self.max_tracked_ips:
+                    self._sweep_expired(ts)
+                    while len(self._failures) >= self.max_tracked_ips:
+                        self._failures.popitem(last=False)
                 self._failures[key] = bucket
+            else:
+                self._failures.move_to_end(key)
             bucket.append(ts)
 
     def reset(self, key: str) -> None:
@@ -73,17 +107,68 @@ class LoginRateLimiter:
             self._failures.pop(key, None)
 
 
+def _get_header(headers: Any, name: str) -> str:
+    if headers is None:
+        return ""
+    value = headers.get(name) if hasattr(headers, "get") else None
+    if value is None and hasattr(headers, "items"):
+        lowered = name.lower()
+        for k, v in headers.items():
+            if isinstance(k, str) and k.lower() == lowered:
+                value = v
+                break
+    return value if isinstance(value, str) else ""
+
+
+def _parse_ip(raw: str) -> str | None:
+    if not isinstance(raw, str):
+        return None
+    token = raw.strip().strip('"').strip("'")
+    if not token or len(token) > 128 or "%" in token or any(ch.isspace() for ch in token):
+        return None
+    if token.startswith("["):
+        end = token.find("]")
+        if end <= 1:
+            return None
+        rest = token[end + 1 :]
+        if rest and not (rest.startswith(":") and len(rest) > 1 and rest[1:].isdigit()):
+            return None
+        token = token[1:end]
+    try:
+        return str(ipaddress.ip_address(token))
+    except ValueError:
+        if token.count(":") == 1:
+            host, port = token.rsplit(":", 1)
+            if port.isdigit():
+                try:
+                    return str(ipaddress.ip_address(host))
+                except ValueError:
+                    return None
+        return None
+
+
 def extract_client_ip(headers: Any, fallback_host: str = "unknown") -> str:
-    """Extract the real client IP address from reverse-proxy headers or socket peer."""
-    forwarded = headers.get("x-forwarded-for", "")
+    """Extract and validate the real client IP address from reverse-proxy headers or socket peer."""
+    forwarded = _get_header(headers, "x-forwarded-for")
     if forwarded:
-        first_ip = forwarded.split(",", 1)[0].strip()
-        if first_ip:
-            return first_ip
-    real_ip = headers.get("x-real-ip", "").strip()
+        parts = forwarded[-2048:].split(",")[-32:]
+        for part in reversed(parts):
+            parsed = _parse_ip(part)
+            if parsed is not None:
+                return parsed
+    real_ip = _get_header(headers, "x-real-ip")
     if real_ip:
-        return real_ip
-    return fallback_host or "unknown"
+        parsed = _parse_ip(real_ip)
+        if parsed is not None:
+            return parsed
+    if isinstance(fallback_host, str):
+        parsed_fallback = _parse_ip(fallback_host)
+        if parsed_fallback is not None:
+            return parsed_fallback
+        stripped = fallback_host.strip()
+        if stripped in {"testclient", "unknown"}:
+            return stripped
+    return "unknown"
 
 
 def create_session_token(username: str, secret: bytes, max_age: int = DEFAULT_SESSION_DURATION) -> str:
@@ -112,46 +197,151 @@ def verify_session_token(token: str, secret: bytes) -> str | None:
 
 
 def hash_password(password: str) -> str:
-    """Compute constant-format SHA-256 digest of password."""
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    """Compute a salted scrypt hash of the password."""
+    salt = os.urandom(_SCRYPT_SALT_BYTES)
+    digest = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=_SCRYPT_N,
+        r=_SCRYPT_R,
+        p=_SCRYPT_P,
+        maxmem=_SCRYPT_MAXMEM,
+        dklen=_SCRYPT_DKLEN,
+    )
+    return f"scrypt$n={_SCRYPT_N}$r={_SCRYPT_R}$p={_SCRYPT_P}${salt.hex()}${digest.hex()}"
+
+
+def _parse_scrypt_hash(encoded: str) -> tuple[int, int, int, bytes, bytes] | None:
+    parts = encoded.split("$")
+    if len(parts) != 6:
+        return None
+    algo, n_part, r_part, p_part, salt_hex, hash_hex = parts
+    if (
+        algo != "scrypt"
+        or not n_part.startswith("n=")
+        or not r_part.startswith("r=")
+        or not p_part.startswith("p=")
+    ):
+        return None
+    n_str, r_str, p_str = n_part[2:], r_part[2:], p_part[2:]
+    if not (n_str.isdigit() and r_str.isdigit() and p_str.isdigit()):
+        return None
+    n = int(n_str)
+    r = int(r_str)
+    p = int(p_str)
+    if n < 2 or (n & (n - 1)) != 0 or r < 1 or p < 1 or p > 16:
+        return None
+    if 128 * r * (n + p) + 1024 * 1024 > _SCRYPT_MAX_ACCEPT_MAXMEM:
+        return None
+    if (
+        not _HEX_RE.fullmatch(salt_hex)
+        or not _HEX_RE.fullmatch(hash_hex)
+        or len(salt_hex) % 2 != 0
+        or len(hash_hex) % 2 != 0
+    ):
+        return None
+    salt = bytes.fromhex(salt_hex)
+    digest = bytes.fromhex(hash_hex)
+    if len(salt) < 8 or not (16 <= len(digest) <= 128):
+        return None
+    return n, r, p, salt, digest
 
 
 def load_user_hashes(config_path: Path | None = None) -> dict[str, str]:
-    """Load valid username -> sha256_hash mapping from server configuration."""
-    candidates = [
-        config_path,
-        Path(os.environ.get("HMREC_GATEWAY_CONFIG", "")),
+    """Load valid username -> password_hash mapping from server configuration with stat caching."""
+    candidates: list[Path] = []
+    if config_path is not None:
+        candidates.append(Path(config_path))
+    env_cfg = os.environ.get("HMREC_GATEWAY_CONFIG", "").strip()
+    if env_cfg:
+        candidates.append(Path(env_cfg))
+    candidates.extend([
         Path("/etc/hmrec/server/gateway.json"),
-        Path("/data/hm_project/service/.runtime/server/gateway.json"),
         Path(".runtime/server/gateway.json"),
-    ]
-    for candidate in candidates:
-        if candidate and candidate.is_file():
+    ])
+
+    with _HASH_CACHE_LOCK:
+        for candidate in candidates:
             try:
-                data = json.loads(candidate.read_text(encoding="utf-8"))
-                hashes = data.get("password_hashes")
-                if isinstance(hashes, dict) and hashes:
-                    return hashes
-            except Exception:
-                pass
+                if not candidate.is_file():
+                    continue
+                resolved = candidate.resolve()
+                st = resolved.stat()
+                cached = _HASH_CACHE.get(resolved)
+                if cached is not None and cached[0] == st.st_mtime_ns and cached[1] == st.st_size:
+                    return dict(cached[2])
+                data = json.loads(resolved.read_text(encoding="utf-8"))
+                raw_hashes = data.get("password_hashes")
+                if not isinstance(raw_hashes, dict):
+                    continue
+                cleaned = {
+                    k: v
+                    for k, v in raw_hashes.items()
+                    if isinstance(k, str) and isinstance(v, str) and k and v
+                }
+                if cleaned:
+                    _HASH_CACHE[resolved] = (st.st_mtime_ns, st.st_size, cleaned)
+                    return dict(cleaned)
+            except (OSError, ValueError, TypeError):
+                continue
     return {}
 
 
 def verify_user_credentials(username: str, password: str, user_hashes: dict[str, str]) -> bool:
-    """Verify username and password against SHA-256 hash dictionary in constant time."""
-    safe_password = password[:256] if password else ""
-    computed_hash = hash_password(safe_password)
-    expected_hash = user_hashes.get(username, _DUMMY_PASSWORD_HASH)
-    digest_matches = hmac.compare_digest(computed_hash, expected_hash)
-    if (
-        not username
-        or not password
-        or len(username) > 128
-        or len(password) > 256
-        or username not in user_hashes
-    ):
-        return False
-    return digest_matches
+    """Verify username and password against scrypt or legacy SHA-256 hashes in constant time."""
+    valid_inputs = (
+        isinstance(username, str)
+        and isinstance(password, str)
+        and bool(username)
+        and bool(password)
+        and len(username) <= 128
+        and len(password) <= 256
+        and isinstance(user_hashes, dict)
+        and username in user_hashes
+    )
+    safe_password = (password[:256] if isinstance(password, str) and password else "").encode("utf-8")
+    stored = user_hashes.get(username) if (isinstance(username, str) and isinstance(user_hashes, dict)) else None
+
+    if valid_inputs and isinstance(stored, str):
+        parsed = _parse_scrypt_hash(stored)
+        if parsed is not None:
+            n, r, p, salt, expected_digest = parsed
+            maxmem = max(_SCRYPT_MAXMEM, 128 * r * (n + p) + 1024 * 1024)
+            derived = hashlib.scrypt(
+                safe_password,
+                salt=salt,
+                n=n,
+                r=r,
+                p=p,
+                maxmem=maxmem,
+                dklen=len(expected_digest),
+            )
+            return hmac.compare_digest(derived, expected_digest)
+        if _LEGACY_SHA256_RE.fullmatch(stored):
+            dummy = hashlib.scrypt(
+                safe_password,
+                salt=_DUMMY_SCRYPT_SALT,
+                n=_SCRYPT_N,
+                r=_SCRYPT_R,
+                p=_SCRYPT_P,
+                maxmem=_SCRYPT_MAXMEM,
+                dklen=_SCRYPT_DKLEN,
+            )
+            _ = hmac.compare_digest(dummy, _DUMMY_SCRYPT_DIGEST)
+            legacy_digest = hashlib.sha256(safe_password).hexdigest()
+            return hmac.compare_digest(legacy_digest, stored)
+
+    dummy = hashlib.scrypt(
+        safe_password,
+        salt=_DUMMY_SCRYPT_SALT,
+        n=_SCRYPT_N,
+        r=_SCRYPT_R,
+        p=_SCRYPT_P,
+        maxmem=_SCRYPT_MAXMEM,
+        dklen=_SCRYPT_DKLEN,
+    )
+    _ = hmac.compare_digest(dummy, _DUMMY_SCRYPT_DIGEST)
+    return False
 
 
 def render_login_html(error: str | None = None) -> str:

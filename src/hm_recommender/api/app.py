@@ -1,6 +1,7 @@
 """FastAPI serving application with authenticated administrative endpoints."""
 
 from contextlib import asynccontextmanager
+import hashlib
 import hmac
 import os
 from pathlib import Path
@@ -18,6 +19,7 @@ from hm_recommender.api.auth import (
     DEFAULT_SESSION_DURATION,
     MAX_LOGIN_BODY_BYTES,
     SECURITY_HEADERS,
+    SHORT_SESSION_DURATION,
     LoginRateLimiter,
     create_session_token,
     extract_client_ip,
@@ -33,6 +35,7 @@ from hm_recommender.api.schemas import (
     HistoryRecommendationResponse,
     PrepareRequest,
     RecommendationRequest,
+    RecommendationResponse,
 )
 from hm_recommender.releases.registry import ReleaseRegistry, Unavailable
 
@@ -85,7 +88,7 @@ def create_app(
         if not hmac.compare_digest(authorization.encode(), expected):
             raise HTTPException(status_code=403, detail='Administrative authorization required')
 
-    session_secret = token.encode('utf-8')
+    session_secret = hmac.new(token.encode('utf-8'), b'hmrec:session-secret:v1', hashlib.sha256).digest()
     rate_limiter = LoginRateLimiter()
 
     @app.get('/login', response_class=HTMLResponse)
@@ -134,8 +137,8 @@ def create_app(
             )
 
         rate_limiter.reset(client_ip)
-        max_age = DEFAULT_SESSION_DURATION if remember else None
-        session_token = create_session_token(username, session_secret, max_age=DEFAULT_SESSION_DURATION)
+        max_age = DEFAULT_SESSION_DURATION if remember else SHORT_SESSION_DURATION
+        session_token = create_session_token(username, session_secret, max_age=max_age)
         response = RedirectResponse(url='/', status_code=303, headers=SECURITY_HEADERS)
         response.set_cookie(
             key=COOKIE_NAME,
@@ -217,7 +220,7 @@ def create_app(
             'data_as_of': state.data_as_of.isoformat(),
         }
 
-    @app.post('/recommend', response_model=HistoryRecommendationResponse)
+    @app.post('/recommend', response_model=RecommendationResponse)
     def recommend(request: RecommendationRequest):
         started = time.perf_counter()
         status = 'ok'

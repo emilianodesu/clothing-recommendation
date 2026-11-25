@@ -1,13 +1,18 @@
-"""Past-only seed and transactional publication of operational H profiles."""
+"""Past-only seed and transactional publication of operational H/v2 profiles."""
 from datetime import date, datetime, timedelta, timezone
+import json
 from pathlib import Path
+import re
 from uuid import UUID
 import polars as pl
 from hm_recommender.database import connect
 from hm_recommender.data.ingest import load_dataset, scan
 from hm_recommender.data.io import sha256
 from hm_recommender.data.validate import HM_SOURCE
+from hm_recommender.releases.contracts import RELEASE_ID_PATTERN
 from hm_recommender.releases.package import verify_history_release
+
+_RELEASE_ID_RE = re.compile(RELEASE_ID_PATTERN)
 
 
 def stream_identity(value):
@@ -19,7 +24,22 @@ def stream_identity(value):
 def initialize_stream(dataset_dir: Path, release_directory: Path, stream_id: str, *, mode: str, connection=connect):
     stream_identity(stream_id)
     dataset_dir=Path(dataset_dir); release_directory=Path(release_directory)
-    manifest=verify_history_release(release_directory)
+    if release_directory.is_symlink() or not release_directory.is_dir():
+        raise ValueError('Invalid release directory')
+    manifest_path=release_directory/'manifest.json'
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError('Invalid release manifest')
+    raw=json.loads(manifest_path.read_text())
+    if not isinstance(raw,dict):
+        raise ValueError('Invalid release manifest')
+    raw_id=raw.get('release_id')
+    if not isinstance(raw_id,str) or not _RELEASE_ID_RE.fullmatch(raw_id):
+        raise ValueError('Invalid release ID')
+    if raw_id.startswith('v2-'):
+        from hm_recommender.v2.package import verify_v2_release
+        manifest=verify_v2_release(release_directory)
+    else:
+        manifest=verify_history_release(release_directory)
     dataset=load_dataset(dataset_dir)
     if (sha256(dataset_dir/'manifest.json')!=manifest.dataset_manifest_sha256
         or dataset.source_sha256!=manifest.source_sha256): raise ValueError('Dataset differs from frozen package')

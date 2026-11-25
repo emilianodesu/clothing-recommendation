@@ -1,10 +1,12 @@
 """Operational feedback routes; the base /recommend contract stays immutable."""
+from collections import OrderedDict
 from dataclasses import replace
 from types import MappingProxyType
 from datetime import date, datetime, timezone
 import heapq
 import os
 from pathlib import Path
+import threading
 from typing import Annotated
 import polars as pl
 from fastapi import HTTPException, Depends, Query
@@ -32,6 +34,40 @@ def install_events(app, registry, admin):
     profiles=DemoProfiles(store.connection, os.environ.get('HMREC_IMAGE_ARCHIVE'))
     images=ImageCache(os.environ.get('HMREC_IMAGE_ARCHIVE'),os.environ.get('HMREC_IMAGE_CACHE','/tmp/hmrec-images'),
                       max_bytes=int(os.environ.get('HMREC_IMAGE_CACHE_BYTES',64*1024**2)))
+    catalog_cache: OrderedDict[tuple[str, str], tuple[list[dict], list[str]]] = OrderedDict()
+    catalog_lock = threading.Lock()
+    max_catalog_entries = 2
+
+    def _get_catalog_cached(release_id: str) -> tuple[list[dict], list[str]]:
+        catalog_path = registry._directory(release_id) / 'catalog.parquet'
+        cache_key = (release_id, str(catalog_path))
+        with catalog_lock:
+            cached = catalog_cache.get(cache_key)
+            if cached is not None:
+                catalog_cache.move_to_end(cache_key)
+                return cached
+            table = pl.read_parquet(catalog_path)
+            rows: list[dict] = []
+            search_texts: list[str] = []
+            for raw_row in table.to_dicts():
+                norm_row = {
+                    k: (v.isoformat() if isinstance(v, (date, datetime)) else v)
+                    for k, v in raw_row.items()
+                }
+                rows.append(norm_row)
+                search_texts.append(
+                    ' '.join(
+                        str(v)
+                        for k, v in norm_row.items()
+                        if k != 'first_seen' and v is not None
+                    ).lower()
+                )
+            entry = (rows, search_texts)
+            catalog_cache[cache_key] = entry
+            catalog_cache.move_to_end(cache_key)
+            while len(catalog_cache) > max_catalog_entries:
+                catalog_cache.popitem(last=False)
+            return entry
 
     @app.get('/streams')
     def streams():
@@ -57,13 +93,41 @@ def install_events(app, registry, admin):
         except Exception: raise HTTPException(503, 'Demonstration profiles unavailable') from None
 
     @app.get('/catalog')
-    def catalog(offset: int=Query(0,ge=0,le=10_000_000),limit: int=Query(12,ge=1,le=48)):
+    def catalog(
+        offset: int = Query(0, ge=0, le=10_000_000),
+        limit: int = Query(12, ge=1, le=48),
+        q: str | None = Query(None, max_length=256),
+        index_group_name: str | None = Query(None, max_length=128),
+    ):
         try:
-            base=registry.snapshot()
-            table=pl.scan_parquet(registry._directory(base.release_id)/'catalog.parquet').slice(offset,limit).collect()
-            return {'release_id':base.release_id,'total':len(base.catalog),'items':table.to_dicts(),
-                    'filters':{field:sorted(index) for field,index in base.filter_index.items()}}
-        except Exception: raise HTTPException(503,'Catalog unavailable') from None
+            base = registry.snapshot()
+            rows, search_texts = _get_catalog_cached(base.release_id)
+            idx_group = (index_group_name or '').strip()
+            query = (q or '').strip().lower()
+            if not idx_group and not query:
+                total = len(rows)
+                items = rows[offset : offset + limit]
+            else:
+                if idx_group and query:
+                    filtered = [
+                        row
+                        for row, txt in zip(rows, search_texts)
+                        if row.get('index_group_name') == idx_group and query in txt
+                    ]
+                elif idx_group:
+                    filtered = [row for row in rows if row.get('index_group_name') == idx_group]
+                else:
+                    filtered = [row for row, txt in zip(rows, search_texts) if query in txt]
+                total = len(filtered)
+                items = filtered[offset : offset + limit]
+            return {
+                'release_id': base.release_id,
+                'total': total,
+                'items': items,
+                'filters': {field: sorted(index) for field, index in base.filter_index.items()},
+            }
+        except Exception:
+            raise HTTPException(503, 'Catalog unavailable') from None
 
     @app.get('/articles/{article_id}/image')
     def image(article_id: str):
@@ -109,13 +173,53 @@ def install_events(app, registry, admin):
     def recommend_stream(stream_id: str, request: RecommendationRequest):
         try:
             stream_identity(stream_id)
-            base=registry.snapshot()
-            release,cutoff,revision,received,published,popular,history,mode=store.profile(stream_id,request.customer_id)
-            if release!=base.release_id: raise Conflict('Stream belongs to another active release')
-            state=replace(base,data_as_of=cutoff,histories=MappingProxyType({request.customer_id:tuple(history)}),popularity=tuple(popular))
-            body=state.recommend(request).model_dump(mode='json')
-            body.update(stream_id=stream_id,revision=revision,received_before=received.isoformat(),published_at=published.isoformat(),mode=mode)
+            base = registry.snapshot()
+            release, cutoff, revision, received, published, popular, history, mode = store.profile(
+                stream_id, request.customer_id
+            )
+            if release != base.release_id:
+                raise Conflict('Stream belongs to another active release')
+            if hasattr(base, 'recommend_stream'):
+                with store.connection() as conn:
+                    rows = conn.execute(
+                        """SELECT article_id, kind, event_time
+                           FROM interaction_events
+                           WHERE stream_id = %s AND customer_id = %s
+                             AND received_at < %s
+                             AND (event_time AT TIME ZONE 'UTC')::date < %s
+                           ORDER BY event_time ASC""",
+                        (stream_id, request.customer_id, received, cutoff),
+                    ).fetchall()
+                live_events = [
+                    {'article_id': str(aid), 'kind': str(kind), 'event_time': ev_time}
+                    for aid, kind, ev_time in rows
+                ]
+                body = base.recommend_stream(
+                    request,
+                    cutoff=cutoff,
+                    popular=tuple(popular),
+                    history=tuple(history),
+                    live_events=live_events,
+                ).model_dump(mode='json')
+            else:
+                state = replace(
+                    base,
+                    data_as_of=cutoff,
+                    histories=MappingProxyType({request.customer_id: tuple(history)}),
+                    popularity=tuple(popular),
+                )
+                body = state.recommend(request).model_dump(mode='json')
+            body.update(
+                stream_id=stream_id,
+                revision=revision,
+                received_before=received.isoformat(),
+                published_at=published.isoformat(),
+                mode=mode,
+            )
             return body
-        except Conflict: raise HTTPException(409,'Stream belongs to another active release') from None
-        except ValueError: raise HTTPException(404,'Stream unavailable') from None
-        except Exception: raise HTTPException(503,'Operational profiles unavailable') from None
+        except Conflict:
+            raise HTTPException(409, 'Stream belongs to another active release') from None
+        except ValueError:
+            raise HTTPException(404, 'Stream unavailable') from None
+        except Exception:
+            raise HTTPException(503, 'Operational profiles unavailable') from None

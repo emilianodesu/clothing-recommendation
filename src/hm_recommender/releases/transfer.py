@@ -1,14 +1,42 @@
 """Bounded, data-only portable packages. Never extract archive paths directly."""
+import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import tempfile
 import zipfile
+from hm_recommender.releases.contracts import V2_RELEASE_ID_PATTERN
 from hm_recommender.releases.package import verify_history_release
 
-FILES={'manifest.json','rules.json','validation-reference.json','catalog.parquet','customers.parquet','histories.parquet','popularity.parquet'}
-MAX_BYTES=2*1024**3
+FILES = {
+    'manifest.json',
+    'rules.json',
+    'validation-reference.json',
+    'catalog.parquet',
+    'customers.parquet',
+    'histories.parquet',
+    'popularity.parquet',
+}
+V2_FILES = {
+    'manifest.json',
+    'rules.json',
+    'validation-reference.json',
+    'model.txt',
+    'catalog.parquet',
+    'item_stats.parquet',
+    'user_stats.parquet',
+    'user_affinities.parquet',
+    'histories.parquet',
+    'segment_popularity.parquet',
+    'cooc.npz',
+    'svd_v.npy',
+    'svd_sigma.npy',
+    'content_tfidf.npz',
+}
+_V2_RELEASE_RE = re.compile(V2_RELEASE_ID_PATTERN)
+MAX_BYTES = 2 * 1024**3
 
 
 def unpack(archive, destination, allowed=None, max_bytes=MAX_BYTES, max_files=1024):
@@ -18,7 +46,14 @@ def unpack(archive, destination, allowed=None, max_bytes=MAX_BYTES, max_files=10
         with zipfile.ZipFile(archive) as z:
             infos=z.infolist();names=[i.filename for i in infos]
             if not infos or len(infos)>max_files or len(set(names))!=len(names):raise ValueError('Invalid archive inventory')
-            if allowed is not None and set(names)!=set(allowed):raise ValueError('Unexpected archive inventory')
+            if allowed is not None:
+                if isinstance(allowed, (set, frozenset)) and all(isinstance(item, str) for item in allowed):
+                    allowed_sets = [set(allowed)]
+                else:
+                    allowed_sets = [set(candidate) for candidate in allowed]
+                name_set = set(names)
+                if not any(name_set == candidate for candidate in allowed_sets):
+                    raise ValueError('Unexpected archive inventory')
             if sum(i.file_size for i in infos)>max_bytes:raise ValueError('Archive exceeds budget')
             for i in infos:
                 # Flat filenames only; no links, directories, devices, encryption or alternate paths.
@@ -52,24 +87,49 @@ def pack(directory, output):
 
 
 def export_release(directory: Path, output: Path) -> Path:
-    directory=Path(directory);before=verify_history_release(directory)
-    Path(output).parent.mkdir(parents=True,exist_ok=True)
+    directory = Path(directory)
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError('Invalid release directory')
+    manifest_path = directory / 'manifest.json'
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError('Invalid release manifest')
+    raw = json.loads(manifest_path.read_text())
+    rid = raw.get('release_id') if isinstance(raw, dict) else None
+    is_v2 = isinstance(rid, str) and bool(_V2_RELEASE_RE.fullmatch(rid))
+    if is_v2:
+        from hm_recommender.v2.package import verify_v2_release
+        before = verify_v2_release(directory)
+        files_to_copy = V2_FILES
+        verifier = verify_v2_release
+    else:
+        before = verify_history_release(directory)
+        files_to_copy = FILES
+        verifier = verify_history_release
+    Path(output).parent.mkdir(parents=True, exist_ok=True)
     # Reverify the actual exported bytes to detect source changes during copy.
     with tempfile.TemporaryDirectory(dir=Path(output).parent) as tmp:
-        for name in FILES:shutil.copyfile(directory/name,Path(tmp)/name)
-        after=verify_history_release(Path(tmp))
-        if after.model_dump()!=before.model_dump():raise ValueError('Release changed during export')
-        return pack(tmp,output)
+        for name in files_to_copy:
+            shutil.copyfile(directory / name, Path(tmp) / name)
+        after = verifier(Path(tmp))
+        if after.model_dump() != before.model_dump():
+            raise ValueError('Release changed during export')
+        return pack(tmp, output)
 
 
 def import_release(archive: Path, destination: Path):
-    destination=Path(destination)
-    if destination.exists() or destination.is_symlink():raise ValueError('Destination must be new')
-    destination.parent.mkdir(parents=True,exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='.import-',dir=destination.parent) as tmp:
-        root=Path(tmp);unpack(archive,root,FILES)
-        manifest=verify_history_release(root)
+    destination = Path(destination)
+    if destination.exists() or destination.is_symlink():
+        raise ValueError('Destination must be new')
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.import-', dir=destination.parent) as tmp:
+        root = Path(tmp)
+        unpack(archive, root, (FILES, V2_FILES))
+        if {p.name for p in root.iterdir()} == V2_FILES:
+            from hm_recommender.v2.package import verify_v2_release
+            manifest = verify_v2_release(root)
+        else:
+            manifest = verify_history_release(root)
         # A same-filesystem rename only after full semantic verification.
         root.rename(destination)
-    manifest._root=destination
+    manifest._root = destination
     return manifest

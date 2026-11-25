@@ -7,17 +7,32 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
 
 
+class ColdStartPreferences(StrictModel):
+    age_bin: str | None = Field(default=None, min_length=1, max_length=32)
+    index_group_name: str | None = Field(default=None, min_length=1, max_length=64)
+
+
 class RecommendationRequest(StrictModel):
     customer_id: str = Field(min_length=1, max_length=128, pattern=r'^\S+$')
     k: int = Field(default=12, ge=1, le=12)
     filters: dict[Literal['product_type_name','product_group_name','colour_group_name'],
                   str] = Field(default_factory=dict, max_length=3)
+    mode: Literal['balanced', 'discovery'] = 'balanced'
+    preferences: ColdStartPreferences | None = None
 
 
 class RecommendationItem(StrictModel):
     article_id: str
     rank: int
-    reason: Literal['recent_purchase','popular_7d']
+    reason: Literal[
+        'recent_purchase',
+        'same_product_variant',
+        'frequently_bought_together',
+        'latent_style_match',
+        'content_similar',
+        'popular_for_segment',
+        'popular_7d',
+    ]
 
 
 class HistoryRecommendationResponse(StrictModel):
@@ -29,18 +44,27 @@ class HistoryRecommendationResponse(StrictModel):
     items: list[RecommendationItem]
 
 
+class RecommendationResponse(StrictModel):
+    request_id: str
+    release_id: str
+    strategy: Literal['recent_then_popular', 'two_stage_lgbm_v2'] = 'recent_then_popular'
+    features_timestamp: date
+    fallback: bool
+    items: list[RecommendationItem]
+
+
 class PrepareRequest(StrictModel):
     directory: str = Field(min_length=1, max_length=512)
 
 
 class ActivateRequest(StrictModel):
-    release_id: str = Field(pattern=r'^h-[a-f0-9]{64}$')
+    release_id: str = Field(pattern=r'^(h|v2)-[a-f0-9]{64}$')
 
 
 class EventInput(StrictModel):
     event_id: str = Field(pattern=r'^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$')
     stream_id: str = Field(pattern=r'^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$')
-    release_id: str = Field(pattern=r'^h-[a-f0-9]{64}$')
+    release_id: str = Field(pattern=r'^(h|v2)-[a-f0-9]{64}$')
     customer_id: str = Field(min_length=1,max_length=128,pattern=r'^\S+$')
     article_id: str = Field(min_length=1,max_length=32,pattern=r'^\d+$')
     kind: Literal['purchase','view','click']

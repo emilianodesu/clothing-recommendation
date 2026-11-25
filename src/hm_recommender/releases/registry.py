@@ -1,5 +1,6 @@
 """Durable PostgreSQL pointer and a single serving owner, with atomic snapshots."""
 from contextlib import contextmanager
+import json
 import os
 from pathlib import Path
 import re
@@ -11,7 +12,20 @@ from hm_recommender.database import connect
 from hm_recommender.data.io import sha256
 from hm_recommender.releases.package import verify_history_release
 from hm_recommender.api.recommend import load_state
-from hm_recommender.releases.contracts import HistoryPublicationResult
+from hm_recommender.releases.contracts import (
+    RELEASE_ID_PATTERN,
+    HistoryPublicationResult,
+    V2PublicationResult,
+)
+
+_RELEASE_ID_RE = re.compile(RELEASE_ID_PATTERN)
+
+
+def _load_release_state(release_id: str, directory: Path):
+    if release_id.startswith('v2-'):
+        from hm_recommender.api.recommend_v2 import load_v2_state
+        return load_v2_state(directory)
+    return load_state(directory)
 
 
 class Unavailable(RuntimeError):
@@ -89,15 +103,26 @@ class ReleaseRegistry:
             self.store.close()
 
     def _directory(self, release_id):
-        if not re.fullmatch(r'h-[a-f0-9]{64}',release_id): raise ValueError('Invalid release ID')
-        return self.root/release_id
+        if not isinstance(release_id, str) or not _RELEASE_ID_RE.fullmatch(release_id):
+            raise ValueError('Invalid release ID')
+        return self.root / release_id
 
     def _load(self, release_id):
         directory = self._directory(release_id)
         checksum = self.store.checksum(release_id)
-        if directory.is_symlink() or sha256(directory/'manifest.json') != checksum:
+        manifest_path = directory / 'manifest.json'
+        if (
+            directory.is_symlink()
+            or not directory.is_dir()
+            or manifest_path.is_symlink()
+            or not manifest_path.is_file()
+            or sha256(manifest_path) != checksum
+        ):
             raise ValueError('Registered manifest changed')
-        return load_state(directory)
+        state = _load_release_state(release_id, directory)
+        if state.release_id != release_id:
+            raise ValueError('Registered manifest changed')
+        return state
 
     def recover(self):
         with self._publication, self._lock:
@@ -117,30 +142,84 @@ class ReleaseRegistry:
 
     def prepare_release(self, directory: Path):
         with self._publication:
-            with self._lock: self.store.check()
-            manifest = verify_history_release(directory)
-            checksum = sha256(directory/'manifest.json')
+            with self._lock:
+                self.store.check()
+            directory = Path(directory)
+            if directory.is_symlink() or not directory.is_dir():
+                raise ValueError('Invalid release directory')
+            manifest_path = directory / 'manifest.json'
+            if manifest_path.is_symlink() or not manifest_path.is_file():
+                raise ValueError('Invalid release manifest')
+            raw = json.loads(manifest_path.read_text())
+            if not isinstance(raw, dict):
+                raise ValueError('Invalid release manifest')
+            raw_id = raw.get('release_id')
+            if not isinstance(raw_id, str) or not _RELEASE_ID_RE.fullmatch(raw_id):
+                raise ValueError('Invalid release ID')
+            is_v2 = raw_id.startswith('v2-')
+            if is_v2:
+                from hm_recommender.v2.package import verify_v2_release
+                manifest = verify_v2_release(directory)
+            else:
+                manifest = verify_history_release(directory)
+            checksum = sha256(manifest_path)
             target = self._directory(manifest.release_id)
+            if target.is_symlink():
+                raise ValueError('Invalid release target')
             if not target.exists():
-                temporary = Path(tempfile.mkdtemp(prefix='.prepare-',dir=self.root))
-                # Copy only the verified inventory; changes during copy must still verify.
-                for path in directory.iterdir():
-                    if path.is_symlink() or not path.is_file(): raise ValueError('Invalid source file')
-                    shutil.copyfile(path,temporary/path.name)
-                state = load_state(temporary)
-                if state.release_id != manifest.release_id or sha256(temporary/'manifest.json') != checksum:
-                    raise ValueError('Source changed during preparation')
-                del state
-                for path in temporary.iterdir():
-                    with path.open('rb') as stream: os.fsync(stream.fileno())
-                with closing_directory(temporary): pass
-                temporary.rename(target)
-                with closing_directory(self.root): pass
-            if sha256(target/'manifest.json') != checksum: raise ValueError('Existing release differs')
-            verify_history_release(target)
-            self.store.register(manifest,checksum)
-            return HistoryPublicationResult(release_id=manifest.release_id,catalog_size=manifest.files['catalog'].rows,
-                past_buyers=manifest.files['customers'].rows,history_rows=manifest.files['histories'].rows).model_dump()
+                temporary = Path(tempfile.mkdtemp(prefix='.prepare-', dir=self.root))
+                try:
+                    # Copy only the verified inventory; changes during copy must still verify.
+                    for path in directory.iterdir():
+                        if path.is_symlink() or not path.is_file():
+                            raise ValueError('Invalid source file')
+                        shutil.copyfile(path, temporary / path.name)
+                    if is_v2:
+                        verified_tmp = verify_v2_release(temporary)
+                        if verified_tmp.release_id != manifest.release_id or sha256(temporary / 'manifest.json') != checksum:
+                            raise ValueError('Source changed during preparation')
+                    else:
+                        state = load_state(temporary)
+                        if state.release_id != manifest.release_id or sha256(temporary / 'manifest.json') != checksum:
+                            raise ValueError('Source changed during preparation')
+                        del state
+                    for path in temporary.iterdir():
+                        with path.open('rb') as stream:
+                            os.fsync(stream.fileno())
+                    with closing_directory(temporary):
+                        pass
+                    temporary.rename(target)
+                    with closing_directory(self.root):
+                        pass
+                except BaseException:
+                    shutil.rmtree(temporary, ignore_errors=True)
+                    raise
+            else:
+                target_manifest = target / 'manifest.json'
+                if (
+                    target_manifest.is_symlink()
+                    or not target_manifest.is_file()
+                    or sha256(target_manifest) != checksum
+                ):
+                    raise ValueError('Existing release differs')
+                if is_v2:
+                    verify_v2_release(target)
+                else:
+                    verify_history_release(target)
+            self.store.register(manifest, checksum)
+            if is_v2:
+                return V2PublicationResult(
+                    release_id=manifest.release_id,
+                    catalog_size=manifest.files['catalog'].rows,
+                    past_buyers=manifest.files['user_stats'].rows,
+                    history_rows=manifest.files['histories'].rows,
+                ).model_dump()
+            return HistoryPublicationResult(
+                release_id=manifest.release_id,
+                catalog_size=manifest.files['catalog'].rows,
+                past_buyers=manifest.files['customers'].rows,
+                history_rows=manifest.files['histories'].rows,
+            ).model_dump()
 
     def activate_release(self, release_id: str):
         with self._publication:

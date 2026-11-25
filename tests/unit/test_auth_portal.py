@@ -1,19 +1,31 @@
 """Unit tests for the authentication portal, session tokens, and security gateway."""
 
+import base64
+import hashlib
+import hmac
+import inspect
+import json
+import os
 from pathlib import Path
+import re
 import time
-import urllib.parse
 
 from fastapi.testclient import TestClient
 import pytest
 
+import hm_recommender.api.auth as auth_module
 from hm_recommender.api.app import create_app
 from hm_recommender.api.auth import (
     COOKIE_NAME,
+    DEFAULT_SESSION_DURATION,
     MAX_LOGIN_ATTEMPTS,
+    MAX_TRACKED_IPS,
+    SHORT_SESSION_DURATION,
     LoginRateLimiter,
     create_session_token,
+    extract_client_ip,
     hash_password,
+    load_user_hashes,
     render_login_html,
     verify_session_token,
     verify_user_credentials,
@@ -45,13 +57,66 @@ def test_session_token_create_and_verify():
 def test_password_hashing_and_verification():
     pwd = "MySuperSecretPassword123!"
     hashed = hash_password(pwd)
-    assert len(hashed) == 64
+    hashed_second = hash_password(pwd)
+    assert re.fullmatch(r"scrypt\$n=16384\$r=8\$p=1\$[0-9a-f]{32}\$[0-9a-f]{64}", hashed)
+    assert hashed != hashed_second
 
     hashes = {"alanmagno": hashed}
     assert verify_user_credentials("alanmagno", pwd, hashes) is True
     assert verify_user_credentials("alanmagno", "WrongPassword", hashes) is False
     assert verify_user_credentials("unknown_user", pwd, hashes) is False
     assert verify_user_credentials("", pwd, hashes) is False
+    assert verify_user_credentials("alanmagno", "", hashes) is False
+    assert verify_user_credentials("a" * 129, pwd, {"a" * 129: hashed}) is False
+    assert verify_user_credentials("alanmagno", "x" * 257, {"alanmagno": hash_password("x" * 257)}) is False
+
+
+def test_legacy_sha256_compat_and_malformed_hashes():
+    pwd = "LegacyPassword2026!"
+    legacy_hash = hashlib.sha256(pwd.encode("utf-8")).hexdigest()
+    assert len(legacy_hash) == 64
+
+    hashes = {"legacy_user": legacy_hash}
+    assert verify_user_credentials("legacy_user", pwd, hashes) is True
+    assert verify_user_credentials("legacy_user", "WrongPassword", hashes) is False
+
+    malformed_entries = [
+        "scrypt$n=16384$r=8$p=1$short$deadbeef",
+        "scrypt$n=1000$r=8$p=1$" + ("aa" * 16) + "$" + ("bb" * 32),  # non-power-of-two n
+        "scrypt$n=1048576$r=8$p=1$" + ("aa" * 16) + "$" + ("bb" * 32),  # excessive memory
+        "scrypt$n=16384$r=8$p=1$" + ("aa" * 15 + "  ") + "$" + ("bb" * 32),  # whitespace in hex
+        "not-a-valid-hash",
+    ]
+    for idx, bad_hash in enumerate(malformed_entries):
+        assert verify_user_credentials(f"u{idx}", pwd, {f"u{idx}": bad_hash}) is False
+
+
+def test_verify_user_credentials_runs_constant_time_scrypt_for_all_paths(monkeypatch: pytest.MonkeyPatch):
+    calls: list[bytes] = []
+    real_scrypt = hashlib.scrypt
+
+    def spy_scrypt(password: bytes, *, salt: bytes, n: int, r: int, p: int, maxmem: int = 0, dklen: int = 64):
+        calls.append(salt)
+        return real_scrypt(password, salt=salt, n=n, r=r, p=p, maxmem=maxmem, dklen=dklen)
+
+    monkeypatch.setattr(hashlib, "scrypt", spy_scrypt)
+    scrypt_hash = real_scrypt(b"pw", salt=b"\x11" * 16, n=16384, r=8, p=1, maxmem=32 * 1024 * 1024, dklen=32)
+    hashes = {
+        "scrypt_user": f"scrypt$n=16384$r=8$p=1${'11' * 16}${scrypt_hash.hex()}",
+        "legacy_user": hashlib.sha256(b"pw").hexdigest(),
+        "bad_user": "corrupt-hash",
+    }
+
+    assert verify_user_credentials("scrypt_user", "pw", hashes) is True
+    assert len(calls) == 1
+    assert verify_user_credentials("legacy_user", "pw", hashes) is True
+    assert len(calls) == 2
+    assert verify_user_credentials("unknown_user", "pw", hashes) is False
+    assert len(calls) == 3
+    assert verify_user_credentials("bad_user", "pw", hashes) is False
+    assert len(calls) == 4
+    assert verify_user_credentials("", "pw", hashes) is False
+    assert len(calls) == 5
 
 
 def test_render_login_html():
@@ -184,6 +249,7 @@ def test_api_auth_endpoints(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 
 def test_login_rate_limiter_unit():
+    assert MAX_TRACKED_IPS == 10_000
     limiter = LoginRateLimiter(max_attempts=3, window_seconds=60)
     assert limiter.is_blocked("198.51.100.1", now=100.0) is False
     limiter.record_failure("198.51.100.1", now=100.0)
@@ -193,6 +259,130 @@ def test_login_rate_limiter_unit():
     assert limiter.is_blocked("198.51.100.1", now=125.0) is True
     # Expires after window
     assert limiter.is_blocked("198.51.100.1", now=165.0) is False
+
+
+def test_login_rate_limiter_sweep_and_lru_eviction():
+    limiter = LoginRateLimiter(max_attempts=2, window_seconds=60, max_tracked_ips=3)
+    limiter.record_failure("198.51.100.1", now=10.0)
+    limiter.record_failure("198.51.100.2", now=20.0)
+    limiter.record_failure("198.51.100.3", now=50.0)
+
+    # Touch .1 via is_blocked? It has 1 failure (<2) and is not expired at t=55, so .1 becomes MRU and .2 is LRU
+    assert limiter.is_blocked("198.51.100.1", now=55.0) is False
+    limiter.record_failure("198.51.100.4", now=56.0)
+    assert list(limiter._failures.keys()) == ["198.51.100.3", "198.51.100.1", "198.51.100.4"]
+
+    # Expired sweep clears .3 and .1 before evicting .4 at t=118.0
+    limiter.record_failure("198.51.100.5", now=118.0)
+    assert "198.51.100.5" in limiter._failures
+    assert len(limiter._failures) <= 3
+
+
+def test_extract_client_ip_validation_and_normalization():
+    assert extract_client_ip({"X-Forwarded-For": "203.0.113.99"}) == "203.0.113.99"
+    assert extract_client_ip({"x-forwarded-for": "198.51.100.1, 203.0.113.99"}) == "203.0.113.99"
+    assert extract_client_ip({"X-Forwarded-For": "garbage, 203.0.113.99:44321"}) == "203.0.113.99"
+    assert extract_client_ip({"X-Forwarded-For": "2001:0db8:0000:0000:0000:0000:0000:0001"}) == "2001:db8::1"
+    assert extract_client_ip({"X-Forwarded-For": "[2001:0db8::1]:8443"}) == "2001:db8::1"
+    assert extract_client_ip({"X-Forwarded-For": "not-an-ip", "X-Real-IP": "198.51.100.77:8080"}) == "198.51.100.77"
+    assert extract_client_ip({"X-Forwarded-For": "spoofed;drop table", "X-Real-IP": "bad"}, "testclient") == "testclient"
+    assert extract_client_ip({"X-Forwarded-For": "fe80::1%eth0"}, "bad-host") == "unknown"
+
+
+def test_load_user_hashes_stat_cache_and_no_hardcoded_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    assert "/data/hm_project" not in inspect.getsource(auth_module)
+    auth_module._HASH_CACHE.clear()
+
+    cfg_a = tmp_path / "gw_a.json"
+    cfg_b = tmp_path / "gw_b.json"
+    hash_a1 = hash_password("PasswordOne123456!")
+    hash_a2 = hash_password("PasswordTwo123456!")
+    hash_b = hash_password("PasswordThree1234!")
+    cfg_a.write_text(json.dumps({"password_hashes": {"alice": hash_a1}}), encoding="utf-8")
+    cfg_b.write_text(json.dumps({"password_hashes": {"bob": hash_b}}), encoding="utf-8")
+
+    monkeypatch.setenv("HMREC_GATEWAY_CONFIG", str(cfg_a))
+    read_count = 0
+    orig_read_text = Path.read_text
+
+    def spy_read_text(self: Path, *args, **kwargs):
+        nonlocal read_count
+        read_count += 1
+        return orig_read_text(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", spy_read_text)
+    assert load_user_hashes() == {"alice": hash_a1}
+    assert load_user_hashes() == {"alice": hash_a1}
+    assert read_count == 1
+
+    # Mutating content + mtime invalidates cache
+    cfg_a.write_text(json.dumps({"password_hashes": {"alice": hash_a2, "carol": hash_b}}), encoding="utf-8")
+    st = cfg_a.stat()
+    os.utime(cfg_a, ns=(st.st_atime_ns, st.st_mtime_ns + 1_000_000))
+    assert load_user_hashes() == {"alice": hash_a2, "carol": hash_b}
+    assert read_count == 2
+
+    # Switching config path loads new file
+    monkeypatch.setenv("HMREC_GATEWAY_CONFIG", str(cfg_b))
+    assert load_user_hashes() == {"bob": hash_b}
+    assert read_count == 3
+
+    # Corrupt JSON returns empty dict safely
+    bad_cfg = tmp_path / "bad.json"
+    bad_cfg.write_text("{not-json", encoding="utf-8")
+    monkeypatch.setenv("HMREC_GATEWAY_CONFIG", str(bad_cfg))
+    assert load_user_hashes(bad_cfg) == {}
+
+
+def test_session_secret_domain_separation_and_remember_durations(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    assert SHORT_SESSION_DURATION == 12 * 3600
+    raw_token = "admin_bearer_secret_2026"
+    monkeypatch.setenv("HM_APP_PASSWORD", raw_token)
+    pwd = "SessionCheckPassword2026!"
+    cfg_file = tmp_path / "gateway.json"
+    cfg_file.write_text(
+        json.dumps({"domain": "hm.test", "users": {"testuser": "bcrypt"}, "password_hashes": {"testuser": hash_password(pwd)}}),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HMREC_GATEWAY_CONFIG", str(cfg_file))
+
+    app = create_app(admin_token=raw_token)
+    client = TestClient(app)
+
+    # remember=False -> 12h cookie max-age and 12h token exp
+    before_short = int(time.time())
+    res_short = client.post(
+        "/login",
+        data={"username": "testuser", "password": pwd},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        follow_redirects=False,
+    )
+    assert res_short.status_code == 303
+    set_cookie_short = res_short.headers["set-cookie"]
+    assert f"Max-Age={SHORT_SESSION_DURATION}" in set_cookie_short
+    tok_short = res_short.cookies[COOKIE_NAME]
+
+    # Token must NOT verify under raw admin bearer secret; MUST verify under HMAC domain-separated secret
+    assert verify_session_token(tok_short, raw_token.encode("utf-8")) is None
+    derived_secret = hmac.new(raw_token.encode("utf-8"), b"hmrec:session-secret:v1", hashlib.sha256).digest()
+    assert verify_session_token(tok_short, derived_secret) == "testuser"
+
+    payload_short = json.loads(base64.urlsafe_b64decode(tok_short.split(".")[0].encode("ascii")).decode("utf-8"))
+    assert before_short + SHORT_SESSION_DURATION - 5 <= payload_short["exp"] <= int(time.time()) + SHORT_SESSION_DURATION + 5
+
+    # remember="1" -> 30d cookie max-age and 30d token exp
+    before_long = int(time.time())
+    res_long = client.post(
+        "/login",
+        data={"username": "testuser", "password": pwd, "remember": "1"},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        follow_redirects=False,
+    )
+    assert res_long.status_code == 303
+    assert f"Max-Age={DEFAULT_SESSION_DURATION}" in res_long.headers["set-cookie"]
+    tok_long = res_long.cookies[COOKIE_NAME]
+    payload_long = json.loads(base64.urlsafe_b64decode(tok_long.split(".")[0].encode("ascii")).decode("utf-8"))
+    assert before_long + DEFAULT_SESSION_DURATION - 5 <= payload_long["exp"] <= int(time.time()) + DEFAULT_SESSION_DURATION + 5
 
 
 def test_render_login_html_escapes_xss():

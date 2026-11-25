@@ -2,6 +2,7 @@
 import getpass
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 from server_support import run, write_private
@@ -28,6 +29,20 @@ def hash_password(password):
     if not re.fullmatch(r'\$2[aby]\$14\$[./A-Za-z0-9]{53}', digest):
         raise ValueError('Respuesta bcrypt inválida')
     return digest
+
+
+def hash_portal_password(password):
+    salt = os.urandom(16)
+    digest = hashlib.scrypt(
+        password.encode('utf-8'),
+        salt=salt,
+        n=16384,
+        r=8,
+        p=1,
+        maxmem=32 * 1024 * 1024,
+        dklen=32,
+    )
+    return f'scrypt$n=16384$r=8$p=1${salt.hex()}${digest.hex()}'
 
 
 def caddyfile(domain, users, *, tunnel=False):
@@ -96,7 +111,7 @@ def configure(root, domain, user, *, remove=False, password=None, tunnel_network
             if getpass.getpass('Repetir contraseña: ') != password:
                 raise ValueError('Contraseñas distintas')
         state['users'][user] = hash_password(password)
-        state.setdefault('password_hashes', {})[user] = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        state.setdefault('password_hashes', {})[user] = hash_portal_password(password)
     rendered = caddyfile(state['domain'], state['users'], tunnel=bool(state.get('tunnel_network')))
     # Mount directory, not individual file, so atomic updates become visible on reload.
     write_private(folder/'Caddyfile', rendered)

@@ -270,6 +270,24 @@ a.logout-btn:focus-visible,
     border: 1px solid var(--atelier-ice-border) !important;
 }
 
+.atelier-badge-variant {
+    background: var(--atelier-warm-bg) !important;
+    color: var(--atelier-warm-text) !important;
+    border: 1px solid var(--atelier-border-hover) !important;
+}
+
+.atelier-badge-cooc {
+    background: var(--atelier-ice-bg) !important;
+    color: var(--atelier-ice-text) !important;
+    border: 1px solid var(--atelier-ice-border) !important;
+}
+
+.atelier-badge-style {
+    background: var(--atelier-sage-bg) !important;
+    color: var(--atelier-sage-text) !important;
+    border: 1px solid var(--atelier-sage-border) !important;
+}
+
 /* Editorial Buttons */
 [data-testid="stButton"] button[kind="primary"] {
     background: var(--atelier-primary-bg) !important;
@@ -391,6 +409,31 @@ label {
 [data-testid="stSelectbox"] > div > div:focus-within {
     border-color: var(--atelier-noir) !important;
     box-shadow: 0 0 0 1px var(--atelier-noir) !important;
+}
+
+[data-testid="stTextInput"] > div > div > input {
+    background-color: var(--atelier-surface) !important;
+    border: 1px solid var(--atelier-border) !important;
+    border-radius: 3px !important;
+    color: var(--atelier-noir) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 14px !important;
+}
+
+[data-testid="stTextInput"] > div > div > input:focus {
+    border-color: var(--atelier-noir) !important;
+    box-shadow: 0 0 0 1px var(--atelier-noir) !important;
+}
+
+[data-testid="stRadio"] > div {
+    gap: 10px !important;
+}
+
+.atelier-detail-card, .atelier-activity-panel {
+    background: var(--atelier-surface) !important;
+    border: 1px solid var(--atelier-border) !important;
+    border-radius: 3px !important;
+    padding: 14px 18px !important;
 }
 
 /* Dropdown Menus & Popover Portals */
